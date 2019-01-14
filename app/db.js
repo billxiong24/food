@@ -1,30 +1,48 @@
 require('dotenv').config()
 const pg = require('pg');
 
-let pool = new pg.Pool();
+class DB {
 
-//query is of the form "SELECT * FROM table WHERE col = $1 AND col2 = $2"
-//params is an array of form [param1, param2], corresponding to $1, $2
-//returns promise
-function execSingleQuery(query, params) {
-    return pool.connect().then(function(client) {
-        return client.query(query, params).then(function(res) {
-            client.release();
-            return res;
+    constructor() {
+        if(!DB.instance) {
+            this.pool = new pg.Pool();
+            DB.instance = this;
+        }
+
+        return DB.instance;
+
+    }
+    
+    //query is of the form "SELECT * FROM table WHERE col = $1 AND col2 = $2"
+    //params is an array of form [param1, param2], corresponding to $1, $2
+    //returns promise
+    
+    execSingleQuery(query, params) {
+        return this.pool.connect().then(function(client) {
+            return client.query(query, params).then(function(res) {
+                client.release();
+                return res;
+            });
         });
-    });
+    }
+
+    closePool() {
+        this.pool.end();
+    
+    }
 }
 
-//execSingleQuery("SELECT NOW()", []).then(function(res) {
+const db = new DB();
+Object.freeze(db);
+
+//db.execSingleQuery("SELECT NOW()", []).then(function(res) {
     //console.log(res.rows);
 //}).then(function(res) {
 
-    //execSingleQuery("SELECT NOW()", [])
+    //db.execSingleQuery("SELECT NOW()", [])
     //.then(function(res) {
         //console.log(res.rows);
-    //});
+    //})
 //})
 
-module.exports = {
-    execSingleQuery
-};
+module.exports = db;
