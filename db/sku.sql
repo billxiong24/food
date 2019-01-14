@@ -1,8 +1,5 @@
 -- Run this file with psql -f sku.sql. Only run this once to set up database.
 DROP DATABASE IF EXISTS SKU_MGMT;
-DROP TABLE IF EXISTS ProductLine CASCADE;
-DROP TABLE IF EXISTS Ingredients;
-DROP TABLE IF EXISTS SKU;
 CREATE DATABASE SKU_MGMT;
 -- connect to postgres database SKU_MGMT- can't just use db like in MYSQL
 \c sku_mgmt;
