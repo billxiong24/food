@@ -1,19 +1,14 @@
 const db = require("./db");
+const CRUD = require("./CRUD");
 
-class Ingredient {
+class Ingredient extends CRUD {
 
     constructor() {
+        super();
         this.tableName = "ingredients";
     }
 
-    makeParamList(obj) {
-        let list = [];
-        for(let key in obj) {
-            list.push(obj[key]);
-        }
-        return list;
-    }
-
+    //override
     checkExisting(obj) {
         let num = obj.num;
         let name = obj.name;
@@ -42,64 +37,20 @@ class Ingredient {
      * }
      *
      */
-    create(ingredObj) {
-        let params = this.makeParamList(ingredObj)
+    create(dataObj) {
+        let params = this.makeParamList(dataObj)
         let query = "";
-        if(ingredObj.hasOwnProperty('num')) {
+        if(dataObj.hasOwnProperty('num')) {
             query = "INSERT INTO " + this.tableName + " (name, num, vend_info, pkg_size, pkg_cost, comments) VALUES ($1, $2, $3, $4, $5, $6)"
         }
         else {
             query = "INSERT INTO " + this.tableName + " (name, vend_info, pkg_size, pkg_cost, comments) VALUES ($1, $2, $3, $4, $5)"
         }
-
-        return this.checkExisting(ingredObj).then(function(res) {
-            //ingredient exists
-            if(res.rows.length > 0) {
-                return Promise.reject("Ingredient exists.");
-            }
-            return res;
-        })
-        .then(function(res) {
-            return db.execSingleQuery(query, params);
-        });
+        return super.insert(query, dataObj, "Entry with name or num exists already.");
     }
 
-    update(ingredObj, oldName) {
-        let params = this.makeParamList(ingredObj);
-        params.push(oldName);
-
-        let query = "UPDATE " + this.tableName + " SET "
-        let keys = Object.keys(ingredObj);
-
-        for(let i = 0; i < keys.length; i++) {
-            let k = keys[i];
-            query += (k + " = " + "$" + (i + 1));
-
-            if(i != keys.length - 1) {
-                query += ", ";
-            }
-            else {
-                query += " ";
-            }
-        }
-
-        query += "WHERE name = $" + (keys.length + 1);
-
-        //if we are updating name and/or num
-        if(ingredObj.name || ingredObj.num) {
-            return this.checkExisting(ingredObj).then(function(res) {
-                if(res.rows.length > 0) {
-                    return Promise.reject("Attempting to update to existing entry for " + JSON.stringify(ingredObj));
-                }
-                return res;
-            })
-            .then(function(res) {
-                db.execSingleQuery(query, params);
-            })
-        }
-        else {
-            return db.execSingleQuery(query, params);
-        }
+    update(dataObj, oldName) {
+        return super.change(dataObj, oldName, "name");
     }
 
     remove(name) {
@@ -112,8 +63,8 @@ class Ingredient {
 
 const ing = new Ingredient();
 //ing.create({
-    //name: "ing35", 
-    //num: 47, 
+    //name: "459ff\\c", 
+    //num: 49, 
     //vend_info: "some vending", 
     //pkg_size: "11 gallons", 
     //pkg_cost: 15,
@@ -124,20 +75,23 @@ const ing = new Ingredient();
 //})
 //.catch(function(err) {
     //console.log(err);
-//});
-
-
-//ing.update({
-    //vend_info: "some vending", 
-    //pkg_size: "11 gallons", 
-    //pkg_cost: 15,
-    //comments: "a comment"
-//}, "ing35")
-//.then(function(res) {
-    //console.log(res);
 //})
-//.catch(function(err) {
-    //console.log(err);
-//});
+
+
+ing.update({
+    name: "ing35",
+    num: 47,
+    vend_info: "watwtaawtat", 
+    pkg_size: "3587 gallons", 
+    pkg_cost: 15,
+    comments: "a comment"
+}, "ing35")
+.then(function(res) {
+    console.log(res);
+})
+.catch(function(err) {
+    console.log(err);
+    console.log("ERRRROR");
+});
 
 module.exports = Ingredient;
