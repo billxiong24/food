@@ -26,6 +26,29 @@ class SKU extends CRUD {
         return Promise.reject("No valid name or num provided.");
     } 
 
+    addIngredients(case_upc, ingredients) {
+        let query = "INSERT INTO sku_ingred (sku_num, ingred_num) VALUES";
+        for(let i = 0; i < ingredients.length; i++) {
+            query += "($1, $"+ (i + 2) + ")";
+            if(i != ingredients.length - 1) {
+                query += ","
+            }
+        }
+        return db.execSingleQuery("SELECT num FROM sku WHERE case_upc=$1", [case_upc]).then(function(res) {
+            return res.rows[0].num;
+        })
+        .then(function(sku_num) {
+            ingredients.unshift(sku_num);
+        })
+        .then(function(res) {
+            return db.execSingleQuery(query, ingredients);
+        });
+    }
+
+    search(searchQuery, ingredients, productlines) {
+        let query = "SELECT sku.name, sku.num, ingredients.num, ingredients.name FROM sku INNER JOIN sku_ingred ON sku.num = sku_ingred.sku_num INNER JOIN ingredients ON sku_ingred.ingred_num=ingredients.num WHERE sku.name LIKE '%sku%' and sku.prd_line='prod3' and (ingredients.name = 'ing');";
+    }
+
     create(dataObj) {
         let params = this.makeParamList(dataObj)
         let query = "";
@@ -36,7 +59,16 @@ class SKU extends CRUD {
         else {
             query = "INSERT INTO " + this.tableName + " (name, case_upc, unit_upc, unit_size, count_per_case, prd_line, comments) VALUES ($1, $2, $3, $4, $5, $6, $7)"
         }
-        return super.insert(query, dataObj, "That SKU entry exists already.");
+
+        return db.execSingleQuery("SELECT * FROM productline WHERE productline.name = $1", [dataObj.prd_line]).then((res) => {
+            if(res.rows.length == 0) {
+                return Promise.reject("Product line does not exist.");
+            }
+            return res;
+        })
+        .then((res) => {
+            return super.insert(query, dataObj, "That SKU entry exists already.");
+        });
     }
 
     update(dataObj, oldName) {
@@ -52,15 +84,22 @@ class SKU extends CRUD {
 }
 
 const sku = new SKU();
+//sku.addIngredients(5043, [1414, 44, 6])
+//.then(function(res) {
+    //console.log(res);
+//})
+//.catch(function(err) {
+    //console.log(err);
+//})
+
 sku.create({
-    name: "sku1", 
-    num: 54, 
-    case_upc: 2477, 
-    unit_upc: 1123, 
-    unit_size: "5 lbs", 
-    count_per_case: 4,
-    prd_line: "prod1",
-    comments: "a comment"
+    name: "sku690", 
+    case_upc: 4327, 
+    unit_upc: 11222, 
+    unit_size: "6 lbs sskusku", 
+    count_per_case: 6,
+    prd_line: "prod3",
+    comments: "another comment"
 })
 .then(function(res) {
     console.log(res);
@@ -69,22 +108,22 @@ sku.create({
     console.log(err);
 });
 
-sku.update({
-    name: "sku1", 
-    num: 12, 
-    case_upc: 2449, 
-    unit_upc: 112553, 
-    unit_size: "10 lbs", 
-    count_per_case: 4,
-    prd_line: "prod1",
-    comments: "a comment"
-}, 12)
-.then(function(res) {
-    console.log(res);
-    console.log("this is a result");
-})
-.catch(function(err) {
-    console.log(err);
-});
+//sku.update({
+    //name: "sku1", 
+    //num: 12, 
+    //case_upc: 2449, 
+    //unit_upc: 112553, 
+    //unit_size: "10 lbs", 
+    //count_per_case: 4,
+    //prd_line: "prod3",
+    //comments: "a comment"
+//}, 12)
+//.then(function(res) {
+    //console.log(res);
+    //console.log("this is a result");
+//})
+//.catch(function(err) {
+    //console.log(err);
+//});
 
 module.exports = SKU;

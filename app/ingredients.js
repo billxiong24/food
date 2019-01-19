@@ -25,6 +25,24 @@ class Ingredient extends CRUD {
         return Promise.reject("No valid name or num provided.");
     } 
 
+    search(searchQuery, skus) {
+        let query = "SELECT sku.name as sku_name, ingredients.name as ingred_name, ingredients.num as ingred_num, sku.num as sku_num, * FROM sku INNER JOIN sku_ingred ON sku.num = sku_ingred.sku_num INNER JOIN ingredients ON sku_ingred.ingred_num=ingredients.num WHERE ingredients.name LIKE '%" + searchQuery + "%' AND (";
+
+        for(let i = 0; i < skus.length; i++) {
+        
+            query += "sku.name=$" + (i + 1); 
+            if(i == skus.length - 1) {
+                query += ")";
+            }
+            else {
+                query += " OR ";
+            }
+        }
+
+        //skus.unshift(searchQuery);
+        return db.execSingleQuery(query, skus);
+    }
+
     /**
      * Object should be in the form of
      * {
@@ -61,13 +79,22 @@ class Ingredient extends CRUD {
     }
 }
 
-const ing = new Ingredient();
+//const ing = new Ingredient();
+//ing.search("ing", ["sku1", "sku23"])
+//.then(function(res) {
+    //console.log(res.rows);
+//})
+//.catch(function(err) {
+    //console.log(err);
+//})
+
+
 //ing.create({
-    //name: "459ff\\c", 
-    //num: 49, 
-    //vend_info: "some vending", 
-    //pkg_size: "11 gallons", 
-    //pkg_cost: 15,
+    //name: "ing24545", 
+    //num: 1415, 
+    //vend_info: "tnoerhr vending", 
+    //pkg_size: "55 gallons", 
+    //pkg_cost: 10,
     //comments: "a comment"
 //})
 //.then(function(res) {
@@ -75,23 +102,23 @@ const ing = new Ingredient();
 //})
 //.catch(function(err) {
     //console.log(err);
+//});
+
+
+//ing.update({
+    //name: "ing35",
+    //num: 47,
+    //vend_info: "watwtaawtat", 
+    //pkg_size: "3587 gallons", 
+    //pkg_cost: 15,
+    //comments: "a comment"
+//}, "ing35")
+//.then(function(res) {
+    //console.log(res);
 //})
-
-
-ing.update({
-    name: "ing35",
-    num: 47,
-    vend_info: "watwtaawtat", 
-    pkg_size: "3587 gallons", 
-    pkg_cost: 15,
-    comments: "a comment"
-}, "ing35")
-.then(function(res) {
-    console.log(res);
-})
-.catch(function(err) {
-    console.log(err);
-    console.log("ERRRROR");
-});
+//.catch(function(err) {
+    //console.log(err);
+    //console.log("ERRRROR");
+//});
 
 module.exports = Ingredient;
