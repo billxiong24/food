@@ -22,7 +22,7 @@ class CRUD {
     insert(query, dataObj, errMsg="Primary/unique key exists already.") {
         let params = this.makeParamList(dataObj);
         return this.checkExisting(dataObj).then(function(res) {
-            //ingredient exists
+            //already exists
             if(res.rows.length > 0) {
                 return Promise.reject(errMsg);
             }

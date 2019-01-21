@@ -36,6 +36,8 @@ class SKU extends CRUD {
             }
         }
         return db.execSingleQuery("SELECT num FROM sku WHERE case_upc=$1", [case_upc]).then(function(res) {
+            if(res.rows.length == 0)
+                return Promise.reject("This SKU does not exist.");
             return res.rows[0].num;
         })
         .then(function(sku_num) {
@@ -43,6 +45,19 @@ class SKU extends CRUD {
         })
         .then(function(res) {
             return db.execSingleQuery(query, ingredients);
+        });
+    }
+
+    removeIngredient(case_upc, ingred_num) {
+        let query = "DELETE FROM sku_ingred WHERE sku_num=$1 AND ingred_num=$2";
+
+        return db.execSingleQuery("SELECT num FROM sku WHERE case_upc=$1", [case_upc]).then(function(res) {
+            if(res.rows.length == 0)
+                return Promise.reject("This SKU does not exist.");
+            return res.rows[0].num;
+        })
+        .then(function(res) {
+            return db.execSingleQuery(query, [res, ingred_num]);
         });
     }
 
@@ -123,6 +138,13 @@ class SKU extends CRUD {
 }
 
 const sku = new SKU();
+
+//sku.removeIngredient(5043, 44).then(function(res) {
+    //console.log(res);
+//})
+//.catch(function(err) {
+    //console.log(err);
+//});
 
 //sku.search("sku", ["ing35", "ing4545", "name"], ["prod1", "prod2", "prod3", "prod5"]).then(function(res) {
     //console.log(res.rows);
