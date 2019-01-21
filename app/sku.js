@@ -26,6 +26,14 @@ class SKU extends CRUD {
         return Promise.reject("No valid name or num provided.");
     } 
 
+    getSKUNumIfExists(case_upc) {
+        return db.execSingleQuery("SELECT num FROM sku WHERE case_upc=$1", [case_upc]).then(function(res) {
+            if(res.rows.length == 0)
+                return Promise.reject("This SKU does not exist.");
+            return res.rows[0].num;
+        });
+    }
+
     //when creating sku, we want to add ingredients.
     addIngredients(case_upc, ingredients) {
         let query = "INSERT INTO sku_ingred (sku_num, ingred_num) VALUES";
@@ -35,11 +43,8 @@ class SKU extends CRUD {
                 query += ","
             }
         }
-        return db.execSingleQuery("SELECT num FROM sku WHERE case_upc=$1", [case_upc]).then(function(res) {
-            if(res.rows.length == 0)
-                return Promise.reject("This SKU does not exist.");
-            return res.rows[0].num;
-        })
+
+        return this.getSKUNumIfExists(case_upc)
         .then(function(sku_num) {
             ingredients.unshift(sku_num);
         })
@@ -51,11 +56,7 @@ class SKU extends CRUD {
     removeIngredient(case_upc, ingred_num) {
         let query = "DELETE FROM sku_ingred WHERE sku_num=$1 AND ingred_num=$2";
 
-        return db.execSingleQuery("SELECT num FROM sku WHERE case_upc=$1", [case_upc]).then(function(res) {
-            if(res.rows.length == 0)
-                return Promise.reject("This SKU does not exist.");
-            return res.rows[0].num;
-        })
+        return this.getSKUNumIfExists(case_upc)
         .then(function(res) {
             return db.execSingleQuery(query, [res, ingred_num]);
         });
@@ -153,7 +154,7 @@ const sku = new SKU();
 
     //console.log(err);
 //});
-//sku.addIngredients(5043, [1414, 44, 6])
+//sku.addIngredients(1001, [2, 47, 6, 49])
 //.then(function(res) {
     //console.log(res);
 //})

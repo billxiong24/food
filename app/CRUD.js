@@ -73,6 +73,10 @@ class CRUD {
     remove(pKey) {
 
     }
+
+    search(name) {
+
+    }
 }
 
 module.exports = CRUD;

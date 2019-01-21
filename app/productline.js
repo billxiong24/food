@@ -13,20 +13,22 @@ class ProductLine extends CRUD {
             return Promise.reject("Bad productline name.");
         }
 
-        let query = "SELECT * FROM " + this.tableName + " WHERE productline.name=$1";
+        let query = "SELECT * FROM " + this.tableName + " WHERE name=$1";
         return db.execSingleQuery(query, [dataObj.name]);
     }
 
     create(dataObj) {
-        let params = this.makeParamList();
         let query = "INSERT INTO " + this.tableName + " (name) VALUES ($1)";
-
         return super.insert(query, dataObj, "Error creating product line: product line exists.");
-
     }
 
     update(dataObj, oldPrimaryKey) {
         return super.change(dataObj, oldPrimaryKey, "name");
+    }
+
+    search(name) {
+        name = "%" + name + "%";
+        return db.execSingleQuery("SELECT * FROM " + this.tableName + " WHERE name LIKE $1", [name]);
     }
 
     remove(name) {
@@ -42,10 +44,7 @@ class ProductLine extends CRUD {
             //verify that no SKUs depend on this product line
             return db.execSingleQuery("DELETE FROM " + this.tableName + " WHERE name=$1", [name]);
         });
-
-
     }
-
 }
 
 //const p = new ProductLine();
