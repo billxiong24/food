@@ -23,14 +23,21 @@ class Ingredient extends CRUD {
         }
         
         return Promise.reject("No valid name or num provided.");
-    } 
+    }
+
+    searchByName(name) {
+        name = "%" + name + "%";
+        let query = "SELECT * FROM ingredients WHERE ingredients.name LIKE $1";
+        return db.execSingleQuery(query, [name]);
+    }
 
     search(searchQuery, skus) {
-        let query = "SELECT sku.name as sku_name, ingredients.name as ingred_name, ingredients.num as ingred_num, sku.num as sku_num, * FROM sku INNER JOIN sku_ingred ON sku.num = sku_ingred.sku_num INNER JOIN ingredients ON sku_ingred.ingred_num=ingredients.num WHERE ingredients.name LIKE '%" + searchQuery + "%' AND (";
+        searchQuery = "%" + searchQuery + "%";
+        let query = "SELECT sku.name as sku_name, ingredients.name as ingred_name, ingredients.num as ingred_num, sku.num as sku_num, * FROM sku INNER JOIN sku_ingred ON sku.num = sku_ingred.sku_num INNER JOIN ingredients ON sku_ingred.ingred_num=ingredients.num WHERE ingredients.name LIKE $1 AND (";
 
         for(let i = 0; i < skus.length; i++) {
         
-            query += "sku.name=$" + (i + 1); 
+            query += "sku.name=$" + (i + 2); 
             if(i == skus.length - 1) {
                 query += ")";
             }
@@ -39,7 +46,7 @@ class Ingredient extends CRUD {
             }
         }
 
-        //skus.unshift(searchQuery);
+        skus.unshift(searchQuery);
         return db.execSingleQuery(query, skus);
     }
 
@@ -86,7 +93,15 @@ class Ingredient extends CRUD {
 //})
 //.catch(function(err) {
     //console.log(err);
+//});
+
+//ing.searchByName("ing")
+//.then(function(res) {
+    //console.log(res.rows);
 //})
+//.catch(function(err) {
+    //console.log(err);
+//});
 
 
 //ing.create({

@@ -26,6 +26,7 @@ class SKU extends CRUD {
         return Promise.reject("No valid name or num provided.");
     } 
 
+    //when creating sku, we want to add ingredients.
     addIngredients(case_upc, ingredients) {
         let query = "INSERT INTO sku_ingred (sku_num, ingred_num) VALUES";
         for(let i = 0; i < ingredients.length; i++) {
@@ -45,8 +46,47 @@ class SKU extends CRUD {
         });
     }
 
+    searchByName(name) {
+        name = "%" + name + "%";
+        let query = "SELECT * FROM sku WHERE sku.name LIKE $1";
+        return db.execSingleQuery(query, [name]);
+    }
+
     search(searchQuery, ingredients, productlines) {
-        let query = "SELECT sku.name, sku.num, ingredients.num, ingredients.name FROM sku INNER JOIN sku_ingred ON sku.num = sku_ingred.sku_num INNER JOIN ingredients ON sku_ingred.ingred_num=ingredients.num WHERE sku.name LIKE '%sku%' and sku.prd_line='prod3' and (ingredients.name = 'ing');";
+        searchQuery = "%" + searchQuery + "%";
+
+        let query = "SELECT sku.name as sku_name, ingredients.name as ingred_name, ingredients.num as ingred_num, sku.num as sku_num, * FROM sku INNER JOIN sku_ingred ON sku.num = sku_ingred.sku_num INNER JOIN ingredients ON sku_ingred.ingred_num=ingredients.num WHERE sku.name LIKE $1 AND (";
+
+        let count = 1;
+
+        for(let i = 0; i < ingredients.length; i++) {
+        
+            query += "ingredients.name=$" + (i + 2); 
+            if(i == ingredients.length - 1) {
+                query += ")";
+            }
+            else {
+                query += " OR ";
+            }
+
+            count++;
+        }
+
+        query += " AND (";
+
+        for(let i = 0; i < productlines.length; i++) {
+            count++;
+            query += "sku.prd_line=$" + (count); 
+            if(i == productlines.length - 1) {
+                query += ")";
+            }
+            else {
+                query += " OR ";
+            }
+        }
+        ingredients.unshift(searchQuery);
+        let arr = ingredients.concat(productlines);
+        return db.execSingleQuery(query, arr);
     }
 
     create(dataObj) {
@@ -84,6 +124,14 @@ class SKU extends CRUD {
 }
 
 const sku = new SKU();
+
+sku.search("sku", ["ing35", "ing4545", "name"], ["prod1", "prod2", "prod3", "prod5"]).then(function(res) {
+    console.log(res.rows);
+})
+.catch(function(err) {
+
+    console.log(err);
+});
 //sku.addIngredients(5043, [1414, 44, 6])
 //.then(function(res) {
     //console.log(res);
@@ -92,21 +140,21 @@ const sku = new SKU();
     //console.log(err);
 //})
 
-sku.create({
-    name: "sku690", 
-    case_upc: 4327, 
-    unit_upc: 11222, 
-    unit_size: "6 lbs sskusku", 
-    count_per_case: 6,
-    prd_line: "prod3",
-    comments: "another comment"
-})
-.then(function(res) {
-    console.log(res);
-})
-.catch(function(err) {
-    console.log(err);
-});
+//sku.create({
+    //name: "sku690", 
+    //case_upc: 4327, 
+    //unit_upc: 11222, 
+    //unit_size: "6 lbs sskusku", 
+    //count_per_case: 6,
+    //prd_line: "prod3",
+    //comments: "another comment"
+//})
+//.then(function(res) {
+    //console.log(res);
+//})
+//.catch(function(err) {
+    //console.log(err);
+//});
 
 //sku.update({
     //name: "sku1", 
