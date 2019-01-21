@@ -63,7 +63,6 @@ class Ingredient extends CRUD {
      *
      */
     create(dataObj) {
-        let params = this.makeParamList(dataObj)
         let query = "";
         if(dataObj.hasOwnProperty('num')) {
             query = "INSERT INTO " + this.tableName + " (name, num, vend_info, pkg_size, pkg_cost, comments) VALUES ($1, $2, $3, $4, $5, $6)"

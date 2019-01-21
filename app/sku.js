@@ -90,7 +90,6 @@ class SKU extends CRUD {
     }
 
     create(dataObj) {
-        let params = this.makeParamList(dataObj)
         let query = "";
         if(dataObj.hasOwnProperty('num')) {
             query = "INSERT INTO " + this.tableName + " (name, num, case_upc, unit_upc, unit_size, count_per_case, prd_line, comments) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)"
@@ -125,13 +124,13 @@ class SKU extends CRUD {
 
 const sku = new SKU();
 
-sku.search("sku", ["ing35", "ing4545", "name"], ["prod1", "prod2", "prod3", "prod5"]).then(function(res) {
-    console.log(res.rows);
-})
-.catch(function(err) {
+//sku.search("sku", ["ing35", "ing4545", "name"], ["prod1", "prod2", "prod3", "prod5"]).then(function(res) {
+    //console.log(res.rows);
+//})
+//.catch(function(err) {
 
-    console.log(err);
-});
+    //console.log(err);
+//});
 //sku.addIngredients(5043, [1414, 44, 6])
 //.then(function(res) {
     //console.log(res);
@@ -140,21 +139,21 @@ sku.search("sku", ["ing35", "ing4545", "name"], ["prod1", "prod2", "prod3", "pro
     //console.log(err);
 //})
 
-//sku.create({
-    //name: "sku690", 
-    //case_upc: 4327, 
-    //unit_upc: 11222, 
-    //unit_size: "6 lbs sskusku", 
-    //count_per_case: 6,
-    //prd_line: "prod3",
-    //comments: "another comment"
-//})
-//.then(function(res) {
-    //console.log(res);
-//})
-//.catch(function(err) {
-    //console.log(err);
-//});
+sku.create({
+    name: "sku690", 
+    case_upc: 43434, 
+    unit_upc: 65345, 
+    unit_size: "12 lbs sy98vv", 
+    count_per_case: 98,
+    prd_line: "prod4",
+    comments: "commentingg"
+})
+.then(function(res) {
+    console.log(res);
+})
+.catch(function(err) {
+    console.log(err);
+});
 
 //sku.update({
     //name: "sku1", 

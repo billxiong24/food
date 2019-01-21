@@ -54,21 +54,6 @@ class CRUD {
 
         query += "WHERE " + primaryKeyName + "= $" + (keys.length + 1);
         return db.execSingleQuery(query, params);
-
-        //if we are updating a primary or unique key
-        //if(false) {
-            //return this.checkExisting(dataObj).then(function(res) {
-                //if(res.rows.length > 0) {
-                    //return Promise.reject("Attempting to update to existing entry for " + JSON.stringify(dataObj));
-                //}
-                //return res;
-            //})
-            //.then(function(res) {
-                //db.execSingleQuery(query, params);
-            //})
-        //}
-        //else {
-        //}
     }
 
 
@@ -85,7 +70,9 @@ class CRUD {
 
     }
 
+    remove(pKey) {
 
+    }
 }
 
 module.exports = CRUD;
