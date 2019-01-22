@@ -3,6 +3,12 @@ const Ingredient = require('../app/ingredient');
 let router = express.Router();
 
 
+router.get('/dummyData', function(req, res, next) {
+
+    let data = [{"name":"name","num":6,"vend_info":"vending","pkg_size":"345lbs","pkg_cost":"45","comments":"helloworld","id":1},{"name":"name","num":6,"vend_info":"vending","pkg_size":"345lbs","pkg_cost":"45","comments":"helloworld","id":1},{"name":"name","num":6,"vend_info":"vending","pkg_size":"345lbs","pkg_cost":"45","comments":"helloworld","id":1},{"name":"name6969","num":12,"vend_info":null,"pkg_size":"55 gallons","pkg_cost":"10","comments":null,"id":9},{"name":"nameanother","num":698,"vend_info":"someinfo please","pkg_size":"5lbs","pkg_cost":"45","comments":"heldddloworld","id":2},{"name":"namerino","num":5633,"vend_info":"waterinrterro","pkg_size":"266","pkg_cost":"5300","comments":null,"id":12}];
+    res.status(200).json(data);
+});
+
 router.get('/search', function(req, res, next) {
     let name = req.query.name;
     let list = req.query.skus;
