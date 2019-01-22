@@ -5,6 +5,11 @@
 -- Dumped from database version 9.6.10
 -- Dumped by pg_dump version 9.6.10
 
+DROP DATABASE IF EXISTS SKU_MGMT;
+CREATE DATABASE SKU_MGMT;
+
+\c sku_mgmt
+
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
@@ -296,11 +301,16 @@ ALTER TABLE ONLY public.sku_ingred ALTER COLUMN ingred_num SET DEFAULT nextval('
 --
 
 COPY public.ingredients (name, num, vend_info, pkg_size, pkg_cost, comments, id) FROM stdin;
-anothername	2	vending	5lbs	45	heldddloworld	2
 ing1	44	some vending	11 gallons	15	a comment	3
 459ff\\c	49	some vending	11 gallons	15	a comment	4
-ing35	47	watwtaawtat	3587 gallons	15	a comment	5
 name	6	vending	345lbs	45	helloworld	1
+ing4545	1414	tnoerhr vending	55 gallons	10	a comment	6
+ing24545	1415	tnoerhr vending	55 gallons	10	a comment	7
+name6969	12	\N	55 gallons	10	\N	9
+ing234	47	please	3587 poundsss	15	a comment	5
+nameanother	698	someinfo please	5lbs	45	heldddloworld	2
+ing1992	563	waterino	66	500	\N	11
+namerino	5633	waterinrterro	266	5300	\N	12
 \.
 
 
@@ -308,7 +318,7 @@ name	6	vending	345lbs	45	helloworld	1
 -- Name: ingredients_id_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
 --
 
-SELECT pg_catalog.setval('public.ingredients_id_seq', 5, true);
+SELECT pg_catalog.setval('public.ingredients_id_seq', 12, true);
 
 
 --
@@ -323,7 +333,8 @@ SELECT pg_catalog.setval('public.ingredients_num_seq', 2, true);
 --
 
 COPY public.productline (name, id) FROM stdin;
-prod3	1
+prod4	2
+prod69	1
 \.
 
 
@@ -331,7 +342,7 @@ prod3	1
 -- Name: productline_id_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
 --
 
-SELECT pg_catalog.setval('public.productline_id_seq', 1, true);
+SELECT pg_catalog.setval('public.productline_id_seq', 3, true);
 
 
 --
@@ -339,15 +350,20 @@ SELECT pg_catalog.setval('public.productline_id_seq', 1, true);
 --
 
 COPY public.sku (name, num, case_upc, unit_upc, unit_size, count_per_case, prd_line, comments, id) FROM stdin;
-sku23	100	5043	1123	5 lbs	4	prod3	a comment	2
-sku2355	1	5048	1128	5 lbs	4	prod3	a comment	3
-sku2356	2	5049	1122	5 lbs	4	prod3	a comment	5
-sku210	3	102	1122	5 lbs sku23	4	prod3	a comment with sku210	6
-sku2154	4	1023	11222	6 lbs sskusku	4	prod3	another comment	7
-sku215423	5	102355	11222	6 lbs sskusku	6	prod3	another comment	8
-sku1	12	2449	112553	10 lbs	4	prod3	a comment	4
-sku215423	123	1023553	11222	6 lbs sskusku	6	prod3	another comment	9
-sku1245872	55	2477	1123	5 lbs	4	prod3	a comment	1
+sku23	100	5043	1123	5 lbs	4	prod69	a comment	2
+sku2355	1	5048	1128	5 lbs	4	prod69	a comment	3
+sku2356	2	5049	1122	5 lbs	4	prod69	a comment	5
+sku210	3	102	1122	5 lbs sku23	4	prod69	a comment with sku210	6
+sku2154	4	1023	11222	6 lbs sskusku	4	prod69	another comment	7
+sku215423	5	102355	11222	6 lbs sskusku	6	prod69	another comment	8
+sku215423	123	1023553	11222	6 lbs sskusku	6	prod69	another comment	9
+sku1245872	55	2477	1123	5 lbs	4	prod69	a comment	1
+sku69	1234	23116	11222	6 lbs sskusku	6	prod69	another comment	11
+sku690	6	4327	11222	6 lbs sskusku	6	prod69	another comment	12
+sku690	7	1001	65345	12 lbs sy98vv	98	prod4	commentingg	13
+sku690	8	43434	65345	12 lbs sy98vv	98	prod4	commentingg	14
+sku720	9	12345	65653	12 lbs	998	prod4	commentingg	15
+sku1	12	2449	112553	10 lbs	4	prod4	a comment	4
 \.
 
 
@@ -355,7 +371,7 @@ sku1245872	55	2477	1123	5 lbs	4	prod3	a comment	1
 -- Name: sku_id_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
 --
 
-SELECT pg_catalog.setval('public.sku_id_seq', 9, true);
+SELECT pg_catalog.setval('public.sku_id_seq', 15, true);
 
 
 --
@@ -365,17 +381,23 @@ SELECT pg_catalog.setval('public.sku_id_seq', 9, true);
 COPY public.sku_ingred (sku_num, ingred_num) FROM stdin;
 1	49
 1	47
-1	2
-2	2
 2	47
 12	47
-12	2
 12	49
-55	2
 55	44
 1	6
 2	6
 55	6
+100	1414
+100	6
+7	47
+7	6
+7	49
+1	698
+2	698
+12	698
+55	698
+7	698
 \.
 
 
@@ -397,7 +419,15 @@ SELECT pg_catalog.setval('public.sku_ingred_sku_num_seq', 1, false);
 -- Name: sku_num_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
 --
 
-SELECT pg_catalog.setval('public.sku_num_seq', 5, true);
+SELECT pg_catalog.setval('public.sku_num_seq', 9, true);
+
+
+--
+-- Name: ingredients ignredients_name_key; Type: CONSTRAINT; Schema: public; Owner: billxiong24
+--
+
+ALTER TABLE ONLY public.ingredients
+    ADD CONSTRAINT ignredients_name_key UNIQUE (name);
 
 
 --

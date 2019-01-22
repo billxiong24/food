@@ -1,5 +1,6 @@
 const db = require("./db");
 const CRUD = require("./CRUD");
+const squel = require("squel").useFlavour('postgres');
 
 class Ingredient extends CRUD {
 
@@ -23,14 +24,22 @@ class Ingredient extends CRUD {
         }
         
         return Promise.reject("No valid name or num provided.");
-    } 
+    }
 
+    searchByName(name) {
+        name = "%" + name + "%";
+        let query = "SELECT * FROM ingredients WHERE ingredients.name LIKE $1";
+        return db.execSingleQuery(query, [name]);
+    }
+
+    //TODO use squel to generate this query
     search(searchQuery, skus) {
-        let query = "SELECT sku.name as sku_name, ingredients.name as ingred_name, ingredients.num as ingred_num, sku.num as sku_num, * FROM sku INNER JOIN sku_ingred ON sku.num = sku_ingred.sku_num INNER JOIN ingredients ON sku_ingred.ingred_num=ingredients.num WHERE ingredients.name LIKE '%" + searchQuery + "%' AND (";
+        searchQuery = "%" + searchQuery + "%";
+        let query = "SELECT sku.name as sku_name, ingredients.name as ingred_name, ingredients.num as ingred_num, sku.num as sku_num, * FROM sku INNER JOIN sku_ingred ON sku.num = sku_ingred.sku_num INNER JOIN ingredients ON sku_ingred.ingred_num=ingredients.num WHERE ingredients.name LIKE $1 AND (";
 
         for(let i = 0; i < skus.length; i++) {
         
-            query += "sku.name=$" + (i + 1); 
+            query += "sku.name=$" + (i + 2); 
             if(i == skus.length - 1) {
                 query += ")";
             }
@@ -39,7 +48,7 @@ class Ingredient extends CRUD {
             }
         }
 
-        //skus.unshift(searchQuery);
+        skus.unshift(searchQuery);
         return db.execSingleQuery(query, skus);
     }
 
@@ -56,14 +65,12 @@ class Ingredient extends CRUD {
      *
      */
     create(dataObj) {
-        let params = this.makeParamList(dataObj)
-        let query = "";
-        if(dataObj.hasOwnProperty('num')) {
-            query = "INSERT INTO " + this.tableName + " (name, num, vend_info, pkg_size, pkg_cost, comments) VALUES ($1, $2, $3, $4, $5, $6)"
-        }
-        else {
-            query = "INSERT INTO " + this.tableName + " (name, vend_info, pkg_size, pkg_cost, comments) VALUES ($1, $2, $3, $4, $5)"
-        }
+        if(!dataObj.name || !dataObj.num || !dataObj.pkg_size || !dataObj.pkg_cost)
+            return Promise.reject("Not all required fields are present.");
+
+        let query = squel.insert()
+        .into(this.tableName)
+        .setFieldsRows([dataObj]).toString();
         return super.insert(query, dataObj, "Entry with name or num exists already.");
     }
 
@@ -79,23 +86,31 @@ class Ingredient extends CRUD {
     }
 }
 
-//const ing = new Ingredient();
+const ing = new Ingredient();
 //ing.search("ing", ["sku1", "sku23"])
 //.then(function(res) {
     //console.log(res.rows);
 //})
 //.catch(function(err) {
     //console.log(err);
+//});
+
+//ing.searchByName("ing")
+//.then(function(res) {
+    //console.log(res.rows);
 //})
+//.catch(function(err) {
+    //console.log(err);
+//});
 
 
 //ing.create({
-    //name: "ing24545", 
-    //num: 1415, 
-    //vend_info: "tnoerhr vending", 
+    //name: "name6969", 
+    //num: 12, 
+    ////vend_info: "tnoerhr vending", 
     //pkg_size: "55 gallons", 
-    //pkg_cost: 10,
-    //comments: "a comment"
+    //pkg_cost: 10
+    ////comments: "a comment"
 //})
 //.then(function(res) {
     //console.log(res);
@@ -106,13 +121,11 @@ class Ingredient extends CRUD {
 
 
 //ing.update({
-    //name: "ing35",
-    //num: 47,
-    //vend_info: "watwtaawtat", 
-    //pkg_size: "3587 gallons", 
-    //pkg_cost: 15,
-    //comments: "a comment"
-//}, "ing35")
+    //name: "doesnteixt",
+    //vend_info: "please", 
+    //pkg_size: "3587 poundsss", 
+    //pkg_cost: 15
+//}, "fgiusfdgiuarereirud")
 //.then(function(res) {
     //console.log(res);
 //})

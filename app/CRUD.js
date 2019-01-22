@@ -1,4 +1,5 @@
 const db = require("./db");
+const squel = require("squel").useFlavour("postgres");
 
 class CRUD {
 
@@ -22,53 +23,26 @@ class CRUD {
     insert(query, dataObj, errMsg="Primary/unique key exists already.") {
         let params = this.makeParamList(dataObj);
         return this.checkExisting(dataObj).then(function(res) {
-            //ingredient exists
+            //already exists
             if(res.rows.length > 0) {
                 return Promise.reject(errMsg);
             }
             return res;
         })
         .then(function(res) {
-            return db.execSingleQuery(query, params);
+            return db.execSingleQuery(query, []);
         });
     }
 
     change(dataObj, oldPrimaryKey, primaryKeyName) {
-        let params = this.makeParamList(dataObj);
-        params.push(oldPrimaryKey);
-
-        let query = "UPDATE " + this.tableName + " SET "
-        let keys = Object.keys(dataObj);
-
-        for(let i = 0; i < keys.length; i++) {
-            let k = keys[i];
-            query += (k + " = " + "$" + (i + 1));
-
-            if(i != keys.length - 1) {
-                query += ", ";
-            }
-            else {
-                query += " ";
-            }
+        let q = squel.update()
+        .table(this.tableName)
+        for(let k in dataObj) {
+            q = q.set(k, dataObj[k]);
         }
-
-        query += "WHERE " + primaryKeyName + "= $" + (keys.length + 1);
-        return db.execSingleQuery(query, params);
-
-        //if we are updating a primary or unique key
-        //if(false) {
-            //return this.checkExisting(dataObj).then(function(res) {
-                //if(res.rows.length > 0) {
-                    //return Promise.reject("Attempting to update to existing entry for " + JSON.stringify(dataObj));
-                //}
-                //return res;
-            //})
-            //.then(function(res) {
-                //db.execSingleQuery(query, params);
-            //})
-        //}
-        //else {
-        //}
+        q = q.where(primaryKeyName + "='" + oldPrimaryKey+"'");
+        q = q.toString();
+        return db.execSingleQuery(q, []);
     }
 
 
@@ -85,7 +59,13 @@ class CRUD {
 
     }
 
+    remove(pKey) {
 
+    }
+
+    search(name) {
+
+    }
 }
 
 module.exports = CRUD;
