@@ -41,7 +41,7 @@ router.get('/search', function(req, res, next) {
     }
 });
 
-//rendering page?
+//TODO rendering page
 router.get('/:name', function(req, res, next) {
     res.status(200).json({});
 });
