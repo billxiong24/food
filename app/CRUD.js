@@ -1,4 +1,5 @@
 const db = require("./db");
+const squel = require("squel").useFlavour("postgres");
 
 class CRUD {
 
@@ -29,31 +30,19 @@ class CRUD {
             return res;
         })
         .then(function(res) {
-            return db.execSingleQuery(query, params);
+            return db.execSingleQuery(query, []);
         });
     }
 
     change(dataObj, oldPrimaryKey, primaryKeyName) {
-        let params = this.makeParamList(dataObj);
-        params.push(oldPrimaryKey);
-
-        let query = "UPDATE " + this.tableName + " SET "
-        let keys = Object.keys(dataObj);
-
-        for(let i = 0; i < keys.length; i++) {
-            let k = keys[i];
-            query += (k + " = " + "$" + (i + 1));
-
-            if(i != keys.length - 1) {
-                query += ", ";
-            }
-            else {
-                query += " ";
-            }
+        let q = squel.update()
+        .table(this.tableName)
+        for(let k in dataObj) {
+            q = q.set(k, dataObj[k]);
         }
-
-        query += "WHERE " + primaryKeyName + "= $" + (keys.length + 1);
-        return db.execSingleQuery(query, params);
+        q = q.where(primaryKeyName + "='" + oldPrimaryKey+"'");
+        q = q.toString();
+        return db.execSingleQuery(q, []);
     }
 
 

@@ -1,5 +1,6 @@
 const db = require("./db");
 const CRUD = require("./CRUD");
+const squel = require("squel").useFlavour('postgres');
 
 class SKU extends CRUD {
 
@@ -35,6 +36,7 @@ class SKU extends CRUD {
     }
 
     //when creating sku, we want to add ingredients.
+    //TODO use squel to generate this query
     addIngredients(case_upc, ingredients) {
         let query = "INSERT INTO sku_ingred (sku_num, ingred_num) VALUES";
         for(let i = 0; i < ingredients.length; i++) {
@@ -68,6 +70,7 @@ class SKU extends CRUD {
         return db.execSingleQuery(query, [name]);
     }
 
+    //TODO use squel to generate this query
     search(searchQuery, ingredients, productlines) {
         searchQuery = "%" + searchQuery + "%";
 
@@ -105,29 +108,32 @@ class SKU extends CRUD {
         return db.execSingleQuery(query, arr);
     }
 
-    create(dataObj) {
-        let query = "";
-        if(dataObj.hasOwnProperty('num')) {
-            query = "INSERT INTO " + this.tableName + " (name, num, case_upc, unit_upc, unit_size, count_per_case, prd_line, comments) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)"
-
-        }
-        else {
-            query = "INSERT INTO " + this.tableName + " (name, case_upc, unit_upc, unit_size, count_per_case, prd_line, comments) VALUES ($1, $2, $3, $4, $5, $6, $7)"
-        }
-
-        return db.execSingleQuery("SELECT * FROM productline WHERE productline.name = $1", [dataObj.prd_line]).then((res) => {
+    checkProductLineExists(name) {
+        return db.execSingleQuery("SELECT * FROM productline WHERE productline.name = $1", [name]).then((res) => {
             if(res.rows.length == 0) {
                 return Promise.reject("Product line does not exist.");
             }
             return res;
-        })
+        });
+    }
+
+    create(dataObj) {
+        let query = squel.insert()
+        .into(this.tableName)
+        .setFieldsRows([dataObj]).toString();
+
+        //product line must exist
+        return this.checkProductLineExists(dataObj.prd_line)
         .then((res) => {
             return super.insert(query, dataObj, "That SKU entry exists already.");
         });
     }
 
     update(dataObj, oldName) {
-        return super.change(dataObj, oldName, "num");
+        return this.checkProductLineExists(dataObj.prd_line)
+        .then((res) => {
+            return super.change(dataObj, oldName, "num");
+        })
     }
 
     remove(num) {
@@ -162,32 +168,32 @@ const sku = new SKU();
     //console.log(err);
 //})
 
-sku.create({
-    name: "sku690", 
-    case_upc: 43434, 
-    unit_upc: 65345, 
-    unit_size: "12 lbs sy98vv", 
-    count_per_case: 98,
-    prd_line: "prod4",
-    comments: "commentingg"
-})
-.then(function(res) {
-    console.log(res);
-})
-.catch(function(err) {
-    console.log(err);
-});
+//sku.create({
+    //name: "sku720", 
+    //case_upc: 12345, 
+    //unit_upc: 65653, 
+    //unit_size: "12 lbs", 
+    //count_per_case: 998,
+    //prd_line: "prod4",
+    //comments: "commentingg"
+//})
+//.then(function(res) {
+    //console.log(res);
+//})
+//.catch(function(err) {
+    //console.log(err);
+//});
 
-//sku.update({
-    //name: "sku1", 
-    //num: 12, 
-    //case_upc: 2449, 
-    //unit_upc: 112553, 
-    //unit_size: "10 lbs", 
-    //count_per_case: 4,
-    //prd_line: "prod3",
-    //comments: "a comment"
-//}, 12)
+sku.update({
+    name: "sku1", 
+    num: 12, 
+    case_upc: 2449, 
+    unit_upc: 112553, 
+    unit_size: "10 lbs", 
+    count_per_case: 4,
+    prd_line: "prod4",
+    comments: "a comment"
+}, 12)
 //.then(function(res) {
     //console.log(res);
     //console.log("this is a result");

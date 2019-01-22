@@ -17,7 +17,7 @@ class DB {
     //params is an array of form [param1, param2], corresponding to $1, $2
     //returns promise
     
-    execSingleQuery(query, params) {
+    execSingleQuery(query, params=[]) {
         return this.pool.connect().then(function(client) {
             return client.query(query, params).then(function(res) {
                 client.release();
