@@ -30,7 +30,6 @@ router.post('/', function(req, res, next) {
         res.status(201).json({});
     })
     .catch((err) => {
-
         res.status(409).json({
             error: err
         });
@@ -38,6 +37,12 @@ router.post('/', function(req, res, next) {
 });
 
 router.put('/:name', function(req, res, next) {
+
+    if(!req.body.name) {
+        return res.status(400).send({
+            error: "Must include name parameter in PUT request."
+        });
+    }
 
     const prdline = new ProductLine();
     
@@ -53,7 +58,19 @@ router.put('/:name', function(req, res, next) {
 });
 
 router.delete('/:name', function(req, res, next) {
+    const prdline = new ProductLine();
 
+    prdline.remove(req.params.name)
+    .then((result) => {
+        res.status(200).json({
+            rowCount: result.rowCount
+        });
+    })
+    .catch((err) => {
+        res.status(409).json({
+            error: err
+        });
+    });
 });
 
 module.exports = router;

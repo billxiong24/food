@@ -85,31 +85,21 @@ router.get('/search', function(req, res, next) {
     let list = req.query.skus;
 
     const ing = new Ingredient();
-    if(!list || list.length == 0) {
-        ing.searchByName(name).then((result) => {
-            res.json(result.rows);
-        })
-        .catch((err) => {
-            res.json({
-                error: err
-            });
-        })
+    if(!list) {
+        list = [];
     }
-    else {
-        if(!Array.isArray(list)) {
-            let temp = [];
-            temp.push(list);
-            list = temp;
-        }
-        ing.search(name, list).then((result) => {
-            res.json(result.rows);
-        })
-        .catch((err) => {
-            res.json({
-                error: err
-            });
+    else if (!Array.isArray(list)) {
+        list = [list];
+    }
+
+    ing.search(name, list).then((result) => {
+        res.json(result.rows);
+    })
+    .catch((err) => {
+        res.json({
+            error: err
         });
-    }
+    });
 });
 
 //TODO rendering page
@@ -150,7 +140,7 @@ router.put('/:name', function(req, res, next) {
     })
     .catch((err) => {
         res.status(409).json({
-            error: "There was an error updating the ingredient. Check that the updated ingredients do not already exist."
+            error: err
         });
     });
 });
@@ -166,7 +156,7 @@ router.delete('/:name', function(req, res, next) {
     })
     .catch((err) => {
         res.status(409).json({
-            error: "Error deleting resource. Make sure request is propery formatted."
+            error: err
         });
     });
 });
