@@ -30,7 +30,9 @@ class CRUD {
             return res;
         })
         .then(function(res) {
-            return db.execSingleQuery(query, []);
+            return db.execSingleQuery(query, [], (err) => {
+                throw "There was an error. Please try again."
+            });
         });
     }
 
@@ -42,7 +44,10 @@ class CRUD {
         }
         q = q.where(primaryKeyName + "='" + oldPrimaryKey+"'");
         q = q.toString();
-        return db.execSingleQuery(q, []);
+        return db.execSingleQuery(q, [], (err) => {
+            //return Promise.reject("There was an error. Please try again.");
+            throw "There was an error. Please try again."
+        });
     }
 
 

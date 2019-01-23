@@ -74,8 +74,10 @@ class SKU extends CRUD {
     search(searchQuery, ingredients, productlines) {
         searchQuery = "%" + searchQuery + "%";
 
-        let query = "SELECT sku.name as sku_name, ingredients.name as ingred_name, ingredients.num as ingred_num, sku.num as sku_num, * FROM sku INNER JOIN sku_ingred ON sku.num = sku_ingred.sku_num INNER JOIN ingredients ON sku_ingred.ingred_num=ingredients.num WHERE sku.name LIKE $1 AND (";
+        let query = "SELECT sku.name as sku_name, ingredients.name as ingred_name, ingredients.num as ingred_num, sku.num as sku_num, * FROM sku INNER JOIN sku_ingred ON sku.num = sku_ingred.sku_num INNER JOIN ingredients ON sku_ingred.ingred_num=ingredients.num WHERE sku.name LIKE $1";
 
+        if(ingredients.length > 0)
+            query += " AND ("
         let count = 1;
 
         for(let i = 0; i < ingredients.length; i++) {
@@ -91,7 +93,8 @@ class SKU extends CRUD {
             count++;
         }
 
-        query += " AND (";
+        if(productlines.length > 0)
+            query += " AND (";
 
         for(let i = 0; i < productlines.length; i++) {
             count++;
@@ -153,11 +156,10 @@ const sku = new SKU();
     //console.log(err);
 //});
 
-//sku.search("sku", ["ing35", "ing4545", "name"], ["prod1", "prod2", "prod3", "prod5"]).then(function(res) {
+//sku.search("sku2", [], ["prod69"]).then(function(res) {
     //console.log(res.rows);
 //})
 //.catch(function(err) {
-
     //console.log(err);
 //});
 //sku.addIngredients(1001, [2, 47, 6, 49])
@@ -184,16 +186,16 @@ const sku = new SKU();
     //console.log(err);
 //});
 
-sku.update({
-    name: "sku1", 
-    num: 12, 
-    case_upc: 2449, 
-    unit_upc: 112553, 
-    unit_size: "10 lbs", 
-    count_per_case: 4,
-    prd_line: "prod4",
-    comments: "a comment"
-}, 12)
+//sku.update({
+    //name: "sku1", 
+    //num: 12, 
+    //case_upc: 2449, 
+    //unit_upc: 112553, 
+    //unit_size: "10 lbs", 
+    //count_per_case: 4,
+    //prd_line: "prod4",
+    //comments: "a comment"
+//}, 12)
 //.then(function(res) {
     //console.log(res);
     //console.log("this is a result");

@@ -17,11 +17,14 @@ class DB {
     //params is an array of form [param1, param2], corresponding to $1, $2
     //returns promise
     
-    execSingleQuery(query, params=[]) {
+    execSingleQuery(query, params=[], errFn=function(err){ throw err; }) {
         return this.pool.connect().then(function(client) {
             return client.query(query, params).then(function(res) {
                 client.release();
                 return res;
+            })
+            .catch((err) => {
+                errFn(err);
             });
         });
     }

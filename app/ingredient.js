@@ -35,7 +35,10 @@ class Ingredient extends CRUD {
     //TODO use squel to generate this query
     search(searchQuery, skus) {
         searchQuery = "%" + searchQuery + "%";
-        let query = "SELECT sku.name as sku_name, ingredients.name as ingred_name, ingredients.num as ingred_num, sku.num as sku_num, * FROM sku INNER JOIN sku_ingred ON sku.num = sku_ingred.sku_num INNER JOIN ingredients ON sku_ingred.ingred_num=ingredients.num WHERE ingredients.name LIKE $1 AND (";
+        let query = "SELECT sku.name as sku_name, ingredients.name as ingred_name, ingredients.num as ingred_num, sku.num as sku_num, * FROM sku INNER JOIN sku_ingred ON sku.num = sku_ingred.sku_num INNER JOIN ingredients ON sku_ingred.ingred_num=ingredients.num WHERE ingredients.name LIKE $1";
+
+        if(skus.length > 0)
+            query += " AND ("
 
         for(let i = 0; i < skus.length; i++) {
         
@@ -65,7 +68,7 @@ class Ingredient extends CRUD {
      *
      */
     create(dataObj) {
-        if(!dataObj.name || !dataObj.num || !dataObj.pkg_size || !dataObj.pkg_cost)
+        if(!dataObj.name || !dataObj.pkg_size || !dataObj.pkg_cost)
             return Promise.reject("Not all required fields are present.");
 
         let query = squel.insert()
@@ -86,8 +89,8 @@ class Ingredient extends CRUD {
     }
 }
 
-const ing = new Ingredient();
-//ing.search("ing", ["sku1", "sku23"])
+//const ing = new Ingredient();
+//ing.search("ing", ["sku23", "sku690", "sku1", "sku2356"])
 //.then(function(res) {
     //console.log(res.rows);
 //})

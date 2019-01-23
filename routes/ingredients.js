@@ -142,19 +142,13 @@ router.post('/', function(req, res, next) {
 
 router.put('/:name', function(req, res, next) {
     const ing = new Ingredient();
-    let dataObj = {};
-    
-    for(let k in req.body) {
-        dataObj[k] = req.body[k];
-    }
-    ing.update(dataObj, req.params.name)
+    ing.update(req.body, req.params.name)
     .then((result) => {
         res.status(200).json({
             rowCount: result.rowCount
         });
     })
     .catch((err) => {
-        console.log(err);
         res.status(409).json({
             error: "There was an error updating the ingredient. Check that the updated ingredients do not already exist."
         });

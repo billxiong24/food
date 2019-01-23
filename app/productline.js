@@ -1,5 +1,6 @@
 const db = require('./db');
 const CRUD = require("./CRUD");
+const squel = require("squel").useFlavour("postgres");
 
 class ProductLine extends CRUD {
 
@@ -18,7 +19,13 @@ class ProductLine extends CRUD {
     }
 
     create(dataObj) {
-        let query = "INSERT INTO " + this.tableName + " (name) VALUES ($1)";
+        if(!dataObj.name) {
+            return Promise.reject("Must include valid name for product line.");
+        }
+
+        let query = squel.insert()
+        .into(this.tableName)
+        .setFieldsRows([dataObj]).toString();
         return super.insert(query, dataObj, "Error creating product line: product line exists.");
     }
 
@@ -47,7 +54,7 @@ class ProductLine extends CRUD {
     }
 }
 
-//const p = new ProductLine();
+const p = new ProductLine();
 
 //p.update({
     //name: "wagdfivby"
@@ -68,7 +75,7 @@ class ProductLine extends CRUD {
 //});
 
 //p.create({
-    //name: "prod4"
+    //name: "prod44"
 //})
 //.then(function(res) {
     //console.log(res);
