@@ -130,6 +130,26 @@ router.post('/', function(req, res, next) {
     });
 });
 
+router.get('/:name/skus', function(req, res, next) {
+    let name = req.params.name;
+    if(!name) {
+        return res.status(400).json({
+            error: "Malformed URL."
+        });
+    }
+
+    const ing = new Ingredient();
+    ing.getSkus(name)
+    .then((result) => {
+        res.status(200).json(result.rows);
+    })
+    .catch((err) => {
+        res.status(400).json({
+            error: err
+        });
+    });
+});
+
 router.put('/:name', function(req, res, next) {
 
     if(Object.keys(req.body).length === 0) {
