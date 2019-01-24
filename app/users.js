@@ -25,7 +25,7 @@ class Users extends CRUD {
             return Promise.reject("Must include valid username.");
         }
 
-        bcrypt.hash(dataObj.password, saltRounds).then((hash) => {
+        return bcrypt.hash(dataObj.password, saltRounds).then((hash) => {
             const hashedDataObj = Object.assign({},dataObj);
             hashedDataObj.password = hash;
             let query = squel.insert()
@@ -58,7 +58,7 @@ class Users extends CRUD {
     }
 
     update(dataObj, oldPrimaryKey) {
-        bcrypt.hash(dataObj.password, saltRounds).then((hash) => {
+        return bcrypt.hash(dataObj.password, saltRounds).then((hash) => {
             const hashedDataObj = Object.assign({},dataObj);
             hashedDataObj.password = hash;
             return super.change(dataObj, oldPrimaryKey, "id");
