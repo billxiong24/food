@@ -26,16 +26,15 @@ class Ingredient extends CRUD {
         return Promise.reject("No valid name or num provided.");
     }
 
-    searchByName(name) {
-        name = "%" + name + "%";
-        let query = "SELECT * FROM ingredients WHERE ingredients.name LIKE $1";
+    getSkus(name) {
+        let query =  "SELECT DISTINCT sku.* FROM sku INNER JOIN sku_ingred ON sku.num = sku_ingred.sku_num INNER JOIN ingredients ON sku_ingred.ingred_num=ingredients.num WHERE ingredients.name=$1";
         return db.execSingleQuery(query, [name]);
     }
 
     //TODO use squel to generate this query
     search(searchQuery, skus) {
         searchQuery = "%" + searchQuery + "%";
-        let query = "SELECT sku.name as sku_name, ingredients.name as ingred_name, ingredients.num as ingred_num, sku.num as sku_num, * FROM sku INNER JOIN sku_ingred ON sku.num = sku_ingred.sku_num INNER JOIN ingredients ON sku_ingred.ingred_num=ingredients.num WHERE ingredients.name LIKE $1";
+        let query = "SELECT DISTINCT ingredients.* FROM sku LEFT JOIN sku_ingred ON sku.num = sku_ingred.sku_num LEFT JOIN ingredients ON sku_ingred.ingred_num=ingredients.num WHERE ingredients.name LIKE $1";
 
         if(skus.length > 0)
             query += " AND ("

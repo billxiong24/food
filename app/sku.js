@@ -75,17 +75,16 @@ class SKU extends CRUD {
         });
     }
 
-    searchByName(name) {
-        name = "%" + name + "%";
-        let query = "SELECT * FROM sku WHERE sku.name LIKE $1";
-        return db.execSingleQuery(query, [name]);
+    getIngredients(case_upc) {
+        let query = "SELECT DISTINCT ingredients.* FROM sku INNER JOIN sku_ingred ON sku.num = sku_ingred.sku_num INNER JOIN ingredients ON sku_ingred.ingred_num=ingredients.num WHERE sku.case_upc=$1";
+        return db.execSingleQuery(query, [case_upc]);
     }
 
     //TODO use squel to generate this query
     search(searchQuery, ingredients, productlines) {
         searchQuery = "%" + searchQuery + "%";
 
-        let query = "SELECT sku.name as sku_name, ingredients.name as ingred_name, ingredients.num as ingred_num, sku.num as sku_num, * FROM sku INNER JOIN sku_ingred ON sku.num = sku_ingred.sku_num INNER JOIN ingredients ON sku_ingred.ingred_num=ingredients.num WHERE sku.name LIKE $1";
+        let query = "SELECT DISTINCT sku.* FROM sku LEFT JOIN sku_ingred ON sku.num = sku_ingred.sku_num LEFT JOIN ingredients ON sku_ingred.ingred_num=ingredients.num WHERE sku.name LIKE $1";
 
         if(ingredients.length > 0)
             query += " AND ("

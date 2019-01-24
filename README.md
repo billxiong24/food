@@ -23,3 +23,9 @@ Set up database and dummy data: ```Run psql -f db/food.sql```
 ## Start project  
 Run ```npm start```. This will start server on localhost:8000. Use ```nodemon```, so don't have to restart server every time changes are made.    
 
+
+## REST API documentation  
+### SKUS  
+Search for SKUs based on ingredients and product lines.
+
+

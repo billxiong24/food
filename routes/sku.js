@@ -28,10 +28,32 @@ router.get('/search', function(req, res, next) {
     })
     .catch((err) => {
         res.status(400).json({
-            error: "There was an error. Make sure request is formatted correctly."
+            error: err
         });
     });
 });
+
+router.get('/:case_upc/ingredients', function(req, res, next) {
+    let case_upc = req.params.case_upc;
+    if(!case_upc) {
+        return res.status(400).json({
+            error: "Malformed URL."
+        });
+    }
+
+    const sku = new Sku();
+    sku.getIngredients(case_upc)
+    .then((result) => {
+        res.status(200).json(result.rows);
+    })
+    .catch((err) => {
+        res.status(400).json({
+            error: err
+        });
+    });
+});
+
+
 
 router.post('/:case_upc/ingredients', function(req, res, next) {
     let ingredients = null;
@@ -40,7 +62,7 @@ router.post('/:case_upc/ingredients', function(req, res, next) {
     }
     catch(err) {
         return res.status(400).json({
-            error: "Malformed ingredients parameter."
+            error: "Malformed URL."
         });
     }
 
