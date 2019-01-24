@@ -31,7 +31,7 @@ class Users extends CRUD {
             let query = squel.insert()
             .into(this.tableName)
             .setFieldsRows([dataObj]).toString();
-            return super.insert(query, dataObj, "Error creating user: user already exists.");
+            return super.insert(query, hashedDataObj, "Error creating user: user already exists.");
         });
     }
 
@@ -48,7 +48,7 @@ class Users extends CRUD {
         }
         storedCreds = storedCreds[0];
 
-        bcrypt.compare(dataObj.password, storedCreds.password).then((res) => {
+        return bcrypt.compare(dataObj.password, storedCreds.password).then((res) => {
             if(res) {
                 return {uname:dataObj.uname};
             }
@@ -61,7 +61,7 @@ class Users extends CRUD {
         return bcrypt.hash(dataObj.password, saltRounds).then((hash) => {
             const hashedDataObj = Object.assign({},dataObj);
             hashedDataObj.password = hash;
-            return super.change(dataObj, oldPrimaryKey, "id");
+            return super.change(hashedDataObj, oldPrimaryKey, "id");
         });
     }
 
