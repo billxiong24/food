@@ -6,6 +6,7 @@
     "start": "./node_modules/nodemon/bin/nodemon.js app"
   },
   "dependencies": {
+    "bcrypt": "^3.0.3",
     "cookie-parser": "~1.4.3",
     "cors": "^2.8.5",
     "debug": "~2.6.9",
