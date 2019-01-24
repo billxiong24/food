@@ -34,7 +34,7 @@ class Ingredient extends CRUD {
     //TODO use squel to generate this query
     search(searchQuery, skus) {
         searchQuery = "%" + searchQuery + "%";
-        let query = "SELECT DISTINCT ingredients.* FROM sku INNER JOIN sku_ingred ON sku.num = sku_ingred.sku_num INNER JOIN ingredients ON sku_ingred.ingred_num=ingredients.num WHERE ingredients.name LIKE $1";
+        let query = "SELECT DISTINCT ingredients.* FROM sku LEFT JOIN sku_ingred ON sku.num = sku_ingred.sku_num LEFT JOIN ingredients ON sku_ingred.ingred_num=ingredients.num WHERE ingredients.name LIKE $1";
 
         if(skus.length > 0)
             query += " AND ("

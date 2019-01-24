@@ -84,7 +84,7 @@ class SKU extends CRUD {
     search(searchQuery, ingredients, productlines) {
         searchQuery = "%" + searchQuery + "%";
 
-        let query = "SELECT DISTINCT sku.* FROM sku INNER JOIN sku_ingred ON sku.num = sku_ingred.sku_num INNER JOIN ingredients ON sku_ingred.ingred_num=ingredients.num WHERE sku.name LIKE $1";
+        let query = "SELECT DISTINCT sku.* FROM sku LEFT JOIN sku_ingred ON sku.num = sku_ingred.sku_num LEFT JOIN ingredients ON sku_ingred.ingred_num=ingredients.num WHERE sku.name LIKE $1";
 
         if(ingredients.length > 0)
             query += " AND ("
