@@ -30,24 +30,20 @@ class CRUD {
             return res;
         })
         .then(function(res) {
-            return db.execSingleQuery(query, [], (err) => {
-                throw "There was an error. Please try again."
-            });
+            return db.execSingleQuery(query, []);
         });
     }
 
     change(dataObj, oldPrimaryKey, primaryKeyName) {
         let q = squel.update()
         .table(this.tableName)
+        console.log(dataObj);
         for(let k in dataObj) {
             q = q.set(k, dataObj[k]);
         }
         q = q.where(primaryKeyName + "='" + oldPrimaryKey+"'");
         q = q.toString();
-        return db.execSingleQuery(q, [], (err) => {
-            //return Promise.reject("There was an error. Please try again.");
-            throw "There was an error. Please try again."
-        });
+        return db.execSingleQuery(q, []);
     }
 
 

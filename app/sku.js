@@ -36,31 +36,42 @@ class SKU extends CRUD {
     }
 
     //when creating sku, we want to add ingredients.
-    //TODO use squel to generate this query
     addIngredients(case_upc, ingredients) {
-        let query = "INSERT INTO sku_ingred (sku_num, ingred_num) VALUES";
-        for(let i = 0; i < ingredients.length; i++) {
-            query += "($1, $"+ (i + 2) + ")";
-            if(i != ingredients.length - 1) {
-                query += ","
-            }
-        }
-
+        let query = "";
         return this.getSKUNumIfExists(case_upc)
         .then(function(sku_num) {
-            ingredients.unshift(sku_num);
+            for(let i = 0; i < ingredients.length; i++) {
+                let obj = ingredients[i];
+                if(!obj.ingred_num || !obj.quantity)
+                    return Promise.reject("Ingredient does not have number or quantity");
+                obj.sku_num = sku_num;
+            }
+
+            query = squel.insert()
+            .into('sku_ingred')
+            .setFieldsRows(ingredients)
+            .toString();
         })
         .then(function(res) {
-            return db.execSingleQuery(query, ingredients);
+            return db.execSingleQuery(query, []);
         });
     }
 
-    removeIngredient(case_upc, ingred_num) {
-        let query = "DELETE FROM sku_ingred WHERE sku_num=$1 AND ingred_num=$2";
-
+    removeIngredients(case_upc, ingreds) {
+        //let query = "DELETE FROM sku_ingred WHERE case_upc=$1 AND ingred_num=$2";
         return this.getSKUNumIfExists(case_upc)
         .then(function(res) {
-            return db.execSingleQuery(query, [res, ingred_num]);
+            let expr = squel.expr();
+            for(let i = 0; i < ingreds.length; i++) {
+                expr = expr.or("ingred_num = ?", ingreds[i]);
+            }
+            let query = squel.delete()
+            .from("sku_ingred")
+            .where("sku_num=?", res)
+            .where(
+                expr
+            ).toString();
+            return db.execSingleQuery(query, []);
         });
     }
 
@@ -121,6 +132,10 @@ class SKU extends CRUD {
     }
 
     create(dataObj) {
+        if(!dataObj.name || !dataObj.case_upc || !dataObj.unit_upc || !dataObj.unit_size || !dataObj.count_per_case || !dataObj.prd_line) {
+            return Promise.reject("Not all required fields are present.");
+        }
+
         let query = squel.insert()
         .into(this.tableName)
         .setFieldsRows([dataObj]).toString();
@@ -133,17 +148,22 @@ class SKU extends CRUD {
     }
 
     update(dataObj, oldName) {
-        return this.checkProductLineExists(dataObj.prd_line)
-        .then((res) => {
-            return super.change(dataObj, oldName, "num");
-        })
+        if(!dataObj.prd_line) {
+            return super.change(dataObj, oldName, "case_upc");
+        }
+        else {
+            return this.checkProductLineExists(dataObj.prd_line)
+            .then((res) => {
+                return super.change(dataObj, oldName, "case_upc");
+            });
+        }
     }
 
-    remove(num) {
-        if(!num) {
+    remove(case_upc) {
+        if(!case_upc) {
             return Promise.reject("Bad num.");
         }
-        return db.execSingleQuery("DELETE FROM " + this.tableName + " WHERE num = $1", [num]);
+        return db.execSingleQuery("DELETE FROM " + this.tableName + " WHERE case_upc = $1", [case_upc]);
     }
 }
 
@@ -162,17 +182,34 @@ const sku = new SKU();
 //.catch(function(err) {
     //console.log(err);
 //});
-//sku.addIngredients(1001, [2, 47, 6, 49])
+//sku.addIngredients(23116, [
+    //{
+        //ingred_num: 49,
+        //quantity: 12
+    //},
+    //{
+        //ingred_num: 563,
+        //quantity: 15.4
+    //},
+    //{
+        //ingred_num: 56633,
+        //quantity: 599.3
+    //},
+    //{
+        //ingred_num: 1415,
+        //quantity: 599.3
+    //}
+//])
 //.then(function(res) {
     //console.log(res);
 //})
 //.catch(function(err) {
-    //console.log(err);
 //})
 
 //sku.create({
-    //name: "sku720", 
-    //case_upc: 12345, 
+    //name: "sku723", 
+    //adfy: "agiuiufkgfgc",
+    //case_upc: 123345, 
     //unit_upc: 65653, 
     //unit_size: "12 lbs", 
     //count_per_case: 998,
@@ -203,5 +240,6 @@ const sku = new SKU();
 //.catch(function(err) {
     //console.log(err);
 //});
+
 
 module.exports = SKU;

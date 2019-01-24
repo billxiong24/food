@@ -131,6 +131,12 @@ router.post('/', function(req, res, next) {
 });
 
 router.put('/:name', function(req, res, next) {
+
+    if(Object.keys(req.body).length === 0) {
+        return req.json({
+            rowCount: 0
+        });
+    }
     const ing = new Ingredient();
     ing.update(req.body, req.params.name)
     .then((result) => {
