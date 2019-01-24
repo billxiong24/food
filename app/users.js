@@ -28,9 +28,10 @@ class Users extends CRUD {
         return bcrypt.hash(dataObj.password, saltRounds).then((hash) => {
             const hashedDataObj = Object.assign({},dataObj);
             hashedDataObj.password = hash;
+            console.log(hashedDataObj);
             let query = squel.insert()
             .into(this.tableName)
-            .setFieldsRows([dataObj]).toString();
+            .setFieldsRows([hashedDataObj]).toString();
             return super.insert(query, hashedDataObj, "Error creating user: user already exists.");
         });
     }
