@@ -16,8 +16,10 @@ Enable postgresql server: ```sudo systemctl enable postgresql```
 Start postgresql server: ```sudo systemctl start postgresql```  
 For Fedora, need to initialize db: ```sudo postgresql-setup --itdb --unit postgresql```  
 
-Set up database and dummy data: ```Run psql -f db/food.sql```  
+change ```.env``` file to appropriate credentials for postgres database.
 
+
+Set up database and dummy data: ```Run psql -f db/food.sql```  
 ## Start project  
-Run ```node app```. This will start server on localhost:8000.  
+Run ```npm start```. This will start server on localhost:8000. Use ```nodemon```, so don't have to restart server every time changes are made.    
 
