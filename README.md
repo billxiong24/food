@@ -25,56 +25,56 @@ Run ```npm start```. This will start server on localhost:8000. Use ```nodemon```
     
     
 ## API documentation      
-### SKUS      
+## SKUS      
     
-#### Search for SKUs based on ingredients and product lines.     
-Allows users to search for SKUs, and filter them based on ingredients and prod lines.    
+### Search for SKUs based on ingredients and product lines.     
+* Allows users to search for SKUs, and filter them based on ingredients and prod lines.    
 **URL**: ```GET /sku/search```         
-
+  
 **PARAMETERS**:     
-     
+        
 | Parameter      | Description | Type |    
 | ----------- | ----------- |---------    
 | name      | **Required**. name of SKU to search for. | String |    
 | ingredients | **Optional**. List of ingredients to filter SKU by. SKUs returned will contain at least one ingredient. | List |    
 | prodlines | **Optional**. List of product lines to filter SKU by. SKUs returned will contain at least one ingredient. | List |      
     
-**EXAMPLE**:     
+* **EXAMPLE**:     
   
 ```GET /sku/search?name=sku&ingredients=ing1&ingredients=ing2&prodlines=p1&prodlines=p2```      
 Searches for "sku", which must contain one of "ing1" or "ing2", and must be in productline "p1" or "p2".      
     
-#### Retrieve ingredients of a SKU    
+### Retrieve ingredients of a SKU    
   
-Given a case_upc of a SKU, fetch ingredients associated with that SKU.    
+* Given a case_upc of a SKU, fetch ingredients associated with that SKU.    
 **URL:** ```GET /:case_upc/ingredients```      
   
 **PARAMETERS**:     
-  
+      
 | Parameter      | Description | Type |    
 | ----------- | ----------- |---------    
 | case_upc | **Required**. The case_upc of a SKU. This is part of the URL | integer |     
   
-**EXAMPLE**:     
+* **EXAMPLE**:     
   
 ```GET /sku/634/ingredients```       
   
 Retrieves ingredients for SKU with case_upc = 634.    
      
      
-#### Add ingredients to existing SKU    
-Given existing SKU, add a list of ingredient tuples to that SKU.    
+### Add ingredients to existing SKU    
+* Given existing SKU, add a list of ingredient tuples to that SKU. Ingredients must already exist.   
   
 **URL**: ```POST /sku/:case_upc/ingredients```      
   
 **PARAMETERS**:     
-  
+      
 | Parameter      | Description | Type |    
 | ----------- | ----------- |---------    
 | case_upc | **Required** The case_upc of a SKU. This is part of the URL. | integer |    
 |ingredients | **Optional**. List of ingredients tuples to add to SKU. This parameter should be sent in request body. Takes form of ```[{ingred_num: 1, quantity: 1}, {ingred_num: 2, quantity: 2}] ``` | String (stringified JSON) |      
     
-**Example**     
+* **Example**     
 ```POST /sku/634/ingredients```      
 With request body:     
 ```    
@@ -91,18 +91,18 @@ With request body:
     ]    
 }    
 ```     
-Adds 2 ingredients to SKU with case_upc 634.      
+Adds 2 existing ingredients to SKU with case_upc 634. **Note**: the ingredients must already exist.     
     
   
-#### Add a SKU    
+### Add a SKU    
   
-**URL**: ```POST /sku```      
+* **URL**: ```POST /sku```      
 Create a SKU.    
   
 **PARAMETERS**:     
   
 The following parameters are all in request body.    
-  
+    
 | Parameter      | Description | Type |    
 | ----------- | ----------- |---------    
 | Name | **Required**. Name of SKU. | String |     
@@ -113,8 +113,8 @@ The following parameters are all in request body.
 | count_per_case | **Required**. count per case | Integer |     
 | prd_line | **Required**. Product line this SKU belongs to. | String |     
 | comments | **Optional**. comments | String |     
-  
-**EXAMPLE**     
+   
+* **EXAMPLE**     
 ```POST /sku```      
 With request body:    
 ```      
@@ -131,9 +131,9 @@ With request body:
 Creates SKU with those parameters.    
    
     
-#### Update a SKU.    
+### Update a SKU.    
   
-Update SKU's parameters.    
+* Update SKU's parameters.    
   
 **URL**: ```PUT /sku/:case_upc```      
   
@@ -142,8 +142,8 @@ Update SKU's parameters.
 **Example**: Same as ```POST /sku```, Except use ```PUT /sku```.      
   
       
-#### Delete a SKU.    
-  
+### Delete a SKU.    
+* Deletes a SKU given case UPC of SKU.    
 **URL**: ```DELETE /:case_upc/ingredients```      
   
 **PARAMETERS**     
@@ -151,8 +151,8 @@ Update SKU's parameters.
 | Parameter      | Description | Type |    
 | ----------- | ----------- |---------    
 | case_upc | **Required**. case UPC of SKU. URL Parameter. | integer |       
-  
-**EXAMPLE**     
+    
+* **EXAMPLE**     
   
 ```DELETE /sku```    
 With request body:    
@@ -164,8 +164,8 @@ With request body:
 deletes a SKU with case_upc 643.       
     
   
-#### Delete ingredients from a SKU      
-Deletes a list of ingredients from a SKU. Ingredients must exist in SKU.    
+### Delete ingredients from a SKU      
+* Deletes a list of ingredients from a SKU. Ingredients must exist in SKU.    
   
 **URL**: ```DELETE /:case_upc/ingredients```      
   
@@ -177,7 +177,7 @@ Deletes a list of ingredients from a SKU. Ingredients must exist in SKU.
 | ingredients| **Required**. List of ingredient numbers to delete. | List |    
   
   
-**EXAMPLE**     
+* **EXAMPLE**     
 ```DELETE /643/ingredients```    
 With request body:    
 ```    
