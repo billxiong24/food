@@ -34,25 +34,45 @@ class Ingredient extends CRUD {
     //TODO use squel to generate this query
     search(searchQuery, skus) {
         searchQuery = "%" + searchQuery + "%";
-        let query = "SELECT DISTINCT ingredients.* FROM sku LEFT JOIN sku_ingred ON sku.num = sku_ingred.sku_num LEFT JOIN ingredients ON sku_ingred.ingred_num=ingredients.num WHERE ingredients.name LIKE $1";
+        //let query = "SELECT DISTINCT ingredients.* FROM sku LEFT JOIN sku_ingred ON sku.num = sku_ingred.sku_num LEFT JOIN ingredients ON sku_ingred.ingred_num=ingredients.num WHERE ingredients.name LIKE $1";
 
-        if(skus.length > 0)
-            query += " AND ("
+        //if(skus.length > 0)
+            //query += " AND ("
 
-        for(let i = 0; i < skus.length; i++) {
+        //for(let i = 0; i < skus.length; i++) {
         
-            query += "sku.name=$" + (i + 2); 
-            if(i == skus.length - 1) {
-                query += ")";
-            }
-            else {
-                query += " OR ";
-            }
-        }
+            //query += "sku.name=$" + (i + 2); 
+            //if(i == skus.length - 1) {
+                //query += ")";
+            //}
+            //else {
+                //query += " OR ";
+            //}
+        //}
 
-        skus.unshift(searchQuery);
-        return db.execSingleQuery(query, skus);
+        let q = squel.select()
+        .from('sku')
+        .field("ingredients.*")
+        .left_join("sku_ingred", null, "sku.num=sku_ingred.sku_num")
+        .left_join("ingredients", null, "sku_ingred.ingred_num=ingredients.num")
+        .where("ingredients.name LIKE ? ", searchQuery);
+
+        if(skus.length > 0) {
+            let expr = squel.expr();
+            for(let i = 0; i < skus.length; i++) {
+                expr = expr.or("sku.name=?",skus[i]);
+            }
+            q = q.where(
+                expr
+            );
+        }
+        q = q.distinct().toString();
+
+        //skus.unshift(searchQuery);
+        //return db.execSingleQuery(query, skus);
+        return db.execSingleQuery(q);
     }
+
 
     /**
      * Object should be in the form of

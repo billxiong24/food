@@ -37,7 +37,6 @@ class CRUD {
     change(dataObj, oldPrimaryKey, primaryKeyName) {
         let q = squel.update()
         .table(this.tableName)
-        console.log(dataObj);
         for(let k in dataObj) {
             q = q.set(k, dataObj[k]);
         }

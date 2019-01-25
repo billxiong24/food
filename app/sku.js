@@ -83,42 +83,67 @@ class SKU extends CRUD {
     //TODO use squel to generate this query
     search(searchQuery, ingredients, productlines) {
         searchQuery = "%" + searchQuery + "%";
+        //let query = "SELECT DISTINCT sku.* FROM sku LEFT JOIN sku_ingred ON sku.num = sku_ingred.sku_num LEFT JOIN ingredients ON sku_ingred.ingred_num=ingredients.num WHERE sku.name LIKE $1";
 
-        let query = "SELECT DISTINCT sku.* FROM sku LEFT JOIN sku_ingred ON sku.num = sku_ingred.sku_num LEFT JOIN ingredients ON sku_ingred.ingred_num=ingredients.num WHERE sku.name LIKE $1";
+        let q = squel.select()
+        .from(this.tableName)
+        .field("sku.*")
+        .left_join("sku_ingred", null, "sku.num=sku_ingred.sku_num")
+        .left_join("ingredients", null, "sku_ingred.ingred_num=ingredients.num")
+        .where("sku.name LIKE ? ", searchQuery);
+        if(ingredients.length > 0) {
+            let expr = squel.expr();
+            for(let i = 0; i < ingredients.length; i++) {
+                expr = expr.or("ingredients.name=?",ingredients[i]);
+            }
+            q = q.where(
+                expr
+            );
+        }
+        if(productlines.length > 0) {
+            let expr = squel.expr();
+            for(let i = 0; i < productlines.length; i++) {
+                expr = expr.or("sku.prd_line=?",productlines[i]);
+            }
+            q = q.where(
+                expr
+            );
+        }
+        q = q.distinct().toString();
 
-        if(ingredients.length > 0)
-            query += " AND ("
-        let count = 1;
+        //if(ingredients.length > 0)
+            //query += " AND ("
+        //let count = 1;
 
-        for(let i = 0; i < ingredients.length; i++) {
+        //for(let i = 0; i < ingredients.length; i++) {
         
-            query += "ingredients.name=$" + (i + 2); 
-            if(i == ingredients.length - 1) {
-                query += ")";
-            }
-            else {
-                query += " OR ";
-            }
+            //query += "ingredients.name=$" + (i + 2); 
+            //if(i == ingredients.length - 1) {
+                //query += ")";
+            //}
+            //else {
+                //query += " OR ";
+            //}
 
-            count++;
-        }
+            //count++;
+        //}
 
-        if(productlines.length > 0)
-            query += " AND (";
+        //if(productlines.length > 0)
+            //query += " AND (";
 
-        for(let i = 0; i < productlines.length; i++) {
-            count++;
-            query += "sku.prd_line=$" + (count); 
-            if(i == productlines.length - 1) {
-                query += ")";
-            }
-            else {
-                query += " OR ";
-            }
-        }
-        ingredients.unshift(searchQuery);
-        let arr = ingredients.concat(productlines);
-        return db.execSingleQuery(query, arr);
+        //for(let i = 0; i < productlines.length; i++) {
+            //count++;
+            //query += "sku.prd_line=$" + (count); 
+            //if(i == productlines.length - 1) {
+                //query += ")";
+            //}
+            //else {
+                //query += " OR ";
+            //}
+        //}
+        //ingredients.unshift(searchQuery);
+        //let arr = ingredients.concat(productlines);
+        return db.execSingleQuery(q);
     }
 
     checkProductLineExists(name) {
