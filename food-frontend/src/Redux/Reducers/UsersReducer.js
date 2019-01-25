@@ -3,7 +3,7 @@ import { USER_LOG_IN_ATTEMPT, USER_CREATE_ATTEMPT } from '../Actions/UserActionT
 const initialState = {
   name: null,
   isSuccess: false,
-  errMsg: "test"
+  errMsg: null
 }
 
 export default function userReducer(state = initialState, action) {

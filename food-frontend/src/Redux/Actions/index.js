@@ -21,6 +21,50 @@ export const getDummyIngredients = () => {
   };
 };
 
+// User Creation
+export const userCreateAttempt = (dataObj) => {
+  return (dispatch) => {
+    return axios.put(hostname + 'users/' + dataObj.uname, {
+      uname: dataObj.uname,
+      password: dataObj.password
+    })
+    .then(response => {
+      dispatch(
+        {
+          type: USER_CREATE_ATTEMPT,
+          data: {
+            isSuccess: true
+          }
+        }
+      )
+    })
+    .catch(err => {
+      if(err.response.status == 400 || err.response.status == 409) {
+        dispatch(
+          {
+            type: USER_CREATE_ATTEMPT,
+            data: {
+              isSuccess: false,
+              errMsg: err.response.data.error
+            }
+          }
+        )
+      } else {
+        dispatch(
+          {
+            type: USER_LOG_IN_ATTEMPT,
+            data: {
+              errMsg: "Something unexpected went wrong"
+            }
+          }
+        )
+        throw(err.response);
+      }
+    })
+  }
+}
+
+// User Authentication
 export const userLoginAttempt = (dataObj) => {
   return (dispatch) => {
     return axios.post(hostname + 'users/', {
@@ -36,7 +80,32 @@ export const userLoginAttempt = (dataObj) => {
       );
     })
     .catch(error => {
-      throw(error);
+      let msg = '';
+      if(error.response.status == 400) {
+        if(error.response.data.error == "User Doesn't Exist") {
+          msg = "Incorrect Username or Password";
+        } else {
+          msg = "Incorrect Password";
+        }
+        dispatch(
+          {
+            type: USER_LOG_IN_ATTEMPT,
+            data: {
+              errMsg: msg
+            }
+          }
+        )
+      } else {
+        dispatch(
+          {
+            type: USER_LOG_IN_ATTEMPT,
+            data: {
+              errMsg: "Something unexpected went wrong"
+            }
+          }
+        )
+        throw(error.response);
+      }
     });
   }
 }
