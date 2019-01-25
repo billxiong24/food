@@ -15,7 +15,6 @@ export default {
     filters: dummy_filters,
     items: dummy_ingredients,
     sortby: labels.ingredients.sort_by.INGREDIENT_NAME,
-    input_filter_type: labels.filter_type.INGREDIENT_NAME,
     current_page_number: 1,
     total_pages: 12,
     cards: []
