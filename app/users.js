@@ -41,7 +41,7 @@ class Users extends CRUD {
         }
         
         let query = "SELECT uname, password FROM " + this.tableName + " WHERE uname=$1";
-        let storedCreds = db.execSingleQuery(query, [dataObj.uname]).rows;
+        let storedCreds = db.execSingleQuery(query, [dataObj.uname]);
         console.log(storedCreds);
 
         if(storedCreds.length!=1) {
