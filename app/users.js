@@ -42,11 +42,12 @@ class Users extends CRUD {
         
         let query = "SELECT uname, password FROM " + this.tableName + " WHERE uname=$1";
         return db.execSingleQuery(query, [dataObj.uname]).then((result) => {
-        console.log(result);
-
+        
+        result = result.rows;
         if(result.length!=1) {
           return Promise.reject("User Doesn't Exist");
         }
+        result = result[0];
 
         return bcrypt.compare(dataObj.password, result.password).then((res) => {
             if(res) {
