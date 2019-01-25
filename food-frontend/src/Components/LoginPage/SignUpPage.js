@@ -10,7 +10,7 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import withStyles from '@material-ui/core/styles/withStyles';
 import { connect } from 'react-redux';
-import { userLoginAttempt, routeToPage } from '../../Redux/Actions'
+import { userCreateAttempt } from '../../Redux/Actions'
 
 const styles = theme => ({
   main: {
@@ -41,15 +41,23 @@ const styles = theme => ({
   },
   submit: {
     marginTop: theme.spacing.unit * 3,
+  },
+  hide: {
+    display: 'none'
   }
 });
 
-class LoginPage extends Component {
+const unameRegex = "^(?=.{3,32}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$";
+const passwordRegex = "^(?=.{8,70}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$";
+
+class SignUpPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
       uname:"",
-      password:""
+      password:"",
+      passwordCheck:"",
+      status:""
     }
   }
 
@@ -60,18 +68,49 @@ class LoginPage extends Component {
   }
 
   updatePasswordValue(evt) {
-    evt.preventDefault();
     this.setState({
       password: evt.target.value
     });
   }
 
+  updatePasswordCheckValue(evt) {
+    this.setState({
+      passwordCheck: evt.target.value
+    });
+  }
+
   submitFormCheck(e) {
     e.preventDefault();
-    this.props.userLoginAttempt(Object.assign({},this.state))
+    if(this.state.uname.match(unameRegex)===null) {
+      this.setState({
+        status: "Usernames must be between 3 and 32 characters of length and only use alphanumerical characters, -, and _",
+        uname: ""
+      });
+      return;
+    }
+    if(this.state.password.match(passwordRegex)===null) {
+      this.setState({
+        status: "Passwords must be between 8 and 32 characters of length and only use alphanumerical characters, -, and _",
+        password: "",
+        passwordCheck: ""
+      });
+      return;
+    }
+    if(this.state.password!==this.state.passwordCheck) {
+      this.setState({
+        status: "Passwords do not match"
+      });
+      return;
+    }
+    this.props.userCreateAttempt(Object.assign({},this.state))
     .then(()=>{
-      if(!this.props.users.uname){
-        this.props.routeToPage(0);
+      if(this.props.users.isSuccess) {
+        this.setState({
+          status: "User Successfully Created!",
+          uname: "",
+          password: "",
+          passwordCheck: ""
+        })
       }
     })
   }
@@ -86,16 +125,20 @@ class LoginPage extends Component {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign in
+            Create New User
           </Typography>
           <form className={classes.form} onSubmit={(e)=>{this.submitFormCheck(e)}}>
             <FormControl margin="normal" required fullWidth>
               <InputLabel htmlFor="username">Username</InputLabel>
-              <Input id="username" name="username" autoComplete="username" autoFocus value={this.state.uname} onChange={evt => {this.updateUnameValue(evt)}}/>
+              <Input id="username" name="username" value={this.state.uname} onChange={evt => {this.updateUnameValue(evt)}}/>
             </FormControl>
             <FormControl margin="normal" required fullWidth>
               <InputLabel htmlFor="password">Password</InputLabel>
-              <Input name="password" type="password" id="password" autoComplete="current-password" value={this.state.password} onChange={evt => {this.updatePasswordValue(evt)}}/>
+              <Input name="password" type="password" id="password" value={this.state.password} onChange={evt => {this.updatePasswordValue(evt)}}/>
+            </FormControl>
+            <FormControl margin="normal" required fullWidth>
+              <InputLabel htmlFor="password">Re-Enter Password</InputLabel>
+              <Input name="password" type="password" id="passwordCheck" value={this.state.passwordCheck} onChange={evt => {this.updatePasswordCheckValue(evt)}}/>
             </FormControl>
             <Button
               type="submit"
@@ -104,9 +147,9 @@ class LoginPage extends Component {
               color="primary"
               className={classes.submit}
             >
-              Sign in
+              Create User
             </Button>
-            <label>{users.errMsg}</label>
+            <label>{this.state.status ? this.state.status : users.errMsg}</label>
           </form>
         </Paper>
       </main>
@@ -121,4 +164,4 @@ const mapStateToProps = state => {
   }
 }
 
-export default withStyles(styles)(connect(mapStateToProps,{userLoginAttempt, routeToPage})(LoginPage));
+export default withStyles(styles)(connect(mapStateToProps,{userCreateAttempt})(SignUpPage));

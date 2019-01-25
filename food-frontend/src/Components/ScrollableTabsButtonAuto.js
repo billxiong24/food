@@ -8,6 +8,9 @@ import Typography from '@material-ui/core/Typography';
 import SimpleList from './GenericComponents/ItemList';
 import IngredientsPage from './IngredientsPage/IngredientsPage';
 import LoginPage from './LoginPage/LoginPage';
+import SignUpPage from './LoginPage/SignUpPage';
+import { routeToPage } from '../Redux/Actions/index';
+import { connect } from 'react-redux';
 
 function TabContainer(props) {
   return (
@@ -30,24 +33,27 @@ const styles = theme => ({
 });
 
 class ScrollableTabsButtonAuto extends React.Component {
-  state = {
-    value: 0,
-  };
+  constructor(props) {
+    super(props);
+  }
+  // state = {
+  //   value: 0,
+  // };
 
   handleChange = (event, value) => {
-    this.setState({ value });
+    this.props.routeToPage(value);
   };
 
   render() {
     const { classes } = this.props;
-    const { value } = this.state;
+    const value = this.props.route;
 
     return (
       <div className={classes.root}>
         <AppBar position="static" color="default">
           <Tabs
             value={value}
-            onChange={this.handleChange}
+            onChange={(event, value) => {this.handleChange(event, value)}}
             indicatorColor="primary"
             textColor="primary"
             variant="scrollable"
@@ -60,6 +66,7 @@ class ScrollableTabsButtonAuto extends React.Component {
             <Tab label="Bulk Import" />
             <Tab label="Admin" />
             <Tab label="Log In" />
+            <Tab label="Create Account" />
           </Tabs>
         </AppBar>
         {value === 0 && <IngredientsPage></IngredientsPage>}
@@ -68,7 +75,8 @@ class ScrollableTabsButtonAuto extends React.Component {
         {value === 3 && <TabContainer>Item Four</TabContainer>}
         {value === 4 && <TabContainer>Item Five</TabContainer>}
         {value === 5 && <TabContainer>Item Six</TabContainer>}
-        {value === 6 && <LoginPage>Item Six</LoginPage>}
+        {value === 6 && <LoginPage>Item Seven</LoginPage>}
+        {value === 7 && <SignUpPage>Item Eight</SignUpPage>}
       </div>
     );
   }
@@ -78,4 +86,10 @@ ScrollableTabsButtonAuto.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(ScrollableTabsButtonAuto);
+const mapStateToProps = state => {
+  return {
+    route: state.route
+  }
+}
+
+export default withStyles(styles)(connect(mapStateToProps,{routeToPage})(ScrollableTabsButtonAuto));

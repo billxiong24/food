@@ -8,6 +8,8 @@ export default {
     isSuccess: false,
     errMsg: null
   },
+  // Persistent data concerning routing
+  route: 0,
   // Persistent data concnerning ingredients view
   ingredients: {
     filters: dummy_filters,
