@@ -48,7 +48,6 @@ Searches for "sku", which must contain one of "ing1" or "ing2", and must be in p
   
 * Given a case_upc of a SKU, fetch ingredients associated with that SKU.    
 **URL:** ```GET /:case_upc/ingredients```      
-  
 **PARAMETERS**:     
       
 | Parameter      | Description | Type |    
@@ -56,17 +55,13 @@ Searches for "sku", which must contain one of "ing1" or "ing2", and must be in p
 | case_upc | **Required**. The case_upc of a SKU. This is part of the URL | integer |     
   
 * **EXAMPLE**:     
-  
 ```GET /sku/634/ingredients```       
-  
 Retrieves ingredients for SKU with case_upc = 634.    
      
      
 ### Add ingredients to existing SKU    
 * Given existing SKU, add a list of ingredient tuples to that SKU. Ingredients must already exist.   
-  
 **URL**: ```POST /sku/:case_upc/ingredients```      
-  
 **PARAMETERS**:     
       
 | Parameter      | Description | Type |    
@@ -134,18 +129,14 @@ Creates SKU with those parameters.
 ### Update a SKU.    
   
 * Update SKU's parameters.    
-  
 **URL**: ```PUT /sku/:case_upc```      
-  
 **PARAMETERS**: Same as ```POST /sku```, with the addition of ```case_upc``` in URL, which corresponds to case UPC of the specified SKU.    
-  
 **Example**: Same as ```POST /sku```, Except use ```PUT /sku```.      
   
       
 ### Delete a SKU.    
 * Deletes a SKU given case UPC of SKU.    
 **URL**: ```DELETE /:case_upc/ingredients```      
-  
 **PARAMETERS**     
   
 | Parameter      | Description | Type |    
@@ -153,7 +144,6 @@ Creates SKU with those parameters.
 | case_upc | **Required**. case UPC of SKU. URL Parameter. | integer |       
     
 * **EXAMPLE**     
-  
 ```DELETE /sku```    
 With request body:    
 ```    
@@ -166,9 +156,7 @@ deletes a SKU with case_upc 643.
   
 ### Delete ingredients from a SKU      
 * Deletes a list of ingredients from a SKU. Ingredients must exist in SKU.    
-  
 **URL**: ```DELETE /:case_upc/ingredients```      
-  
 **PARAMETERS**      
   
 | Parameter      | Description | Type |    
