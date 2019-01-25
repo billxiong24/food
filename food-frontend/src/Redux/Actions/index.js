@@ -3,7 +3,7 @@ import axios from 'axios';
 
 export const getDummyIngredients = () => {
   return (dispatch) => {
-    return axios.get('http://localhost:8000/ingredients/dummyData')
+    return axios.get('http://cmdev.colab.duke.edu:8000/ingredients/dummyData')
       .then(response => {
         dispatch(
           {

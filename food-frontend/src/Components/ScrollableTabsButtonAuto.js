@@ -7,6 +7,7 @@ import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import SimpleList from './GenericComponents/ItemList';
 import IngredientsPage from './IngredientsPage/IngredientsPage';
+import LoginPage from './LoginPage/LoginPage';
 
 function TabContainer(props) {
   return (
@@ -58,6 +59,7 @@ class ScrollableTabsButtonAuto extends React.Component {
             <Tab label="Calculator" />
             <Tab label="Bulk Import" />
             <Tab label="Admin" />
+            <Tab label="Log In" />
           </Tabs>
         </AppBar>
         {value === 0 && <IngredientsPage></IngredientsPage>}
@@ -66,6 +68,7 @@ class ScrollableTabsButtonAuto extends React.Component {
         {value === 3 && <TabContainer>Item Four</TabContainer>}
         {value === 4 && <TabContainer>Item Five</TabContainer>}
         {value === 5 && <TabContainer>Item Six</TabContainer>}
+        {value === 6 && <LoginPage>Item Six</LoginPage>}
       </div>
     );
   }
