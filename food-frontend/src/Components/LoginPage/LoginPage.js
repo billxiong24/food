@@ -10,7 +10,7 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import withStyles from '@material-ui/core/styles/withStyles';
 import { connect } from 'react-redux';
-import { userLoginAttempt } from '../../Redux/Actions'
+import { userLoginAttempt, routeToPage } from '../../Redux/Actions'
 
 const styles = theme => ({
   main: {
@@ -69,6 +69,11 @@ class LoginPage extends Component {
   submitFormCheck(e) {
     e.preventDefault();
     this.props.userLoginAttempt(Object.assign({},this.state))
+    .then(()=>{
+      if(!this.props.users.uname){
+        this.props.routeToPage(0);
+      }
+    })
   }
 
   render() {
@@ -116,4 +121,4 @@ const mapStateToProps = state => {
   }
 }
 
-export default withStyles(styles)(connect(mapStateToProps,{userLoginAttempt})(LoginPage));
+export default withStyles(styles)(connect(mapStateToProps,{userLoginAttempt, routeToPage})(LoginPage));

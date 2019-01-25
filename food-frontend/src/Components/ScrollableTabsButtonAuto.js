@@ -9,6 +9,8 @@ import SimpleList from './GenericComponents/ItemList';
 import IngredientsPage from './IngredientsPage/IngredientsPage';
 import LoginPage from './LoginPage/LoginPage';
 import SignUpPage from './LoginPage/SignUpPage';
+import { routeToPage } from '../Redux/Actions/index';
+import { connect } from 'react-redux';
 
 function TabContainer(props) {
   return (
@@ -31,24 +33,27 @@ const styles = theme => ({
 });
 
 class ScrollableTabsButtonAuto extends React.Component {
-  state = {
-    value: 0,
-  };
+  constructor(props) {
+    super(props);
+  }
+  // state = {
+  //   value: 0,
+  // };
 
   handleChange = (event, value) => {
-    this.setState({ value });
+    this.props.routeToPage(value);
   };
 
   render() {
     const { classes } = this.props;
-    const { value } = this.state;
+    const value = this.props.route;
 
     return (
       <div className={classes.root}>
         <AppBar position="static" color="default">
           <Tabs
             value={value}
-            onChange={this.handleChange}
+            onChange={(event, value) => {this.handleChange(event, value)}}
             indicatorColor="primary"
             textColor="primary"
             variant="scrollable"
@@ -81,4 +86,10 @@ ScrollableTabsButtonAuto.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(ScrollableTabsButtonAuto);
+const mapStateToProps = state => {
+  return {
+    route: state.route
+  }
+}
+
+export default withStyles(styles)(connect(mapStateToProps,{routeToPage})(ScrollableTabsButtonAuto));

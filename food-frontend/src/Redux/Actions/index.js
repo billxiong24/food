@@ -1,5 +1,6 @@
 import { FETCH_GITHUB_DATA, GET_INGREDIENTS_DUMMY_DATA } from './ActionTypes';
 import { USER_LOG_IN_ATTEMPT, USER_CREATE_ATTEMPT } from './UserActionTypes';
+import { ROUTERS_ROUTE_TO_PAGE } from './RoutingActionTypes';
 import axios from 'axios';
 
 const hostname = 'http://cmdev.colab.duke.edu:8000/';
@@ -19,6 +20,18 @@ export const getDummyIngredients = () => {
         throw(error);
       });
   };
+};
+
+// Temporary Routing for now
+export const routeToPage = (val) => {
+  return (dispatch) => {
+    return dispatch(
+      {
+        type: ROUTERS_ROUTE_TO_PAGE,
+        data: val
+      }
+    )
+  }
 };
 
 // User Creation
@@ -75,9 +88,11 @@ export const userLoginAttempt = (dataObj) => {
       dispatch(
         {
           type: USER_LOG_IN_ATTEMPT,
-          data: response.data
+          data: {
+            name: response.data.uname
+          }
         }
-      );
+      )
     })
     .catch(error => {
       let msg = '';
