@@ -41,21 +41,21 @@ class Users extends CRUD {
         }
         
         let query = "SELECT uname, password FROM " + this.tableName + " WHERE uname=$1";
-        let storedCreds = db.execSingleQuery(query, [dataObj.uname]);
-        console.log(storedCreds);
+        return db.execSingleQuery(query, [dataObj.uname]).then((result) => {
+        console.log(result);
 
-        if(storedCreds.length!=1) {
+        if(result.length!=1) {
           return Promise.reject("User Doesn't Exist");
         }
-        storedCreds = storedCreds[0];
 
-        return bcrypt.compare(dataObj.password, storedCreds.password).then((res) => {
+        return bcrypt.compare(dataObj.password, result.password).then((res) => {
             if(res) {
                 return {uname:dataObj.uname};
             }
             else
                 return Promise.reject("Incorrect Password");
-      });
+            });
+        });
     }
 
     update(dataObj, oldPrimaryKey) {
