@@ -28,7 +28,6 @@ class Users extends CRUD {
         return bcrypt.hash(dataObj.password, saltRounds).then((hash) => {
             const hashedDataObj = Object.assign({},dataObj);
             hashedDataObj.password = hash;
-            console.log(hashedDataObj);
             let query = squel.insert()
             .into(this.tableName)
             .setFieldsRows([hashedDataObj]).toString();
@@ -43,6 +42,7 @@ class Users extends CRUD {
         
         let query = "SELECT uname, password FROM " + this.tableName + " WHERE uname=$1";
         let storedCreds = db.execSingleQuery(query, [dataObj.uname]).rows;
+        console.log(storedCreds);
 
         if(storedCreds.length!=1) {
           return Promise.reject("User Doesn't Exist");
