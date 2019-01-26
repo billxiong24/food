@@ -18,10 +18,6 @@ router.get('/search', function(req, res, next) {
     });
 });
 
-//TODO rendering page
-router.get('/:name', function(req, res, next) {
-    res.status(200).json({});
-});
 
 router.post('/', function(req, res, next) {
     const prdline = new ProductLine();

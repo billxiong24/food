@@ -248,4 +248,71 @@ Retrieves all SKU's with "peppers" as an ingredient.
 ```DELETE /ingredients/peppers```    
 Deletes pepper as an ingredient. This also removes the ingredient from any SKU's that use it.   
 
+## Product Lines
+  
+### Search for product line
+* Given a name, search for product lines with a related name.
+**URL**: ```GET /productline/search```    
+**PARAMETERS**   
+  
+| Parameter      | Description | Type |    
+| ----------- | ----------- |---------|    
+| name | **Required**. Name of keyword to search| String |                
+
+* **EXAMPLE**     
+```GET /productline/search?name=prod```    
+Searches product lines with keyword "prod"   
+
+
+### Add a product line
+* Create a product line with a given name, provided that the name doesn't already exist.    
+**URL**: ```POST /productline```    
+**PARAMETERS**   
+  
+| Parameter      | Description | Type |    
+| ----------- | ----------- |---------|    
+| name | **Required**. Name of product line to add. | String |                
+
+* **EXAMPLE**     
+```POST /productline```    
+With request body
+```
+{
+    name: 'prod'
+}
+```
+Adds a product line with name 'prod' to database, provided that it doesn't already exist.   
+
+### Update a product line  
+* Update a product line's parameters (just name for now.).
+**URL**: ```PUT /productline/:name```    
+**PARAMETERS**   
+  
+| Parameter      | Description | Type |    
+| ----------- | ----------- |---------|    
+| name | **Required**. Name of product line to update to. Request body parameter. | String |                
+| name | **Required**. URL Parameter. Name of current product line. | String |                
+
+* **EXAMPLE**     
+```PUT /productline/prod```     
+With request body  
+```  
+{  
+    name: 'prod1'  
+}
+```   
+Updates a product line whose name is "prod", to "prod1".   
+
+### Delete a product line
+* Delete a product line who has a given name
+**URL**: ```DELETE /productline/:name```    
+**PARAMETERS**   
+  
+| Parameter      | Description | Type |    
+| ----------- | ----------- |---------|    
+| name | **Required**. URL Parameter. Name of product line to delete. | String |                
+
+* **EXAMPLE**     
+```DELETE /productline/prod```     
+Deletes a product line whose name is "prod". If product line has SKUs, will be unable to delete.  
 

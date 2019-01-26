@@ -242,8 +242,7 @@ const sku = new SKU();
 
 //sku.create({
     //name: "sku723", 
-    //adfy: "agiuiufkgfgc",
-    //case_upc: 123345, 
+    //case_upc: 233, 
     //unit_upc: 65653, 
     //unit_size: "12 lbs", 
     //count_per_case: 998,

@@ -90,7 +90,9 @@ router.post('/', function(req, res, next) {
     const sku = new Sku();
     sku.create(req.body)
     .then((result) => {
-        res.status(201).json({});
+        res.status(201).json({
+            rowCount: result.rowCount
+        });
     })
     .catch((err) => {
         res.status(409).json({

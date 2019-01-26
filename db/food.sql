@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 9.6.10
--- Dumped by pg_dump version 9.6.10
+-- Dumped from database version 10.6 (Ubuntu 10.6-0ubuntu0.18.04.1)
+-- Dumped by pg_dump version 10.6 (Ubuntu 10.6-0ubuntu0.18.04.1)
 
 DROP DATABASE IF EXISTS SKU_MGMT;
 CREATE DATABASE SKU_MGMT;
@@ -178,7 +178,8 @@ ALTER SEQUENCE public.sku_id_seq OWNED BY public.sku.id;
 
 CREATE TABLE public.sku_ingred (
     sku_num integer NOT NULL,
-    ingred_num integer NOT NULL
+    ingred_num integer NOT NULL,
+    quantity numeric DEFAULT 1
 );
 
 
@@ -248,6 +249,33 @@ ALTER SEQUENCE public.sku_num_seq OWNED BY public.sku.num;
 
 
 --
+-- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: billxiong24
+--
+
+CREATE SEQUENCE public.users_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.users_id_seq OWNER TO billxiong24;
+
+--
+-- Name: users; Type: TABLE; Schema: public; Owner: billxiong24
+--
+
+CREATE TABLE public.users (
+    uname character varying(32) NOT NULL,
+    id integer DEFAULT nextval('public.users_id_seq'::regclass) NOT NULL,
+    password character varying(60) NOT NULL
+);
+
+
+ALTER TABLE public.users OWNER TO billxiong24;
+
+--
 -- Name: ingredients num; Type: DEFAULT; Schema: public; Owner: billxiong24
 --
 
@@ -315,20 +343,6 @@ namerino	5633	waterinrterro	266	5300	\N	12
 
 
 --
--- Name: ingredients_id_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
---
-
-SELECT pg_catalog.setval('public.ingredients_id_seq', 12, true);
-
-
---
--- Name: ingredients_num_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
---
-
-SELECT pg_catalog.setval('public.ingredients_num_seq', 2, true);
-
-
---
 -- Data for Name: productline; Type: TABLE DATA; Schema: public; Owner: billxiong24
 --
 
@@ -336,13 +350,6 @@ COPY public.productline (name, id) FROM stdin;
 prod4	2
 prod69	1
 \.
-
-
---
--- Name: productline_id_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
---
-
-SELECT pg_catalog.setval('public.productline_id_seq', 3, true);
 
 
 --
@@ -368,37 +375,72 @@ sku1	12	2449	112553	10 lbs	4	prod4	a comment	4
 
 
 --
--- Name: sku_id_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
---
-
-SELECT pg_catalog.setval('public.sku_id_seq', 15, true);
-
-
---
 -- Data for Name: sku_ingred; Type: TABLE DATA; Schema: public; Owner: billxiong24
 --
 
-COPY public.sku_ingred (sku_num, ingred_num) FROM stdin;
-1	49
-1	47
-2	47
-12	47
-12	49
-55	44
-1	6
-2	6
-55	6
-100	1414
-100	6
-7	47
-7	6
-7	49
-1	698
-2	698
-12	698
-55	698
-7	698
+COPY public.sku_ingred (sku_num, ingred_num, quantity) FROM stdin;
+1	49	1
+1	47	1
+2	47	1
+12	47	1
+12	49	1
+55	44	1
+1	6	1
+2	6	1
+55	6	1
+100	1414	1
+100	6	1
+7	47	1
+7	6	1
+7	49	1
+1	698	1
+2	698	1
+12	698	1
+55	698	1
+7	698	1
 \.
+
+
+--
+-- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: billxiong24
+--
+
+COPY public.users (uname, id, password) FROM stdin;
+gordon5	6	$2b$10$nXnMFKFaqLj00/a1Vs7fJ.EWLVdthJqxGa70b9.Y4lKzFeO5FwHo2
+admin	7	$2b$10$QJigJyIlGtU7pYpnRO2foOJOBqeiladsPXeEj4vLxSnAuPQbIdAcS
+fff	8	$2b$10$nraqxUvDeUlU7pWdzXb5z.AOcXb9Z2ipB1uci6NowxFTyhA4GnYaq
+siddarth	9	$2b$10$Pwp3lW15hTFzklMarcAqTuxpe3yHvlXRRKf.xSeuyxzXXTXBU5jlG
+faa	10	$2b$10$uVfDG4KA9rrX7mNdBm8Xt.xAjsFBUITXbyer5z6sOWBh1MAvhhDOq
+111	11	$2b$10$Q9gVDGojNiyrgw63qxpOlOUuaX3mVTSBURhFhMt/l8VxVrfN3X9om
+\.
+
+
+--
+-- Name: ingredients_id_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
+--
+
+SELECT pg_catalog.setval('public.ingredients_id_seq', 12, true);
+
+
+--
+-- Name: ingredients_num_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
+--
+
+SELECT pg_catalog.setval('public.ingredients_num_seq', 2, true);
+
+
+--
+-- Name: productline_id_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
+--
+
+SELECT pg_catalog.setval('public.productline_id_seq', 3, true);
+
+
+--
+-- Name: sku_id_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
+--
+
+SELECT pg_catalog.setval('public.sku_id_seq', 16, true);
 
 
 --
@@ -419,7 +461,14 @@ SELECT pg_catalog.setval('public.sku_ingred_sku_num_seq', 1, false);
 -- Name: sku_num_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
 --
 
-SELECT pg_catalog.setval('public.sku_num_seq', 9, true);
+SELECT pg_catalog.setval('public.sku_num_seq', 10, true);
+
+
+--
+-- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
+--
+
+SELECT pg_catalog.setval('public.users_id_seq', 11, true);
 
 
 --
@@ -492,6 +541,22 @@ ALTER TABLE ONLY public.sku
 
 ALTER TABLE ONLY public.sku
     ADD CONSTRAINT sku_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: billxiong24
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: users users_uname; Type: CONSTRAINT; Schema: public; Owner: billxiong24
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_uname UNIQUE (uname);
 
 
 --

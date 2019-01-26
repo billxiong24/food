@@ -102,11 +102,6 @@ router.get('/search', function(req, res, next) {
     });
 });
 
-//TODO rendering page
-router.get('/:name', function(req, res, next) {
-    res.status(200).json({});
-});
-
 router.post('/', function(req, res, next) {
     //{
         //name: req.body.name,
@@ -120,7 +115,9 @@ router.post('/', function(req, res, next) {
     ing.create(req.body)
     .then((result) => {
         //HTTP 201 is successful addition
-        res.status(201).json({});
+        res.status(201).json({
+            rowCount: result.rowCount
+        });
     })
     .catch((err) => {
         //HTTP 409 is conflict status
