@@ -13,5 +13,20 @@ export default {
             INGREDIENTS: "Ingredients",
             SKU_NAME: "SKU"
         }
+    },
+    skus:{
+        sort_by:{
+            NAME: "Name",
+            CASE_UPC: "Case UPC",
+            UNIT_UPC: "Unit UPC",
+            UNIT_SIZE: "Unit Size",
+            COUNT_PER_CASE: "Count Per Case",
+            PRODUCT_LINE: "Product Line"
+        },
+        filter_type:{
+            SKU_NAME: "SKU",
+            INGREDIENTS: "Ingredients",
+            PRODUCT_LINE: "Product Line"
+        }
     }
   }

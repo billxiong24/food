@@ -17,6 +17,23 @@ export default {
     sortby: labels.ingredients.sort_by.INGREDIENT_NAME,
     current_page_number: 1,
     total_pages: 12,
-    cards: []
+    skus: [],
+    errMsg: null
+  },
+  // Persistent data concerning productline view
+  productline: {
+    keyword: "",
+    productLines: [],
+    errMsg: null
+  },
+  // Persistent data concerning skus view
+  skus: {
+    filters: [],
+    items: [],
+    sortby: null,
+    current_page_number: 1,
+    total_pages: 12,
+    ingredients: [],
+    errMsg: null
   }
 }
