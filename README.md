@@ -251,7 +251,7 @@ Deletes pepper as an ingredient. This also removes the ingredient from any SKU's
 ## Product Lines
   
 ### Search for product line
-* Given a name, search for product lines with a related name.
+* Given a name, search for product lines with a related name.   
 **URL**: ```GET /productline/search```    
 **PARAMETERS**   
   
@@ -304,7 +304,7 @@ With request body
 Updates a product line whose name is "prod", to "prod1".   
 
 ### Delete a product line
-* Delete a product line who has a given name
+* Delete a product line who has a given name   
 **URL**: ```DELETE /productline/:name```    
 **PARAMETERS**   
   
