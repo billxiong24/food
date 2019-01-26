@@ -49,18 +49,19 @@ class Ingredient extends CRUD {
                 //query += " OR ";
             //}
         //}
+        //"select DISTINCT ingredients.* from ingredients LEFT JOIN sku_ingred ON (ingredients.num=sku_ingred.ingred_num) LEFT JOIN sku ON (sku.num=sku_ingred.sku_num) WHERE ingredients.name LIKE '%ing%'"
 
         let q = squel.select()
-        .from('sku')
+        .from('ingredients')
         .field("ingredients.*")
-        .left_join("sku_ingred", null, "sku.num=sku_ingred.sku_num")
-        .left_join("ingredients", null, "sku_ingred.ingred_num=ingredients.num")
+        .left_join("sku_ingred", null, "ingredients.num=sku_ingred.sku_num")
+        .left_join("sku", null, "sku_ingred.sku_num=sku.num")
         .where("ingredients.name LIKE ? ", searchQuery);
 
         if(skus.length > 0) {
             let expr = squel.expr();
             for(let i = 0; i < skus.length; i++) {
-                expr = expr.or("sku.name=?",skus[i]);
+                expr = expr.or("sku.case_upc=?",skus[i]);
             }
             q = q.where(
                 expr
