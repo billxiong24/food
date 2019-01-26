@@ -47,7 +47,17 @@ class SKU extends CRUD {
                 obj.sku_num = sku_num;
             }
 
-            query = squel.insert()
+            squel.onConflictInsert = function(options) {
+              return squel.insert(options, [
+                  new squel.cls.StringBlock(options, 'INSERT'),
+                  new squel.cls.IntoTableBlock(options),
+                  new squel.cls.InsertFieldValueBlock(options),
+                  new squel.cls.WhereBlock(options),
+                  new squel.cls.StringBlock(options, 'ON CONFLICT DO NOTHING')
+                ]);
+            };
+
+            query = squel.onConflictInsert()
             .into('sku_ingred')
             .setFieldsRows(ingredients)
             .toString();

@@ -75,7 +75,9 @@ router.post('/:case_upc/ingredients', function(req, res, next) {
     const sku = new Sku();
     sku.addIngredients(case_upc, ingredients)
     .then((result) => {
-        res.status(201).json({});
+        res.status(201).json({
+            rowCount: result.rowCount
+        });
     })
     .catch((err) => {
         res.status(409).json({
