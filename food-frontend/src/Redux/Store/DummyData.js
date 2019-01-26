@@ -79,14 +79,14 @@ export let dummy_filters = [
     },
     {
         type: labels.ingredients.filter_type.SKU_NAME,
-        string: 1234
+        string: "Chef Boyarde Beefy Bites"
     },
     {
         type: labels.ingredients.filter_type.SKU_NAME,
-        string: 55325
+        string: "Pizza Rolls"
     },
     {
         type: labels.ingredients.filter_type.INGREDIENTS,
-        string: 5234525
+        string: "Campbells Creamy Chicken Noodle Soup"
     }
 ]
