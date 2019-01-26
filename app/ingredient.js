@@ -54,7 +54,7 @@ class Ingredient extends CRUD {
         let q = squel.select()
         .from('ingredients')
         .field("ingredients.*")
-        .left_join("sku_ingred", null, "ingredients.num=sku_ingred.sku_num")
+        .left_join("sku_ingred", null, "ingredients.num=sku_ingred.ingred_num")
         .left_join("sku", null, "sku_ingred.sku_num=sku.num")
         .where("ingredients.name LIKE ? ", searchQuery);
 
