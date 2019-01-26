@@ -1,5 +1,12 @@
-cp ../Resources/ComponentFileSkeleton.js $1.js
+cwd=$(pwd)
 
-sed -i"any_symbol" 's/SampleComponent/'"${1}"'/g' "$1.js"
+parent_path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 
-rm $1.jsany_symbol
+cd "$parent_path"
+
+cp ../Resources/ComponentFileSkeleton.js $cwd/$1.js
+
+sed -i"any_symbol" 's/SampleComponent/'"${1}"'/g' "$cwd/$1.js"
+
+rm $cwd/$1.jsany_symbol
+
