@@ -170,16 +170,82 @@ With request body:
   
 Deletes ingredients "1, 2, 3, 4, and 5" from SKU with case UPC 643, provided that the ingredients exist.       
      
-## Ingredients    
+## Ingredients  
+### Search for Ingredients
+
+* Search for ingredients by keyword (name), and filtering by SKUs. Ingredients must appear in at least one SKU in the filter.    
+**URL**: ```GET /ingredients/search ```         
+**PARAMETERS**      
+  
+| Parameter      | Description | Type |    
+| ----------- | ----------- |---------|    
+| name | **Required**. keyword to search by. | String |       
+| ingredients| **Optional**. List of SKUs to filter ingredients by. | List |    
+  
+  
+* **EXAMPLE**     
+```GET /ingredients/search?name=ing&skus=s1&skus=s2&skus=s3```     
+Searches for ingredients with keyword "ing", who must appear in one of "s1, s2, or s3".   
+
+### Create new Ingredient   
+* Add ingredient with given parameters to database.   
+**URL**: ```POST /ingredients```   
+**PARAMETERS**   
+  
+| Parameter      | Description | Type |    
+| ----------- | ----------- |---------|    
+| name | **Required**. keyword to search by. | String |         
+| num | **Optional**. Number of ingredient. Auto-generated if not supplied | Integer |         
+| vend_info | **Optional**. Vending info | String |         
+| pkg_size | **Required**. Package size. | String |         
+| pkg_cost | **Required**. Cost of package | Decimal |         
+| comments | **Optional**. Comments| String |         
+
+
+* **EXAMPLE**     
+```POST /ingredients```     
+With Request body:   
+```  
+{  
+        name: 'name',  
+        vend_info: "something",  
+        pkg_size: "4 lbs",  
+        pkg_cost: 22  
+}
+```  
+Creates an Ingredient with the specified parameters.    
+
+### Get SKU's with an ingredient
+* Given an ingredient name, get all SKU's that have that ingredient.   
+**URL**: ```GET /ingredients/:name/skus```   
+**PARAMETERS**   
+  
+| Parameter      | Description | Type |    
+| ----------- | ----------- |---------|    
+| name | **Required**. Name of existing ingredient. URL parameter | String |                
+
+
+* **EXAMPLE**     
+```GET /ingredients/peppers/skus```    
+Retrieves all SKU's with "peppers" as an ingredient.    
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+### Update an Ingredient.    
+* Update Ingredient's parameters.    
+**URL**: ```PUT /ingredients/:name```      
+**PARAMETERS**: Same as ```POST /ingredients```, with the addition of ```name``` in URL, which corresponds to the name of a specified ingredient.   
+* **Example**: Same as ```POST /ingredients```, Except use ```PUT /ingredients/:name```.    
+  
+### Delete an Ingredient  
+* Delete an ingredient given a name.
+**URL**: ```DELETE /ingredients/:name```  
+**PARAMETERS**:  
+  
+| Parameter      | Description | Type |    
+| ----------- | ----------- |---------|    
+| name | **Required**. Name of existing ingredient. URL parameter | String |                
+
+* **EXAMPLE**     
+```DELETE /ingredients/peppers```    
+Deletes pepper as an ingredient. This also removes the ingredient from any SKU's that use it.   
+
+
