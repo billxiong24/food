@@ -9,7 +9,7 @@ class ItemList extends Component {
       <div>
         {
         this.props.items.map((item, index) => (
-          React.cloneElement(this.props.children, { item: item })
+          React.cloneElement(this.props.children, { key: index, item: item })
         ))
         }
       </div>

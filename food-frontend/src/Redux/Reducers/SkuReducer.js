@@ -28,9 +28,7 @@ export default function skuReducer(state = initialState, action) {
         })
       });
     case SKU_SEARCH:
-      return Object.assign({}, state, {
-        items: action.data
-      });
+      return Object.assign({}, state, action.data);
     case SKU_SORT_BY:
       return Object.assign({}, state, {
         sortby: action.data

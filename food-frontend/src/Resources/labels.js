@@ -28,5 +28,8 @@ export default {
             INGREDIENTS: "Ingredients",
             PRODUCT_LINE: "Product Line"
         }
+    },
+    users:{
+      ADMIN:'admin'
     }
   }

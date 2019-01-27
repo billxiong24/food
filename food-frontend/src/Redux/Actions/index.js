@@ -63,7 +63,10 @@ export const skuSearch = (filters) => {
     .then(response => {
       dispatch({
         type: SKU_SEARCH,
-        data: response.data
+        data: {
+          items: response.data,
+          errMsg: ''
+        }
       })
     })
     .catch(error => {
@@ -89,7 +92,8 @@ export const skuGetIng = (sku) => {
       dispatch({
         type: SKU_GET_ING,
         data: {
-          ingredients: response.data
+          ingredients: response.data,
+          errMsg: ''
         }
       })
     })
@@ -119,7 +123,10 @@ export const skuAddIng = (sku, ing) => {
     return axios.post(hostname + 'sku/' + sku.case_upc + '/ingredients', ing)
     .then((reponse)=>{
       dispatch({
-        type: SKU_ADD_ING
+        type: SKU_ADD_ING,
+        data: {
+          errMsg: ''
+        }
       })
     })
     .catch((err)=>{
@@ -148,7 +155,10 @@ export const skuDeleteIng = (sku, ing) => {
     return axios.delete(hostname + 'sku/' + sku.case_upc + 'ingredients', ing)
     .then((response)=>{
       dispatch({
-        type: SKU_DELETE_ING
+        type: SKU_DELETE_ING,
+        data: {
+          errMsg: ''
+        }
       })
     })
     .catch((err) => {
@@ -177,7 +187,10 @@ export const skuAddSku = (sku) => {
     return axios.post(hostname + 'sku/', sku)
     .then((result) => {
       dispatch({
-        type: SKU_ADD_SKU
+        type: SKU_ADD_SKU,
+        data: {
+          errMsg: ''
+        }
       });
     })
     .catch((err) => {
@@ -206,7 +219,10 @@ export const skuUpdateSku = (sku) => {
     return axios.put(hostname + 'sku/' + sku.case_upc, sku)
     .then((result) => {
       dispatch({
-        type: SKU_UPDATE_SKU
+        type: SKU_UPDATE_SKU,
+        data: {
+          errMsg: ''
+        }
       });
     })
     .catch((err) => {
@@ -236,6 +252,9 @@ export const skuDeleteSku = (sku) => {
     .then((response) => {
       dispatch({
         type: SKU_DELETE_SKU,
+        data: {
+          errMsg: ''
+        }
       })
     })
     .catch((err) => {
@@ -317,6 +336,9 @@ export const ingAddIng = (ing) => {
     .then((response) => {
       dispatch({
           type: ING_ADD_ING,
+          data: {
+            errMsg: ''
+          }
       })
     })
     .catch((err) => {
@@ -347,7 +369,8 @@ export const ingGetSkus = (ing) => {
       dispatch({
         type: ING_GET_SKUS,
         data: {
-          skus: response.data
+          skus: response.data,
+          errMsg: ''
         }
       })
     })
@@ -378,6 +401,9 @@ export const ingUpdateIng = (ing) => {
     .then((response) => {
       dispatch({
         type: ING_UPDATE_ING,
+        data: {
+          errMsg: ''
+        }
       })
     })
     .catch((err) => {
@@ -407,6 +433,9 @@ export const ingDeleteIng = (ing) => {
     .then((response) => {
       dispatch({
         type: ING_DELETE_ING,
+        data: {
+          errMsg: ''
+        }
       })
     })
     .catch((err) => {
@@ -437,7 +466,7 @@ export const ingDeleteIng = (ing) => {
 export const prdlineSearch = (name) => {
   return (dispatch) => {
     return axios.get(hostname + 'productline/search', {
-      query: {
+      params: {
         name: name
       }
     })
@@ -445,7 +474,8 @@ export const prdlineSearch = (name) => {
       dispatch({
         type: PRDLINE_SEARCH,
         data: {
-          productLines: response.data
+          productLines: response.data,
+          errMsg: ''
         }
       })
     })
@@ -460,10 +490,14 @@ export const prdlineAddPrdline = (prdline) => {
     return axios.post(hostname + 'productline/', prdline)
     .then((response) => {
       dispatch({
-        type: PRDLINE_ADD_PRDLINE
+        type: PRDLINE_ADD_PRDLINE,
+        data: {
+          errMsg: ''
+        }
       })
     })
     .catch((err) => {
+      console.log(err);
       if(err.response.status === 409) {
         dispatch({
           type: PRDLINE_ADD_PRDLINE,
@@ -484,14 +518,19 @@ export const prdlineAddPrdline = (prdline) => {
   }
 }
 
-export const prdlineUpdatePrdline = (oldName, newName) => {
+export const prdlineUpdatePrdline = (prdline) => {
   return (dispatch) => {
-    return axios.put(hostname + 'productline/' + oldName, {
-      name: newName
+    return axios.put(hostname + 'productline/' + prdline.oldname, {
+      name: prdline.name
     })
     .then((response) => {
+      delete prdline.oldname;
       dispatch({
-        type: PRDLINE_UPDATE_PRDLINE
+        type: PRDLINE_UPDATE_PRDLINE,
+        data: {
+          productLineToUpdate: prdline,
+          errMsg: ''
+        }
       })
     })
     .catch((err) => {
@@ -517,10 +556,14 @@ export const prdlineUpdatePrdline = (oldName, newName) => {
 
 export const prdlineDeletePrdline = (prdline) => {
   return (dispatch) => {
-    return axios.get(hostname + 'productline/' + prdline.name)
+    return axios.delete(hostname + 'productline/' + prdline.name)
     .then((response) => {
       dispatch({
-        type: PRDLINE_DELETE_PRDLINE
+        type: PRDLINE_DELETE_PRDLINE,
+        data: {
+          productLineToDelete: prdline,
+          errMsg: ''
+        }
       })
     })
     .catch((err) => {
@@ -573,7 +616,8 @@ export const userCreateAttempt = (dataObj) => {
       dispatch({
         type: USER_CREATE_ATTEMPT,
         data: {
-          isSuccess: true
+          isSuccess: true,
+          errMsg: ''
         }
       });
     })
@@ -610,7 +654,8 @@ export const userLoginAttempt = (dataObj) => {
       dispatch({
         type: USER_LOG_IN_ATTEMPT,
         data: {
-          name: response.data.uname
+          uname: response.data.uname,
+          errMsg: ''
         }
       });
     })
