@@ -31,9 +31,7 @@ router.post('/', function(req, res, next) {
 });
 
 router.put('/:id', function(req, res, next) {
-
     const mg = new ManufacturingGoals();
-    
     mg.update(req.body, req.params.id)
     .then((result) => {
         res.status(200).json({
