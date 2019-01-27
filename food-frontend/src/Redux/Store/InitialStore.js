@@ -24,6 +24,8 @@ export default {
   productline: {
     keyword: "",
     productLines: [],
+    current_page_number: 1,
+    total_pages: 1,
     errMsg: null
   },
   // Persistent data concerning skus view
@@ -32,7 +34,7 @@ export default {
     items: [],
     sortby: null,
     current_page_number: 1,
-    total_pages: 12,
+    total_pages: 1,
     ingredients: [],
     errMsg: null
   }

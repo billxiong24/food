@@ -6,6 +6,7 @@ import { ING_ADD_FILTER, ING_REMOVE_FILTER, ING_SEARCH, ING_SORT_BY,
 import { SKU_ADD_FILTER, SKU_REMOVE_FILTER, SKU_SEARCH, SKU_SORT_BY,
     SKU_GET_ING, SKU_ADD_ING, SKU_DELETE_ING, SKU_ADD_SKU, SKU_UPDATE_SKU,
     SKU_DELETE_SKU } from './SkuActionType';
+import { PRDLINE_ADD_PRDLINE, PRDLINE_UPDATE_PRDLINE, PRDLINE_DELETE_PRDLINE, PRDLINE_SEARCH } from './ProductLineActionTypes';
 import labels from "../../Resources/labels";
 import axios from 'axios';
 
@@ -95,14 +96,14 @@ export const skuGetIng = (sku) => {
     .catch((err) => {
       if(err.response.status === 400) {
         dispatch({
-          type: SKU_ADD_ING,
+          type: SKU_GET_ING,
           data: {
             errMsg: err.response.data.error
           }
         });
       } else {
         dispatch({
-          type: SKU_ADD_ING,
+          type: SKU_GET_ING,
           data: {
             errMsg: 'Something unexpected went wrong'
           }
@@ -162,7 +163,7 @@ export const skuDeleteIng = (sku, ing) => {
         dispatch({
           type: SKU_DELETE_ING,
           data: {
-            errMsg: err.response.data.error
+            errMsg: 'Something unexpected went wrong'
           }
         });
         throw(err.response);
@@ -191,7 +192,7 @@ export const skuAddSku = (sku) => {
         dispatch({
           type: SKU_ADD_SKU,
           data: {
-            errMsg: err.response.data.error
+            errMsg: 'Something unexpected went wrong'
           }
         });
         throw(err.response);
@@ -220,7 +221,7 @@ export const skuUpdateSku = (sku) => {
         dispatch({
           type: SKU_UPDATE_SKU,
           data: {
-            errMsg: err.response.data.error
+            errMsg: 'Something unexpected went wrong'
           }
         });
         throw(err.response);
@@ -426,6 +427,120 @@ export const ingDeleteIng = (ing) => {
         throw(err.response);
       }
     });
+  }
+}
+
+/*
+========================================================( Product Line Action Creators )========================================================
+*/
+
+export const prdlineSearch = (name) => {
+  return (dispatch) => {
+    return axios.get(hostname + 'productline/search', {
+      query: {
+        name: name
+      }
+    })
+    .then(response => {
+      dispatch({
+        type: PRDLINE_SEARCH,
+        data: {
+          productLines: response.data
+        }
+      })
+    })
+    .catch(error => {
+      throw(error);
+    })
+  }
+}
+
+export const prdlineAddPrdline = (prdline) => {
+  return (dispatch) => {
+    return axios.post(hostname + 'productline/', prdline)
+    .then((response) => {
+      dispatch({
+        type: PRDLINE_ADD_PRDLINE
+      })
+    })
+    .catch((err) => {
+      if(err.response.status === 409) {
+        dispatch({
+          type: PRDLINE_ADD_PRDLINE,
+          data: {
+            errMsg: err.response.data.error
+          }
+        })
+      } else {
+        dispatch({
+          type: PRDLINE_ADD_PRDLINE,
+          data: {
+            errMsg: 'Something unexpected went wrong'
+          }
+        });
+        throw(err.response);
+      }
+    });
+  }
+}
+
+export const prdlineUpdatePrdline = (oldName, newName) => {
+  return (dispatch) => {
+    return axios.put(hostname + 'productline/' + oldName, {
+      name: newName
+    })
+    .then((response) => {
+      dispatch({
+        type: PRDLINE_UPDATE_PRDLINE
+      })
+    })
+    .catch((err) => {
+      if(err.response.status === 400) {
+        dispatch({
+          type: PRDLINE_UPDATE_PRDLINE,
+          data: {
+            errMsg: err.response.data.error
+          }
+        })
+      } else {
+        dispatch({
+          type: PRDLINE_UPDATE_PRDLINE,
+          data: {
+            errMsg: 'Something unexpected went wrong'
+          }
+        })
+        throw(err.response);
+      }
+    })
+  }
+}
+
+export const prdlineDeletePrdline = (prdline) => {
+  return (dispatch) => {
+    return axios.get(hostname + 'productline/' + prdline.name)
+    .then((response) => {
+      dispatch({
+        type: PRDLINE_DELETE_PRDLINE
+      })
+    })
+    .catch((err) => {
+      if(err.response.status === 409) {
+        dispatch({
+          type: PRDLINE_DELETE_PRDLINE,
+          data: {
+            errMsg: err.response.data.error
+          }
+        })
+      } else {
+        dispatch({
+          type: PRDLINE_DELETE_PRDLINE,
+          data: {
+            errMsg: 'Something unexpected went wrong'
+          }
+        });
+        throw(err.response);
+      }
+    })
   }
 }
 
