@@ -2,13 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 10.6 (Ubuntu 10.6-0ubuntu0.18.04.1)
--- Dumped by pg_dump version 10.6 (Ubuntu 10.6-0ubuntu0.18.04.1)
-
-DROP DATABASE IF EXISTS SKU_MGMT;
-CREATE DATABASE SKU_MGMT;
-
-\c sku_mgmt
+-- Dumped from database version 9.6.10
+-- Dumped by pg_dump version 9.6.10
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -96,6 +91,41 @@ ALTER TABLE public.ingredients_num_seq OWNER TO billxiong24;
 --
 
 ALTER SEQUENCE public.ingredients_num_seq OWNED BY public.ingredients.num;
+
+
+--
+-- Name: manufacturing_goals; Type: TABLE; Schema: public; Owner: billxiong24
+--
+
+CREATE TABLE public.manufacturing_goals (
+    user_id integer NOT NULL,
+    sku_id integer NOT NULL,
+    case_quantity numeric NOT NULL,
+    id integer NOT NULL
+);
+
+
+ALTER TABLE public.manufacturing_goals OWNER TO billxiong24;
+
+--
+-- Name: manufacturing_goals_id_seq; Type: SEQUENCE; Schema: public; Owner: billxiong24
+--
+
+CREATE SEQUENCE public.manufacturing_goals_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.manufacturing_goals_id_seq OWNER TO billxiong24;
+
+--
+-- Name: manufacturing_goals_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: billxiong24
+--
+
+ALTER SEQUENCE public.manufacturing_goals_id_seq OWNED BY public.manufacturing_goals.id;
 
 
 --
@@ -290,6 +320,13 @@ ALTER TABLE ONLY public.ingredients ALTER COLUMN id SET DEFAULT nextval('public.
 
 
 --
+-- Name: manufacturing_goals id; Type: DEFAULT; Schema: public; Owner: billxiong24
+--
+
+ALTER TABLE ONLY public.manufacturing_goals ALTER COLUMN id SET DEFAULT nextval('public.manufacturing_goals_id_seq'::regclass);
+
+
+--
 -- Name: productline id; Type: DEFAULT; Schema: public; Owner: billxiong24
 --
 
@@ -329,17 +366,64 @@ ALTER TABLE ONLY public.sku_ingred ALTER COLUMN ingred_num SET DEFAULT nextval('
 --
 
 COPY public.ingredients (name, num, vend_info, pkg_size, pkg_cost, comments, id) FROM stdin;
-ing1	44	some vending	11 gallons	15	a comment	3
 459ff\\c	49	some vending	11 gallons	15	a comment	4
 name	6	vending	345lbs	45	helloworld	1
 ing4545	1414	tnoerhr vending	55 gallons	10	a comment	6
 ing24545	1415	tnoerhr vending	55 gallons	10	a comment	7
 name6969	12	\N	55 gallons	10	\N	9
 ing234	47	please	3587 poundsss	15	a comment	5
-nameanother	698	someinfo please	5lbs	45	heldddloworld	2
 ing1992	563	waterino	66	500	\N	11
 namerino	5633	waterinrterro	266	5300	\N	12
+ing6663	3	dalis	55 gallons	10	commenting	13
+ing1112	4	dalis	55 gallons	10	commenting	14
+ing11123	2533	dalis	55 gallons	10	commenting	15
+ing111253	5	dalis	55 gallons	10	commenting	16
+ing190	7	dalis	55 gallons	10	commenting	18
+ing19309	2364	dalis	55 gallons	10	commenting	19
+4398	888	dalis	55 gallons	10	commenting	20
+114	898	dalis	55 gallons	10	commenting	21
+nameinger	8	dalis	55 gallons	10	commenting	22
+name223	9	dalis	55 gallons	10	commenting	23
+name142	10	dalis	55 gallons	10	commenting	24
+namefii	11	dalis	55 gallons	10	commenting	25
+name25	13	dalis	55 gallons	10	commenting	27
+eriuadf	14	tnoerhr vending	55 gallons	10	a comment	28
+adsoidf	15	\N	55 gallons	10	\N	29
+ing22812	16	\N	12	523	\N	30
+newname	17	\N	55 gallons	10	\N	31
+adsfiuer	18	tnoerhr vending	55 gallons	10	a comment	32
+inginginging	19	tnoerhr vending	aer	10	a comment	33
+skuskus	698	someinfo please	5lbs	45	newcomment wiht id	2
 \.
+
+
+--
+-- Name: ingredients_id_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
+--
+
+SELECT pg_catalog.setval('public.ingredients_id_seq', 33, true);
+
+
+--
+-- Name: ingredients_num_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
+--
+
+SELECT pg_catalog.setval('public.ingredients_num_seq', 19, true);
+
+
+--
+-- Data for Name: manufacturing_goals; Type: TABLE DATA; Schema: public; Owner: billxiong24
+--
+
+COPY public.manufacturing_goals (user_id, sku_id, case_quantity, id) FROM stdin;
+\.
+
+
+--
+-- Name: manufacturing_goals_id_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
+--
+
+SELECT pg_catalog.setval('public.manufacturing_goals_id_seq', 2, true);
 
 
 --
@@ -349,7 +433,15 @@ namerino	5633	waterinrterro	266	5300	\N	12
 COPY public.productline (name, id) FROM stdin;
 prod4	2
 prod69	1
+prod51	5
 \.
+
+
+--
+-- Name: productline_id_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
+--
+
+SELECT pg_catalog.setval('public.productline_id_seq', 5, true);
 
 
 --
@@ -366,12 +458,23 @@ sku215423	5	102355	11222	6 lbs sskusku	6	prod69	another comment	8
 sku215423	123	1023553	11222	6 lbs sskusku	6	prod69	another comment	9
 sku1245872	55	2477	1123	5 lbs	4	prod69	a comment	1
 sku69	1234	23116	11222	6 lbs sskusku	6	prod69	another comment	11
-sku690	6	4327	11222	6 lbs sskusku	6	prod69	another comment	12
 sku690	7	1001	65345	12 lbs sy98vv	98	prod4	commentingg	13
 sku690	8	43434	65345	12 lbs sy98vv	98	prod4	commentingg	14
 sku720	9	12345	65653	12 lbs	998	prod4	commentingg	15
 sku1	12	2449	112553	10 lbs	4	prod4	a comment	4
+sku723	11	123345	65653	12 lbs	998	prod4	commentingg	17
+sku723	13	233	65653	12 lbs	998	prod4	commentingg	19
+sku13462	14	3549	65653	12 lbs	998	prod4	\N	20
+skusku	15	3213	65653	12 lbs	998	prod4	\N	21
+sku6543	5727	5555	696	22	3	prod51	\N	22
 \.
+
+
+--
+-- Name: sku_id_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
+--
+
+SELECT pg_catalog.setval('public.sku_id_seq', 22, true);
 
 
 --
@@ -384,63 +487,19 @@ COPY public.sku_ingred (sku_num, ingred_num, quantity) FROM stdin;
 2	47	1
 12	47	1
 12	49	1
-55	44	1
 1	6	1
 2	6	1
 55	6	1
 100	1414	1
 100	6	1
 7	47	1
-7	6	1
-7	49	1
 1	698	1
 2	698	1
 12	698	1
 55	698	1
 7	698	1
+100	5633	2
 \.
-
-
---
--- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: billxiong24
---
-
-COPY public.users (uname, id, password) FROM stdin;
-gordon5	6	$2b$10$nXnMFKFaqLj00/a1Vs7fJ.EWLVdthJqxGa70b9.Y4lKzFeO5FwHo2
-admin	7	$2b$10$QJigJyIlGtU7pYpnRO2foOJOBqeiladsPXeEj4vLxSnAuPQbIdAcS
-fff	8	$2b$10$nraqxUvDeUlU7pWdzXb5z.AOcXb9Z2ipB1uci6NowxFTyhA4GnYaq
-siddarth	9	$2b$10$Pwp3lW15hTFzklMarcAqTuxpe3yHvlXRRKf.xSeuyxzXXTXBU5jlG
-faa	10	$2b$10$uVfDG4KA9rrX7mNdBm8Xt.xAjsFBUITXbyer5z6sOWBh1MAvhhDOq
-111	11	$2b$10$Q9gVDGojNiyrgw63qxpOlOUuaX3mVTSBURhFhMt/l8VxVrfN3X9om
-\.
-
-
---
--- Name: ingredients_id_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
---
-
-SELECT pg_catalog.setval('public.ingredients_id_seq', 12, true);
-
-
---
--- Name: ingredients_num_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
---
-
-SELECT pg_catalog.setval('public.ingredients_num_seq', 2, true);
-
-
---
--- Name: productline_id_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
---
-
-SELECT pg_catalog.setval('public.productline_id_seq', 3, true);
-
-
---
--- Name: sku_id_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
---
-
-SELECT pg_catalog.setval('public.sku_id_seq', 16, true);
 
 
 --
@@ -461,7 +520,21 @@ SELECT pg_catalog.setval('public.sku_ingred_sku_num_seq', 1, false);
 -- Name: sku_num_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
 --
 
-SELECT pg_catalog.setval('public.sku_num_seq', 10, true);
+SELECT pg_catalog.setval('public.sku_num_seq', 15, true);
+
+
+--
+-- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: billxiong24
+--
+
+COPY public.users (uname, id, password) FROM stdin;
+gordon5	6	$2b$10$nXnMFKFaqLj00/a1Vs7fJ.EWLVdthJqxGa70b9.Y4lKzFeO5FwHo2
+admin	7	$2b$10$QJigJyIlGtU7pYpnRO2foOJOBqeiladsPXeEj4vLxSnAuPQbIdAcS
+fff	8	$2b$10$nraqxUvDeUlU7pWdzXb5z.AOcXb9Z2ipB1uci6NowxFTyhA4GnYaq
+siddarth	9	$2b$10$Pwp3lW15hTFzklMarcAqTuxpe3yHvlXRRKf.xSeuyxzXXTXBU5jlG
+faa	10	$2b$10$uVfDG4KA9rrX7mNdBm8Xt.xAjsFBUITXbyer5z6sOWBh1MAvhhDOq
+111	11	$2b$10$Q9gVDGojNiyrgw63qxpOlOUuaX3mVTSBURhFhMt/l8VxVrfN3X9om
+\.
 
 
 --
@@ -493,6 +566,14 @@ ALTER TABLE ONLY public.ingredients
 
 ALTER TABLE ONLY public.ingredients
     ADD CONSTRAINT ingredients_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: manufacturing_goals manufacturing_goals_pkey; Type: CONSTRAINT; Schema: public; Owner: billxiong24
+--
+
+ALTER TABLE ONLY public.manufacturing_goals
+    ADD CONSTRAINT manufacturing_goals_pkey PRIMARY KEY (user_id, sku_id);
 
 
 --
@@ -557,6 +638,22 @@ ALTER TABLE ONLY public.users
 
 ALTER TABLE ONLY public.users
     ADD CONSTRAINT users_uname UNIQUE (uname);
+
+
+--
+-- Name: manufacturing_goals manufacturing_goals_sku_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: billxiong24
+--
+
+ALTER TABLE ONLY public.manufacturing_goals
+    ADD CONSTRAINT manufacturing_goals_sku_id_fkey FOREIGN KEY (sku_id) REFERENCES public.sku(id);
+
+
+--
+-- Name: manufacturing_goals manufacturing_goals_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: billxiong24
+--
+
+ALTER TABLE ONLY public.manufacturing_goals
+    ADD CONSTRAINT manufacturing_goals_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id);
 
 
 --
