@@ -1,12 +1,10 @@
 let express = require('express');
-const ProductLine = require('../app/productline');
+const ManufacturingGoals = require('../app/manufacturing_goal');
 let router = express.Router();
 
 router.get('/search', function(req, res, next) {
-    let name = req.query.name;
-    const prdline = new ProductLine();
-
-    prdline.search(name)
+    const mg = new ManufacturingGoals()
+    mg.search(req.query.user_id)
     .then((result) => {
         res.status(200).json(result.rows);
     })
@@ -17,10 +15,9 @@ router.get('/search', function(req, res, next) {
     });
 });
 
-
 router.post('/', function(req, res, next) {
-    const prdline = new ProductLine();
-    prdline.create(req.body)
+    const mg = new ManufacturingGoals();
+    mg.create(req.body)
     .then((result) => {
         res.status(201).json({
             rowCount: result.rowCount
@@ -35,9 +32,9 @@ router.post('/', function(req, res, next) {
 
 router.put('/:id', function(req, res, next) {
 
-    const prdline = new ProductLine();
+    const mg = new ManufacturingGoals();
     
-    prdline.update(req.body, req.params.id)
+    mg.update(req.body, req.params.id)
     .then((result) => {
         res.status(200).json({
             rowCount: result.rowCount
@@ -51,9 +48,9 @@ router.put('/:id', function(req, res, next) {
 });
 
 router.delete('/:id', function(req, res, next) {
-    const prdline = new ProductLine();
+    const mg = new ManufacturingGoals();
 
-    prdline.remove(req.params.id)
+    mg.remove(req.params.id)
     .then((result) => {
         res.status(200).json({
             rowCount: result.rowCount
