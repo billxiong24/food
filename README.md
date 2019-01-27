@@ -46,7 +46,7 @@ Searches for "sku", which must contain one of "ing1" or "ing2", and must be in p
     
 ### Retrieve ingredients of a SKU    
   
-* Given a case_upc of a SKU, fetch ingredients associated with that SKU.    
+* Given ID of a SKU, fetch ingredients associated with that SKU.    
 **URL:** ```GET /sku/:id/ingredients```      
 **PARAMETERS**:     
       
@@ -141,11 +141,11 @@ Creates SKU with those parameters.
   
 | Parameter      | Description | Type |    
 | ----------- | ----------- |---------    
-| case_upc | **Required**. case UPC of SKU. URL Parameter. | integer |       
+| id | **Required**. ID of SKU. URL Parameter. | integer |       
     
 * **EXAMPLE**     
 ```DELETE /sku/643```    
-deletes a SKU with case_upc 643.       
+deletes a SKU with id 643.       
     
   
 ### Delete ingredients from a SKU      
@@ -160,7 +160,7 @@ deletes a SKU with case_upc 643.
   
   
 * **EXAMPLE**     
-```DELETE /643/ingredients```    
+```DELETE /sku/643/ingredients```    
 With request body:    
 ```    
 {    
@@ -215,7 +215,7 @@ With Request body:
 ```  
 Creates an Ingredient with the specified parameters.    
 
-### Get SKU's with an ingredient
+### Get SKU's associated with an ingredient
 * Given an ingredient name, get all SKU's that have that ingredient.   
 **URL**: ```GET /ingredients/:id/skus```   
 **PARAMETERS**   
