@@ -29,8 +29,8 @@ class ProductLine extends CRUD {
         return super.insert(query, dataObj, "Error creating product line: product line exists.");
     }
 
-    update(dataObj, oldPrimaryKey) {
-        return super.change(dataObj, oldPrimaryKey, "name");
+    update(dataObj, id) {
+        return super.change(dataObj, id, "id");
     }
 
     search(name) {
@@ -38,18 +38,18 @@ class ProductLine extends CRUD {
         return db.execSingleQuery("SELECT * FROM " + this.tableName + " WHERE name LIKE $1", [name]);
     }
 
-    remove(name) {
+    remove(id) {
         //if SKUs have this product line, we should not be able to remove it
-        return db.execSingleQuery("SELECT * FROM sku  WHERE sku.prd_line=$1 LIMIT 1", [name])
+        return db.execSingleQuery("SELECT * FROM sku WHERE prd_line=(SELECT name FROM productline WHERE id=$1) LIMIT 1", [id])
         .then((res)=> {
             if(res.rows.length > 0) {
-                return Promise.reject("Cannot remove " + name + ": SKU's are assigned to this product line.");
+                return Promise.reject("Cannot remove " + id + ": SKU's are assigned to this product line.");
             }
             return res;
         })
         .then((res)=> {
             //verify that no SKUs depend on this product line
-            return db.execSingleQuery("DELETE FROM " + this.tableName + " WHERE name=$1", [name]);
+            return db.execSingleQuery("DELETE FROM " + this.tableName + " WHERE id=$1", [id]);
         });
     }
 }

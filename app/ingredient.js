@@ -26,9 +26,9 @@ class Ingredient extends CRUD {
         return Promise.reject("No valid name or num provided.");
     }
 
-    getSkus(name) {
-        let query =  "SELECT DISTINCT sku.* FROM sku INNER JOIN sku_ingred ON sku.num = sku_ingred.sku_num INNER JOIN ingredients ON sku_ingred.ingred_num=ingredients.num WHERE ingredients.name=$1";
-        return db.execSingleQuery(query, [name]);
+    getSkus(id) {
+        let query =  "SELECT DISTINCT sku.* FROM sku INNER JOIN sku_ingred ON sku.num = sku_ingred.sku_num INNER JOIN ingredients ON sku_ingred.ingred_num=ingredients.num WHERE ingredients.id=$1";
+        return db.execSingleQuery(query, [id]);
     }
 
     //TODO use squel to generate this query
@@ -97,15 +97,15 @@ class Ingredient extends CRUD {
         return super.insert(query, dataObj, "Entry with name or num exists already.");
     }
 
-    update(dataObj, oldName) {
-        return super.change(dataObj, oldName, "name");
+    update(dataObj, id) {
+        return super.change(dataObj, id, "id");
     }
 
-    remove(name) {
-        if(!name) {
-            return Promise.reject("Bad name.");
+    remove(id) {
+        if(!id) {
+            return Promise.reject("Bad id.");
         }
-        return db.execSingleQuery("DELETE FROM " + this.tableName + " WHERE name = $1", [name]);
+        return db.execSingleQuery("DELETE FROM " + this.tableName + " WHERE id = $1", [id]);
     }
 }
 
