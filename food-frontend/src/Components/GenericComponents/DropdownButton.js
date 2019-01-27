@@ -34,53 +34,33 @@ class DropdownButton extends Component {
 
     constructor(props) {
         super(props);
+               super(props);
+        let {items, selected_index} = this.props
+        let list = []
+        for (var i = 0; i < items.length; i++) {
+            var item = items[i];
+            var obj = {
+                id:i,
+                title: item,
+                selected: false,
+                key: 'list' 
+            };
+            list.push(obj);
+       }
         this.state = {
-            location: [
-                {
-                    id: 0,
-                    title: 'New York',
-                    selected: false,
-                    key: 'location'
-                },
-                {
-                    id: 1,
-                    title: 'Dublin',
-                    selected: false,
-                    key: 'location'
-                },
-                {
-                    id: 2,
-                    title: 'Istanbul',
-                    selected: false,
-                    key: 'location'
-                }
-            ],
-            fruit: [
-                {
-                    id: 0,
-                    title: 'Apple',
-                    selected: false,
-                    key: 'fruit'
-                },
-                {
-                    id: 1,
-                    title: 'Orange',
-                    selected: false,
-                    key: 'fruit'
-                },
-                {
-                    id: 2,
-                    title: 'Strawberry',
-                    selected: false,
-                    key: 'fruit'
-                }
-            ]
+            list: list
         }
+        this.resetThenSet(selected_index, 'list')
     }
 
     resetThenSet = (id, key) => {
-        let temp = JSON.parse(JSON.stringify(this.state[key]));
-        temp.forEach(item => item.selected = false);
+        console.log(key)
+        console.log(this.state)
+        let temp = this.state[key];
+        console.log(temp)
+        for (var i = 0; i < temp.length; i++) {
+            temp[i].selected = false;
+       }
         temp[id].selected = true;
         this.setState({
             [key]: temp
@@ -88,17 +68,15 @@ class DropdownButton extends Component {
     }
 
     render() {
-        const { classes } = this.props;
-        // console.log(this.props)
+        const { classes, items, selected_index } = this.props;
         return (
             <Dropdown
-                title="Select fruit"
-                list={this.state.fruit}
+                title={this.state.list[selected_index].title}
+                list={this.state.list}
                 resetThenSet={this.resetThenSet}
             />
         );
     }
-
 }
 
 export default withStyles(styles)(DropdownButton);

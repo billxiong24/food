@@ -184,10 +184,16 @@ class IntegrationReactSelect extends React.Component {
   render() {
     const { classes, theme } = this.props;
 
-    const suggestions = this.props.dummy_ingredients.map(suggestion => ({
-      value: suggestion.name,
-      label: suggestion.name,
-    }));
+    const suggestions = [];
+
+    if('items' in this.props){
+      suggestions  = this.props.items.map(suggestion => ({
+        value: suggestion.name,
+        label: suggestion.name,
+      })); 
+    }
+
+    
 
     const selectStyles = {
       input: base => ({
@@ -221,9 +227,5 @@ IntegrationReactSelect.propTypes = {
   theme: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = state => {
-  return {
-    dummy_ingredients: state.dummy_ingredients
-  };
-};
-export default connect(mapStateToProps,null)(withStyles(styles, { withTheme: true })(IntegrationReactSelect));
+
+export default connect(null,null)(withStyles(styles, { withTheme: true })(IntegrationReactSelect));

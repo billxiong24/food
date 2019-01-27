@@ -22,6 +22,12 @@ import back from '../../Resources/Images/baseline-navigate_before-24px.svg'
 import next from '../../Resources/Images/baseline-navigate_next-24px.svg'
 import SimpleCard from '../GenericComponents/SimpleCard';
 import FilterItem from './FilterItem';
+import FilterList from './FilterList';
+import IngredientList from './IngredientList';
+import IntegrationAutosuggest from '../GenericComponents/IntegrationAutosuggest';
+import FilterDropdown from './FilterDropdown';
+import SortByDropdown from './SortByDropdown';
+import PageSelector from './PageSelector';
 
 const styles = {
   card: {
@@ -63,7 +69,7 @@ const styles = {
     marginTop: 5,
     marginBottom: 5,
     padding: 10,
-    backgroundColor: 'purple',
+    backgroundColor: '#6F3AD3',
     flexDirection: 'column',
     display: 'flex',
     borderRadius: 12
@@ -71,7 +77,11 @@ const styles = {
   active_filters_container_title: {
     color: 'white',
     fontSize: '24px',
-    float: 'left'
+    float: 'left',
+    fontFamily: 'Open Sans',
+    fontWeight: 300,
+    textAlign: 'left',
+    margin: 8
   },
   ingredients_list_divider: {
     width: '90%',
@@ -115,35 +125,19 @@ class IngredientsPage extends Component {
           <Typography className={classes.active_filters_container_title}>
             Active Filters
           </Typography>
-          <div className ={classes.filters_list}>
-            <ItemList items={dummy_ingredients}>
-              <FilterItem></FilterItem>
-            </ItemList>
-          </div>
+          <FilterList></FilterList>
         </Card>
         <div className={classes.ingredients_list_container}>
           <div className={classes.ingredients_list}>
             <div className={classes.ingredients_search_bar}>
-              <IntegrationReactSelect></IntegrationReactSelect>
-              <DropdownButton></DropdownButton>
-              <DropdownButton></DropdownButton>
+              <IntegrationAutosuggest></IntegrationAutosuggest>
+              <FilterDropdown></FilterDropdown>
+              <SortByDropdown></SortByDropdown>
             </div>
-            <ItemList items={dummy_ingredients}>
-              <SimpleCard></SimpleCard>
-            </ItemList>
+            <IngredientList></IngredientList>
           </div>
           <div variant="inset" className={classes.ingredients_list_divider} />
-          <div className={classes.page_selection_container}>
-            <IconButton color="secondary" className={classes.button} aria-label="Add an alarm">
-              <img src={back}/>
-            </IconButton>
-            <Typography className={classes.page_number_text}>
-              Page 1 of 12
-            </Typography>
-            <IconButton color="secondary" className={classes.button} aria-label="Add an alarm">
-              <img src={next}/>
-            </IconButton>
-          </div>
+          <PageSelector></PageSelector>
         </div>
       </div>
     );

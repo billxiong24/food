@@ -1,14 +1,20 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
+import { connect } from 'react-redux';
+import FilterItem from './FilterItem';
+import ItemList from '../GenericComponents/ItemList';
 
 const styles = {
-
+    filters_list:{
+        overflow: 'auto'
+    }
 };
 
 class FilterList extends Component {
 
-    constructor(props){
+    constructor(props) {
         super(props);
+        
     }
 
 
@@ -17,10 +23,13 @@ class FilterList extends Component {
     }
 
     render() {
-        const { classes } = this.props
+        const { classes, filters } = this.props
+        console.log(filters)
         return (
-            <div>
-
+            <div className={classes.filters_list}>
+                <ItemList items={filters}>
+                    <FilterItem></FilterItem>
+                </ItemList>
             </div>
         );
     }
@@ -28,7 +37,7 @@ class FilterList extends Component {
 
 const mapStateToProps = state => {
     return {
-        
+        filters:state.ingredients.filters
     };
 };
 
@@ -37,4 +46,4 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default withStyles(styles)(connect(mapStateToProps,mapDispatchToProps)(FilterList));
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(FilterList));

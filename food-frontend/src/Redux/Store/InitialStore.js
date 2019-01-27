@@ -1,4 +1,4 @@
-import { dummy_filters, dummy_ingredients } from "./DummyData";
+import { dummy_filters, dummy_ingredients, dummy_ingredient_names } from "./DummyData";
 import labels from "../../Resources/labels";
 
 export default {
@@ -14,7 +14,9 @@ export default {
   ingredients: {
     filters: dummy_filters,
     items: dummy_ingredients,
+    ingredient_names: dummy_ingredient_names,
     sortby: labels.ingredients.sort_by.INGREDIENT_NAME,
+    filter_type: labels.ingredients.filter_type.SKU_NAME,
     current_page_number: 1,
     total_pages: 12,
     cards: []
