@@ -102,11 +102,6 @@ router.get('/search', function(req, res, next) {
     });
 });
 
-//TODO rendering page
-router.get('/:name', function(req, res, next) {
-    res.status(200).json({});
-});
-
 router.post('/', function(req, res, next) {
     //{
         //name: req.body.name,
@@ -120,7 +115,9 @@ router.post('/', function(req, res, next) {
     ing.create(req.body)
     .then((result) => {
         //HTTP 201 is successful addition
-        res.status(201).json({});
+        res.status(201).json({
+            rowCount: result.rowCount
+        });
     })
     .catch((err) => {
         //HTTP 409 is conflict status
@@ -130,16 +127,16 @@ router.post('/', function(req, res, next) {
     });
 });
 
-router.get('/:name/skus', function(req, res, next) {
-    let name = req.params.name;
-    if(!name) {
+router.get('/:id/skus', function(req, res, next) {
+    let id = req.params.id;
+    if(!id) {
         return res.status(400).json({
             error: "Malformed URL."
         });
     }
 
     const ing = new Ingredient();
-    ing.getSkus(name)
+    ing.getSkus(id)
     .then((result) => {
         res.status(200).json(result.rows);
     })
@@ -150,7 +147,7 @@ router.get('/:name/skus', function(req, res, next) {
     });
 });
 
-router.put('/:name', function(req, res, next) {
+router.put('/:id', function(req, res, next) {
 
     if(Object.keys(req.body).length === 0) {
         return req.json({
@@ -158,7 +155,7 @@ router.put('/:name', function(req, res, next) {
         });
     }
     const ing = new Ingredient();
-    ing.update(req.body, req.params.name)
+    ing.update(req.body, req.params.id)
     .then((result) => {
         res.status(200).json({
             rowCount: result.rowCount
@@ -171,10 +168,10 @@ router.put('/:name', function(req, res, next) {
     });
 });
 
-router.delete('/:name', function(req, res, next) {
-    let name = req.params.name;
+router.delete('/:id', function(req, res, next) {
+    let id = req.params.id;
     const ing = new Ingredient();
-    ing.remove(name)
+    ing.remove(id)
     .then((result) => {
         res.status(200).json({
             rowCount: result.rowCount

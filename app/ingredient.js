@@ -26,9 +26,9 @@ class Ingredient extends CRUD {
         return Promise.reject("No valid name or num provided.");
     }
 
-    getSkus(name) {
-        let query =  "SELECT DISTINCT sku.* FROM sku INNER JOIN sku_ingred ON sku.num = sku_ingred.sku_num INNER JOIN ingredients ON sku_ingred.ingred_num=ingredients.num WHERE ingredients.name=$1";
-        return db.execSingleQuery(query, [name]);
+    getSkus(id) {
+        let query =  "SELECT DISTINCT sku.* FROM sku INNER JOIN sku_ingred ON sku.num = sku_ingred.sku_num INNER JOIN ingredients ON sku_ingred.ingred_num=ingredients.num WHERE ingredients.id=$1";
+        return db.execSingleQuery(query, [id]);
     }
 
     //TODO use squel to generate this query
@@ -49,18 +49,19 @@ class Ingredient extends CRUD {
                 //query += " OR ";
             //}
         //}
+        //"select DISTINCT ingredients.* from ingredients LEFT JOIN sku_ingred ON (ingredients.num=sku_ingred.ingred_num) LEFT JOIN sku ON (sku.num=sku_ingred.sku_num) WHERE ingredients.name LIKE '%ing%'"
 
         let q = squel.select()
-        .from('sku')
+        .from('ingredients')
         .field("ingredients.*")
-        .left_join("sku_ingred", null, "sku.num=sku_ingred.sku_num")
-        .left_join("ingredients", null, "sku_ingred.ingred_num=ingredients.num")
+        .left_join("sku_ingred", null, "ingredients.num=sku_ingred.ingred_num")
+        .left_join("sku", null, "sku_ingred.sku_num=sku.num")
         .where("ingredients.name LIKE ? ", searchQuery);
 
         if(skus.length > 0) {
             let expr = squel.expr();
             for(let i = 0; i < skus.length; i++) {
-                expr = expr.or("sku.name=?",skus[i]);
+                expr = expr.or("sku.case_upc=?",skus[i]);
             }
             q = q.where(
                 expr
@@ -96,15 +97,15 @@ class Ingredient extends CRUD {
         return super.insert(query, dataObj, "Entry with name or num exists already.");
     }
 
-    update(dataObj, oldName) {
-        return super.change(dataObj, oldName, "name");
+    update(dataObj, id) {
+        return super.change(dataObj, id, "id");
     }
 
-    remove(name) {
-        if(!name) {
-            return Promise.reject("Bad name.");
+    remove(id) {
+        if(!id) {
+            return Promise.reject("Bad id.");
         }
-        return db.execSingleQuery("DELETE FROM " + this.tableName + " WHERE name = $1", [name]);
+        return db.execSingleQuery("DELETE FROM " + this.tableName + " WHERE id = $1", [id]);
     }
 }
 

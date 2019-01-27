@@ -70,7 +70,7 @@ class LoginPage extends Component {
     e.preventDefault();
     this.props.userLoginAttempt(Object.assign({},this.state))
     .then(()=>{
-      if(!this.props.users.uname){
+      if(this.props.users.uname){
         this.props.routeToPage(0);
       }
     })

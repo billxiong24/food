@@ -33,16 +33,16 @@ router.get('/search', function(req, res, next) {
     });
 });
 
-router.get('/:case_upc/ingredients', function(req, res, next) {
-    let case_upc = req.params.case_upc;
-    if(!case_upc) {
+router.get('/:id/ingredients', function(req, res, next) {
+    let id = req.params.id;
+    if(!id) {
         return res.status(400).json({
             error: "Malformed URL."
         });
     }
 
     const sku = new Sku();
-    sku.getIngredients(case_upc)
+    sku.getIngredients(id)
     .then((result) => {
         res.status(200).json(result.rows);
     })
@@ -54,8 +54,7 @@ router.get('/:case_upc/ingredients', function(req, res, next) {
 });
 
 
-
-router.post('/:case_upc/ingredients', function(req, res, next) {
+router.post('/:id/ingredients', function(req, res, next) {
     let ingredients = null;
     try {
         ingredients = JSON.parse(req.body.ingredients);
@@ -66,16 +65,18 @@ router.post('/:case_upc/ingredients', function(req, res, next) {
         });
     }
 
-    let case_upc = req.params.case_upc;
-    if(!case_upc) {
+    let id = req.params.id;
+    if(!id) {
         return res.status(400).json({
             error: "Malformed URL."
         });
     }
     const sku = new Sku();
-    sku.addIngredients(case_upc, ingredients)
+    sku.addIngredients(id, ingredients)
     .then((result) => {
-        res.status(201).json({});
+        res.status(201).json({
+            rowCount: result.rowCount
+        });
     })
     .catch((err) => {
         res.status(409).json({
@@ -88,7 +89,9 @@ router.post('/', function(req, res, next) {
     const sku = new Sku();
     sku.create(req.body)
     .then((result) => {
-        res.status(201).json({});
+        res.status(201).json({
+            rowCount: result.rowCount
+        });
     })
     .catch((err) => {
         res.status(409).json({
@@ -97,8 +100,8 @@ router.post('/', function(req, res, next) {
     });
 });
 
-router.put('/:case_upc', function(req, res, next) {
-    if(!req.params.case_upc) {
+router.put('/:id', function(req, res, next) {
+    if(!req.params.id) {
         return res.status(400).json({
             error: "Malformed URL."
         });
@@ -111,7 +114,7 @@ router.put('/:case_upc', function(req, res, next) {
     }
 
     const sku = new Sku();
-    sku.update(req.body, req.params.case_upc)
+    sku.update(req.body, req.params.id)
     .then((result) => {
         res.status(200).json({
             rowCount: result.rowCount
@@ -124,14 +127,14 @@ router.put('/:case_upc', function(req, res, next) {
     });
 });
 
-router.delete('/:case_upc', function(req, res, next) {
-    if(!req.params.case_upc) {
+router.delete('/:id', function(req, res, next) {
+    if(!req.params.id) {
         return res.status(400).json({
             error: "Malformed URL."
         });
     }
     const sku = new Sku();
-    sku.remove(req.params.case_upc)
+    sku.remove(req.params.id)
     .then((result) => {
         res.status(200).json({
             rowCount: result.rowCount
@@ -144,19 +147,24 @@ router.delete('/:case_upc', function(req, res, next) {
     });
 });
 
-router.delete('/:case_upc/ingredients', function(req, res, next) {
-    if(!req.params.case_upc) {
+router.delete('/:id/ingredients', function(req, res, next) {
+    if(!req.params.id) {
         return res.status(400).json({
             error: "Malformed URL."
         });
     }
-    if(!req.body.ingredients) {
+
+    let ingredients = req.body.ingredients;
+    if(!ingredients) {
         return res.status(200).json({
             rowCount: 0
         });
     }
+    else if (!Array.isArray(ingredients)) {
+        ingredients = [ingredients];
+    }
     const sku = new Sku();
-    sku.removeIngredients(req.params.case_upc, req.body.ingredients)
+    sku.removeIngredients(req.params.id, ingredients)
     .then((result) => {
         res.status(200).json({
             rowCount: result.rowCount

@@ -4,12 +4,12 @@ import labels from "../../Resources/labels";
 export default {
   // For now, only persistent data about users is who is actually logged in if there is someone logged in
   users: {
-    name: null,
+    uname: null,
     isSuccess: false,
     errMsg: null
   },
   // Persistent data concerning routing
-  route: 0,
+  route: 2,
   // Persistent data concnerning ingredients view
   ingredients: {
     filters: dummy_filters,
@@ -19,6 +19,25 @@ export default {
     filter_type: labels.ingredients.filter_type.SKU_NAME,
     current_page_number: 1,
     total_pages: 12,
-    cards: []
+    skus: [],
+    errMsg: null
+  },
+  // Persistent data concerning productline view
+  productLine: {
+    keyword: "",
+    productLines: [],
+    current_page_number: 1,
+    total_pages: 1,
+    errMsg: null
+  },
+  // Persistent data concerning skus view
+  skus: {
+    filters: [],
+    items: [],
+    sortby: null,
+    current_page_number: 1,
+    total_pages: 1,
+    ingredients: [],
+    errMsg: null
   }
 }

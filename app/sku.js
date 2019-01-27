@@ -27,8 +27,8 @@ class SKU extends CRUD {
         return Promise.reject("No valid name or num provided.");
     } 
 
-    getSKUNumIfExists(case_upc) {
-        return db.execSingleQuery("SELECT num FROM sku WHERE case_upc=$1", [case_upc]).then(function(res) {
+    getSKUNumIfExists(id) {
+        return db.execSingleQuery("SELECT num FROM sku WHERE id=$1", [id]).then(function(res) {
             if(res.rows.length == 0)
                 return Promise.reject("This SKU does not exist.");
             return res.rows[0].num;
@@ -36,9 +36,9 @@ class SKU extends CRUD {
     }
 
     //when creating sku, we want to add ingredients.
-    addIngredients(case_upc, ingredients) {
+    addIngredients(id, ingredients) {
         let query = "";
-        return this.getSKUNumIfExists(case_upc)
+        return this.getSKUNumIfExists(id)
         .then(function(sku_num) {
             for(let i = 0; i < ingredients.length; i++) {
                 let obj = ingredients[i];
@@ -47,7 +47,17 @@ class SKU extends CRUD {
                 obj.sku_num = sku_num;
             }
 
-            query = squel.insert()
+            squel.onConflictInsert = function(options) {
+              return squel.insert(options, [
+                  new squel.cls.StringBlock(options, 'INSERT'),
+                  new squel.cls.IntoTableBlock(options),
+                  new squel.cls.InsertFieldValueBlock(options),
+                  new squel.cls.WhereBlock(options),
+                  new squel.cls.StringBlock(options, 'ON CONFLICT DO NOTHING')
+                ]);
+            };
+
+            query = squel.onConflictInsert()
             .into('sku_ingred')
             .setFieldsRows(ingredients)
             .toString();
@@ -57,9 +67,9 @@ class SKU extends CRUD {
         });
     }
 
-    removeIngredients(case_upc, ingreds) {
+    removeIngredients(id, ingreds) {
         //let query = "DELETE FROM sku_ingred WHERE case_upc=$1 AND ingred_num=$2";
-        return this.getSKUNumIfExists(case_upc)
+        return this.getSKUNumIfExists(id)
         .then(function(res) {
             let expr = squel.expr();
             for(let i = 0; i < ingreds.length; i++) {
@@ -75,9 +85,9 @@ class SKU extends CRUD {
         });
     }
 
-    getIngredients(case_upc) {
-        let query = "SELECT DISTINCT ingredients.* FROM sku INNER JOIN sku_ingred ON sku.num = sku_ingred.sku_num INNER JOIN ingredients ON sku_ingred.ingred_num=ingredients.num WHERE sku.case_upc=$1";
-        return db.execSingleQuery(query, [case_upc]);
+    getIngredients(id) {
+        let query = "SELECT DISTINCT ingredients.* FROM sku INNER JOIN sku_ingred ON sku.num = sku_ingred.sku_num INNER JOIN ingredients ON sku_ingred.ingred_num=ingredients.num WHERE sku.id=$1";
+        return db.execSingleQuery(query, [id]);
     }
 
     //TODO use squel to generate this query
@@ -171,27 +181,27 @@ class SKU extends CRUD {
         });
     }
 
-    update(dataObj, oldName) {
+    update(dataObj, id) {
         if(!dataObj.prd_line) {
-            return super.change(dataObj, oldName, "case_upc");
+            return super.change(dataObj, id, "id");
         }
         else {
             return this.checkProductLineExists(dataObj.prd_line)
             .then((res) => {
-                return super.change(dataObj, oldName, "case_upc");
+                return super.change(dataObj, id, "id");
             });
         }
     }
 
-    remove(case_upc) {
-        if(!case_upc) {
+    remove(id) {
+        if(!id) {
             return Promise.reject("Bad num.");
         }
-        return db.execSingleQuery("DELETE FROM " + this.tableName + " WHERE case_upc = $1", [case_upc]);
+        return db.execSingleQuery("DELETE FROM " + this.tableName + " WHERE id = $1", [id]);
     }
 }
 
-const sku = new SKU();
+//const sku = new SKU();
 
 //sku.removeIngredient(5043, 44).then(function(res) {
     //console.log(res);
@@ -232,8 +242,7 @@ const sku = new SKU();
 
 //sku.create({
     //name: "sku723", 
-    //adfy: "agiuiufkgfgc",
-    //case_upc: 123345, 
+    //case_upc: 233, 
     //unit_upc: 65653, 
     //unit_size: "12 lbs", 
     //count_per_case: 998,

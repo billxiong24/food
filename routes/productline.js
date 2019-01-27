@@ -18,16 +18,14 @@ router.get('/search', function(req, res, next) {
     });
 });
 
-//TODO rendering page
-router.get('/:name', function(req, res, next) {
-    res.status(200).json({});
-});
 
 router.post('/', function(req, res, next) {
     const prdline = new ProductLine();
     prdline.create(req.body)
     .then((result) => {
-        res.status(201).json({});
+        res.status(201).json({
+            rowCount: result.rowCount
+        });
     })
     .catch((err) => {
         res.status(409).json({
@@ -36,17 +34,11 @@ router.post('/', function(req, res, next) {
     });
 });
 
-router.put('/:name', function(req, res, next) {
-
-    if(!req.body.name) {
-        return res.status(400).send({
-            error: "Must include name parameter in PUT request."
-        });
-    }
+router.put('/:id', function(req, res, next) {
 
     const prdline = new ProductLine();
     
-    prdline.update(req.body, req.params.name)
+    prdline.update(req.body, req.params.id)
     .then((result) => {
         res.status(200).json({
             rowCount: result.rowCount
@@ -59,10 +51,10 @@ router.put('/:name', function(req, res, next) {
     });
 });
 
-router.delete('/:name', function(req, res, next) {
+router.delete('/:id', function(req, res, next) {
     const prdline = new ProductLine();
 
-    prdline.remove(req.params.name)
+    prdline.remove(req.params.id)
     .then((result) => {
         res.status(200).json({
             rowCount: result.rowCount
