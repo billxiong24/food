@@ -370,8 +370,8 @@ With request body
 }
 ```   
 Updates manufacturing goal "56" to be SKU with id "5", and case quantity 45.    
-   
-   
+     
+    
 ### DELETE manufacturing goal for user
 * Delete a manufacturing goal with a given id.   
 **URL**: ```DELETE /manufacturing_goals/:id```    
@@ -386,3 +386,20 @@ Updates manufacturing goal "56" to be SKU with id "5", and case quantity 45.
 ```DELETE /manufacturing_goals/56```     
   
 Deletes manufacturing goal with ID 56.   
+   
+### GET manufacturing calculations    
+* GET manufacturing calculations for a given user id and sku id   
+**URL**: ```GET /manufacturing_goals/calculations```    
+**PARAMETERS**    
+    
+| Parameter      | Description | Type |    
+| ----------- | ----------- |---------|    
+| sku_id | **Required**. ID of SKU to perform calculations on. | Integer |    
+| user_id | **Required**. ID of user. | Integer |    
+    
+   
+* **EXAMPLE**     
+```GET /manufacturing_goals/calculations?sku_id=6&user_id=5```     
+   
+Perform and retrieve calculations for sku_id of 6 and user_id of 5. This multiplies all SKU's ingredients by the   
+manufacturing goal's case quantity.  
