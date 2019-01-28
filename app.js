@@ -10,6 +10,7 @@ var usersRouter = require('./routes/users');
 var ingredientsRouter = require('./routes/ingredients');
 var productlineRouter = require('./routes/productline');
 var skuRouter = require('./routes/sku');
+var mgRouter = require('./routes/manufacturing_goals');
 
 var http = require('http');
 const PORT = 8000;
@@ -31,6 +32,7 @@ app.use('/users', usersRouter);
 app.use('/ingredients', ingredientsRouter);
 app.use('/productline', productlineRouter);
 app.use('/sku', skuRouter);
+app.use('/manufacturing_goals', mgRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
