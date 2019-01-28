@@ -2,7 +2,7 @@ let express = require('express');
 const ManufacturingGoals = require('../app/manufacturing_goal');
 let router = express.Router();
 
-router.get('/search', function(req, res, next) {
+router.get('/', function(req, res, next) {
     const mg = new ManufacturingGoals()
     mg.search(req.query.user_id)
     .then((result) => {

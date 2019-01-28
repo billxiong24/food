@@ -304,7 +304,7 @@ With request body
 Updates a product line whose name id is 25, to "prod1".   
 
 ### Delete a product line
-* Delete a product line who has a given name   
+* Delete a product line who has a given id.   
 **URL**: ```DELETE /productline/:id```    
 **PARAMETERS**   
   
@@ -315,4 +315,74 @@ Updates a product line whose name id is 25, to "prod1".
 * **EXAMPLE**     
 ```DELETE /productline/25```     
 Deletes a product line whose id is 25. If product line has SKUs, will be unable to delete.  
+  
 
+## Manufacturing Goals
+  
+### Get manufacturing goals for a user
+* Get all manufacturing goals for a given user id.   
+**URL**: ```GET /manufacturing_goals```    
+**PARAMETERS**   
+  
+| Parameter      | Description | Type |    
+| ----------- | ----------- |---------|    
+| user_id | **Required**. URL Parameter. ID of user to search for. | Integer |                
+
+* **EXAMPLE**     
+```GET /manufacturing_goals?user_id=52```     
+Retrieve all manufacturing goals for user with id 52.  
+
+### Create manufacturing goal for user
+* Create a new manufacturing goal for a user with some ID.   
+**URL**: ```POST /manufacturing_goals```    
+**PARAMETERS**   
+  
+| Parameter      | Description | Type |    
+| ----------- | ----------- |---------|    
+| user_id | **Required**. ID of user that this goal belongs to. | Integer |       
+| sku_id | **Required**. ID of sku. | Integer | 
+| case_quantity | **Required**. Number of cases. | Integer | 
+
+* **EXAMPLE**     
+```POST /manufacturing_goals```     
+With request body  
+```  
+{  
+    sku_id: 2,
+    user_id: 3,
+    case_quantity: 12
+}
+```   
+Creates a manufacturing goal for user "3" for SKU "2" with 12 cases.   
+   
+### Update manufacturing goal for user
+* Update parameters of manufacturing goal assigned to some user.   
+**URL**: ```PUT /manufacturing_goals/:id```    
+**PARAMETERS**  
+Same as ```POST /manufacturing_goals```, except for ```id```, which is the id of the manufacturing goal.
+* **EXAMPLE**     
+```PUT /manufacturing_goals/56```     
+With request body  
+```  
+{  
+    sku_id: 5,
+    case_quantity: 45
+}
+```   
+Updates manufacturing goal "56" to be SKU with id "5", and case quantity 45.    
+   
+   
+### DELETE manufacturing goal for user
+* Delete a manufacturing goal with a given id.   
+**URL**: ```DELETE /manufacturing_goals/:id```    
+**PARAMETERS**   
+   
+| Parameter      | Description | Type |    
+| ----------- | ----------- |---------|    
+| id | **Required**. URL Parameter. ID of manufacturing goal to delete. | Integer |    
+   
+  
+* **EXAMPLE**     
+```DELETE /manufacturing_goals/56```     
+  
+Deletes manufacturing goal with ID 56.   
