@@ -83,6 +83,8 @@ router.get('/dummyData', function(req, res, next) {
 router.get('/search', function(req, res, next) {
     let name = req.query.name;
     let list = req.query.skus;
+    let orderKey = req.query.orderKey;
+    let asc = req.query.asc == "1"; 
 
     const ing = new Ingredient();
     if(!list) {
@@ -92,7 +94,7 @@ router.get('/search', function(req, res, next) {
         list = [list];
     }
 
-    ing.search(name, list).then((result) => {
+    ing.search(name, list, orderKey ? orderKey : null, asc).then((result) => {
         res.json(result.rows);
     })
     .catch((err) => {

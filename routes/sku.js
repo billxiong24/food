@@ -6,6 +6,8 @@ router.get('/search', function(req, res, next) {
     let name = req.query.name;
     let ingredients = req.query.ingredients;
     let prodlines = req.query.prodlines;
+    let orderKey = req.query.orderKey;
+    let asc = req.query.asc == "1"; 
 
     if(!ingredients) {
         ingredients = [];
@@ -22,7 +24,7 @@ router.get('/search', function(req, res, next) {
     }
     const sku = new Sku();
 
-    sku.search(name, ingredients, prodlines)
+    sku.search(name, ingredients, prodlines, orderKey ? orderKey : null, asc)
     .then((result) => {
         res.status(200).json(result.rows);
     })
