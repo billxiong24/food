@@ -262,10 +262,12 @@ Deletes ingredient with id 253. This also removes the ingredient from any SKU's 
 | Parameter      | Description | Type |    
 | ----------- | ----------- |---------|    
 | name | **Required**. Name of keyword to search| String |                
+| orderKey | **Optional**. Column to order results by. | String |      
+| asc | **Optional**. Either 1 or 0. 1 for ascending, 0 for descending. Defaults to 1. | List |      
 
 * **EXAMPLE**     
-```GET /productline/search?name=prod```    
-Searches product lines with keyword "prod"   
+```GET /productline/search?name=prod&orderKey=name&asc=0```    
+Searches product lines with keyword "prod". Ordered by name, descending.   
 
 
 ### Add a product line

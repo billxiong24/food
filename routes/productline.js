@@ -5,8 +5,10 @@ let router = express.Router();
 router.get('/search', function(req, res, next) {
     let name = req.query.name;
     const prdline = new ProductLine();
+    let orderKey = req.query.orderKey;
+    let asc = (!req.query.asc) || req.query.asc == "1"; 
 
-    prdline.search(name)
+    prdline.search(name, orderKey, asc)
     .then((result) => {
         res.status(200).json(result.rows);
     })
