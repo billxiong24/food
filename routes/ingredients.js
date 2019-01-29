@@ -84,7 +84,7 @@ router.get('/search', function(req, res, next) {
     let name = req.query.name;
     let list = req.query.skus;
     let orderKey = req.query.orderKey;
-    let asc = req.query.asc == "1"; 
+    let asc = (!req.query.asc) || req.query.asc == "1"; 
 
     const ing = new Ingredient();
     if(!list) {

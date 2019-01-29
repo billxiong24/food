@@ -7,7 +7,7 @@ router.get('/search', function(req, res, next) {
     let ingredients = req.query.ingredients;
     let prodlines = req.query.prodlines;
     let orderKey = req.query.orderKey;
-    let asc = req.query.asc == "1"; 
+    let asc = (!req.query.asc) || req.query.asc == "1"; 
 
     if(!ingredients) {
         ingredients = [];
