@@ -50,6 +50,7 @@ class Users extends CRUD {
         result = result[0];
 
         return bcrypt.compare(dataObj.password, result.password).then((res) => {
+          console.log(result)
           if(res) {
                 return {
                   uname:result.uname,
