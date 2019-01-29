@@ -47,6 +47,9 @@ const styles = {
     width: '6%',
     'padding-left':'2%',
     'padding-right':'2%',
+  },
+  hide: {
+    display:'none'
   }
 };
 
@@ -82,7 +85,6 @@ class ProductLinePage extends Component {
   }
 
   addProductLine(prdline){
-    delete prdline.oldname; // TODO: until api relies on id instead of name
     this.props.prdlineAddPrdline(prdline)
     .then(()=>{
       if(!this.props.productLine.errMsg) {
@@ -189,10 +191,12 @@ class ProductLinePage extends Component {
             ></ProductLineCard>
           </ItemList>
 
-          <div variant="inset" className={classes.ingredients_list_divider}/>
-          <Typography className={classes.page_number_text}>
-            Page {productLine.current_page_number} of {productLine.total_pages}
-          </Typography>
+          <div className={productLine.productLines.length === 0 ? classes.hide : ''}>
+            <div variant="inset" className={classes.ingredients_list_divider}/>
+            <Typography className={classes.page_number_text}>
+              Page {productLine.current_page_number} of {productLine.total_pages}
+            </Typography>
+          </div>
         </div>
         <SimpleSnackbar
         open={this.state.alert} 
@@ -230,13 +234,12 @@ const mapStateToProps = state => {
   };
 };
 
-// const mapDispatchToProps = dispatch => {
-//   return {
-//     search: (name) => {
-//       prdlineSearch(name);
-//     }
-//   };
-// };
+const mapDispatchToProps = {
+  prdlineSearch,
+  prdlineAddPrdline,
+  prdlineDeletePrdline,
+  prdlineUpdatePrdline
+};
 
 
-export default withStyles(styles)(connect(mapStateToProps,{prdlineSearch, prdlineAddPrdline, prdlineDeletePrdline, prdlineUpdatePrdline})(ProductLinePage));
+export default withStyles(styles)(connect(mapStateToProps,mapDispatchToProps)(ProductLinePage));

@@ -9,7 +9,8 @@ import SimpleList from './GenericComponents/ItemList';
 import IngredientsPage from './IngredientsPage/IngredientsPage';
 import LoginPage from './LoginPage/LoginPage';
 import SignUpPage from './LoginPage/SignUpPage';
-import ProductLinePage from './ProductLinePage/ProductLinePage'
+import ProductLinePage from './ProductLinePage/ProductLinePage';
+import ManufacturingGoalsPage from './ManufacturingGoalsPage/ManufacturingGoalsPage';
 import { routeToPage } from '../Redux/Actions/index';
 import { connect } from 'react-redux';
 
@@ -73,7 +74,7 @@ class ScrollableTabsButtonAuto extends React.Component {
         {value === 0 && <IngredientsPage></IngredientsPage>}
         {value === 1 && <TabContainer>Item Two</TabContainer>}
         {value === 2 && <ProductLinePage></ProductLinePage>}
-        {value === 3 && <TabContainer>Item Four</TabContainer>}
+        {value === 3 && <ManufacturingGoalsPage></ManufacturingGoalsPage>}
         {value === 4 && <TabContainer>Item Five</TabContainer>}
         {value === 5 && <TabContainer>Item Six</TabContainer>}
         {value === 6 && <LoginPage>Item Seven</LoginPage>}

@@ -42,7 +42,7 @@ const styles = {
   }
 };
 
-class ProductLineCard extends Component {
+class ManufacturingGoalsCard extends Component {
     constructor(props) {
       super(props);
       this.state={
@@ -183,8 +183,8 @@ function NewProductLine(props) {
   );
 }
 
-ProductLineCard.propTypes = {
+ManufacturingGoalsCard.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(ProductLineCard);
+export default withStyles(styles)(ManufacturingGoalsCard);

@@ -1,6 +1,6 @@
 import { ROUTERS_ROUTE_TO_PAGE } from '../Actions/RoutingActionTypes';
 
-const initialState = 2
+const initialState = 3
 
 export default function routeReducer(state = initialState, action) {
   switch (action.type) {
