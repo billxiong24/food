@@ -38,11 +38,13 @@ Run ```npm start```. This will start server on localhost:8000. Use ```nodemon```
 | name      | **Required**. name of SKU to search for. | String |    
 | ingredients | **Optional**. List of ingredients to filter SKU by. SKUs returned will contain at least one ingredient. | List |    
 | prodlines | **Optional**. List of product lines to filter SKU by. SKUs returned will contain at least one ingredient. | List |      
+| orderKey | **Optional**. Column to order results by. | String |      
+| asc | **Optional**. Either 1 or 0. 1 for ascending, 0 for descending. Defaults to 1. | List |      
     
 * **EXAMPLE**:     
   
-```GET /sku/search?name=sku&ingredients=ing1&ingredients=ing2&prodlines=p1&prodlines=p2```      
-Searches for "sku", which must contain one of "ing1" or "ing2", and must be in productline "p1" or "p2".      
+```GET /sku/search?name=sku&ingredients=ing1&ingredients=ing2&prodlines=p1&prodlines=p2&orderKey=name```      
+Searches for "sku", which must contain one of "ing1" or "ing2", and must be in productline "p1" or "p2". Orders SKUs by name, ascending.         
     
 ### Retrieve ingredients of a SKU    
   
@@ -181,11 +183,13 @@ Deletes ingredients "1, 2, 3, 4, and 5" from SKU with id 643, provided that the 
 | ----------- | ----------- |---------|    
 | name | **Required**. keyword to search by. | String |       
 | ingredients| **Optional**. List of SKUs to filter ingredients by. | List |    
+| orderKey | **Optional**. Column to order results by. | String |      
+| asc | **Optional**. Either 1 or 0. 1 for ascending, 0 for descending. Defaults to 1. | List |      
   
   
 * **EXAMPLE**     
-```GET /ingredients/search?name=ing&skus=s1&skus=s2&skus=s3```     
-Searches for ingredients with keyword "ing", who must appear in one of "s1, s2, or s3".   
+```GET /ingredients/search?name=ing&skus=s1&skus=s2&skus=s3&orderKey=num&asc=0```     
+Searches for ingredients with keyword "ing", who must appear in one of "s1, s2, or s3". Ordered by num, descending.     
 
 ### Create new Ingredient   
 * Add ingredient with given parameters to database.   
@@ -258,10 +262,12 @@ Deletes ingredient with id 253. This also removes the ingredient from any SKU's 
 | Parameter      | Description | Type |    
 | ----------- | ----------- |---------|    
 | name | **Required**. Name of keyword to search| String |                
+| orderKey | **Optional**. Column to order results by. | String |      
+| asc | **Optional**. Either 1 or 0. 1 for ascending, 0 for descending. Defaults to 1. | List |      
 
 * **EXAMPLE**     
-```GET /productline/search?name=prod```    
-Searches product lines with keyword "prod"   
+```GET /productline/search?name=prod&orderKey=name&asc=0```    
+Searches product lines with keyword "prod". Ordered by name, descending.   
 
 
 ### Add a product line

@@ -32,25 +32,8 @@ class Ingredient extends CRUD {
     }
 
     //TODO use squel to generate this query
-    search(searchQuery, skus) {
+    search(searchQuery, skus, orderKey, asc=true) {
         searchQuery = "%" + searchQuery + "%";
-        //let query = "SELECT DISTINCT ingredients.* FROM sku LEFT JOIN sku_ingred ON sku.num = sku_ingred.sku_num LEFT JOIN ingredients ON sku_ingred.ingred_num=ingredients.num WHERE ingredients.name LIKE $1";
-
-        //if(skus.length > 0)
-            //query += " AND ("
-
-        //for(let i = 0; i < skus.length; i++) {
-        
-            //query += "sku.name=$" + (i + 2); 
-            //if(i == skus.length - 1) {
-                //query += ")";
-            //}
-            //else {
-                //query += " OR ";
-            //}
-        //}
-        //"select DISTINCT ingredients.* from ingredients LEFT JOIN sku_ingred ON (ingredients.num=sku_ingred.ingred_num) LEFT JOIN sku ON (sku.num=sku_ingred.sku_num) WHERE ingredients.name LIKE '%ing%'"
-
         let q = squel.select()
         .from('ingredients')
         .field("ingredients.*")
@@ -67,7 +50,11 @@ class Ingredient extends CRUD {
                 expr
             );
         }
+        if(orderKey) {
+            q = q.order(orderKey, asc);
+        }
         q = q.distinct().toString();
+        console.log(q);
 
         //skus.unshift(searchQuery);
         //return db.execSingleQuery(query, skus);

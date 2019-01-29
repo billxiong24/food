@@ -5,8 +5,10 @@ let router = express.Router();
 router.get('/search', function(req, res, next) {
     let name = req.query.name;
     const prdline = new ProductLine();
+    let orderKey = req.query.orderKey;
+    let asc = (!req.query.asc) || req.query.asc == "1"; 
 
-    prdline.search(name)
+    prdline.search(name, orderKey, asc)
     .then((result) => {
         res.status(200).json(result.rows);
     })
@@ -35,6 +37,11 @@ router.post('/', function(req, res, next) {
 
 router.put('/:id', function(req, res, next) {
 
+    if(!req.body.name) {
+        return res.status(400).send({
+            error: "Required parameters not set."
+        });
+    }
     const prdline = new ProductLine();
     
     prdline.update(req.body, req.params.id)

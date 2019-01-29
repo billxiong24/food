@@ -89,7 +89,7 @@ class SKU extends CRUD {
     }
 
     //TODO use squel to generate this query
-    search(searchQuery, ingredients, productlines) {
+    search(searchQuery, ingredients, productlines, orderKey, asc=true) {
         searchQuery = "%" + searchQuery + "%";
         let q = squel.select()
         .from(this.tableName)
@@ -115,7 +115,11 @@ class SKU extends CRUD {
                 expr
             );
         }
+        if(orderKey) {
+            q = q.order(orderKey, asc);
+        }
         q = q.distinct().toString();
+        console.log(q);
         return db.execSingleQuery(q);
     }
 
