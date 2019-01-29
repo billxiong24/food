@@ -40,7 +40,7 @@ class Users extends CRUD {
             return Promise.reject("Bad username");
         }
         
-        let query = "SELECT uname, password FROM " + this.tableName + " WHERE uname=$1";
+        let query = "SELECT * FROM " + this.tableName + " WHERE uname=$1";
         return db.execSingleQuery(query, [dataObj.uname]).then((result) => {
         
         result = result.rows;
@@ -50,7 +50,6 @@ class Users extends CRUD {
         result = result[0];
 
         return bcrypt.compare(dataObj.password, result.password).then((res) => {
-          console.log(result)
           if(res) {
                 return {
                   uname:result.uname,
