@@ -37,6 +37,11 @@ router.post('/', function(req, res, next) {
 
 router.put('/:id', function(req, res, next) {
 
+    if(!req.body.name) {
+        return res.status(400).send({
+            error: "Required parameters not set."
+        });
+    }
     const prdline = new ProductLine();
     
     prdline.update(req.body, req.params.id)
