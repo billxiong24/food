@@ -50,11 +50,10 @@ class Users extends CRUD {
         result = result[0];
 
         return bcrypt.compare(dataObj.password, result.password).then((res) => {
-          console.log(dataObj);  
           if(res) {
                 return {
-                  uname:dataObj.uname,
-                  id:dataObj.id
+                  uname:result.uname,
+                  id:result.id
                 };
             }
             else
