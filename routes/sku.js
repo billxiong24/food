@@ -57,15 +57,17 @@ router.get('/:id/ingredients', function(req, res, next) {
 
 
 router.post('/:id/ingredients', function(req, res, next) {
-    let ingredients = null;
-    try {
-        ingredients = JSON.parse(req.body.ingredients);
-    }
-    catch(err) {
-        return res.status(400).json({
-            error: "Malformed Request Body."
-        });
-    }
+    //let ingredients = null;
+    //console.log(req.body.ingredients);
+    //console.log(req.body.ingredients[0]);
+    //try {
+        //ingredients = JSON.parse(req.body.ingredients);
+    //}
+    //catch(err) {
+        //return res.status(400).json({
+            //error: "Malformed Request Body."
+        //});
+    //}
 
     let id = req.params.id;
     if(!id) {
@@ -74,7 +76,7 @@ router.post('/:id/ingredients', function(req, res, next) {
         });
     }
     const sku = new Sku();
-    sku.addIngredients(id, ingredients)
+    sku.addIngredients(id, req.body.ingredients)
     .then((result) => {
         res.status(201).json({
             rowCount: result.rowCount
