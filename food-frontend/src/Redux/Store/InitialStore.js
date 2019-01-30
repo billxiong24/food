@@ -5,6 +5,7 @@ export default {
   // For now, only persistent data about users is who is actually logged in if there is someone logged in
   users: {
     uname: null,
+    id: null,
     isSuccess: false,
     errMsg: null
   },
@@ -39,5 +40,9 @@ export default {
     total_pages: 1,
     ingredients: [],
     errMsg: null
+  },
+  manGoals: {
+    goals: [],
+    errMsg: null,
   }
 }

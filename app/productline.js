@@ -33,9 +33,17 @@ class ProductLine extends CRUD {
         return super.change(dataObj, id, "id");
     }
 
-    search(name) {
+    search(name, orderKey, asc=true) {
         name = "%" + name + "%";
-        return db.execSingleQuery("SELECT * FROM " + this.tableName + " WHERE name LIKE $1", [name]);
+        let query = squel.select()
+        .from(this.tableName)
+        .where("name LIKE ? ", name);
+
+        if(orderKey) {
+            query = query.order(orderKey, asc);
+        }
+
+        return db.execSingleQuery(query.toString());
     }
 
     remove(id) {

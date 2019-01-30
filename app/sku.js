@@ -7,7 +7,6 @@ class SKU extends CRUD {
     constructor() {
         super();
         this.tableName = "sku";
-    
     }
 
     //override
@@ -43,7 +42,7 @@ class SKU extends CRUD {
             for(let i = 0; i < ingredients.length; i++) {
                 let obj = ingredients[i];
                 if(!obj.ingred_num || !obj.quantity)
-                    return Promise.reject("Ingredient does not have number or quantity");
+                    return promise.reject("ingredient does not have number or quantity");
                 obj.sku_num = sku_num;
             }
 
@@ -68,7 +67,6 @@ class SKU extends CRUD {
     }
 
     removeIngredients(id, ingreds) {
-        //let query = "DELETE FROM sku_ingred WHERE case_upc=$1 AND ingred_num=$2";
         return this.getSKUNumIfExists(id)
         .then(function(res) {
             let expr = squel.expr();
@@ -91,10 +89,8 @@ class SKU extends CRUD {
     }
 
     //TODO use squel to generate this query
-    search(searchQuery, ingredients, productlines) {
+    search(searchQuery, ingredients, productlines, orderKey, asc=true) {
         searchQuery = "%" + searchQuery + "%";
-        //let query = "SELECT DISTINCT sku.* FROM sku LEFT JOIN sku_ingred ON sku.num = sku_ingred.sku_num LEFT JOIN ingredients ON sku_ingred.ingred_num=ingredients.num WHERE sku.name LIKE $1";
-
         let q = squel.select()
         .from(this.tableName)
         .field("sku.*")
@@ -119,40 +115,11 @@ class SKU extends CRUD {
                 expr
             );
         }
+        if(orderKey) {
+            q = q.order(orderKey, asc);
+        }
         q = q.distinct().toString();
-
-        //if(ingredients.length > 0)
-            //query += " AND ("
-        //let count = 1;
-
-        //for(let i = 0; i < ingredients.length; i++) {
-        
-            //query += "ingredients.name=$" + (i + 2); 
-            //if(i == ingredients.length - 1) {
-                //query += ")";
-            //}
-            //else {
-                //query += " OR ";
-            //}
-
-            //count++;
-        //}
-
-        //if(productlines.length > 0)
-            //query += " AND (";
-
-        //for(let i = 0; i < productlines.length; i++) {
-            //count++;
-            //query += "sku.prd_line=$" + (count); 
-            //if(i == productlines.length - 1) {
-                //query += ")";
-            //}
-            //else {
-                //query += " OR ";
-            //}
-        //}
-        //ingredients.unshift(searchQuery);
-        //let arr = ingredients.concat(productlines);
+        console.log(q);
         return db.execSingleQuery(q);
     }
 

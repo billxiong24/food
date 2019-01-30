@@ -522,9 +522,7 @@ export const prdlineAddPrdline = (prdline) => {
 
 export const prdlineUpdatePrdline = (prdline) => {
   return (dispatch) => {
-    return axios.put(hostname + 'productline/' + prdline.oldname, {
-      name: prdline.name
-    })
+    return axios.put(hostname + 'productline/' + prdline.id, prdline)
     .then((response) => {
       delete prdline.oldname;
       dispatch({
@@ -558,7 +556,7 @@ export const prdlineUpdatePrdline = (prdline) => {
 
 export const prdlineDeletePrdline = (prdline) => {
   return (dispatch) => {
-    return axios.delete(hostname + 'productline/' + prdline.name)
+    return axios.delete(hostname + 'productline/' + prdline.id)
     .then((response) => {
       dispatch({
         type: PRDLINE_DELETE_PRDLINE,
@@ -657,6 +655,7 @@ export const userLoginAttempt = (dataObj) => {
         type: USER_LOG_IN_ATTEMPT,
         data: {
           uname: response.data.uname,
+          id: response.data.id,
           errMsg: ''
         }
       });
