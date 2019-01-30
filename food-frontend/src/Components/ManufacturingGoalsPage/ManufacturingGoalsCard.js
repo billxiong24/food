@@ -39,6 +39,9 @@ const styles = {
     float:'right',
     padding:'0px',
     'margin-top':'-5px'
+  },
+  clickable: {
+    cursor:'pointer'
   }
 };
 
@@ -80,6 +83,9 @@ class ManufacturingGoalsCard extends Component {
           })
         }
       }
+      else {
+        this.props.onClick(this.props.item);
+      }
     }
 
     textChange(e) {
@@ -90,16 +96,10 @@ class ManufacturingGoalsCard extends Component {
 
     onEnter(e) {
       if(e.which === 13 || e.keyCode === 13) {
-        let prdline = {
+        let manGoal = {
           name:this.state.text
         };
-        if(this.props.item.id) {
-          prdline = {
-            ...prdline,
-            id: this.props.item.id
-          }
-        }
-        this.props.onEnter(prdline);
+        this.props.onEnter(manGoal);
         this.setState({
           editting: false,
           text: ''
@@ -107,20 +107,15 @@ class ManufacturingGoalsCard extends Component {
       }
     }
 
-    delete(e) {
-      e.stopPropagation();
-      this.props.deleteProductLine(Object.assign({}, this.props.item));
-    }
-
     render(){
         const { classes } = this.props;
         const bull = <span className={classes.bullet}>•</span>;
         const item = this.props.item
-        // console.log(this.props)
         return (
-          <Card className={classes.card} onClick={() => { this.edit() }}>
+          <Card className={classes.card + ' ' + (this.props.editable ? '' : classes.clickable)} 
+          onClick={() => { this.edit() }}>
             <CardContent>
-              <NewProductLine
+              <NewManufacturingGoal
                 editting={this.state.editting}
                 classes={classes}
                 item={item}
@@ -128,39 +123,14 @@ class ManufacturingGoalsCard extends Component {
                 onTextChange={(e) => { this.textChange(e) }}
                 onTextEnter={(e) => { this.onEnter(e) }}
               >
-              </NewProductLine>
-              <DeleteProductLine
-                editable={this.props.editable}
-                persistent={this.props.persistent}
-                classes={classes}
-                onClick={(e) => { this.delete(e) }}
-              >
-              </DeleteProductLine>
+              </NewManufacturingGoal>
             </CardContent>
           </Card>
         );
     }
 }
 
-function DeleteProductLine(props) {
-  const { classes } = props;
-  if(props.editable && props.persistent) {
-    return (
-      <IconButton
-        key="close"
-        aria-label="Close"
-        color="inherit"
-        className={classes.button + ' ' + classes.close_button}
-        onClick={(e)=>{props.onClick(e)}}
-      >
-        <CloseIcon />
-      </IconButton>
-    );
-  }
-  return null;
-}
-
-function NewProductLine(props) {
+function NewManufacturingGoal(props) {
   const { classes, item } = props;
   if(props.editting && item) {
     return (

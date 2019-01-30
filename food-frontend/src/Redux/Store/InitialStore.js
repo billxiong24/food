@@ -1,7 +1,7 @@
 import { dummy_filters, dummy_ingredients } from "./DummyData";
 import labels from "../../Resources/labels";
 
-export default {
+export const initStore = {
   // For now, only persistent data about users is who is actually logged in if there is someone logged in
   users: {
     uname: null,
@@ -39,8 +39,13 @@ export default {
     ingredients: [],
     errMsg: null
   },
+  // Manufacturing Goals
   manGoals: {
     goals: [],
-    errMsg: null,
+    activeGoal:{},
+    skus: [],
+    productLines: [],
+    filters: [],
+    errMsg: null
   }
 }

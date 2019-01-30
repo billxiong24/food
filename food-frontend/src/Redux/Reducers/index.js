@@ -5,6 +5,7 @@ import routeReducer from './RouteReducer';
 import ingredientReducer from './IngredientReducer';
 import skuReducer from './SkuReducer';
 import productLineReducer from './ProductLineReducer';
+import manufacturingGoalReducer from './ManufacturingGoalReducer';
 
 export default combineReducers({
     dummy_ingredients: ingredientsDummyReducer,
@@ -12,5 +13,6 @@ export default combineReducers({
     route: routeReducer,
     ingredients: ingredientReducer,
     skus: skuReducer,
-    productLine: productLineReducer 
+    productLine: productLineReducer,
+    manGoals: manufacturingGoalReducer
 });
