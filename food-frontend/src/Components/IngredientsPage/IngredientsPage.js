@@ -3,7 +3,6 @@ import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
 import SimpleList from '../GenericComponents/ItemList';
 import ItemList from '../GenericComponents/ItemList';
-import IntegrationReactSelect from '../GenericComponents/IntegrationReactSelect';
 import { purple } from '@material-ui/core/colors';
 import color from '@material-ui/core/colors/cyan';
 import Card from '@material-ui/core/Card';
@@ -28,6 +27,7 @@ import IntegrationAutosuggest from '../GenericComponents/IntegrationAutosuggest'
 import FilterDropdown from './FilterDropdown';
 import SortByDropdown from './SortByDropdown';
 import PageSelector from './PageSelector';
+import IngredientsPageSearchBar from './IngredientsPageSearchBar';
 
 const styles = {
   card: {
@@ -145,7 +145,7 @@ class IngredientsPage extends Component {
         </Card>
         <div className={classes.ingredients_list_container}>
           <div className={classes.ingredients_list}>
-            <IntegrationAutosuggest className={classes.autosuggest}></IntegrationAutosuggest>
+            <IngredientsPageSearchBar></IngredientsPageSearchBar>
             <div className={classes.ingredients_search_bar}>
             </div>
             <IngredientList></IngredientList>

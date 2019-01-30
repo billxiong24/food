@@ -53,7 +53,6 @@ const suggestions = [
 
 function renderInputComponent(inputProps) {
   const { classes, inputRef = () => {}, ref, ...other } = inputProps;
-  console.log(inputProps)
 
   return (
     <TextField
@@ -197,9 +196,28 @@ class IntegrationAutosuggest extends React.Component {
     });
   };
 
-  handleChange = name => (event, { newValue }) => {
+  onSuggestionSelected = (event, { suggestion, suggestionValue, suggestionIndex, sectionIndex, method }) => {
+    this.props.onEnter(suggestion.label);
+    this.clear()
+  }
+
+  onEnter = (e) => {
+    if(e.keyCode == 13){
+      this.props.onEnter(e.target.value);
+      // put the login here
+      this.clear()
+   }
+  }
+
+  clear = () => {
+    
     this.setState({
-      [name]: newValue,
+      single: ""
+    })
+  }
+  handleChange = name => (event, { newValue, method }) => {
+    this.setState({
+      single : newValue
     });
   };
 
@@ -225,12 +243,13 @@ class IntegrationAutosuggest extends React.Component {
       <div className={classes.root}>
         <Autosuggest
           {...autosuggestProps}
+          onSuggestionSelected={this.onSuggestionSelected}
           inputProps={{
             classes,
-            placeholder: 'Search a country (start with a)',
+            placeholder: this.props.placeholder,
             value: this.state.single,
             onChange: this.handleChange('single'),
-            color:'white'
+            onKeyDown: this.onEnter
           }}
           theme={{
             container: classes.container,

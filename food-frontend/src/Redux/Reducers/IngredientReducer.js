@@ -1,5 +1,5 @@
 import { ING_ADD_FILTER, ING_REMOVE_FILTER, ING_SEARCH, ING_SORT_BY,
-  ING_ADD_ING, ING_GET_SKUS, ING_UPDATE_ING, ING_DELETE_ING } from '../Actions/IngredientActionTypes';
+  ING_ADD_ING, ING_GET_SKUS, ING_UPDATE_ING, ING_DELETE_ING, ING_SET_FILTER_TYPE } from '../Actions/IngredientActionTypes';
 
 const initialState = {
   filters: [],
@@ -36,6 +36,11 @@ export default function ingredientReducer(state = initialState, action) {
     case ING_SORT_BY:
       return Object.assign({}, state, {
         sortby: action.data
+      });
+    case ING_SET_FILTER_TYPE:
+      console.log("filter type set to " + action.data)
+      return Object.assign({}, state, {
+        filter_type: action.data
       });
     case ING_ADD_ING:
       return Object.assign({}, state, action.data);

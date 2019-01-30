@@ -2,7 +2,7 @@ import { FETCH_GITHUB_DATA, GET_INGREDIENTS_DUMMY_DATA } from './ActionTypes';
 import { USER_LOG_IN_ATTEMPT, USER_CREATE_ATTEMPT } from './UserActionTypes';
 import { ROUTERS_ROUTE_TO_PAGE } from './RoutingActionTypes';
 import { ING_ADD_FILTER, ING_REMOVE_FILTER, ING_SEARCH, ING_SORT_BY,
-    ING_ADD_ING, ING_GET_SKUS, ING_UPDATE_ING, ING_DELETE_ING } from './IngredientActionTypes';
+    ING_ADD_ING, ING_GET_SKUS, ING_UPDATE_ING, ING_DELETE_ING, ING_SET_FILTER_TYPE } from './IngredientActionTypes';
 import { SKU_ADD_FILTER, SKU_REMOVE_FILTER, SKU_SEARCH, SKU_SORT_BY,
     SKU_GET_ING, SKU_ADD_ING, SKU_DELETE_ING, SKU_ADD_SKU, SKU_UPDATE_SKU,
     SKU_DELETE_SKU } from './SkuActionType';
@@ -331,6 +331,17 @@ export const ingSortBy = (category) => {
     })
   }
 }
+
+// Need to do something, probably involved with search
+export const ingSetFilterType = (filter_type) => {
+  return (dispatch) => {
+    return dispatch({
+      type: ING_SET_FILTER_TYPE,
+      data: filter_type
+    })
+  }
+}
+
 
 export const ingAddIng = (ing) => {
   return (dispatch) => {
