@@ -59,8 +59,39 @@ router.delete('/:id/skus', function(req, res, next) {
     });
 });
 
-router.get('/calculations', function(req, res, next) {
+router.get('/:id/calculations', function(req, res, next) {
+    const mg = new ManufacturingGoals();
+    mg.calculateQuantities(req.params.id)
+    .then((result) => {
+        res.status(200).json(result.rows);
+    })
+    .catch((err) => {
+        res.status(400).json({
+            error: err
+        });
+    });
+});
 
+router.post('/exported_file', function(req, res, next) {
+    let format = (req.body.format) ? req.body.format : "csv";
+    let jsonList = req.body.data;
+    if(!Array.isArray(jsonList)) {
+        return res.status(400).json({
+            error: "Parameter must be a list."
+        });
+    }
+
+    res.setHeader('Content-disposition', 'attachment; filename=testing.csv');
+    res.set('Content-Type', 'text/csv');
+
+    if(!jsonList || jsonList.length === 0) {
+        let csv = "";
+        return res.status(200).send(csv);
+    }
+
+    const mg = new ManufacturingGoals();
+    let csv = mg.exportFile(jsonList, format);
+    res.status(200).send(csv);
 });
 
 router.post('/', function(req, res, next) {

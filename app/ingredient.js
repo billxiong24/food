@@ -44,12 +44,13 @@ class Ingredient extends CRUD {
         if(skus.length > 0) {
             let expr = squel.expr();
             for(let i = 0; i < skus.length; i++) {
-                expr = expr.or("sku.case_upc=?",skus[i]);
+                expr = expr.or("sku.id=?",skus[i]);
             }
             q = q.where(
                 expr
             );
         }
+        console.log(orderKey);
         if(orderKey) {
             q = q.order(orderKey, asc);
         }

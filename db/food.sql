@@ -138,7 +138,7 @@ ALTER SEQUENCE public.manufacturing_goal_id_seq OWNED BY public.manufacturing_go
 CREATE TABLE public.manufacturing_goal_sku (
     mg_id integer NOT NULL,
     sku_id integer NOT NULL,
-    quantity numeric DEFAULT 0 NOT NULL
+    quantity numeric NOT NULL
 );
 
 
@@ -288,7 +288,7 @@ ALTER SEQUENCE public.sku_id_seq OWNED BY public.sku.id;
 CREATE TABLE public.sku_ingred (
     sku_num integer NOT NULL,
     ingred_num integer NOT NULL,
-    quantity numeric DEFAULT 1
+    quantity numeric NOT NULL
 );
 
 
@@ -543,6 +543,9 @@ COPY public.manufacturing_goal_sku (mg_id, sku_id, quantity) FROM stdin;
 8	6	0
 8	11	0
 7	3	0.6
+7	5	0.32
+7	7	0.88
+7	20	0.12
 \.
 
 
@@ -622,7 +625,6 @@ SELECT pg_catalog.setval('public.sku_id_seq', 22, true);
 --
 
 COPY public.sku_ingred (sku_num, ingred_num, quantity) FROM stdin;
-1	49	1
 1	47	1
 2	47	1
 12	47	1
@@ -636,6 +638,15 @@ COPY public.sku_ingred (sku_num, ingred_num, quantity) FROM stdin;
 12	698	1
 55	698	1
 7	698	1
+7	8	2
+7	10	4
+12	8	2
+12	10	4
+4	8	2
+4	10	4
+1	10	12
+1	49	1.4
+1	7	1.5
 \.
 
 

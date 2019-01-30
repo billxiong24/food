@@ -52,7 +52,7 @@ class SKU extends CRUD {
                   new squel.cls.IntoTableBlock(options),
                   new squel.cls.InsertFieldValueBlock(options),
                   new squel.cls.WhereBlock(options),
-                  new squel.cls.StringBlock(options, 'ON CONFLICT DO NOTHING')
+                  new squel.cls.StringBlock(options, 'ON CONFLICT (sku_num, ingred_num) DO UPDATE SET quantity = EXCLUDED.quantity')
                 ]);
             };
 

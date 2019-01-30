@@ -3,7 +3,7 @@ const ProductLine = require('../app/productline');
 let router = express.Router();
 
 router.get('/search', function(req, res, next) {
-    let name = req.query.name;
+    let name = req.query.name ? req.query.name : "";
     const prdline = new ProductLine();
     let orderKey = req.query.orderKey;
     let asc = (!req.query.asc) || req.query.asc == "1"; 
@@ -13,7 +13,7 @@ router.get('/search', function(req, res, next) {
         res.status(200).json(result.rows);
     })
     .catch((err) => {
-        res.json({
+        res.status(400).json({
             error: err
         });
     });

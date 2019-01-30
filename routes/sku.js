@@ -3,7 +3,7 @@ const Sku = require('../app/sku');
 let router = express.Router();
 
 router.get('/search', function(req, res, next) {
-    let name = req.query.name;
+    let name = req.query.name ? req.query.name : "";
     let ingredients = req.query.ingredients;
     let prodlines = req.query.prodlines;
     let orderKey = req.query.orderKey;
@@ -57,18 +57,6 @@ router.get('/:id/ingredients', function(req, res, next) {
 
 
 router.post('/:id/ingredients', function(req, res, next) {
-    //let ingredients = null;
-    //console.log(req.body.ingredients);
-    //console.log(req.body.ingredients[0]);
-    //try {
-        //ingredients = JSON.parse(req.body.ingredients);
-    //}
-    //catch(err) {
-        //return res.status(400).json({
-            //error: "Malformed Request Body."
-        //});
-    //}
-
     let id = req.params.id;
     if(!id) {
         return res.status(400).json({
