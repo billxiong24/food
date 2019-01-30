@@ -95,7 +95,6 @@ router.put('/:id', function(req, res, next) {
 
 router.delete('/:id', function(req, res, next) {
     const mg = new ManufacturingGoals();
-
     mg.remove(req.params.id)
     .then((result) => {
         res.status(200).json({

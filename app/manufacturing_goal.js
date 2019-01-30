@@ -42,13 +42,12 @@ class ManufacturingGoals extends CRUD {
         return db.execSingleQuery(query, [manufacturing_id]);
     }
 
-    addSkus(manufacturing_id, sku_ids) {
-        let arr = [];
-        for(let i = 0; i < sku_ids.length; i++) {
-            let obj = {};
+    addSkus(manufacturing_id, skus) {
+        for(let i = 0; i < skus.length; i++) {
+            let obj = skus[i];
+            if(!obj.sku_id || !obj.quantity)
+                return promise.reject("sku does not have id or quantity");
             obj.mg_id = manufacturing_id;
-            obj.sku_id = sku_ids[i];
-            arr.push(obj);
         }
         squel.onConflictInsert = function(options) {
           return squel.insert(options, [
@@ -62,7 +61,7 @@ class ManufacturingGoals extends CRUD {
 
         let query = squel.onConflictInsert()
         .into('manufacturing_goal_sku')
-        .setFieldsRows(arr)
+        .setFieldsRows(skus)
         .toString();
         return db.execSingleQuery(query, []);
     }

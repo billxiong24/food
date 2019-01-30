@@ -9,7 +9,6 @@ DROP DATABASE IF EXISTS sku_mgmt;
 CREATE DATABASE sku_mgmt;
 \c sku_mgmt
 
-
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
@@ -99,24 +98,23 @@ ALTER SEQUENCE public.ingredients_num_seq OWNED BY public.ingredients.num;
 
 
 --
--- Name: manufacturing_goals; Type: TABLE; Schema: public; Owner: billxiong24
+-- Name: manufacturing_goal; Type: TABLE; Schema: public; Owner: billxiong24
 --
 
-CREATE TABLE public.manufacturing_goals (
-    user_id integer NOT NULL,
-    sku_id integer NOT NULL,
-    case_quantity numeric NOT NULL,
-    id integer NOT NULL
+CREATE TABLE public.manufacturing_goal (
+    id integer NOT NULL,
+    name text,
+    user_id integer NOT NULL
 );
 
 
-ALTER TABLE public.manufacturing_goals OWNER TO billxiong24;
+ALTER TABLE public.manufacturing_goal OWNER TO billxiong24;
 
 --
--- Name: manufacturing_goals_id_seq; Type: SEQUENCE; Schema: public; Owner: billxiong24
+-- Name: manufacturing_goal_id_seq; Type: SEQUENCE; Schema: public; Owner: billxiong24
 --
 
-CREATE SEQUENCE public.manufacturing_goals_id_seq
+CREATE SEQUENCE public.manufacturing_goal_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -124,13 +122,89 @@ CREATE SEQUENCE public.manufacturing_goals_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.manufacturing_goals_id_seq OWNER TO billxiong24;
+ALTER TABLE public.manufacturing_goal_id_seq OWNER TO billxiong24;
 
 --
--- Name: manufacturing_goals_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: billxiong24
+-- Name: manufacturing_goal_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: billxiong24
 --
 
-ALTER SEQUENCE public.manufacturing_goals_id_seq OWNED BY public.manufacturing_goals.id;
+ALTER SEQUENCE public.manufacturing_goal_id_seq OWNED BY public.manufacturing_goal.id;
+
+
+--
+-- Name: manufacturing_goal_sku; Type: TABLE; Schema: public; Owner: billxiong24
+--
+
+CREATE TABLE public.manufacturing_goal_sku (
+    mg_id integer NOT NULL,
+    sku_id integer NOT NULL,
+    quantity numeric DEFAULT 0 NOT NULL
+);
+
+
+ALTER TABLE public.manufacturing_goal_sku OWNER TO billxiong24;
+
+--
+-- Name: manufacturing_goal_sku_id_seq; Type: SEQUENCE; Schema: public; Owner: billxiong24
+--
+
+CREATE SEQUENCE public.manufacturing_goal_sku_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.manufacturing_goal_sku_id_seq OWNER TO billxiong24;
+
+--
+-- Name: manufacturing_goal_sku_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: billxiong24
+--
+
+ALTER SEQUENCE public.manufacturing_goal_sku_id_seq OWNED BY public.manufacturing_goal_sku.mg_id;
+
+
+--
+-- Name: manufacturing_goal_sku_sku_id_seq; Type: SEQUENCE; Schema: public; Owner: billxiong24
+--
+
+CREATE SEQUENCE public.manufacturing_goal_sku_sku_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.manufacturing_goal_sku_sku_id_seq OWNER TO billxiong24;
+
+--
+-- Name: manufacturing_goal_sku_sku_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: billxiong24
+--
+
+ALTER SEQUENCE public.manufacturing_goal_sku_sku_id_seq OWNED BY public.manufacturing_goal_sku.sku_id;
+
+
+--
+-- Name: manufacturing_goal_user_id_seq; Type: SEQUENCE; Schema: public; Owner: billxiong24
+--
+
+CREATE SEQUENCE public.manufacturing_goal_user_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.manufacturing_goal_user_id_seq OWNER TO billxiong24;
+
+--
+-- Name: manufacturing_goal_user_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: billxiong24
+--
+
+ALTER SEQUENCE public.manufacturing_goal_user_id_seq OWNED BY public.manufacturing_goal.user_id;
 
 
 --
@@ -325,10 +399,31 @@ ALTER TABLE ONLY public.ingredients ALTER COLUMN id SET DEFAULT nextval('public.
 
 
 --
--- Name: manufacturing_goals id; Type: DEFAULT; Schema: public; Owner: billxiong24
+-- Name: manufacturing_goal id; Type: DEFAULT; Schema: public; Owner: billxiong24
 --
 
-ALTER TABLE ONLY public.manufacturing_goals ALTER COLUMN id SET DEFAULT nextval('public.manufacturing_goals_id_seq'::regclass);
+ALTER TABLE ONLY public.manufacturing_goal ALTER COLUMN id SET DEFAULT nextval('public.manufacturing_goal_id_seq'::regclass);
+
+
+--
+-- Name: manufacturing_goal user_id; Type: DEFAULT; Schema: public; Owner: billxiong24
+--
+
+ALTER TABLE ONLY public.manufacturing_goal ALTER COLUMN user_id SET DEFAULT nextval('public.manufacturing_goal_user_id_seq'::regclass);
+
+
+--
+-- Name: manufacturing_goal_sku mg_id; Type: DEFAULT; Schema: public; Owner: billxiong24
+--
+
+ALTER TABLE ONLY public.manufacturing_goal_sku ALTER COLUMN mg_id SET DEFAULT nextval('public.manufacturing_goal_sku_id_seq'::regclass);
+
+
+--
+-- Name: manufacturing_goal_sku sku_id; Type: DEFAULT; Schema: public; Owner: billxiong24
+--
+
+ALTER TABLE ONLY public.manufacturing_goal_sku ALTER COLUMN sku_id SET DEFAULT nextval('public.manufacturing_goal_sku_sku_id_seq'::regclass);
 
 
 --
@@ -417,18 +512,59 @@ SELECT pg_catalog.setval('public.ingredients_num_seq', 19, true);
 
 
 --
--- Data for Name: manufacturing_goals; Type: TABLE DATA; Schema: public; Owner: billxiong24
+-- Data for Name: manufacturing_goal; Type: TABLE DATA; Schema: public; Owner: billxiong24
 --
 
-COPY public.manufacturing_goals (user_id, sku_id, case_quantity, id) FROM stdin;
+COPY public.manufacturing_goal (id, name, user_id) FROM stdin;
+2	goal1	6
+5	goal2	7
+7	goal2	6
+8	newgoal	6
 \.
 
 
 --
--- Name: manufacturing_goals_id_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
+-- Name: manufacturing_goal_id_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
 --
 
-SELECT pg_catalog.setval('public.manufacturing_goals_id_seq', 2, true);
+SELECT pg_catalog.setval('public.manufacturing_goal_id_seq', 8, true);
+
+
+--
+-- Data for Name: manufacturing_goal_sku; Type: TABLE DATA; Schema: public; Owner: billxiong24
+--
+
+COPY public.manufacturing_goal_sku (mg_id, sku_id, quantity) FROM stdin;
+2	3	0
+2	5	0
+2	6	0
+8	3	0
+8	5	0
+8	6	0
+8	11	0
+7	3	0.6
+\.
+
+
+--
+-- Name: manufacturing_goal_sku_id_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
+--
+
+SELECT pg_catalog.setval('public.manufacturing_goal_sku_id_seq', 1, false);
+
+
+--
+-- Name: manufacturing_goal_sku_sku_id_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
+--
+
+SELECT pg_catalog.setval('public.manufacturing_goal_sku_sku_id_seq', 1, false);
+
+
+--
+-- Name: manufacturing_goal_user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
+--
+
+SELECT pg_catalog.setval('public.manufacturing_goal_user_id_seq', 1, false);
 
 
 --
@@ -454,7 +590,6 @@ SELECT pg_catalog.setval('public.productline_id_seq', 5, true);
 --
 
 COPY public.sku (name, num, case_upc, unit_upc, unit_size, count_per_case, prd_line, comments, id) FROM stdin;
-sku23	100	5043	1123	5 lbs	4	prod69	a comment	2
 sku2355	1	5048	1128	5 lbs	4	prod69	a comment	3
 sku2356	2	5049	1122	5 lbs	4	prod69	a comment	5
 sku210	3	102	1122	5 lbs sku23	4	prod69	a comment with sku210	6
@@ -495,15 +630,12 @@ COPY public.sku_ingred (sku_num, ingred_num, quantity) FROM stdin;
 1	6	1
 2	6	1
 55	6	1
-100	1414	1
-100	6	1
 7	47	1
 1	698	1
 2	698	1
 12	698	1
 55	698	1
 7	698	1
-100	5633	2
 \.
 
 
@@ -574,11 +706,27 @@ ALTER TABLE ONLY public.ingredients
 
 
 --
--- Name: manufacturing_goals manufacturing_goals_pkey; Type: CONSTRAINT; Schema: public; Owner: billxiong24
+-- Name: manufacturing_goal manufacturing_goal_pkey; Type: CONSTRAINT; Schema: public; Owner: billxiong24
 --
 
-ALTER TABLE ONLY public.manufacturing_goals
-    ADD CONSTRAINT manufacturing_goals_pkey PRIMARY KEY (user_id, sku_id);
+ALTER TABLE ONLY public.manufacturing_goal
+    ADD CONSTRAINT manufacturing_goal_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: manufacturing_goal_sku manufacturing_goal_sku_pkey; Type: CONSTRAINT; Schema: public; Owner: billxiong24
+--
+
+ALTER TABLE ONLY public.manufacturing_goal_sku
+    ADD CONSTRAINT manufacturing_goal_sku_pkey PRIMARY KEY (mg_id, sku_id);
+
+
+--
+-- Name: manufacturing_goal manufacturing_goal_user_id_name_key; Type: CONSTRAINT; Schema: public; Owner: billxiong24
+--
+
+ALTER TABLE ONLY public.manufacturing_goal
+    ADD CONSTRAINT manufacturing_goal_user_id_name_key UNIQUE (user_id, name);
 
 
 --
@@ -646,19 +794,27 @@ ALTER TABLE ONLY public.users
 
 
 --
--- Name: manufacturing_goals manufacturing_goals_sku_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: billxiong24
+-- Name: manufacturing_goal_sku manufacturing_goal_sku_fkey; Type: FK CONSTRAINT; Schema: public; Owner: billxiong24
 --
 
-ALTER TABLE ONLY public.manufacturing_goals
-    ADD CONSTRAINT manufacturing_goals_sku_id_fkey FOREIGN KEY (sku_id) REFERENCES public.sku(id);
+ALTER TABLE ONLY public.manufacturing_goal_sku
+    ADD CONSTRAINT manufacturing_goal_sku_fkey FOREIGN KEY (mg_id) REFERENCES public.manufacturing_goal(id) ON DELETE CASCADE;
 
 
 --
--- Name: manufacturing_goals manufacturing_goals_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: billxiong24
+-- Name: manufacturing_goal_sku manufacturing_goal_sku_sku_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: billxiong24
 --
 
-ALTER TABLE ONLY public.manufacturing_goals
-    ADD CONSTRAINT manufacturing_goals_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id);
+ALTER TABLE ONLY public.manufacturing_goal_sku
+    ADD CONSTRAINT manufacturing_goal_sku_sku_id_fkey FOREIGN KEY (sku_id) REFERENCES public.sku(id) ON DELETE CASCADE;
+
+
+--
+-- Name: manufacturing_goal manufacturing_goal_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: billxiong24
+--
+
+ALTER TABLE ONLY public.manufacturing_goal
+    ADD CONSTRAINT manufacturing_goal_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id);
 
 
 --
