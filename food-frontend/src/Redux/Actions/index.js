@@ -304,14 +304,17 @@ export const ingRemoveFilter = (filter_id) => {
 }
 
 export const ingSearch = (filters) => {
+  let params = {
+    name:filters.filter((el)=>{return el.type === labels.ingredients.filter_type.INGREDIENTS}).map((a)=>{return a.string}),
+    skus: filters.filter((el)=>{return el.type === labels.ingredients.filter_type.SKU_NAME}).map((a)=>{return a.string})
+  }
+  console.log(params)
   return (dispatch) => {
     return axios.get(hostname + 'ingredients/search', {
-      query: {
-        name: filters.filter((el)=>{return el.type === labels.ingredients.filter_type.INGREDIENTS}).map((a)=>{return a.string}),
-        skus: filters.filter((el)=>{return el.type === labels.ingredients.filter_type.SKU_NAME}).map((a)=>{return a.string})
-      }
+      params
     })
     .then(response => {
+      console.log(response)
       dispatch({
         type: ING_SEARCH,
         data: response.data

@@ -30,8 +30,9 @@ export default function ingredientReducer(state = initialState, action) {
         })
       });
     case ING_SEARCH:
+      console.log(action.data)
       return Object.assign({}, state, {
-        ingredients: action.data
+        items: action.data
       });
     case ING_SORT_BY:
       return Object.assign({}, state, {

@@ -3,6 +3,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import IntegrationAutosuggest from '../GenericComponents/IntegrationAutosuggest';
 import labels from '../../Resources/labels';
+import { ingAddFilter, ingSearch } from '../../Redux/Actions';
 
 const styles = {
     autosuggest:{
@@ -26,7 +27,19 @@ class IngredientsPageSearchBar extends Component {
     onEnter = (input) => {
         console.log(input + ":" + this.props.filter_type)
         console.log((input + ":" + this.props.filter_type).hashCode())
-        
+        let new_filter = {
+            type: this.props.filter_type,
+            string: input,
+            id: (input + ":" + this.props.filter_type).hashCode()
+        }
+        new Promise((resolve, reject) => {
+            resolve( this.props.addFilter(new_filter));
+          })
+          .then((value) => {
+            console.log(this.props.filters)
+            this.props.search(this.props.filters)
+          });
+
     }
 
     render() {
@@ -61,12 +74,15 @@ class IngredientsPageSearchBar extends Component {
 const mapStateToProps = state => {
     return {
         ingredient_names: state.ingredients.ingredient_names,
-        filter_type: state.ingredients.filter_type
+        filter_type: state.ingredients.filter_type,
+        filters: state.ingredients.filters
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
+        addFilter: filter => dispatch(ingAddFilter(filter)),
+        search: filters => dispatch(ingSearch(filters))
     };
 };
 

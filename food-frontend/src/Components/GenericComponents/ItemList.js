@@ -5,6 +5,7 @@ import SimpleCard from './SimpleCard';
 
 class ItemList extends Component {
   render() {
+    console.log(this.props.items)
     return (
       <div>
         {

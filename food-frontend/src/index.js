@@ -9,7 +9,7 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 import rootReducer from './Redux/Reducers';
 import { fetchGithubData } from './Redux/Actions';
-import InitialStore from './Redux/Store/InitialStore';
+import { InitialStore } from './Redux/Store/InitialStore';
 require("typeface-open-sans");
 require("typeface-roboto")
 
