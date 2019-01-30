@@ -1,5 +1,4 @@
 import { PRDLINE_ADD_PRDLINE, PRDLINE_UPDATE_PRDLINE, PRDLINE_DELETE_PRDLINE, PRDLINE_SEARCH } from '../Actions/ProductLineActionTypes';
-import { array } from 'prop-types';
 
 const initialState = {
   keyword: "",

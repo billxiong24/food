@@ -9,8 +9,9 @@ import { SKU_ADD_FILTER, SKU_REMOVE_FILTER, SKU_SEARCH, SKU_SORT_BY,
 import { PRDLINE_ADD_PRDLINE, PRDLINE_UPDATE_PRDLINE, PRDLINE_DELETE_PRDLINE, PRDLINE_SEARCH } from './ProductLineActionTypes';
 import labels from "../../Resources/labels";
 import axios from 'axios';
+import common from "../../Resources/common";
 
-const hostname = 'http://cmdev.colab.duke.edu:8000/';
+const hostname = common.hostname;
 
 export const getDummyIngredients = () => {
   return (dispatch) => {
