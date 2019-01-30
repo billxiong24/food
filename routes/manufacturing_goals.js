@@ -4,13 +4,56 @@ let router = express.Router();
 
 
 router.get('/', function(req, res, next) {
-    const mg = new ManufacturingGoals()
+    const mg = new ManufacturingGoals();
     mg.search(req.query.user_id)
     .then((result) => {
         res.status(200).json(result.rows);
     })
     .catch((err) => {
-        res.json({
+        res.status(400).json({
+            error: err
+        });
+    });
+});
+
+router.get('/:id/skus', function(req, res, next) {
+    const mg = new ManufacturingGoals();
+    mg.getSkus(req.params.id)
+    .then((result) => {
+        res.status(200).json(result.rows);
+    })
+    .catch((err) => {
+        res.status(400).json({
+            error: err
+        });
+    });
+});
+
+router.post('/:id/skus', function(req, res, next) {
+    const mg = new ManufacturingGoals();
+    mg.addSkus(req.params.id, req.body.skus)
+    .then((result) => {
+        res.status(200).json({
+            rowCount: result.rowCount
+        });
+    })
+    .catch((err) => {
+        res.status(400).json({
+            error: err
+        });
+    });
+});
+
+router.delete('/:id/skus', function(req, res, next) {
+    const mg = new ManufacturingGoals();
+    mg.removeSkus(req.params.id, req.body.skus)
+    .then((result) => {
+        res.status(200).json({
+            rowCount: result.rowCount
+        });
+    })
+    .catch((err) => {
+        res.status(400).json({
             error: err
         });
     });
@@ -18,22 +61,6 @@ router.get('/', function(req, res, next) {
 
 router.get('/calculations', function(req, res, next) {
 
-    if(!req.query.user_id || !req.query.sku_id) {
-        res.status(400).json({
-            error: "Request must include sku_id and user_id"
-        });
-    }
-
-    const mg = new ManufacturingGoals();
-    mg.calculateQuantities(req.query.user_id, req.query.sku_id)
-    .then((result) => {
-        res.status(200).json(result.rows);
-    })
-    .catch((err) => {
-        res.status(409).json({
-            error: err
-        });
-    });
 });
 
 router.post('/', function(req, res, next) {
