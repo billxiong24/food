@@ -8,6 +8,8 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import delete_icon from '../../Resources/Images/delete_button_1.svg'
 import { Icon, IconButton } from '@material-ui/core';
+import { connect } from 'react-redux';
+import { ingRemoveFilter } from '../../Redux/Actions';
 
 const styles = {
     filter_container: {
@@ -15,7 +17,6 @@ const styles = {
         paddingLeft: 15,
         paddingBottom: 5,
         paddingTop: 5,
-        margin: 3,
         marginBottom: 10,
         minHeight: '50px',
         maxWidth: '100%',
@@ -63,7 +64,15 @@ class FilterItem extends Component {
     constructor(props){
         super(props)
         this.state = {focus: true}
+        this.delete = this.delete.bind(this);
     }
+
+    delete(e, index){
+        e.preventDefault();
+        console.log("handled filter delete on click")
+        console.log("onClick.index:" + index)
+        this.props.deleteFilter(index);
+      }
 
     mouseOut() {
         console.log("Mouse out!!!");
@@ -90,7 +99,7 @@ class FilterItem extends Component {
                     </Typography>
                 </div>
                 { this.state.focus ? 
-                    <IconButton className={classes.icon}>
+                    <IconButton className={classes.icon} onClick ={(e) => this.delete(e,item.id)}>
                         <img src={delete_icon} />
                     </IconButton>
                     : 
@@ -102,5 +111,10 @@ class FilterItem extends Component {
 
 }
 
+const mapDispatchToProps = dispatch => {
+    return {
+        deleteFilter: filter_id =>dispatch(ingRemoveFilter(filter_id))
+    };
+};
 
-export default withStyles(styles)(FilterItem);
+export default withStyles(styles)(connect(null, mapDispatchToProps)(FilterItem));

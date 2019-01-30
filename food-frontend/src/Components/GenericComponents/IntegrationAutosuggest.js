@@ -49,12 +49,16 @@ const suggestions = [
   { label: 'Brunei Darussalam' },
 ];
 
+
+
 function renderInputComponent(inputProps) {
   const { classes, inputRef = () => {}, ref, ...other } = inputProps;
+  console.log(inputProps)
 
   return (
     <TextField
       fullWidth
+      underline={classes.underline}
       InputProps={{
         inputRef: node => {
           ref(node);
@@ -62,6 +66,7 @@ function renderInputComponent(inputProps) {
         },
         classes: {
           input: classes.input,
+          underline: classes.underline,
         },
       }}
       {...other}
@@ -72,17 +77,28 @@ function renderInputComponent(inputProps) {
 function renderSuggestion(suggestion, { query, isHighlighted }) {
   const matches = match(suggestion.label, query);
   const parts = parse(suggestion.label, matches);
+  const suggestion_text = {
+    fontSize: 14,
+    fontFamily: 'Open Sans',
+    fontWeight: 300,
+  }
+
+  const selection_text = {
+    fontSize: 14,
+    fontFamily: 'Open Sans',
+    fontWeight: 400,
+  }
 
   return (
     <MenuItem selected={isHighlighted} component="div">
       <div>
         {parts.map((part, index) =>
           part.highlight ? (
-            <span key={String(index)} style={{ fontWeight: 500 }}>
+            <span key={String(index)} style={selection_text}>
               {part.text}
             </span>
           ) : (
-            <strong key={String(index)} style={{ fontWeight: 300 }}>
+            <strong key={String(index)} style={suggestion_text}>
               {part.text}
             </strong>
           ),
@@ -117,7 +133,7 @@ function getSuggestionValue(suggestion) {
 
 const styles = theme => ({
   root: {
-    height: 250,
+    minHeight: 10,
     flexGrow: 1,
   },
   container: {
@@ -132,6 +148,15 @@ const styles = theme => ({
   },
   suggestion: {
     display: 'block',
+    fontSize: 56,
+    fontFamily: 'Open Sans',
+    fontWeight: 300
+  },
+  suggestion_text:{
+    fontSize: 56,
+    fontFamily: 'Open Sans',
+    fontWeight: 300,
+    color: 'white'
   },
   suggestionsList: {
     margin: 0,
@@ -140,6 +165,16 @@ const styles = theme => ({
   },
   divider: {
     height: theme.spacing.unit * 2,
+  },
+  input : {
+    fontSize: 14,
+    fontFamily:'Open Sans',
+  },
+  underline:{
+    '&:after': {
+      borderBottom:'2px solid ' + labels.colors.primaryColor,
+      
+    },
   },
 });
 
@@ -195,6 +230,7 @@ class IntegrationAutosuggest extends React.Component {
             placeholder: 'Search a country (start with a)',
             value: this.state.single,
             onChange: this.handleChange('single'),
+            color:'white'
           }}
           theme={{
             container: classes.container,

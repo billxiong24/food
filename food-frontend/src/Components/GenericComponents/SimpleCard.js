@@ -13,20 +13,23 @@ const styles = {
     width: '100 %',
     marginBottom:20,
     marginTop:20,
-    padding: 10
+    padding: 10,
   },
   bullet: {
     display: 'inline-block',
     margin: '0 2px',
-    transform: 'scale(0.8)',
   },
   ingredrient_name: {
     fontSize: 14,
-    float:'left'
+    float:'left',
+    fontFamily: 'Open Sans',
+    fontWeight: 400,
   },
   ingredient_id: {
     fontSize: 14,
-    float:'right'
+    float:'right',
+    fontFamily: 'Open Sans',
+    fontWeight: 400,
   },
   pos: {
     marginBottom: 12,

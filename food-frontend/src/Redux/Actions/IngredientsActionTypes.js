@@ -1,1 +1,0 @@
-export const DELETE_FILTER = 'DELETE_FILTER'

@@ -291,11 +291,13 @@ export const ingAddFilter = (filter) => {
   }
 }
 
-export const ingRemoveFilter = (filter) => {
+export const ingRemoveFilter = (filter_id) => {
+  console.log("filter delete action")
+  console.log("filter_id:" + filter_id)
   return (dispatch) => {
     return dispatch({
       type: ING_REMOVE_FILTER,
-      data: filter
+      filter_id
     })
   }
 }

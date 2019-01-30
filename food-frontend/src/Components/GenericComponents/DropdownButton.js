@@ -1,16 +1,15 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { DropdownMultiple, Dropdown } from 'reactjs-dropdown-component';
 import { withStyles } from '@material-ui/core/styles';
-
+import Dropdown from './Dropdown';
 
 const styles = {
     card: {
         width: '100 %',
         marginBottom: 20,
         marginTop: 20,
-        padding: 10
+        padding: 10,
     },
     bullet: {
         display: 'inline-block',

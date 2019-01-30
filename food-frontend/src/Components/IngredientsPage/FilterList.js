@@ -6,7 +6,6 @@ import ItemList from '../GenericComponents/ItemList';
 
 const styles = {
     filters_list:{
-        overflow: 'auto'
     }
 };
 

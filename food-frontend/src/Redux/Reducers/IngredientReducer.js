@@ -21,9 +21,12 @@ export default function ingredientReducer(state = initialState, action) {
         ]
       });
     case ING_REMOVE_FILTER:
+      console.log("filter delete reducer")
       return Object.assign({}, state, {
         filters: state.filters.filter((el)=>{
-          return el.type !== action.data.type && el.string !== action.data.type;
+          console.log(el.id)
+          console.log(action.filter_id)
+          return el.id !== action.filter_id
         })
       });
     case ING_SEARCH:

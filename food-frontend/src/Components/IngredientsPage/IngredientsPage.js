@@ -43,10 +43,12 @@ const styles = {
   },
   ingredients_list_container: {
     height: '100%',
-    width: '70%',
-    float: 'right',
-    backgroundColor: 'red',
-    marginRight: 15,
+    width: '73%',
+    float: 'right', 
+    marginRight: 5,
+    marginLeft: 5,
+    marginTop: 5,
+    marginBottom: 5,
     flexDirection: 'column',
     display: 'flex',
     alignItems: 'center'
@@ -68,15 +70,16 @@ const styles = {
     marginLeft: 5,
     marginTop: 5,
     marginBottom: 5,
-    padding: 10,
+    padding: 12,
     backgroundColor: '#6F3AD3',
     flexDirection: 'column',
     display: 'flex',
-    borderRadius: 12
+    borderRadius: 12,
+    overflow: 'auto'
   },
   active_filters_container_title: {
     color: 'white',
-    fontSize: '24px',
+    fontSize: '16px',
     float: 'left',
     fontFamily: 'Open Sans',
     fontWeight: 300,
@@ -105,6 +108,11 @@ const styles = {
   },
   input: {
     display: 'none',
+  },
+  autosuggest:{
+    fontSize: 14,
+    fontFamily: 'Open Sans',
+    fontWeight: 300
   }
 };
 
@@ -122,6 +130,14 @@ class IngredientsPage extends Component {
     return (
       <div className={classes.ingredients_page_container}>
         <Card className={classes.active_filters_container}>
+        <Typography className={classes.active_filters_container_title}>
+            Search Bar Filter Type
+        </Typography>
+        <FilterDropdown></FilterDropdown>
+        <Typography className={classes.active_filters_container_title}>
+            Sort By
+          </Typography>
+              <SortByDropdown></SortByDropdown>
           <Typography className={classes.active_filters_container_title}>
             Active Filters
           </Typography>
@@ -129,10 +145,8 @@ class IngredientsPage extends Component {
         </Card>
         <div className={classes.ingredients_list_container}>
           <div className={classes.ingredients_list}>
+            <IntegrationAutosuggest className={classes.autosuggest}></IntegrationAutosuggest>
             <div className={classes.ingredients_search_bar}>
-              <IntegrationAutosuggest></IntegrationAutosuggest>
-              <FilterDropdown></FilterDropdown>
-              <SortByDropdown></SortByDropdown>
             </div>
             <IngredientList></IngredientList>
           </div>

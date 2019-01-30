@@ -31,5 +31,8 @@ export default {
     },
     users:{
       ADMIN:'admin'
+    },
+    colors:{
+        primaryColor:'#6F3AD3'
     }
   }
