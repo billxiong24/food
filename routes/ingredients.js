@@ -81,7 +81,7 @@ router.get('/dummyData', function(req, res, next) {
 });
 
 router.get('/search', function(req, res, next) {
-    let name = req.query.name;
+    let name = req.query.name ? req.query.name : "";
     let list = req.query.skus;
     let orderKey = req.query.orderKey;
     let asc = (!req.query.asc) || req.query.asc == "1"; 
@@ -94,11 +94,11 @@ router.get('/search', function(req, res, next) {
         list = [list];
     }
 
-    ing.search(name, list, orderKey ? orderKey : null, asc).then((result) => {
+    ing.search(name, list, orderKey, asc).then((result) => {
         res.json(result.rows);
     })
     .catch((err) => {
-        res.json({
+        res.status(400).json({
             error: err
         });
     });
