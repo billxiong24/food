@@ -81,13 +81,30 @@ class ManufacturingGoals extends CRUD {
         return db.execSingleQuery(query, []);
     }
 
-   calculateQuantities(user_id, sku_id) {
-
+   calculateQuantities(manufacturing_id) {
+       //let query = "SELECT ingredients.* (sku_ingred.quantity * manufacturing_goal_sku.quantity) AS calc_res FROM manufacturing_goal_sku INNER JOIN sku ON sku.id = manufacturing_goal_sku.sku_id INNER JOIN sku_ingred ON sku.num=sku_ingred.sku_num INNER JOIN ingredients ON sku_ingred.ingred_num=ingredients.num WHERE mg_id = $1";
+       let query = squel.select()
+       .from("manufacturing_goal_sku")
+       .field("ingredients.*, (sku_ingred.quantity * manufacturing_goal_sku.quantity) AS calc_res")
+       .join("sku", null, "sku.id = manufacturing_goal_sku.sku_id")
+       .join("sku_ingred", null, "sku.num = sku_ingred.sku_num")
+       .join("ingredients", null, "sku_ingred.ingred_num = ingredients.num")
+       .where("mg_id = ?", manufacturing_id)
+       .toString();
+       console.log(query);
+       return db.execSingleQuery(query, []);
    }
 }
 
 
 //const mg = new ManufacturingGoals();
+//mg.calculateQuantities(7)
+//.then(function(res) {
+    //console.log(res.rows)
+//})
+//.catch(function(er) {
+
+//});
 //mg.removeSkus(4, [2, 3, 5])
 //.then(function(res) {
     //console.log(res);

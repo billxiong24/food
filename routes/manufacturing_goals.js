@@ -59,8 +59,17 @@ router.delete('/:id/skus', function(req, res, next) {
     });
 });
 
-router.get('/calculations', function(req, res, next) {
-
+router.get('/:id/calculations', function(req, res, next) {
+    const mg = new ManufacturingGoals();
+    mg.calculateQuantities(req.params.id)
+    .then((result) => {
+        res.status(201).json(result.rows);
+    })
+    .catch((err) => {
+        res.status(400).json({
+            error: err
+        });
+    });
 });
 
 router.post('/', function(req, res, next) {
