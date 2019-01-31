@@ -22,9 +22,10 @@ import next from '../../Resources/Images/baseline-navigate_next-24px.svg'
 import SimpleCard from '../GenericComponents/SimpleCard';
 import ManufacturingGoalsCard from './ManufacturingGoalsCard';
 import ManufacturingGoalsFilterSelect from './ManufacturingGoalsFilterSelect';
-import { mangoalUpdateFilters, mangoalGetProductLines, mangoalSetActiveMangoal, mangoalGetMangoals, mangoalCreateMangoal, mangoalSearchSkus } from '../../Redux/Actions/ManufacturingGoalActionCreators';
+import { mangaolUpdateMangoalSkus, mangoalUpdateFilters, mangoalGetProductLines, mangoalSetActiveMangoal, mangoalGetMangoals, mangoalCreateMangoal, mangoalSearchSkus } from '../../Redux/Actions/ManufacturingGoalActionCreators';
 import ManufacturingGoalsSkuSearch from './ManufacturingGoalsSkuSearch';
 import TextField from '@material-ui/core/TextField';
+import SkuCard from './SkuCard';
 
 const styles = {
   man_goal_page_container: {
@@ -97,7 +98,7 @@ const styles = {
   },
   sku_search_bar: {
     display: 'flex',
-    width:'85%',
+    width:'80%',
     padding: 5,
   },
   sku_quant_field: {
@@ -140,6 +141,9 @@ const styles = {
     backgroundColor: 'gray',
     height: '2px'
   },
+  hidden: {
+    display: 'none'
+  }
 };
 
 class ManufacturingGoalsPage extends Component {
@@ -149,7 +153,8 @@ class ManufacturingGoalsPage extends Component {
       alert: false,
       message: '',
       suggestions:[],
-      quantity: 0
+      quantity: '',
+      sku: {},
     }
   }
 
@@ -187,6 +192,23 @@ class ManufacturingGoalsPage extends Component {
       [name]: event.target.value,
     });
   };
+
+  handleQueryChange = name => event => {
+    this.setState({
+      [name]: event,
+    });
+  }
+
+  addSku() {
+    let sku = {
+      sku_id: this.state.sku.value.id,
+      quantity: this.state.quantity,
+    }
+    this.props.mangaolUpdateMangoalSkus(this.props.manGoals.activeGoal, [sku])
+    .then(() => {
+      console.log(this.props.manGoals.activeGoal.skus);
+    });
+  }
 
   getSkuSuggestions() {
     this.props.mangoalSearchSkus({name:''}, this.props.manGoals.filters)
@@ -278,11 +300,13 @@ class ManufacturingGoalsPage extends Component {
             </Typography>
           </div>
           <div variant="inset" className={classes.divider} />
-          <div className={classes.man_goal_content_container}>
+          <div className={(manGoals.activeGoal.id ? classes.man_goal_content_container : classes.hidden)}>
             <div className={classes.man_goal_content_add}>
               <div className={classes.sku_search_bar}>
                 <ManufacturingGoalsSkuSearch
                   suggestions={this.state.suggestions}
+                  sku={this.state.sku}
+                  onChange={this.handleQueryChange('sku')}
                 ></ManufacturingGoalsSkuSearch>
               </div>
               <TextField
@@ -299,7 +323,9 @@ class ManufacturingGoalsPage extends Component {
               color="primary" 
               aria-label="Add" 
               className={classes.fab +' '+classes.sku_add_button}
-              size="small">
+              size="small"
+              disabled={!this.state.sku || !this.state.quantity}
+              onClick={()=>{this.addSku()}}>
                 <AddIcon />
               </Fab>
             </div>
@@ -310,7 +336,14 @@ class ManufacturingGoalsPage extends Component {
               name={manGoals.filters}
               ></ManufacturingGoalsFilterSelect>
             </div>
-          <div variant="inset" className={classes.divider} />
+            <div variant="inset" className={classes.divider} />
+            <div className={classes.sku_list_container}>
+              <ItemList
+                items={manGoals.activeGoal.skus}
+              >
+                <SkuCard></SkuCard>
+              </ItemList>
+            </div>
           </div>
         </div>
       </div>
@@ -332,7 +365,8 @@ const mapDispatchToProps = {
   mangoalCreateMangoal,
   mangoalSearchSkus,
   mangoalGetProductLines,
-  mangoalUpdateFilters
+  mangoalUpdateFilters,
+  mangaolUpdateMangoalSkus
 }
 
 

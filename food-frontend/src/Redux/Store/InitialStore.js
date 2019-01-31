@@ -4,13 +4,13 @@ import labels from "../../Resources/labels";
 export const InitialStore = {
   // For now, only persistent data about users is who is actually logged in if there is someone logged in
   users: {
-    uname: null,
-    id: null,
+    uname: 'admin',
+    id: 7,
     isSuccess: false,
     errMsg: null
   },
   // Persistent data concerning routing
-  route: 2,
+  route: 3,
   // Persistent data concnerning ingredients view
   ingredients: {
     filters: dummy_filters,
@@ -44,7 +44,12 @@ export const InitialStore = {
   // Manufacturing Goals
   manGoals: {
     goals: [],
-    activeGoal:{},
+    activeGoal:{
+      name: 'Please Select a Manufacturing Goal',
+      id: null,
+      skus: [],
+      user_id: null
+    },
     skus: [],
     productLines: [],
     filters: [],
