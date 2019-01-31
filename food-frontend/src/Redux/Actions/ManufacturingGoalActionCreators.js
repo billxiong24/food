@@ -4,6 +4,41 @@ import common from '../../Resources/common';
 
 const hostname = common.hostname;
 
+export const mangaolUpdateMangoalSkus = (manGoal, skus) => {
+  console.log({skus:skus});
+  return (dispatch) => {
+    return axios.post(hostname + 'manufacturing_goals/' + manGoal.id + '/skus', {skus: skus})
+    .then((response)=>{
+      axios.get(hostname + 'manufacturing_goals/' + manGoal.id + '/skus')
+        .then((response) => {
+          dispatch({
+            type: mangoal_actions.MANGOAL_UPDATE_MANGOAL_SKUS,
+            data: response.data
+          });
+        })
+        .catch((err) => {throw(err)});
+    })
+    .catch((err)=>{
+      if(err.response.status === 400) {
+        dispatch({
+          type: mangoal_actions.MANGOAL_UPDATE_MANGOAL_SKUS,
+          data: {
+            errMsg: err.response.data.error
+          }
+        });
+      } else {
+        dispatch({
+          type: mangoal_actions.MANGOAL_UPDATE_MANGOAL_SKUS,
+          data: {
+            errMsg: 'Something unexpected went wrong'
+          }
+        });
+        throw(err.response);
+      }
+    })
+  }
+}
+
 export const mangoalUpdateFilters = (filters) => {
   return (dispatch) => {
     return dispatch({
@@ -130,10 +165,34 @@ export const mangoalGetMangoals = (user_id) => {
 
 export const mangoalSetActiveMangoal = (manGoal) => {
   return (dispatch) => {
-    return dispatch({
-      type: mangoal_actions.MANGOAL_SET_CURRENT_MANGOAL,
-      data: {
-        activeGoal: manGoal
+    return axios.get(hostname + 'manufacturing_goals/' + manGoal.id + '/skus')
+    .then((response) => {
+      dispatch({
+        type: mangoal_actions.MANGOAL_SET_CURRENT_MANGOAL,
+        data: {
+          activeGoal: {
+            ...manGoal,
+            skus: response.data
+          }
+        }
+      });
+    })
+    .catch((err) => {
+      if(err.response.status === 400) {
+        dispatch({
+          type: mangoal_actions.MANGOAL_SET_CURRENT_MANGOAL,
+          data: {
+            errMsg: err.response.data.error
+          }
+        });
+      } else {
+        dispatch({
+          type: mangoal_actions.MANGOAL_SET_CURRENT_MANGOAL,
+          data: {
+            errMsg: 'Something unexpected went wrong'
+          }
+        });
+        throw(err.response);
       }
     })
   }

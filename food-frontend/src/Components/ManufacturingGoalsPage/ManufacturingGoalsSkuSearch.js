@@ -108,7 +108,7 @@ function Option(props) {
         component="div"
         style={{
           fontWeight: props.isSelected ? 500 : 400,
-          width: '95%'
+          width: '80%'
         }}
         {...props.innerProps}
       >
@@ -121,7 +121,7 @@ function Option(props) {
         style={{
           fontWeight: props.isSelected ? 500 : 400,
           float: 'right',
-          width: '5%',
+          width: '20%',
           textAlign: 'right'
         }}
         {...props.innerProps}
@@ -175,15 +175,6 @@ const components = {
 };
 
 class ManufacturingGoalsSkuSearch extends React.Component {
-  state = {
-    single: null,
-  };
-
-  handleChange = name => value => {
-    this.setState({
-      [name]: value,
-    })
-  };
 
   render() {
     const { classes, theme, suggestions } = this.props;
@@ -206,8 +197,8 @@ class ManufacturingGoalsSkuSearch extends React.Component {
             styles={selectStyles}
             options={suggestions}
             components={components}
-            value={this.state.single}
-            onChange={this.handleChange('single')}
+            value={this.props.sku}
+            onChange={(e)=>{this.props.onChange(e)}}
             placeholder="Search for SKUs to Add"
             isClearable
           />

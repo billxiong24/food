@@ -1,8 +1,8 @@
 import { USER_LOG_IN_ATTEMPT, USER_CREATE_ATTEMPT } from '../Actions/UserActionTypes';
 
 const initialState = {
-  uname: 'admin',
-  id: 7,
+  uname: null,
+  id: null,
   isSuccess: false,
   errMsg: null
 }
