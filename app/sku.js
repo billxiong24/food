@@ -1,6 +1,7 @@
 const db = require("./db");
 const CRUD = require("./CRUD");
 const squel = require("squel").useFlavour('postgres');
+const QueryGenerator = require("./query_generator");
 
 class SKU extends CRUD {
 
@@ -69,17 +70,14 @@ class SKU extends CRUD {
     removeIngredients(id, ingreds) {
         return this.getSKUNumIfExists(id)
         .then(function(res) {
-            let expr = squel.expr();
-            for(let i = 0; i < ingreds.length; i++) {
-                expr = expr.or("ingred_num = ?", ingreds[i]);
-            }
             let query = squel.delete()
             .from("sku_ingred")
-            .where("sku_num=?", res)
-            .where(
-                expr
-            ).toString();
-            return db.execSingleQuery(query, []);
+            .where("sku_num=?", res);
+            const queryGen = new QueryGenerator(query);
+            queryGen.chainOrFilter(ingreds, "ingred_num = ?");
+            let queryStr = queryGen.getQuery().toString();
+            console.log(queryStr);
+            return db.execSingleQuery(queryStr, []);
         });
     }
 
@@ -96,40 +94,15 @@ class SKU extends CRUD {
         .left_join("sku_ingred", null, "sku.num=sku_ingred.sku_num")
         .left_join("ingredients", null, "sku_ingred.ingred_num=ingredients.num");
 
-        if(names.length > 0) {
-            let expr = squel.expr();
-            for(let i = 0; i < names.length; i++) {
-                expr = expr.and("sku.name LIKE ?","%" + names[i] + "%");
-            }
-            q = q.where(
-                expr
-            );
-        }
-
-        if(ingredients.length > 0) {
-            let expr = squel.expr();
-            for(let i = 0; i < ingredients.length; i++) {
-                expr = expr.or("ingredients.name=?",ingredients[i]);
-            }
-            q = q.where(
-                expr
-            );
-        }
-        if(productlines.length > 0) {
-            let expr = squel.expr();
-            for(let i = 0; i < productlines.length; i++) {
-                expr = expr.or("sku.prd_line=?",productlines[i]);
-            }
-            q = q.where(
-                expr
-            );
-        }
-        if(orderKey) {
-            q = q.order(orderKey, asc);
-        }
-        q = q.distinct().toString();
-        console.log(q);
-        return db.execSingleQuery(q);
+        const queryGen = new QueryGenerator(q);
+        names = QueryGenerator.transformQueryArr(names);
+        queryGen.chainAndFilter(names, "sku.name LIKE ?")
+        .chainOrFilter(ingredients, "ingredients.name=?")
+        .chainOrFilter(productlines, "sku.prd_line=?")
+        .orderDistinct(orderKey, asc);
+        let queryStr = queryGen.getQuery().toString();
+        console.log(queryStr);
+        return db.execSingleQuery(queryStr, []);
     }
 
     checkProductLineExists(name) {
@@ -146,10 +119,8 @@ class SKU extends CRUD {
             return Promise.reject("Not all required fields are present.");
         }
 
-        let query = squel.insert()
-        .into(this.tableName)
-        .setFieldsRows([dataObj]).toString();
-
+        let query = QueryGenerator.genInsQuery(dataObj, this.tableName).toString();
+        console.log(query);
         //product line must exist
         return this.checkProductLineExists(dataObj.prd_line)
         .then((res) => {
@@ -177,7 +148,7 @@ class SKU extends CRUD {
     }
 }
 
-//const sku = new SKU();
+const sku = new SKU();
 
 //sku.removeIngredient(5043, 44).then(function(res) {
     //console.log(res);
@@ -186,7 +157,7 @@ class SKU extends CRUD {
     //console.log(err);
 //});
 
-//sku.search("sku2", [], ["prod69"]).then(function(res) {
+//sku.search(["sku2"], [], ["prod69"]).then(function(res) {
     //console.log(res.rows);
 //})
 //.catch(function(err) {

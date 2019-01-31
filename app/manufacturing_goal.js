@@ -83,7 +83,6 @@ class ManufacturingGoals extends CRUD {
     }
 
    calculateQuantities(manufacturing_id, format='json') {
-       //let query = "SELECT ingredients.* (sku_ingred.quantity * manufacturing_goal_sku.quantity) AS calc_res FROM manufacturing_goal_sku INNER JOIN sku ON sku.id = manufacturing_goal_sku.sku_id INNER JOIN sku_ingred ON sku.num=sku_ingred.sku_num INNER JOIN ingredients ON sku_ingred.ingred_num=ingredients.num WHERE mg_id = $1";
        let query = squel.select()
        .from("manufacturing_goal_sku")
        .field("ingredients.*, SUM((sku_ingred.quantity * manufacturing_goal_sku.quantity)) AS calc_res")
