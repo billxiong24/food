@@ -81,12 +81,19 @@ router.get('/dummyData', function(req, res, next) {
 });
 
 router.get('/search', function(req, res, next) {
-    let name = req.query.name ? req.query.name : "";
+    let names = req.query.names;
     let list = req.query.skus;
     let orderKey = req.query.orderKey;
     let asc = (!req.query.asc) || req.query.asc == "1"; 
 
     const ing = new Ingredient();
+    if(!names) {
+        names = [];
+    }
+    else if(!Array.isArray(names)) {
+        names = [names];
+    }
+
     if(!list) {
         list = [];
     }
@@ -94,8 +101,8 @@ router.get('/search', function(req, res, next) {
         list = [list];
     }
 
-    ing.search(name, list, orderKey, asc).then((result) => {
-        res.json(result.rows);
+    ing.search(names, list, orderKey, asc).then((result) => {
+        res.status(200).json(result.rows);
     })
     .catch((err) => {
         res.status(400).json({

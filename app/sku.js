@@ -89,14 +89,23 @@ class SKU extends CRUD {
     }
 
     //TODO use squel to generate this query
-    search(searchQuery, ingredients, productlines, orderKey, asc=true) {
-        searchQuery = "%" + searchQuery + "%";
+    search(names, ingredients, productlines, orderKey, asc=true) {
         let q = squel.select()
         .from(this.tableName)
         .field("sku.*")
         .left_join("sku_ingred", null, "sku.num=sku_ingred.sku_num")
-        .left_join("ingredients", null, "sku_ingred.ingred_num=ingredients.num")
-        .where("sku.name LIKE ? ", searchQuery);
+        .left_join("ingredients", null, "sku_ingred.ingred_num=ingredients.num");
+
+        if(names.length > 0) {
+            let expr = squel.expr();
+            for(let i = 0; i < names.length; i++) {
+                expr = expr.and("sku.name LIKE ?","%" + names[i] + "%");
+            }
+            q = q.where(
+                expr
+            );
+        }
+
         if(ingredients.length > 0) {
             let expr = squel.expr();
             for(let i = 0; i < ingredients.length; i++) {
