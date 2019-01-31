@@ -32,8 +32,7 @@ class Ingredient extends CRUD {
         return db.execSingleQuery(query, [id]);
     }
 
-    //TODO use squel to generate this query
-    search(names, skus, orderKey, asc=true) {
+    search(names, skus, filter) {
         let q = squel.select()
         .from(this.tableName)
         .field("ingredients.*")
@@ -43,9 +42,8 @@ class Ingredient extends CRUD {
         names = QueryGenerator.transformQueryArr(names);
         queryGen.chainAndFilter(names, "ingredients.name LIKE ?")
         .chainOrFilter(skus, "sku.id = ?")
-        .orderDistinct(orderKey, asc);
-
-        let queryStr = queryGen.getQuery().toString();
+        .makeDistinct();
+        let queryStr = filter.applyFilter(queryGen.getQuery()).toString();
         console.log(queryStr);
         return db.execSingleQuery(queryStr, []);
     }

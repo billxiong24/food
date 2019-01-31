@@ -2,6 +2,7 @@ const db = require("./db");
 const CRUD = require("./CRUD");
 const squel = require("squel").useFlavour('postgres');
 const QueryGenerator = require("./query_generator");
+const Filter = require('./filter');
 
 class SKU extends CRUD {
 
@@ -75,8 +76,7 @@ class SKU extends CRUD {
         return db.execSingleQuery(query, [id]);
     }
 
-    //TODO use squel to generate this query
-    search(names, ingredients, productlines, orderKey, asc=true) {
+    search(names, ingredients, productlines, filter) {
         let q = squel.select()
         .from(this.tableName)
         .field("sku.*")
@@ -88,8 +88,8 @@ class SKU extends CRUD {
         queryGen.chainAndFilter(names, "sku.name LIKE ?")
         .chainOrFilter(ingredients, "ingredients.name=?")
         .chainOrFilter(productlines, "sku.prd_line=?")
-        .orderDistinct(orderKey, asc);
-        let queryStr = queryGen.getQuery().toString();
+        .makeDistinct();
+        let queryStr = filter.applyFilter(queryGen.getQuery()).toString();
         console.log(queryStr);
         return db.execSingleQuery(queryStr, []);
     }

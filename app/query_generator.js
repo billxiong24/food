@@ -40,10 +40,7 @@ class QueryGenerator {
         return this.query;
     }
     
-    orderDistinct(orderKey, asc) {
-        if(orderKey) {
-            this.query = this.query.order(orderKey, asc);
-        }
+    makeDistinct() {
         this.query = this.query.distinct();
         return this;
     }
