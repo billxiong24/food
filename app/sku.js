@@ -47,20 +47,9 @@ class SKU extends CRUD {
                 obj.sku_num = sku_num;
             }
 
-            squel.onConflictInsert = function(options) {
-              return squel.insert(options, [
-                  new squel.cls.StringBlock(options, 'INSERT'),
-                  new squel.cls.IntoTableBlock(options),
-                  new squel.cls.InsertFieldValueBlock(options),
-                  new squel.cls.WhereBlock(options),
-                  new squel.cls.StringBlock(options, 'ON CONFLICT (sku_num, ingred_num) DO UPDATE SET quantity = EXCLUDED.quantity')
-                ]);
-            };
-
-            query = squel.onConflictInsert()
-            .into('sku_ingred')
-            .setFieldsRows(ingredients)
-            .toString();
+            query = QueryGenerator.genInsConflictQuery(ingredients, 'sku_ingred',  'ON CONFLICT (sku_num, ingred_num) DO UPDATE SET quantity = EXCLUDED.quantity');
+            query = query.toString();
+            console.log(query);
         })
         .then(function(res) {
             return db.execSingleQuery(query, []);

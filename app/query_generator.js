@@ -33,7 +33,7 @@ class QueryGenerator {
 
         return squel.onConflictInsert()
         .into(tableName)
-        .setFieldsRows([dataObj])
+        .setFieldsRows(dataObj);
     }
 
     getQuery() {
