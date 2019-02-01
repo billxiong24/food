@@ -1,13 +1,26 @@
 let express = require('express');
 const Sku = require('../app/sku');
+const Filter = require("../app/filter");
 let router = express.Router();
 
 router.get('/search', function(req, res, next) {
-    let name = req.query.name;
+    let names = req.query.names;
     let ingredients = req.query.ingredients;
     let prodlines = req.query.prodlines;
     let orderKey = req.query.orderKey;
     let asc = (!req.query.asc) || req.query.asc == "1"; 
+    let limit = parseInt(req.query.limit) || 0;
+    let offset = parseInt(req.query.offset) || 0;
+
+    const filter = new Filter();
+    filter.setOrderKey(orderKey).setAsc(asc).setOffset(req.query.offset).setLimit(req.query.limit);
+
+    if(!names) {
+        names = [];
+    }
+    else if(!Array.isArray(names)) {
+        names = [names];
+    }
 
     if(!ingredients) {
         ingredients = [];
@@ -24,7 +37,7 @@ router.get('/search', function(req, res, next) {
     }
     const sku = new Sku();
 
-    sku.search(name, ingredients, prodlines, orderKey ? orderKey : null, asc)
+    sku.search(names, ingredients, prodlines, filter) 
     .then((result) => {
         res.status(200).json(result.rows);
     })
@@ -57,18 +70,6 @@ router.get('/:id/ingredients', function(req, res, next) {
 
 
 router.post('/:id/ingredients', function(req, res, next) {
-    //let ingredients = null;
-    //console.log(req.body.ingredients);
-    //console.log(req.body.ingredients[0]);
-    //try {
-        //ingredients = JSON.parse(req.body.ingredients);
-    //}
-    //catch(err) {
-        //return res.status(400).json({
-            //error: "Malformed Request Body."
-        //});
-    //}
-
     let id = req.params.id;
     if(!id) {
         return res.status(400).json({

@@ -1,6 +1,7 @@
 const db = require("./db");
 const CRUD = require("./CRUD");
 const squel = require("squel").useFlavour('postgres');
+const QueryGenerator = require("./query_generator");
 
 class Ingredient extends CRUD {
 
@@ -31,34 +32,20 @@ class Ingredient extends CRUD {
         return db.execSingleQuery(query, [id]);
     }
 
-    //TODO use squel to generate this query
-    search(searchQuery, skus, orderKey, asc=true) {
-        searchQuery = "%" + searchQuery + "%";
+    search(names, skus, filter) {
         let q = squel.select()
-        .from('ingredients')
+        .from(this.tableName)
         .field("ingredients.*")
         .left_join("sku_ingred", null, "ingredients.num=sku_ingred.ingred_num")
-        .left_join("sku", null, "sku_ingred.sku_num=sku.num")
-        .where("ingredients.name LIKE ? ", searchQuery);
-
-        if(skus.length > 0) {
-            let expr = squel.expr();
-            for(let i = 0; i < skus.length; i++) {
-                expr = expr.or("sku.case_upc=?",skus[i]);
-            }
-            q = q.where(
-                expr
-            );
-        }
-        if(orderKey) {
-            q = q.order(orderKey, asc);
-        }
-        q = q.distinct().toString();
-        console.log(q);
-
-        //skus.unshift(searchQuery);
-        //return db.execSingleQuery(query, skus);
-        return db.execSingleQuery(q);
+        .left_join("sku", null, "sku_ingred.sku_num=sku.num");
+        const queryGen = new QueryGenerator(q);
+        names = QueryGenerator.transformQueryArr(names);
+        queryGen.chainAndFilter(names, "ingredients.name LIKE ?")
+        .chainOrFilter(skus, "sku.id = ?")
+        .makeDistinct();
+        let queryStr = filter.applyFilter(queryGen.getQuery()).toString();
+        console.log(queryStr);
+        return db.execSingleQuery(queryStr, []);
     }
 
 

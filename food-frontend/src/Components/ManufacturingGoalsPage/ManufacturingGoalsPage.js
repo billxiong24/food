@@ -22,9 +22,14 @@ import next from '../../Resources/Images/baseline-navigate_next-24px.svg'
 import SimpleCard from '../GenericComponents/SimpleCard';
 import ManufacturingGoalsCard from './ManufacturingGoalsCard';
 import ManufacturingGoalsFilterSelect from './ManufacturingGoalsFilterSelect';
-import { mangoalUpdateFilters, mangoalGetProductLines, mangoalSetActiveMangoal, mangoalGetMangoals, mangoalCreateMangoal, mangoalSearchSkus } from '../../Redux/Actions/ManufacturingGoalActionCreators';
+import { mangoalGetCalculations, mangoalDeleteMangoalSkus, mangaolDeleteMangoal, mangaolUpdateMangoalSkus, mangoalUpdateFilters, mangoalGetProductLines, mangoalSetActiveMangoal, mangoalGetMangoals, mangoalCreateMangoal, mangoalSearchSkus } from '../../Redux/Actions/ManufacturingGoalActionCreators';
 import ManufacturingGoalsSkuSearch from './ManufacturingGoalsSkuSearch';
 import TextField from '@material-ui/core/TextField';
+import SkuCard from './SkuCard';
+import axios from 'axios';
+import common from '../../Resources/common';
+import FileDownload from 'js-file-download';
+import {routeToPage} from '../../Redux/Actions/index';
 
 const styles = {
   man_goal_page_container: {
@@ -65,6 +70,7 @@ const styles = {
     paddingLeft: '2.5%',
     paddingRight: '2.5%',
     paddingTop: '1%',
+    paddingBottom: '1%',
     backgroundColor: 'purple',
     borderRadius: 12,
     display: 'flex',
@@ -73,12 +79,15 @@ const styles = {
   },
   man_goal_title_container: {
     marginTop: 10,
+    marginBottom: 5,
     width: '100%',
     display: 'flex'
   },
   man_goal_title: {
     color: 'white',
     fontSize: '32px',
+    width: '95%',
+    textAlign: 'left',
   },
   man_goal_content_container: {
     marginTop: 10,
@@ -88,29 +97,41 @@ const styles = {
     display:'flex',
     flexDirection: 'column'
   },
+  sku_search_container: {
+    height: 140,
+  },
   man_goal_content_add: {
     width:'100%',
-    height:60,
+    height:'50%',
     display:'flex',
     flexDirection: 'row',
-    padding: 5
   },
   sku_search_bar: {
     display: 'flex',
-    width:'85%',
+    width:'80%',
     padding: 5,
+    paddingTop: 22,
   },
   sku_quant_field: {
     display: 'flex',
-    marginTop: 1,
+    marginTop: 10,
     marginLeft: '1%',
     marginRight: '1%',
   },
   sku_add_button: {
     display: 'flex',
+    marginTop: 15,
   },
   filter_container: {
-    display: 'flex'
+    display: 'flex',
+    height: '50%',
+  },
+  sku_list_container: {
+    overflow: 'auto',
+    flexBasis: '80%',
+  },
+  man_goal_options_container: {
+    padding:10,
   },
   clickable: {
     cursor:'pointer'
@@ -118,7 +139,7 @@ const styles = {
   card: {
     width: '100 %',
     margin: 20,
-    padding: 10
+    padding: 10,
   },
   ingredients_list: {
     height: '80vh',
@@ -140,6 +161,9 @@ const styles = {
     backgroundColor: 'gray',
     height: '2px'
   },
+  hidden: {
+    display: 'none'
+  }
 };
 
 class ManufacturingGoalsPage extends Component {
@@ -149,7 +173,8 @@ class ManufacturingGoalsPage extends Component {
       alert: false,
       message: '',
       suggestions:[],
-      quantity: 0
+      quantity: '',
+      sku: null,
     }
   }
 
@@ -188,6 +213,30 @@ class ManufacturingGoalsPage extends Component {
     });
   };
 
+  handleQueryChange = name => event => {
+    this.setState({
+      [name]: event,
+    });
+  }
+
+  addSku() {
+    let sku = {
+      sku_id: this.state.sku.value.id,
+      quantity: this.state.quantity,
+    }
+    this.props.mangaolUpdateMangoalSkus(this.props.manGoals.activeGoal, [sku])
+    .then((response) => {
+      this.setState({
+        sku: null,
+        quantity: ''
+      })
+    });
+  }
+
+  removeSku(sku) {
+    this.props.mangoalDeleteMangoalSkus(this.props.manGoals.activeGoal, [sku.id]);
+  }
+
   getSkuSuggestions() {
     this.props.mangoalSearchSkus({name:''}, this.props.manGoals.filters)
     .then(()=>{
@@ -199,7 +248,7 @@ class ManufacturingGoalsPage extends Component {
           sku.count_per_case
       }));
       this.setState({
-        suggestions: newSuggestions
+        suggestions: newSuggestions.slice(0,6) // TODO update this when the query changes so we don't get all skus for autocomplete
       });
     })
   }
@@ -223,16 +272,9 @@ class ManufacturingGoalsPage extends Component {
   }
 
   removeManufacturingGoal(manGoal){
-    return; // TODO 
-    this.props.prdlineDeletePrdline(manGoal)
+    this.props.mangaolDeleteMangoal(manGoal)
     .then(()=>{
-      if(!this.props.manGoals.errMsg) {
-        this.setState({
-          alert: true,
-          message: 'Product Line Successfully Removed!'
-        });
-        // this.handleQuery();
-      } else {
+      if(this.props.manGoals.errMsg) {
         this.setState({
           alert:true,
           message: 'Product Line NOT Deleted: ' + this.props.manGoals.errMsg
@@ -241,8 +283,28 @@ class ManufacturingGoalsPage extends Component {
     });
   }
 
+  exportManGoal() {
+    return axios.post(common.hostname + 'manufacturing_goals/exported_file', {
+        data: this.props.manGoals.activeGoal.skus,
+        format: "csv",
+    })
+    .then((response)=>{
+      FileDownload(response.data, this.props.manGoals.activeGoal.name + '.csv');
+    })
+    .catch(err=>{
+      console.log(err);
+    })
+  }
+
   showManufacturingGoal(manGoal) {
     this.props.mangoalSetActiveMangoal(manGoal);
+  }
+
+  viewCalculations() {
+    this.props.mangoalGetCalculations(this.props.manGoals.activeGoal)
+    .then((response) => {
+      this.props.routeToPage(8);
+    })
   }
 
   render() {
@@ -276,41 +338,84 @@ class ManufacturingGoalsPage extends Component {
             <Typography className={classes.man_goal_title}>
               {manGoals.activeGoal.name}
             </Typography>
+            <Fab 
+            size="small" 
+            aria-label="Delete" 
+            className={(manGoals.activeGoal.id ? classes.fab : classes.hidden)}
+            onClick={()=>{this.removeManufacturingGoal(this.props.manGoals.activeGoal)}}
+            >
+              <DeleteIcon />
+            </Fab>
           </div>
           <div variant="inset" className={classes.divider} />
-          <div className={classes.man_goal_content_container}>
-            <div className={classes.man_goal_content_add}>
-              <div className={classes.sku_search_bar}>
-                <ManufacturingGoalsSkuSearch
-                  suggestions={this.state.suggestions}
-                ></ManufacturingGoalsSkuSearch>
+          <div className={(manGoals.activeGoal.id ? classes.man_goal_content_container : classes.hidden)}>
+            <div className={classes.sku_search_container}>
+              <div className={classes.man_goal_content_add}>
+                <div className={classes.sku_search_bar}>
+                  <ManufacturingGoalsSkuSearch
+                    suggestions={this.state.suggestions}
+                    sku={this.state.sku}
+                    onChange={this.handleQueryChange('sku')}
+                  ></ManufacturingGoalsSkuSearch>
+                </div>
+                <TextField
+                  id="standard-number"
+                  label="Number"
+                  value={this.state.quantity}
+                  onChange={this.handleChange('quantity')}
+                  className={classes.textField + ' ' + classes.sku_quant_field}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+                <Fab
+                  color="primary"
+                  aria-label="Add"
+                  className={classes.fab + ' ' + classes.sku_add_button}
+                  size="small"
+                  disabled={!this.state.sku || !this.state.quantity}
+                  onClick={() => { this.addSku() }}>
+                  <AddIcon />
+                </Fab>
               </div>
-              <TextField
-                id="standard-number"
-                label="Number"
-                value={this.state.quantity}
-                onChange={this.handleChange('quantity')}
-                className={classes.textField +' '+classes.sku_quant_field}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
-              <Fab 
-              color="primary" 
-              aria-label="Add" 
-              className={classes.fab +' '+classes.sku_add_button}
-              size="small">
-                <AddIcon />
-              </Fab>
+              <div className={classes.filter_container}>
+                <ManufacturingGoalsFilterSelect
+                  prdlines={manGoals.productLines}
+                  updateFilters={(filters) => { this.updateFilters(filters) }}
+                  name={manGoals.filters}
+                ></ManufacturingGoalsFilterSelect>
+              </div>
             </div>
-            <div className={classes.filter_container}>
-              <ManufacturingGoalsFilterSelect
-              prdlines={manGoals.productLines}
-              updateFilters={(filters)=>{this.updateFilters(filters)}}
-              name={manGoals.filters}
-              ></ManufacturingGoalsFilterSelect>
+            <div variant="inset" className={classes.divider} />
+            <div>
+              <label style={{float:'left',marginLeft:50}}>Qty.</label>
+              <label style={{float:'left',marginLeft:50}}>SKU Item</label>
             </div>
-          <div variant="inset" className={classes.divider} />
+            <div className={classes.sku_list_container}>
+              <ItemList
+                items={manGoals.activeGoal.skus}
+              >
+                <SkuCard
+                onDelete={(e)=>{this.removeSku(e)}}></SkuCard>
+              </ItemList>
+            </div>
+            <div variant="inset" className={classes.divider} />
+            <div className={classes.man_goal_options_container}>
+              <Button 
+              variant="contained" 
+              className={classes.button}
+              onClick={()=>{this.exportManGoal()}}
+              >
+                Export {manGoals.activeGoal.name}
+              </Button>
+              <Button 
+              variant="contained" 
+              className={classes.button}
+              onClick={()=>{this.viewCalculations()}}
+              >
+                View Manufacturing Calculations
+              </Button>
+            </div>
           </div>
         </div>
       </div>
@@ -332,7 +437,12 @@ const mapDispatchToProps = {
   mangoalCreateMangoal,
   mangoalSearchSkus,
   mangoalGetProductLines,
-  mangoalUpdateFilters
+  mangoalUpdateFilters,
+  mangaolUpdateMangoalSkus,
+  mangaolDeleteMangoal,
+  mangoalDeleteMangoalSkus,
+  routeToPage,
+  mangoalGetCalculations,
 }
 
 
