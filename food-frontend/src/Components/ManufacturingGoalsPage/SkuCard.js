@@ -6,13 +6,18 @@ import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
 
 const styles = {
   card: {
     width: '100 %',
-    marginBottom:20,
-    marginTop:20,
+    marginBottom:10,
+    marginTop:10,
     padding: 10,
+  },
+  card_content: {
+    textAlign:'left',
   },
   bullet: {
     display: 'inline-block',
@@ -20,18 +25,27 @@ const styles = {
   },
   ingredrient_name: {
     fontSize: 14,
-    float:'left',
     fontFamily: 'Open Sans',
     fontWeight: 400,
+    textAlign:'left',
+    marginLeft: 30,
+    display:'inline-block',
   },
   ingredient_id: {
     fontSize: 14,
-    float:'right',
     fontFamily: 'Open Sans',
-    fontWeight: 400,
+    fontWeight: 1000,
+    width:'5%',
+    textAlign:'right',
+    display:'inline-block',
   },
   pos: {
     marginBottom: 12,
+  },
+  close_button: {
+    float:'right',
+    padding:'0px',
+    'margin-top':'-5px'
   },
 };
 
@@ -42,16 +56,27 @@ class SimpleCard extends Component {
         const item = this.props.item
         // console.log(this.props)
         return (
-            <Card className={classes.card}>
-            <CardContent>
-                <Typography className={classes.ingredrient_name} color="textSecondary" gutterBottom>
-                    {item.name}
-                </Typography>
+          <Card className={classes.card}>
+            <div className={classes.card_content}>
+              <CardContent>
                 <Typography className={classes.ingredient_id} color="textSecondary" gutterBottom>
-                    {item.quantity}
+                  {item.quantity}
                 </Typography>
-            </CardContent>
-            </Card>
+                <Typography className={classes.ingredrient_name} color="textSecondary" gutterBottom>
+                  {item.name + ": " + item.unit_size + " * " + item.count_per_case}
+                </Typography>
+                <IconButton
+                  key="close"
+                  aria-label="Close"
+                  color="inherit"
+                  className={classes.button + ' ' + classes.close_button}
+                  onClick={() => { this.props.onDelete(item) }}
+                >
+                  <CloseIcon />
+                </IconButton>
+              </CardContent>
+            </div>
+          </Card>
         );
     }
 
