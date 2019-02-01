@@ -1,6 +1,7 @@
 let express = require('express');
 const Ingredient = require('../app/ingredient');
 let router = express.Router();
+const Filter = require("../app/filter");
 
 
 router.get('/dummyData', function(req, res, next) {
@@ -85,6 +86,11 @@ router.get('/search', function(req, res, next) {
     let list = req.query.skus;
     let orderKey = req.query.orderKey;
     let asc = (!req.query.asc) || req.query.asc == "1"; 
+    let limit = parseInt(req.query.limit) || 0;
+    let offset = parseInt(req.query.offset) || 0;
+
+    const filter = new Filter();
+    filter.setOrderKey(orderKey).setAsc(asc).setOffset(req.query.offset).setLimit(req.query.limit);
 
     const ing = new Ingredient();
     if(!names) {
@@ -101,7 +107,7 @@ router.get('/search', function(req, res, next) {
         list = [list];
     }
 
-    ing.search(names, list, orderKey, asc).then((result) => {
+    ing.search(names, list, filter).then((result) => {
         res.status(200).json(result.rows);
     })
     .catch((err) => {

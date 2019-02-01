@@ -3,6 +3,7 @@ const squel = require("squel").useFlavour("postgres");
 const CRUD = require("./CRUD");
 const Sku = require('./sku');
 const Formatter = require('./formatter');
+const QueryGenerator = require("./query_generator");
 
 class ManufacturingGoals extends CRUD {
     constructor() {
@@ -50,20 +51,9 @@ class ManufacturingGoals extends CRUD {
                 return promise.reject("sku does not have id or quantity");
             obj.mg_id = manufacturing_id;
         }
-        squel.onConflictInsert = function(options) {
-          return squel.insert(options, [
-              new squel.cls.StringBlock(options, 'INSERT'),
-              new squel.cls.IntoTableBlock(options),
-              new squel.cls.InsertFieldValueBlock(options),
-              new squel.cls.WhereBlock(options),
-              new squel.cls.StringBlock(options, 'ON CONFLICT DO NOTHING')
-            ]);
-        };
-
-        let query = squel.onConflictInsert()
-        .into('manufacturing_goal_sku')
-        .setFieldsRows(skus)
-        .toString();
+        let query = QueryGenerator.genInsConflictQuery(skus, 'manufacturing_goal_sku',  'ON CONFLICT (mg_id, sku_id) DO UPDATE SET quantity = EXCLUDED.quantity');
+        query = query.toString();
+        console.log(query);
         return db.execSingleQuery(query, []);
     }
 
@@ -83,7 +73,6 @@ class ManufacturingGoals extends CRUD {
     }
 
    calculateQuantities(manufacturing_id, format='json') {
-       //let query = "SELECT ingredients.* (sku_ingred.quantity * manufacturing_goal_sku.quantity) AS calc_res FROM manufacturing_goal_sku INNER JOIN sku ON sku.id = manufacturing_goal_sku.sku_id INNER JOIN sku_ingred ON sku.num=sku_ingred.sku_num INNER JOIN ingredients ON sku_ingred.ingred_num=ingredients.num WHERE mg_id = $1";
        let query = squel.select()
        .from("manufacturing_goal_sku")
        .field("ingredients.*, SUM((sku_ingred.quantity * manufacturing_goal_sku.quantity)) AS calc_res")
@@ -164,18 +153,5 @@ class ManufacturingGoals extends CRUD {
     //console.log(err);
 //});
 
-//mg.create({
-    //sku_id: 8,
-    //user_id: 6,
-    //case_quantity: 21
-//})
-//.then(function(res) {
-    //console.log(res);
-
-//})
-//.catch(function(err) {
-    //console.log(err);
-
-//});
 
 module.exports = ManufacturingGoals;

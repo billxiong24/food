@@ -33,6 +33,48 @@ CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
 
+--
+-- Name: unique_ingred_num_seq(); Type: FUNCTION; Schema: public; Owner: billxiong24
+--
+
+CREATE FUNCTION public.unique_ingred_num_seq(OUT nextfree bigint) RETURNS bigint
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+LOOP
+   SELECT INTO nextfree val
+   FROM   nextval('ingredients_num_seq'::regclass) val
+   WHERE  NOT EXISTS (SELECT 1 FROM ingredients WHERE num = val);
+
+   EXIT WHEN FOUND;
+END LOOP; 
+END
+$$;
+
+
+ALTER FUNCTION public.unique_ingred_num_seq(OUT nextfree bigint) OWNER TO billxiong24;
+
+--
+-- Name: unique_sku_num_seq(); Type: FUNCTION; Schema: public; Owner: billxiong24
+--
+
+CREATE FUNCTION public.unique_sku_num_seq(OUT nextfree bigint) RETURNS bigint
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+LOOP
+   SELECT INTO nextfree val
+   FROM   nextval('sku_num_seq'::regclass) val 
+   WHERE  NOT EXISTS (SELECT 1 FROM sku WHERE num = val);
+
+   EXIT WHEN FOUND;
+END LOOP; 
+END
+$$;
+
+
+ALTER FUNCTION public.unique_sku_num_seq(OUT nextfree bigint) OWNER TO billxiong24;
+
 SET default_tablespace = '';
 
 SET default_with_oids = false;
@@ -43,7 +85,7 @@ SET default_with_oids = false;
 
 CREATE TABLE public.ingredients (
     name text NOT NULL,
-    num integer NOT NULL,
+    num integer DEFAULT public.unique_ingred_num_seq() NOT NULL,
     vend_info text,
     pkg_size character varying(100) NOT NULL,
     pkg_cost numeric NOT NULL,
@@ -246,7 +288,7 @@ ALTER SEQUENCE public.productline_id_seq OWNED BY public.productline.id;
 
 CREATE TABLE public.sku (
     name character varying(32) NOT NULL,
-    num integer NOT NULL,
+    num integer DEFAULT public.unique_sku_num_seq() NOT NULL,
     case_upc bigint NOT NULL,
     unit_upc bigint NOT NULL,
     unit_size text NOT NULL,
@@ -385,13 +427,6 @@ CREATE TABLE public.users (
 ALTER TABLE public.users OWNER TO billxiong24;
 
 --
--- Name: ingredients num; Type: DEFAULT; Schema: public; Owner: billxiong24
---
-
-ALTER TABLE ONLY public.ingredients ALTER COLUMN num SET DEFAULT nextval('public.ingredients_num_seq'::regclass);
-
-
---
 -- Name: ingredients id; Type: DEFAULT; Schema: public; Owner: billxiong24
 --
 
@@ -431,13 +466,6 @@ ALTER TABLE ONLY public.manufacturing_goal_sku ALTER COLUMN sku_id SET DEFAULT n
 --
 
 ALTER TABLE ONLY public.productline ALTER COLUMN id SET DEFAULT nextval('public.productline_id_seq'::regclass);
-
-
---
--- Name: sku num; Type: DEFAULT; Schema: public; Owner: billxiong24
---
-
-ALTER TABLE ONLY public.sku ALTER COLUMN num SET DEFAULT nextval('public.sku_num_seq'::regclass);
 
 
 --
@@ -494,6 +522,15 @@ newname	17	\N	55 gallons	10	\N	31
 adsfiuer	18	tnoerhr vending	55 gallons	10	a comment	32
 inginginging	19	tnoerhr vending	aer	10	a comment	33
 skuskus	698	someinfo please	5lbs	45	newcomment wiht id	2
+nameinge	20	hi	10 gs	45	\N	34
+nameingerr	29	hi	10 gs	45	\N	35
+namesepingerr	30	hi	10 gs	45	\N	36
+namerring	31	hi	10 gs	45	\N	38
+ingeroa	32	hier	10 gall	451	\N	39
+roanameing	33	company	1034s	451	\N	40
+name rooro	34	compdsany	1034s	451	\N	41
+name anotering69	35	compdsany	1034s	451	\N	42
+ing and name	36	compdsany	1034s	451	\N	43
 \.
 
 
@@ -501,14 +538,14 @@ skuskus	698	someinfo please	5lbs	45	newcomment wiht id	2
 -- Name: ingredients_id_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
 --
 
-SELECT pg_catalog.setval('public.ingredients_id_seq', 33, true);
+SELECT pg_catalog.setval('public.ingredients_id_seq', 43, true);
 
 
 --
 -- Name: ingredients_num_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
 --
 
-SELECT pg_catalog.setval('public.ingredients_num_seq', 19, true);
+SELECT pg_catalog.setval('public.ingredients_num_seq', 36, true);
 
 
 --
@@ -520,6 +557,7 @@ COPY public.manufacturing_goal (id, name, user_id) FROM stdin;
 5	goal2	7
 7	goal2	6
 8	newgoal	6
+9	sids goals	9
 \.
 
 
@@ -527,7 +565,7 @@ COPY public.manufacturing_goal (id, name, user_id) FROM stdin;
 -- Name: manufacturing_goal_id_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
 --
 
-SELECT pg_catalog.setval('public.manufacturing_goal_id_seq', 8, true);
+SELECT pg_catalog.setval('public.manufacturing_goal_id_seq', 9, true);
 
 
 --
@@ -535,9 +573,6 @@ SELECT pg_catalog.setval('public.manufacturing_goal_id_seq', 8, true);
 --
 
 COPY public.manufacturing_goal_sku (mg_id, sku_id, quantity) FROM stdin;
-2	3	0
-2	5	0
-2	6	0
 8	3	0
 8	5	0
 8	6	0
@@ -546,6 +581,12 @@ COPY public.manufacturing_goal_sku (mg_id, sku_id, quantity) FROM stdin;
 7	5	0.32
 7	7	0.88
 7	20	0.12
+2	3	0.43
+2	6	0.43
+2	5	0.47
+9	8	0.4
+9	1	12
+9	9	0.6
 \.
 
 
@@ -578,6 +619,7 @@ COPY public.productline (name, id) FROM stdin;
 prod4	2
 prod69	1
 prod51	5
+helloprod	6
 \.
 
 
@@ -585,7 +627,7 @@ prod51	5
 -- Name: productline_id_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
 --
 
-SELECT pg_catalog.setval('public.productline_id_seq', 5, true);
+SELECT pg_catalog.setval('public.productline_id_seq', 6, true);
 
 
 --
@@ -610,6 +652,19 @@ sku723	13	233	65653	12 lbs	998	prod4	commentingg	19
 sku13462	14	3549	65653	12 lbs	998	prod4	\N	20
 skusku	15	3213	65653	12 lbs	998	prod4	\N	21
 sku6543	5727	5555	696	22	3	prod51	\N	22
+namesku	16	413445546	14235	59 lbs	12	prod4	\N	23
+hryname	17	23874	14235	59 lbs	12	prod4	\N	24
+hrynamesku	18	2387334	134235	59 lb14dds	124	prod4	\N	26
+asku4	19	551234352	443234	1 gallons	2	prod51	\N	27
+namesku3	20	69283413	3649823	ten gallons	6	prod51	\N	28
+namesku3	21	6934483413	364986623	ten gallons	6	prod51	\N	29
+namesku3	22	9823471385	11123984	ten gallons	6	prod51	\N	30
+namesku328	23	132874684753	34523466444	4 pounds	12	prod51	\N	31
+namesku328	24	34578237487	354444444	4 pounds	12	prod69	\N	32
+nameaeriusku328	25	2853729348	354444444	4 pounds	12	prod69	\N	33
+skueename	26	888888384	456456345	4 pounds	12	prod69	\N	34
+skueename	27	34343434	456456345	4 pounds	12	prod69	\N	35
+skueename	28	100000001	456456345	4 pounds	12	prod69	\N	36
 \.
 
 
@@ -617,7 +672,7 @@ sku6543	5727	5555	696	22	3	prod51	\N	22
 -- Name: sku_id_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
 --
 
-SELECT pg_catalog.setval('public.sku_id_seq', 22, true);
+SELECT pg_catalog.setval('public.sku_id_seq', 36, true);
 
 
 --
@@ -636,8 +691,6 @@ COPY public.sku_ingred (sku_num, ingred_num, quantity) FROM stdin;
 1	698	1
 2	698	1
 12	698	1
-55	698	1
-7	698	1
 7	8	2
 7	10	4
 12	8	2
@@ -647,6 +700,14 @@ COPY public.sku_ingred (sku_num, ingred_num, quantity) FROM stdin;
 1	10	12
 1	49	1.4
 1	7	1.5
+7	9	3
+7	11	15
+14	1414	5
+14	1415	4
+14	11	13
+55	8	4
+55	9	6
+55	698	5.2
 \.
 
 
@@ -668,7 +729,7 @@ SELECT pg_catalog.setval('public.sku_ingred_sku_num_seq', 1, false);
 -- Name: sku_num_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
 --
 
-SELECT pg_catalog.setval('public.sku_num_seq', 15, true);
+SELECT pg_catalog.setval('public.sku_num_seq', 28, true);
 
 
 --
