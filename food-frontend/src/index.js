@@ -14,7 +14,7 @@ require("typeface-open-sans");
 require("typeface-roboto")
 
 
-const store = createStore(rootReducer, InitialStore, applyMiddleware(thunk));
+export const store = createStore(rootReducer, InitialStore, applyMiddleware(thunk));
 
 console.log(store)
 

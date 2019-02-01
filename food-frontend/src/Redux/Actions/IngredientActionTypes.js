@@ -6,4 +6,4 @@ export const ING_ADD_ING = 'ING_ADD_ING';
 export const ING_GET_SKUS = 'ING_GET_SKUS';
 export const ING_UPDATE_ING = 'ING_UPDATE_ING';
 export const ING_DELETE_ING = 'ING_DELETE_ING';
-export const ING_SET_FILTER_TYPE = 'ING_DELETE_ING';
+export const ING_SET_FILTER_TYPE = 'ING_SET_FILTER_ING';

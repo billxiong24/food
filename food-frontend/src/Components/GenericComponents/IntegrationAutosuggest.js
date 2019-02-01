@@ -88,6 +88,13 @@ function renderSuggestion(suggestion, { query, isHighlighted }) {
     fontWeight: 400,
   }
 
+  const id = {
+    fontSize: 14,
+    fontFamily: 'Open Sans',
+    fontWeight: 300,
+    color: 'gray'
+  }
+
   return (
     <MenuItem selected={isHighlighted} component="div">
       <div>
@@ -102,6 +109,11 @@ function renderSuggestion(suggestion, { query, isHighlighted }) {
             </strong>
           ),
         )}
+        <span style={id}>
+              {" (" +suggestion.id +")"}
+        </span>
+        
+
       </div>
     </MenuItem>
   );
@@ -197,7 +209,7 @@ class IntegrationAutosuggest extends React.Component {
   };
 
   onSuggestionSelected = (event, { suggestion, suggestionValue, suggestionIndex, sectionIndex, method }) => {
-    this.props.onEnter(suggestion.label);
+    this.props.onSuggest(suggestion.label, suggestion.id);
     this.clear()
   }
 
@@ -216,19 +228,16 @@ class IntegrationAutosuggest extends React.Component {
     })
   }
   handleChange = name => (event, { newValue, method }) => {
+    console.log(this.props)
     this.setState({
       single : newValue
     });
+    this.props.onChange(newValue)
   };
 
   render() {
-    const { classes, ingredient_names, filter_type } = this.props;
+    const { classes, suggestions, filter_type } = this.props;
 
-    let suggestions = ingredient_names.map(ingredient_name => ({label:ingredient_name}))
-
-    if(filter_type == labels.ingredients.filter_type.INGREDIENTS){
-        suggestions = [];
-    }
 
     const autosuggestProps = {
       renderInputComponent,

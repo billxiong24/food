@@ -23,7 +23,6 @@ class FilterList extends Component {
 
     render() {
         const { classes, filters } = this.props
-        console.log("FILTER LIST")
         console.log(filters)
         return (
             <div className={classes.filters_list}>
@@ -33,11 +32,11 @@ class FilterList extends Component {
             </div>
         );
     }
-}
+}  
 
 const mapStateToProps = state => {
     return {
-        filters:state.ingredients.filters
+        filters:state.skus.filters
     };
 };
 

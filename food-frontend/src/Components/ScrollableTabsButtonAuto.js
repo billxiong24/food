@@ -13,6 +13,8 @@ import ProductLinePage from './ProductLinePage/ProductLinePage';
 import ManufacturingGoalsPage from './ManufacturingGoalsPage/ManufacturingGoalsPage';
 import { routeToPage } from '../Redux/Actions/index';
 import { connect } from 'react-redux';
+import SKUsPage from './SKUPage/SKUsPage';
+import IngredientDetailViewPage from './IngredientDetailViewPage/IngredientDetailViewPage';
 
 function TabContainer(props) {
   return (
@@ -72,11 +74,11 @@ class ScrollableTabsButtonAuto extends React.Component {
           </Tabs>
         </AppBar>
         {value === 0 && <IngredientsPage></IngredientsPage>}
-        {value === 1 && <TabContainer>Item Two</TabContainer>}
+        {value === 1 && <SKUsPage></SKUsPage>}
         {value === 2 && <ProductLinePage></ProductLinePage>}
         {value === 3 && <ManufacturingGoalsPage></ManufacturingGoalsPage>}
         {value === 4 && <TabContainer>Item Five</TabContainer>}
-        {value === 5 && <TabContainer>Item Six</TabContainer>}
+        {value === 5 && <IngredientDetailViewPage></IngredientDetailViewPage>}
         {value === 6 && <LoginPage>Item Seven</LoginPage>}
         {value === 7 && <SignUpPage>Item Eight</SignUpPage>}
       </div>

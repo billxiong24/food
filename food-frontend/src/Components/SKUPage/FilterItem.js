@@ -9,7 +9,7 @@ import Typography from '@material-ui/core/Typography';
 import delete_icon from '../../Resources/Images/delete_button_1.svg'
 import { Icon, IconButton } from '@material-ui/core';
 import { connect } from 'react-redux';
-import { ingRemoveFilter, ingSearch } from '../../Redux/Actions';
+import { ingRemoveFilter, skuRemoveFilter, skuSearch } from '../../Redux/Actions';
 
 const styles = {
     filter_container: {
@@ -71,7 +71,7 @@ class FilterItem extends Component {
         e.preventDefault();
         console.log("handled filter delete on click")
         console.log("onClick.index:" + index)
-        this.props.deleteFilter(index)
+        this.props.deleteFilter(index);
       }
 
     mouseOut() {
@@ -111,22 +111,13 @@ class FilterItem extends Component {
 
 }
 
-const mapStateToProps = state => {
-    return {
-        filters: state.ingredients.filters
-    };
-};
-
-
-
-const mapDispatchToProps = (dispatch, ownProps) => {
+const mapDispatchToProps = dispatch => {
     return {
         deleteFilter: filter_id =>{
-            dispatch(ingRemoveFilter(filter_id))
-            dispatch(ingSearch())
-        },
-        search: filters => dispatch(ingSearch(filters))
+            dispatch(skuRemoveFilter(filter_id))
+            dispatch(skuSearch())
+        }
     };
 };
 
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(FilterItem));
+export default withStyles(styles)(connect(null, mapDispatchToProps)(FilterItem));

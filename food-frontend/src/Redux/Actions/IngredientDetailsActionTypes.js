@@ -1,0 +1,2 @@
+export const ING_DET_GET_SKUS = 'ING_DET_GET_SKUS';
+export const ING_DET_UPDATE_ING = 'ING_DET_UPDATE_ING';
