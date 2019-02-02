@@ -81,7 +81,7 @@ router.post('/exported_file', function(req, res, next) {
         });
     }
 
-    res.setHeader('Content-disposition', 'attachment; filename=testing.csv');
+    res.setHeader('Content-disposition', 'attachment; filename=file.csv');
     res.set('Content-Type', 'text/csv');
 
     if(!jsonList || jsonList.length === 0) {

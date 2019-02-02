@@ -2,6 +2,7 @@ const db = require('./db');
 const CRUD = require("./CRUD");
 const squel = require("squel").useFlavour("postgres");
 const QueryGenerator = require("./query_generator");
+const Filter = require('./filter');
 
 class ProductLine extends CRUD {
 
@@ -32,17 +33,16 @@ class ProductLine extends CRUD {
         return super.change(dataObj, id, "id");
     }
 
-    search(name, orderKey, asc=true) {
-        name = "%" + name + "%";
+    search(names, filter) {
+        names = QueryGenerator.transformQueryArr(names);
         let query = squel.select()
-        .from(this.tableName)
-        .where("name LIKE ? ", name);
+        .from(this.tableName);
 
-        if(orderKey) {
-            query = query.order(orderKey, asc);
-        }
-
-        return db.execSingleQuery(query.toString());
+        const queryGen = new QueryGenerator(query);
+        queryGen.chainAndFilter(names, "name LIKE ?");
+        let queryStr = filter.applyFilter(queryGen.getQuery()).toString();
+        console.log(queryStr);
+        return db.execSingleQuery(queryStr, []);
     }
 
     remove(id) {

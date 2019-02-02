@@ -35,15 +35,18 @@ Run ```npm start```. This will start server on localhost:8000. Use ```nodemon```
         
 | Parameter      | Description | Type |    
 | ----------- | ----------- |---------    
-| name      | **Required**. name of SKU to search for. | String |    
+| names      | **Required**. names of SKUs to search for. | List |    
 | ingredients | **Optional**. List of ingredients to filter SKU by. SKUs returned will contain at least one ingredient. | List |    
 | prodlines | **Optional**. List of product lines to filter SKU by. SKUs returned will contain at least one ingredient. | List |      
 | orderKey | **Optional**. Column to order results by. | String |      
-| asc | **Optional**. Either 1 or 0. 1 for ascending, 0 for descending. Defaults to 1. | List |      
+| asc | **Optional**. Either 1 or 0. 1 for ascending, 0 for descending. Defaults to 1. | List |    
+|limit | **Optional**. Number of search results to return. No parameter returns everything. | integer |   
+| offset | **Optional**. Index at which to start returning results. No parameter starts at 0. | integer |     
+
     
 * **EXAMPLE**:     
   
-```GET /sku/search?name=sku&ingredients=ing1&ingredients=ing2&prodlines=p1&prodlines=p2&orderKey=name```      
+```GET /sku/search?names=sku&ingredients=ing1&ingredients=ing2&prodlines=p1&prodlines=p2&orderKey=name```      
 Searches for "sku", which must contain one of "ing1" or "ing2", and must be in productline "p1" or "p2". Orders SKUs by name, ascending.         
     
 ### Retrieve ingredients of a SKU    
@@ -69,7 +72,7 @@ Retrieves ingredients for SKU with id = 634.
 | Parameter      | Description | Type |    
 | ----------- | ----------- |---------    
 | id | **Required** The id of a SKU. This is part of the URL. | integer |    
-|ingredients | **Optional**. List of ingredients tuples to add to SKU. This parameter should be sent in request body. Takes form of ```[{ingred_num: 1, quantity: 1}, {ingred_num: 2, quantity: 2}] ``` | String (stringified JSON) |      
+|ingredients | **Optional**. List of ingredients tuples to add to SKU. This parameter should be sent in request body. Takes form of ```[{ingred_num: 1, quantity: 1}, {ingred_num: 2, quantity: 2}] ``` ingred_num is ingredient number. | String (stringified JSON) |      
     
 * **Example**     
 ```POST /sku/634/ingredients```      
@@ -181,15 +184,17 @@ Deletes ingredients "1, 2, 3, 4, and 5" from SKU with id 643, provided that the 
   
 | Parameter      | Description | Type |    
 | ----------- | ----------- |---------|    
-| name | **Required**. keyword to search by. | String |       
-| ingredients| **Optional**. List of SKUs to filter ingredients by. | List |    
+| names | **Required**. keywords to search by. | List |       
+| skus | **Optional**. List of IDs of SKUs to filter ingredients by. | List |    
 | orderKey | **Optional**. Column to order results by. | String |      
-| asc | **Optional**. Either 1 or 0. 1 for ascending, 0 for descending. Defaults to 1. | List |      
+| asc | **Optional**. Either 1 or 0. 1 for ascending, 0 for descending. Defaults to 1. | List |     
+|limit | **Optional**. Number of search results to return. No parameter returns everything. | integer |   
+| offset | **Optional**. Index at which to start returning results. No parameter starts at 0. | integer |     
   
   
 * **EXAMPLE**     
-```GET /ingredients/search?name=ing&skus=s1&skus=s2&skus=s3&orderKey=num&asc=0```     
-Searches for ingredients with keyword "ing", who must appear in one of "s1, s2, or s3". Ordered by num, descending.     
+```GET /ingredients/search?names=ing&skus=1&skus=2&skus=3&orderKey=num&asc=0```     
+Searches for ingredients with keyword "ing", who must appear in one of SKUs with ID "1, 2, 0r 3", ordered by num, descending.     
 
 ### Create new Ingredient   
 * Add ingredient with given parameters to database.   
@@ -251,22 +256,24 @@ Retrieves all SKU's with "peppers" as an ingredient.
 * **EXAMPLE**     
 ```DELETE /ingredients/253```    
 Deletes ingredient with id 253. This also removes the ingredient from any SKU's that use it.   
-
+    
 ## Product Lines
-  
+   
 ### Search for product line
 * Given a name, search for product lines with a related name.   
-**URL**: ```GET /productline/search```    
+**URL**: ```GET /productline/search```      
 **PARAMETERS**   
   
 | Parameter      | Description | Type |    
 | ----------- | ----------- |---------|    
-| name | **Required**. Name of keyword to search| String |                
+| names | **Required**. Keywords to search| List |                
 | orderKey | **Optional**. Column to order results by. | String |      
 | asc | **Optional**. Either 1 or 0. 1 for ascending, 0 for descending. Defaults to 1. | List |      
-
+|limit | **Optional**. Number of search results to return. No parameter returns everything. | integer |   
+| offset | **Optional**. Index at which to start returning results. No parameter starts at 0. | integer |     
+   
 * **EXAMPLE**     
-```GET /productline/search?name=prod&orderKey=name&asc=0```    
+```GET /productline/search?names=prod&orderKey=name&asc=0```    
 Searches product lines with keyword "prod". Ordered by name, descending.   
 
 
@@ -322,7 +329,7 @@ Updates a product line whose name id is 25, to "prod1".
 ```DELETE /productline/25```     
 Deletes a product line whose id is 25. If product line has SKUs, will be unable to delete.  
   
-
+  
 ## Manufacturing Goals
   
 ### Get manufacturing goals for a user
@@ -332,7 +339,7 @@ Deletes a product line whose id is 25. If product line has SKUs, will be unable 
   
 | Parameter      | Description | Type |    
 | ----------- | ----------- |---------|    
-| user_id | **Required**. URL Parameter. ID of user to search for. | Integer |                
+| user_id | **Required**. ID of user to search for. | Integer |                 
 
 * **EXAMPLE**     
 ```GET /manufacturing_goals?user_id=52```     
@@ -346,22 +353,20 @@ Retrieve all manufacturing goals for user with id 52.
 | Parameter      | Description | Type |    
 | ----------- | ----------- |---------|    
 | user_id | **Required**. ID of user that this goal belongs to. | Integer |       
-| sku_id | **Required**. ID of sku. | Integer | 
-| case_quantity | **Required**. Number of cases. | Integer | 
+| name | **Required**. Name of manufacturing goal. | String | 
 
 * **EXAMPLE**     
 ```POST /manufacturing_goals```     
 With request body  
 ```  
 {  
-    sku_id: 2,
-    user_id: 3,
-    case_quantity: 12
-}
+    name: "goal",
+    user_id: 2
+}  
 ```   
-Creates a manufacturing goal for user "3" for SKU "2" with 12 cases.   
-   
-### Update manufacturing goal for user
+Creates a manufacturing goal for user "2" with name "goal".   
+    
+### Update manufacturing goal for user  
 * Update parameters of manufacturing goal assigned to some user.   
 **URL**: ```PUT /manufacturing_goals/:id```    
 **PARAMETERS**  
@@ -371,12 +376,10 @@ Same as ```POST /manufacturing_goals```, except for ```id```, which is the id of
 With request body  
 ```  
 {  
-    sku_id: 5,
-    case_quantity: 45
+    name: "newgoal"
 }
 ```   
-Updates manufacturing goal "56" to be SKU with id "5", and case quantity 45.    
-     
+Updates manufacturing goal "56" to have name "newgoal".   
     
 ### DELETE manufacturing goal for user
 * Delete a manufacturing goal with a given id.   
@@ -389,23 +392,122 @@ Updates manufacturing goal "56" to be SKU with id "5", and case quantity 45.
    
   
 * **EXAMPLE**     
-```DELETE /manufacturing_goals/56```     
+```DELETE /manufacturing_goals/56```        
   
 Deletes manufacturing goal with ID 56.   
    
+### GET SKU's of a manufacturing goal   
+* Get all SKU's of a manufacturing goal   
+**URL**: ```GET /manufacturing_goals/:id/skus```    
+**PARAMETERS**   
+   
+| Parameter      | Description | Type |    
+| ----------- | ----------- |---------|    
+| id | **Required**. URL Parameter. ID of manufacturing goal. | Integer |    
+    
+* **EXAMPLE**     
+```GET /manufacturing_goals/56/skus```        
+  
+Gets SKU's of manufacturing goal with ID 56.   
+  
+### Add SKU's to a manufacturing goal   
+* Add a list of SKU's to an existing manufacturing goal.    
+**URL**: ```POST /manufacturing_goals/:id/skus```    
+**PARAMETERS**   
+   
+| Parameter      | Description | Type |    
+| ----------- | ----------- |---------|    
+| id | **Required**. URL Parameter. ID of manufacturing goal. | Integer |    
+| skus | **Required**. List of SKU's to add. List takes form of ```[{sku_id:1, quantity:1}, {sku_id:2, quantity:2}]```, where ```skud_id``` is ID of SKU, and ```quantity``` is number of SKUs. | List |    
+
+    
+* **EXAMPLE**     
+```POST /manufacturing_goals/56/skus```           
+With request body:   
+```  
+{
+        skus: [
+                {
+                        sku_id: 1,
+                        quantity: 1
+                },
+                {
+                        sku_id: 2,
+                        quantity: 2
+                }
+        ]
+}
+```
+Adds SKUS "1" and "2" with quantities 1 and 2, to manufacturing goal "56".   
+  
+
+### Delete SKU's from a manufacturing goal   
+* Delete a list of SKU IDs from an existing manufacturing goal.
+**URL**: ```DELETE /manufacturing_goals/:id/skus```    
+**PARAMETERS**   
+   
+| Parameter      | Description | Type |    
+| ----------- | ----------- |---------|    
+| id | **Required**. URL Parameter. ID of manufacturing goal. | Integer |    
+| skus | **Required**. List of SKU's to delete. List takes form of ```[1, 2, 3, 4]```, where each integer is a sku id. | List |    
+  
+     
+* **EXAMPLE**     
+```DELETE /manufacturing_goals/56/skus```           
+With request body:   
+```  
+{
+        skus: [1, 2, 3, 4]
+}
+```
+Deletes SKUs 1, 2, 3, 4 from manufacturing goal "56". If SKU's do not exist, ignore them.  
+  
 ### GET manufacturing calculations    
 * GET manufacturing calculations for a given user id and sku id   
-**URL**: ```GET /manufacturing_goals/calculations```    
+**URL**: ```GET /manufacturing_goals/:id/calculations```    
 **PARAMETERS**    
     
 | Parameter      | Description | Type |    
 | ----------- | ----------- |---------|    
-| sku_id | **Required**. ID of SKU to perform calculations on. | Integer |    
-| user_id | **Required**. ID of user. | Integer |    
+| id | **Required**. URL Parameter. ID of manufacturing goal. | Integer |       
     
    
 * **EXAMPLE**     
-```GET /manufacturing_goals/calculations?sku_id=6&user_id=5```     
-   
-Perform and retrieve calculations for sku_id of 6 and user_id of 5. This multiplies all SKU's ingredients by the   
-manufacturing goal's case quantity.  
+```GET /manufacturing_goals/56/calculations```      
+Get calculations for manufacturing goal with ID 56. Returns all necessary ingredients with required amounts needed.   
+
+
+### Export to file format   
+* Create a file from JSON data.    
+**URL**: ```POST /manufacturing_goals/exported_file```      
+**PARAMETERS**    
+    
+| Parameter      | Description | Type |    
+| ----------- | ----------- |---------|      
+| format | **Required**. Format of file to create. Currently only accepts "csv". | String |  
+| data | **Required**. JSON data to create csv from. Format of data shown below. | List |   
+  
+* **EXAMPLE**     
+```POST /manufacturing_goals/exported_file```     
+With request body:    
+```
+{
+        format: "csv",
+        data: [
+                {
+                        name: "a",
+                        num: 1
+                },
+                {
+                        name: "b",
+                        num: 2 
+                },
+                {
+                        name: "c",
+                        num: 3
+                }
+        ]
+}
+```   
+Creates a csv file, with name and num as columns, and "a, 1", "b, 2", and "c, 3" as rows.   
+
