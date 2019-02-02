@@ -7,6 +7,7 @@ import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
+import { CardActionArea } from '@material-ui/core';
 
 const styles = {
   card: {
@@ -14,6 +15,9 @@ const styles = {
     marginBottom:20,
     marginTop:20,
     padding: 10,
+  },
+  cardAction:{
+    padding:0
   },
   bullet: {
     display: 'inline-block',
@@ -42,9 +46,12 @@ class SimpleCard extends Component {
         const { classes } = this.props;
         const bull = <span className={classes.bullet}>•</span>;
         const item = this.props.item
-        // console.log(this.props)
+        console.log("SIMPLE CARD")
+        console.log(this.props)
         return (
             <Card className={classes.card}>
+            <CardActionArea
+            className = {classes.cardAction}>
             <CardContent>
                 <Typography className={classes.ingredrient_name} color="textSecondary" gutterBottom>
                     {item.name}
@@ -53,6 +60,7 @@ class SimpleCard extends Component {
                     {item.id}
                 </Typography>
             </CardContent>
+            </CardActionArea>
             </Card>
         );
     }

@@ -143,13 +143,13 @@ class IngredientsPage extends Component {
           </Typography>
           <FilterList></FilterList>
         </Card>
-        <div className={classes.ingredients_list_container}>
-          <div className={classes.ingredients_list}>
-            <IngredientsPageSearchBar></IngredientsPageSearchBar>
+          <div className={classes.ingredients_list_container}>
+            <div className={classes.ingredients_list}>
+              <IngredientsPageSearchBar></IngredientsPageSearchBar>
             <div className={classes.ingredients_search_bar}>
-            </div>
-            <IngredientList></IngredientList>
           </div>
+            <IngredientList></IngredientList>
+        </div>
           <div variant="inset" className={classes.ingredients_list_divider} />
           <PageSelector></PageSelector>
         </div>

@@ -34,7 +34,9 @@ class EditableText extends Component {
         this.setState({
           [name]: event.target.value,
         });
-        this.props.onChange(event.target.value,this.props.key)
+        console.log(this.props)
+        console.log(this.props.key)
+        this.props.onChange(event.target.value,this.props.field)
     };
 
     render() {
