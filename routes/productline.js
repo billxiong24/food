@@ -1,14 +1,27 @@
 let express = require('express');
 const ProductLine = require('../app/productline');
 let router = express.Router();
+const Filter = require('../app/filter');
 
 router.get('/search', function(req, res, next) {
-    let name = req.query.name ? req.query.name : "";
+    let names = req.query.names;
     const prdline = new ProductLine();
     let orderKey = req.query.orderKey;
     let asc = (!req.query.asc) || req.query.asc == "1"; 
+    let limit = parseInt(req.query.limit) || 0;
+    let offset = parseInt(req.query.offset) || 0;
 
-    prdline.search(name, orderKey, asc)
+    if(!names) {
+        names = [];
+    }
+    else if(!Array.isArray(names)) {
+        names = [names];
+    }
+
+    const filter = new Filter();
+    filter.setOrderKey(orderKey).setAsc(asc).setOffset(req.query.offset).setLimit(req.query.limit);
+
+    prdline.search(names, filter)
     .then((result) => {
         res.status(200).json(result.rows);
     })
