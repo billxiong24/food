@@ -1,18 +1,32 @@
 import { ING_ADD_FILTER, ING_REMOVE_FILTER, ING_SEARCH, ING_SORT_BY,
-  ING_ADD_ING, ING_GET_SKUS, ING_UPDATE_ING, ING_DELETE_ING, ING_SET_FILTER_TYPE } from '../Actions/IngredientActionTypes';
+  ING_ADD_ING, ING_GET_SKUS, ING_UPDATE_ING, ING_DELETE_ING, ING_SET_FILTER_TYPE, ING_ADD_DEPENDENCY, ING_REMOVE_DEPENDENCY } from '../Actions/IngredientActionTypes';
 
 const initialState = {
   filters: [],
   items: [],
   sortby: null,
   current_page_number: 1,
-  total_pages: 1,
+  total_pages: 12,
   skus: [],
-  errMsg: null
+  errMsg: null,
+  ingDependency: []
 };
 
 export default function ingredientReducer(state = initialState, action) {
   switch (action.type) {
+    case ING_REMOVE_DEPENDENCY:
+      return Object.assign({}, state, {
+        ingDependency: state.ingDependency.filter((ing) => {
+          return ing.id !== action.data.id;
+        })
+      });
+    case ING_ADD_DEPENDENCY:
+      return Object.assign({}, state, {
+        ingDependency: [
+          ...state.ingDependency,
+          action.data.ingDependency,
+        ]
+      });
     case ING_ADD_FILTER:
       return Object.assign({}, state, {
         filters: [

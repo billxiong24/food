@@ -10,7 +10,7 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import withStyles from '@material-ui/core/styles/withStyles';
 import { connect } from 'react-redux';
-import { userLoginAttempt, routeToPage } from '../../Redux/Actions'
+import { userLogout, routeToPage } from '../../Redux/Actions';
 
 const styles = theme => ({
   main: {
@@ -44,7 +44,7 @@ const styles = theme => ({
   }
 });
 
-class LoginPage extends Component {
+class LogoutPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -53,27 +53,9 @@ class LoginPage extends Component {
     }
   }
 
-  updateUnameValue(evt) {
-    this.setState({
-      uname: evt.target.value
-    });
-  }
-
-  updatePasswordValue(evt) {
-    evt.preventDefault();
-    this.setState({
-      password: evt.target.value
-    });
-  }
-
-  submitFormCheck(e) {
-    e.preventDefault();
-    this.props.userLoginAttempt(Object.assign({},this.state))
-    .then(()=>{
-      if(this.props.users.uname){
-        this.props.routeToPage(0);
-      }
-    })
+  logOutUser() {
+    this.props.userLogout();
+    this.props.routeToPage(6);
   }
 
   render() {
@@ -86,28 +68,17 @@ class LoginPage extends Component {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Log In
+            Log Out
           </Typography>
-          <form className={classes.form} onSubmit={(e)=>{this.submitFormCheck(e)}}>
-            <FormControl margin="normal" required fullWidth>
-              <InputLabel htmlFor="username">Username</InputLabel>
-              <Input id="username" name="username" autoComplete="username" autoFocus value={this.state.uname} onChange={evt => {this.updateUnameValue(evt)}}/>
-            </FormControl>
-            <FormControl margin="normal" required fullWidth>
-              <InputLabel htmlFor="password">Password</InputLabel>
-              <Input name="password" type="password" id="password" autoComplete="current-password" value={this.state.password} onChange={evt => {this.updatePasswordValue(evt)}}/>
-            </FormControl>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              className={classes.submit}
-            >
-              Sign in
+          <Button
+            fullWidth
+            variant="contained"
+            color="primary"
+            className={classes.submit}
+            onClick={()=>{this.logOutUser()}}
+          >
+            Sign Out
             </Button>
-            <label>{users.errMsg}</label>
-          </form>
         </Paper>
       </main>
     );
@@ -121,4 +92,4 @@ const mapStateToProps = state => {
   }
 }
 
-export default withStyles(styles)(connect(mapStateToProps,{userLoginAttempt, routeToPage})(LoginPage));
+export default withStyles(styles)(connect(mapStateToProps,{userLogout, routeToPage})(LogoutPage));
