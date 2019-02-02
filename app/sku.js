@@ -72,7 +72,7 @@ class SKU extends CRUD {
     }
 
     getIngredients(id) {
-        let query = "SELECT DISTINCT ingredients.* FROM sku INNER JOIN sku_ingred ON sku.num = sku_ingred.sku_num INNER JOIN ingredients ON sku_ingred.ingred_num=ingredients.num WHERE sku.id=$1";
+        let query = "SELECT DISTINCT ingredients.*, sku_ingred.quantity FROM sku INNER JOIN sku_ingred ON sku.num = sku_ingred.sku_num INNER JOIN ingredients ON sku_ingred.ingred_num=ingredients.num WHERE sku.id=$1";
         return db.execSingleQuery(query, [id]);
     }
 

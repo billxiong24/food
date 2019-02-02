@@ -4,6 +4,7 @@ var cors = require('cors');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var session = require('express-session');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -27,6 +28,15 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.set('trust proxy', 1);
+app.use(session({
+  secret: 'aeriu23487gfuyjhblkkjaw53u1134eeu',
+  resave: false,
+  saveUninitialized: true,
+    //change this later
+  cookie: { secure: false }
+}));
+
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/ingredients', ingredientsRouter);
@@ -38,6 +48,7 @@ app.use('/manufacturing_goals', mgRouter);
 app.use(function(req, res, next) {
   next(createError(404));
 });
+k
 
 // error handler
 app.use(function(err, req, res, next) {
