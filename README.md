@@ -339,7 +339,7 @@ Deletes a product line whose id is 25. If product line has SKUs, will be unable 
   
 | Parameter      | Description | Type |    
 | ----------- | ----------- |---------|    
-| user_id | **Required**. URL Parameter. ID of user to search for. | Integer |                 
+| user_id | **Required**. ID of user to search for. | Integer |                 
 
 * **EXAMPLE**     
 ```GET /manufacturing_goals?user_id=52```     
@@ -376,12 +376,10 @@ Same as ```POST /manufacturing_goals```, except for ```id```, which is the id of
 With request body  
 ```  
 {  
-    sku_id: 5,
-    case_quantity: 45
+    name: "newgoal"
 }
 ```   
-Updates manufacturing goal "56" to be SKU with id "5", and case quantity 45.    
-     
+Updates manufacturing goal "56" to have name "newgoal".   
     
 ### DELETE manufacturing goal for user
 * Delete a manufacturing goal with a given id.   
@@ -413,7 +411,7 @@ Deletes manufacturing goal with ID 56.
 Gets SKU's of manufacturing goal with ID 56.   
   
 ### Add SKU's to a manufacturing goal   
-* Add a list of SKU's to an existing manufacturing goal. 
+* Add a list of SKU's to an existing manufacturing goal.    
 **URL**: ```POST /manufacturing_goals/:id/skus```    
 **PARAMETERS**   
    
