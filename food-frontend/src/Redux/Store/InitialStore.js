@@ -1,4 +1,4 @@
-import { dummy_filters, dummy_ingredients, dummy_ingredient_names } from "./DummyData";
+import { dummy_filters, dummy_ingredients, dummy_ingredient_names, dummy_ing_det_skus } from "./DummyData";
 import labels from "../../Resources/labels";
 
 export const InitialStore = {
@@ -10,12 +10,12 @@ export const InitialStore = {
     errMsg: null
   },
   // Persistent data concerning routing
-  route: 9,
+  route: 1,
   // Persistent data concnerning ingredients view
   ingredients: {
-    filters: dummy_filters,
-    items: dummy_ingredients,
-    ingredient_names: dummy_ingredient_names,
+    filters: [],
+    items: [],
+    ingredient_names: [],
     sortby: labels.ingredients.sort_by.INGREDIENT_NAME,
     filter_type: labels.ingredients.filter_type.SKU_NAME,
     current_page_number: 1,
@@ -89,10 +89,12 @@ export const InitialStore = {
   skus: {
     filters: [],
     items: [],
-    sortby: null,
+    sortby: labels.ingredients.sort_by.INGREDIENT_NAME,
+    filter_type: labels.ingredients.filter_type.SKU_NAME,
     current_page_number: 1,
     total_pages: 1,
-    ingredients: [],
+    ingredient_names: [],
+    product_line_names:[],
     errMsg: null
   },
   // Manufacturing Goals
@@ -110,4 +112,27 @@ export const InitialStore = {
     filters: [],
     errMsg: null
   },
+  ingredient_details:{
+    ingredientName:"Cheese __",
+    ingredientNum:"56 __",
+    packageSize:"56 lbs. __",
+    costPerPackage:"15.99 __",
+    comment:"This cheese is good __",
+    id:31,
+    skus:dummy_ing_det_skus
+  },
+  sku_details:{
+      name: "Campbell SKU Name",
+      case_upc:42,
+      unit_upc:34,
+      num:12,
+      unit_size:"45 Pomericans",
+      count_per_case:"34",
+      prd_line:"Campbell Home Products",
+      ingredients:dummy_ingredients,
+      comments:"Insert Funny Side Comment",
+      completion:"All Good",
+      product_lines:[],
+      ingredient_suggestions:[]
+  }
 }

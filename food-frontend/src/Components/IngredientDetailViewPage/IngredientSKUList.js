@@ -10,7 +10,7 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { CardActionArea } from '@material-ui/core';
 import { routeToPage } from '../../Redux/Actions';
-import { ingDetSetIng, ingDetGetSkus } from '../../Redux/Actions/ActionCreators/IngredientDetailsActionCreators';
+import { ingDetSetIng } from '../../Redux/Actions/ActionCreators/IngredientDetailsActionCreators';
 
 const styles = {
     card: {
@@ -46,7 +46,7 @@ const styles = {
 
 };
 
-class IngredientList extends Component {
+class IngredientSKUList extends Component {
 
     constructor(props){
         super(props);
@@ -58,17 +58,16 @@ class IngredientList extends Component {
     }
 
     onClick = (item) =>{
-         console.log(item)
-         this.props.setIngredient(item)
+         
     }
 
     render() {
-        const { classes, ingredients } = this.props
+        const { classes, skus } = this.props
         
         return (
             <div>
                 {
-                this.props.ingredients.map((item, index) => (
+                this.props.skus.map((item, index) => (
                     <Card className={classes.card} key={index} onClick = {() => {this.onClick(item)}}>
                         <CardActionArea
                         className = {classes.cardAction}
@@ -78,7 +77,7 @@ class IngredientList extends Component {
                                 {item.name}
                             </Typography>
                             <Typography className={classes.ingredient_id} color="textSecondary" gutterBottom>
-                                {item.id}
+                                {item.unit_upc}
                             </Typography>
                         </CardContent>
                         </CardActionArea>
@@ -93,18 +92,12 @@ class IngredientList extends Component {
 
 const mapStateToProps = state => {
     return {
-        ingredients: state.ingredients.items
+        skus: state.ingredient_details.skus
     };
 };
 
 const mapDispatchToProps = dispatch => {
-    return {
-        setIngredient: ing => {
-            dispatch(ingDetSetIng(ing))
-            dispatch(ingDetGetSkus(ing.id))
-            dispatch(routeToPage(5))
-        }
-    };
+    
 };  
 
-export default withStyles(styles)(connect(mapStateToProps,mapDispatchToProps)(IngredientList));
+export default withStyles(styles)(connect(mapStateToProps,mapDispatchToProps)(IngredientSKUList));

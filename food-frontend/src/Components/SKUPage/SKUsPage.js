@@ -9,7 +9,6 @@ import Card from '@material-ui/core/Card';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import { connect } from 'react-redux';
-import { getDummyIngredients } from '../../Redux/Actions';
 import DropdownButton from '../GenericComponents/DropdownButton';
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
@@ -22,12 +21,12 @@ import next from '../../Resources/Images/baseline-navigate_next-24px.svg'
 import SimpleCard from '../GenericComponents/SimpleCard';
 import FilterItem from './FilterItem';
 import FilterList from './FilterList';
-import IngredientList from './IngredientList';
+import SKUList from './SKUList';
 import IntegrationAutosuggest from '../GenericComponents/IntegrationAutosuggest';
 import FilterDropdown from './FilterDropdown';
 import SortByDropdown from './SortByDropdown';
 import PageSelector from './PageSelector';
-import IngredientsPageSearchBar from './IngredientsPageSearchBar';
+import SKUsPageSearchBar from './SKUsPageSearchBar';
 
 const styles = {
   card: {
@@ -35,13 +34,13 @@ const styles = {
     margin: 20,
     padding: 10
   },
-  ingredients_page_container: {
+  SKUs_page_container: {
     width: '100%',
     height: '100%',
     flexDirection: 'row',
     display: 'flex'
   },
-  ingredients_list_container: {
+  SKUs_list_container: {
     height: '100%',
     width: '73%',
     float: 'right', 
@@ -53,7 +52,7 @@ const styles = {
     display: 'flex',
     alignItems: 'center'
   },
-  ingredients_list: {
+  SKUs_list: {
     height: '80vh',
     width: '100%',
     margin: 5,
@@ -86,7 +85,7 @@ const styles = {
     textAlign: 'left',
     margin: 8
   },
-  ingredients_list_divider: {
+  SKUs_list_divider: {
     width: '90%',
     backgroundColor: 'gray',
     height: '2px',
@@ -96,7 +95,7 @@ const styles = {
     color: 'gray',
     margin: 5
   },
-  ingredients_search_bar: {
+  SKUs_search_bar: {
     flexDirection: 'row',
     display: 'flex'
   },
@@ -116,19 +115,18 @@ const styles = {
   }
 };
 
-class IngredientsPage extends Component {
+class SKUsPage extends Component {
 
   componentWillMount() {
-    this.props.getDummyIngredients()
   }
 
 
 
   render() {
     console.log(this.props)
-    const { classes, dummy_ingredients } = this.props
+    const { classes, dummy_SKUs } = this.props
     return (
-      <div className={classes.ingredients_page_container}>
+      <div className={classes.SKUs_page_container}>
         <Card className={classes.active_filters_container}>
         <Typography className={classes.active_filters_container_title}>
             Search Bar Filter Type
@@ -143,14 +141,14 @@ class IngredientsPage extends Component {
           </Typography>
           <FilterList></FilterList>
         </Card>
-          <div className={classes.ingredients_list_container}>
-            <div className={classes.ingredients_list}>
-              <IngredientsPageSearchBar></IngredientsPageSearchBar>
-            <div className={classes.ingredients_search_bar}>
+        <div className={classes.SKUs_list_container}>
+          <div className={classes.SKUs_list}>
+            <SKUsPageSearchBar></SKUsPageSearchBar>
+            <div className={classes.SKUs_search_bar}>
+            </div>
+            <SKUList></SKUList>
           </div>
-            <IngredientList></IngredientList>
-        </div>
-          <div variant="inset" className={classes.ingredients_list_divider} />
+          <div variant="inset" className={classes.SKUs_list_divider} />
           <PageSelector></PageSelector>
         </div>
       </div>
@@ -160,9 +158,9 @@ class IngredientsPage extends Component {
 
 const mapStateToProps = state => {
   return {
-    dummy_ingredients: state.dummy_ingredients
+    dummy_SKUs: state.dummy_SKUs
   };
 };
 
 
-export default withStyles(styles)(connect(mapStateToProps, { getDummyIngredients })(IngredientsPage));
+export default withStyles(styles)(connect(mapStateToProps, null)(SKUsPage));

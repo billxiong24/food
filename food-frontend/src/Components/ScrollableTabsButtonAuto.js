@@ -16,6 +16,9 @@ import LogoutPage from './LoginPage/LogoutPage';
 import { routeToPage } from '../Redux/Actions/index';
 import { connect } from 'react-redux';
 import IngredientDependencyPage from './IngredientDependencyPage/IngredientDependencyPage';
+import SKUsPage from './SKUPage/SKUsPage';
+import IngredientDetailViewPage from './IngredientDetailViewPage/IngredientDetailViewPage';
+import SKUDetailViewPage from './SKUDetailViewPage/SKUDetailViewPage';
 
 function TabContainer(props) {
   return (
@@ -76,12 +79,13 @@ class ScrollableTabsButtonAuto extends React.Component {
             <Tab label="Log In" />
             <Tab label="Create Account"/>
             <Tab className={classes.hidden}/>
+            <Tab className={classes.hidden}/>
             <Tab label="Dependency Report"/>
             <Tab label="Log Out"/>
           </Tabs>
         </AppBar>
         {value === 0 && <IngredientsPage></IngredientsPage>}
-        {value === 1 && <TabContainer>Item Two</TabContainer>}
+        {value === 1 && <SKUsPage></SKUsPage>}
         {value === 2 && <ProductLinePage></ProductLinePage>}
         {value === 3 && <ManufacturingGoalsPage></ManufacturingGoalsPage>}
         {value === 4 && <TabContainer>Item Five</TabContainer>}
@@ -89,8 +93,9 @@ class ScrollableTabsButtonAuto extends React.Component {
         {value === 6 && <LoginPage></LoginPage>}
         {value === 7 && <SignUpPage></SignUpPage>}
         {value === 8 && <CalculatorPage></CalculatorPage>}
-        {value === 9 && <IngredientDependencyPage></IngredientDependencyPage>}
-        {value === 10 && <LogoutPage></LogoutPage>}
+        {value === 9 && <SKUDetailViewPage></SKUDetailViewPage>}
+        {value === 10 && <IngredientDependencyPage></IngredientDependencyPage>}
+        {value === 11 && <LogoutPage></LogoutPage>}
       </div>
     );
   }

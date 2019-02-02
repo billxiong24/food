@@ -28,14 +28,21 @@ export default function ingredientReducer(state = initialState, action) {
         ]
       });
     case ING_ADD_FILTER:
+      let filters = state.filters.filter((el)=>{
+        return el.id !== action.filter_id
+      })
+      console.log("ING ADD FILTER")
+      console.log(filters)
+      console.log(action.data)
       return Object.assign({}, state, {
         filters: [
-          ...state.filters,
+          ...filters,
           action.data
         ]
       });
     case ING_REMOVE_FILTER:
       console.log("filter delete reducer")
+      console.log(state.filters)
       return Object.assign({}, state, {
         filters: state.filters.filter((el)=>{
           console.log(el.id)
@@ -44,6 +51,7 @@ export default function ingredientReducer(state = initialState, action) {
         })
       });
     case ING_SEARCH:
+      console.log("hello")
       console.log(action.data)
       return Object.assign({}, state, {
         items: action.data
@@ -60,7 +68,11 @@ export default function ingredientReducer(state = initialState, action) {
     case ING_ADD_ING:
       return Object.assign({}, state, action.data);
     case ING_GET_SKUS:
-      return Object.assign({}, state, action.data);
+      console.log("ING GET SKUS")
+      console.log(action.data)
+      return Object.assign({}, state, {
+        skus: action.data.items
+      });
     case ING_UPDATE_ING:
       return Object.assign({}, state, action.data);
     case ING_DELETE_ING:

@@ -17,7 +17,7 @@ export let dummy_ingredients = [
         pkg_size: "345lbs",
         pkg_cost: "45",
         comments: "how about them thighs tho",
-        id: 1
+        id: 12
     },
     {
         name: "2% Milk",
@@ -26,7 +26,7 @@ export let dummy_ingredients = [
         pkg_size: "345lbs",
         pkg_cost: "45",
         comments: "got milk",
-        id: 1
+        id: 167
     },
     {
         name: "Georgian Oranges",
@@ -35,7 +35,7 @@ export let dummy_ingredients = [
         pkg_size: "55 gallons",
         pkg_cost: "10",
         comments: null,
-        id: 9
+        id: 93
     },
     {
         name: "Water",
@@ -44,7 +44,7 @@ export let dummy_ingredients = [
         pkg_size: "5lbs",
         pkg_cost: "45",
         comments: "its not actually spring water",
-        id: 2
+        id: 278
     },
     {
         name: "Sesame Seeds",
@@ -53,7 +53,7 @@ export let dummy_ingredients = [
         pkg_size: "5lbs",
         pkg_cost: "45",
         comments: "that indian thing",
-        id: 76
+        id: 7697
     },
     {
         name: "Cauliflower",
@@ -62,7 +62,7 @@ export let dummy_ingredients = [
         pkg_size: "5lbs",
         pkg_cost: "45",
         comments: "Call me Flower ;)",
-        id: 234
+        id: 234089
     },
     {
         name: "Rice",
@@ -71,7 +71,7 @@ export let dummy_ingredients = [
         pkg_size: "266",
         pkg_cost: "5300",
         comments: null,
-        id: 12
+        id: 1287
     }];
 export let dummy_filters = [
     {
@@ -94,6 +94,36 @@ export let dummy_filters = [
         string: "Campbells Creamy Chicken Noodle Soup",
         id: 3
     }
+]
+
+export let dummy_ing_det_skus = [
+    {      
+        name: "sku723",     
+        case_upc: 123345,     
+        unit_upc: 65653,     
+        unit_size: "12 lbs",     
+        count_per_case: 998,    
+        prd_line: "prod4",    
+        comments: "commentingg"    
+    },
+    {      
+        name: "sku3",     
+        case_upc: 123305,     
+        unit_upc: 655653,     
+        unit_size: "12 lbs",     
+        count_per_case: 998,    
+        prd_line: "prod4",    
+        comments: "commentingg"    
+      },
+      {      
+        name: "skweew3",     
+        case_upc: 1237345,     
+        unit_upc: 656753,     
+        unit_size: "12 lbs",     
+        count_per_case: 998,    
+        prd_line: "prod4",    
+        comments: "commentingg"    
+      }  
 ]
 
 export let dummy_ingredient_names = dummy_ingredients.map(ingredient => ingredient.name);

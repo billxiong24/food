@@ -6,6 +6,8 @@ import ingredientReducer from './IngredientReducer';
 import skuReducer from './SkuReducer';
 import productLineReducer from './ProductLineReducer';
 import manufacturingGoalReducer from './ManufacturingGoalReducer';
+import ingredientDetailReducer from './IngredientDetailReducer';
+import SKUDetailReducer from './SKUDetailReducer';
 
 
 
@@ -16,5 +18,7 @@ export default combineReducers({
     ingredients: ingredientReducer,
     skus: skuReducer,
     productLine: productLineReducer,
-    manGoals: manufacturingGoalReducer
+    manGoals: manufacturingGoalReducer,
+    ingredient_details:ingredientDetailReducer,
+    sku_details:SKUDetailReducer
 });

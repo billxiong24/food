@@ -5,6 +5,7 @@ import IntegrationAutosuggest from '../GenericComponents/IntegrationAutosuggest'
 import labels from '../../Resources/labels';
 import { ingAddFilter, ingSearch, ingGetSkus } from '../../Redux/Actions';
 import { skuFormatter } from '../../Scripts/Formatters';
+import { skuDetGetIng, skuDetIngAutocomplete } from '../../Redux/Actions/ActionCreators/SKUDetailsActionCreators';
 
 const styles = {
     autosuggest:{
@@ -14,10 +15,11 @@ const styles = {
     }
 };
 
-class IngredientsPageSearchBar extends Component {
+class SKUDetailIngredientAutocomplete extends Component {
 
     constructor(props){
         super(props);
+        this.props.getIngredientNames("")
     }
 
 
@@ -63,26 +65,16 @@ class IngredientsPageSearchBar extends Component {
 
     onChange = (input) => {
         console.log(input)
-        this.props.getSKUs(input)
+        this.props.getIngredientNames(input)
     }
 
     render() {
-        const { classes, skus, filter_type } = this.props
+        const { classes, ingredient_names, filter_type } = this.props
         return (
-            filter_type == labels.ingredients.filter_type.INGREDIENTS ?
                 <IntegrationAutosuggest
                     className={classes.autosuggest}
-                    suggestions={[]}
-                    placeholder={"Add an Ingredient Name Filter"}
-                    onEnter = {this.onIngredientFilterEnter}
-                    onSuggest = {this.onIngredientFilterSuggest}
-                    onChange = {this.onChange}
-                ></IntegrationAutosuggest>
-            :
-                <IntegrationAutosuggest
-                    className={classes.autosuggest}
-                    suggestions={skus.map(sku => ({label:skuFormatter(sku), id:sku.id}))}
-                    placeholder={"Add a SKU Name Filter"}
+                    suggestions={ingredient_names.map(ingredient => ({label:ingredient.name, id:ingredient.id}))}
+                    placeholder={"Enter New Ingredient"}
                     onEnter = {this.onSKUFilterEnter}
                     onSuggest = {this.onSKUFilterSuggest}
                     onChange = {this.onChange}
@@ -93,21 +85,14 @@ class IngredientsPageSearchBar extends Component {
 
 const mapStateToProps = state => {
     return {
-        ingredient_names: state.ingredients.ingredient_names,
-        filter_type: state.ingredients.filter_type,
-        filters: state.ingredients.filters,
-        skus: state.ingredients.skus
+        ingredient_names: state.sku_details.ingredient_suggestions,
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        addFilter: filter => {
-            dispatch(ingAddFilter(filter))
-            dispatch(ingSearch())
-        },
-        getSKUs: ing => dispatch(ingGetSkus(ing))
+        getIngredientNames: ing_name => dispatch(skuDetIngAutocomplete(ing_name))
     };
 };
 
-export default withStyles(styles)(connect(mapStateToProps,mapDispatchToProps)(IngredientsPageSearchBar));
+export default withStyles(styles)(connect(mapStateToProps,mapDispatchToProps)(SKUDetailIngredientAutocomplete));

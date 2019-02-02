@@ -1,19 +1,19 @@
 import { GET_INGREDIENTS_DUMMY_DATA } from './ActionTypes';
 import { USER_LOG_OUT, USER_LOG_IN_ATTEMPT, USER_CREATE_ATTEMPT } from './UserActionTypes';
 import { ROUTERS_ROUTE_TO_PAGE } from './RoutingActionTypes';
-import {
-  ING_ADD_DEPENDENCY, ING_REMOVE_DEPENDENCY, ING_ADD_FILTER, ING_REMOVE_FILTER, ING_SEARCH, ING_SORT_BY,
-  ING_ADD_ING, ING_GET_SKUS, ING_UPDATE_ING, ING_DELETE_ING, ING_SET_FILTER_TYPE
-} from './IngredientActionTypes';
-import {
-  SKU_ADD_FILTER, SKU_REMOVE_FILTER, SKU_SEARCH, SKU_SORT_BY,
-  SKU_GET_ING, SKU_ADD_ING, SKU_DELETE_ING, SKU_ADD_SKU, SKU_UPDATE_SKU,
-  SKU_DELETE_SKU
-} from './SkuActionType';
+import { ING_ADD_DEPENDENCY, ING_REMOVE_DEPENDENCY, ING_ADD_FILTER, ING_REMOVE_FILTER, ING_SEARCH, ING_SORT_BY,
+  ING_ADD_ING, ING_GET_SKUS, ING_UPDATE_ING, ING_DELETE_ING, ING_SET_FILTER_TYPE } from './IngredientActionTypes';
+import { SKU_ADD_FILTER, SKU_REMOVE_FILTER, SKU_SEARCH, SKU_SORT_BY,
+    SKU_GET_ING, SKU_ADD_ING, SKU_DELETE_ING, SKU_ADD_SKU, SKU_UPDATE_SKU,
+    SKU_DELETE_SKU, 
+    SKU_SET_FILTER_TYPE,
+    SKU_ING_NAME_AUTOCOMPLETE,
+    SKU_PRODUCT_LINE_NAME_AUTOCOMPLETE} from './SkuActionType';
 import { PRDLINE_ADD_PRDLINE, PRDLINE_UPDATE_PRDLINE, PRDLINE_DELETE_PRDLINE, PRDLINE_SEARCH } from './ProductLineActionTypes';
 import labels from "../../Resources/labels";
 import axios from 'axios';
 import common from "../../Resources/common";
+import {store} from "../../index"
 
 const hostname = common.hostname;
 
@@ -38,6 +38,53 @@ export const getDummyIngredients = () => {
 ========================================================( SKUs Action Creators )========================================================
 */
 
+export const ingredientNameAutocomplete = (name) => {
+  console.log("SKU_ING_NAME_AUTOCOMPLETE ACTION CREATOR")
+  let params = {
+    names:[name],
+    skus: [],
+  }
+  console.log(params)
+  return (dispatch) => {
+    return axios.get(hostname + 'ingredients/search', {
+      params
+    })
+    .then(response => {
+      dispatch({
+        type: SKU_ING_NAME_AUTOCOMPLETE,
+        data: response.data
+      })
+    })
+    .catch(error => {
+      throw(error);
+    });
+  }
+}
+
+export const productLineNameAutoComplete = (name) => {
+  console.log("SKU_PRODUCT_LINE_NAME_AUTOCOMPLETE ACTION CREATOR")
+  console.log(name)
+  return (dispatch) => {
+    return axios.get(hostname + 'productline/search', {
+      params: {
+        name: name
+      }
+    })
+    .then(response => {
+      dispatch({
+        type: SKU_PRODUCT_LINE_NAME_AUTOCOMPLETE,
+        data: {
+          productLines: response.data,
+          errMsg: ''
+        }
+      })
+    })
+    .catch(error => {
+      throw(error);
+    })
+  }
+}
+
 export const skuAddFilter = (filter) => {
   return (dispatch) => {
     return dispatch({
@@ -57,12 +104,14 @@ export const skuRemoveFilter = (filter) => {
 }
 
 export const skuSearch = (filters) => {
+  console.log("SKU_SEARCH ACTION CREATOR")
+  console.log(store.getState().skus.filters)
   return (dispatch) => {
     return axios.get(hostname + 'sku/search', {
-      query: {
-        name: filters.filter((el) => { return el.type === labels.skus.filter_type.SKU_NAME }).map((a) => { return a.string }),
-        ingredients: filters.filter((el) => { return el.type === labels.skus.filter_type.INGREDIENTS }).map((a) => { return a.string }),
-        prodlines: filters.filter((el) => { return el.type === labels.skus.filter_type.PRODUCT_LINE }).map((a) => { return a.string }),
+      params: {
+        names:store.getState().skus.filters.filter((el)=>{return el.type === labels.skus.filter_type.SKU_NAME}).map((a)=>{return a.string}),
+        ingredients:store.getState().skus.filters.filter((el)=>{return el.type === labels.skus.filter_type.INGREDIENTS}).map((a)=>{return a.id}),
+        prodlines:store.getState().skus.filters.filter((el)=>{return el.type === labels.skus.filter_type.PRODUCT_LINE}).map((a)=>{return a.id}),
       }
     })
       .then(response => {
@@ -77,6 +126,16 @@ export const skuSearch = (filters) => {
       .catch(error => {
         throw (error);
       })
+  }
+}
+
+// Need to do something, probably involved with search
+export const skuSetFilterType = (filter_type) => {
+  return (dispatch) => {
+    return dispatch({
+      type: SKU_SET_FILTER_TYPE,
+      data: filter_type
+    })
   }
 }
 
@@ -330,6 +389,7 @@ export const ingAddDependency = (ing) => {
   }
 }
 
+
 export const ingAddFilter = (filter) => {
   return (dispatch) => {
     return dispatch({
@@ -350,13 +410,17 @@ export const ingRemoveFilter = (filter_id) => {
   }
 }
 
-export const ingSearch = (filters) => {
+export const ingSearch = () => {
+  console.log("ING SEARCH")
   let params = {
-    name: filters.filter((el) => { return el.type === labels.ingredients.filter_type.INGREDIENTS }).map((a) => { return a.string }),
-    skus: filters.filter((el) => { return el.type === labels.ingredients.filter_type.SKU_NAME }).map((a) => { return a.string })
+    names:store.getState().ingredients.filters.filter((el)=>{return el.type === labels.ingredients.filter_type.INGREDIENTS}).map((a)=>{return a.string}),
+    skus: store.getState().ingredients.filters.filter((el)=>{return el.type === labels.ingredients.filter_type.SKU_NAME}).map((a)=>{return a.id})
   }
+  console.log(store.getState().ingredients.filters)
   console.log(params)
   return (dispatch) => {
+    console.log("AXIOS")
+    console.log(params)
     return axios.get(hostname + 'ingredients/search', {
       params
     })
@@ -427,35 +491,58 @@ export const ingAddIng = (ing) => {
 }
 
 export const ingGetSkus = (ing) => {
+  // return (dispatch) => {
+  //   return axios.get(hostname + 'ingredients/' + ing + '/skus')
+  //   .then((response) => {
+  //     dispatch({
+  //       type: ING_GET_SKUS,
+  //       data: {
+  //         skus: response.data,
+  //         errMsg: ''
+  //       }
+  //     })
+  //   })
+  //   .catch((err) => {
+  //     if(err.response.status === 400) {
+  //       dispatch({
+  //         type: ING_GET_SKUS,
+  //         data: {
+  //           errMsg: err.response.data.error
+  //         }
+  //       });
+  //     } else {
+  //       dispatch({
+  //         type: ING_GET_SKUS,
+  //         data: {
+  //           errMsg: 'Something unexpected went wrong'
+  //         }
+  //       });
+  //       throw(err.response);
+  //     }
+  //   });
+  // }
   return (dispatch) => {
-    return axios.get(hostname + 'ingredients/' + ing.name + '/skus')
-      .then((response) => {
-        dispatch({
-          type: ING_GET_SKUS,
-          data: {
-            skus: response.data,
-            errMsg: ''
-          }
-        })
-      })
-      .catch((err) => {
-        if (err.response.status === 400) {
-          dispatch({
-            type: ING_GET_SKUS,
-            data: {
-              errMsg: err.response.data.error
-            }
-          });
-        } else {
-          dispatch({
-            type: ING_GET_SKUS,
-            data: {
-              errMsg: 'Something unexpected went wrong'
-            }
-          });
-          throw (err.response);
+    let params = {
+      names:[ing],
+      ingredients: [],
+      prodlines: [],
+    }
+    console.log(params)
+    return axios.get(hostname + 'sku/search', {
+      params
+    })
+    .then(response => {
+      dispatch({
+        type: ING_GET_SKUS,
+        data: {
+          items: response.data,
+          errMsg: ''
         }
-      });
+      })
+    })
+    .catch(error => {
+      throw(error);
+    })
   }
 }
 

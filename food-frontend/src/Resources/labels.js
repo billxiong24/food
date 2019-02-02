@@ -17,8 +17,9 @@ export default {
     skus:{
         sort_by:{
             NAME: "Name",
-            CASE_UPC: "Case UPC",
-            UNIT_UPC: "Unit UPC",
+            SKU_NUM: "SKU No.",
+            CASE_UPC: "Case UPC No.",
+            UNIT_UPC: "Unit UPC No.",
             UNIT_SIZE: "Unit Size",
             COUNT_PER_CASE: "Count Per Case",
             PRODUCT_LINE: "Product Line"
