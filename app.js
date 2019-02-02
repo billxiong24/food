@@ -48,7 +48,6 @@ app.use('/manufacturing_goals', mgRouter);
 app.use(function(req, res, next) {
   next(createError(404));
 });
-k
 
 // error handler
 app.use(function(err, req, res, next) {
