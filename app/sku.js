@@ -79,7 +79,7 @@ class SKU extends CRUD {
     search(names, ingredients, productlines, filter) {
         let q = squel.select()
         .from(this.tableName)
-        .field("sku.*")
+        .field("sku.*, COUNT(*) OVER() as row_count")
         .left_join("sku_ingred", null, "sku.num=sku_ingred.sku_num")
         .left_join("ingredients", null, "sku_ingred.ingred_num=ingredients.num");
 

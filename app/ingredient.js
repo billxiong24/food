@@ -35,7 +35,7 @@ class Ingredient extends CRUD {
     search(names, skus, filter) {
         let q = squel.select()
         .from(this.tableName)
-        .field("ingredients.*")
+        .field("ingredients.*, COUNT(*) OVER() as row_count")
         .left_join("sku_ingred", null, "ingredients.num=sku_ingred.ingred_num")
         .left_join("sku", null, "sku_ingred.sku_num=sku.num");
         const queryGen = new QueryGenerator(q);
