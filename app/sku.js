@@ -44,7 +44,7 @@ class SKU extends CRUD {
             for(let i = 0; i < ingredients.length; i++) {
                 let obj = ingredients[i];
                 if(!obj.ingred_num || !obj.quantity)
-                    return promise.reject("ingredient does not have number or quantity");
+                    return Promise.reject("ingredient does not have number or quantity");
                 obj.sku_num = sku_num;
             }
 
