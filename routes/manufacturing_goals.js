@@ -30,6 +30,11 @@ router.get('/:id/skus', function(req, res, next) {
 });
 
 router.post('/:id/skus', function(req, res, next) {
+    if(!req.body.skus || req.body.skus.length == 0) {
+        return res.status(200).json({
+            rowCount: 0
+        });
+    }
     const mg = new ManufacturingGoals();
     mg.addSkus(req.params.id, req.body.skus)
     .then((result) => {

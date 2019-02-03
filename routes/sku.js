@@ -76,6 +76,11 @@ router.post('/:id/ingredients', function(req, res, next) {
             error: "Malformed URL."
         });
     }
+    if(!req.body.ingredients || req.body.ingredients.length == 0) {
+        return res.status(200).json({
+            rowCount: 0
+        });
+    }
     const sku = new Sku();
     sku.addIngredients(id, req.body.ingredients)
     .then((result) => {
@@ -160,7 +165,7 @@ router.delete('/:id/ingredients', function(req, res, next) {
     }
 
     let ingredients = req.body.ingredients;
-    if(!ingredients) {
+    if(!ingredients || ingredients.length === 0) {
         return res.status(200).json({
             rowCount: 0
         });
