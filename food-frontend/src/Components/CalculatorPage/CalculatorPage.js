@@ -69,7 +69,6 @@ class CalculatorPage extends Component {
   render() {
 
     const { classes, ingredients, activeGoal} = this.props;
-    console.log(ingredients);
 
     return (
       (ingredients) ? 
