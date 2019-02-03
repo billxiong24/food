@@ -4,8 +4,8 @@ import labels from "../../Resources/labels";
 export const InitialStore = {
   // For now, only persistent data about users is who is actually logged in if there is someone logged in
   users: {
-    uname: 'admin',
-    id: 7,
+    uname: '',
+    id: null,
     isSuccess: false,
     errMsg: null
   },
@@ -22,7 +22,8 @@ export const InitialStore = {
     total_pages: 12,
     skus: [],
     errMsg: null,
-    ingDependency: [{
+    ingDependency: [
+    {
       "name": "skuskus",
       "num": 698,
       "vend_info": "someinfo please",
@@ -66,16 +67,16 @@ export const InitialStore = {
         },
       ]
     },
-    {
-      "name": "ing234",
-      "num": 47,
-      "vend_info": "please",
-      "pkg_size": "3587 poundsss",
-      "pkg_cost": "15",
-      "comments": "a comment",
-      "id": 5,
-      skus: [],
-    },]
+      {
+        "name": "ing234",
+        "num": 47,
+        "vend_info": "please",
+        "pkg_size": "3587 poundsss",
+        "pkg_cost": "15",
+        "comments": "a comment",
+        "id": 5,
+        skus: [],
+      },]
   },
   // Persistent data concerning productline view
   productLine: {
