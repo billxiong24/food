@@ -48,7 +48,7 @@ class ManufacturingGoals extends CRUD {
         for(let i = 0; i < skus.length; i++) {
             let obj = skus[i];
             if(!obj.sku_id || !obj.quantity)
-                return promise.reject("sku does not have id or quantity");
+                return Promise.reject("SKU does not have id or quantity");
             obj.mg_id = manufacturing_id;
         }
         let query = QueryGenerator.genInsConflictQuery(skus, 'manufacturing_goal_sku',  'ON CONFLICT (mg_id, sku_id) DO UPDATE SET quantity = EXCLUDED.quantity');
