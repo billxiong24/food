@@ -35,19 +35,31 @@ const styles = theme => ({
   },
 });
 
-class SampleComponent extends Component {
+class IngredientDependencyPage extends Component {
 
   constructor(props) {
     super(props);
   }
 
   exportCalculations() {
+    const rows = this.props.ings.reduce((arr, ing) => {
+      if (ing.skus.length > 0) {
+        return arr.concat(ing.skus.map((sku) => {
+          return {
+            ...sku,
+            ingredient: ing.name
+          };
+        }))
+      } else {
+        return arr.concat([{ingredient: ing.name},]);
+      }
+    }, []);
     axios.post(common.hostname + 'manufacturing_goals/exported_file', {
-      data: this.props.ings,
+      data: rows,
       format: "csv",
     })
       .then((response) => {
-        FileDownload(response.data, this.props.activeGoal.name + '_calculations.csv');
+        FileDownload(response.data, 'ingredient_dependency_report.csv');
       })
       .catch(err => {
         console.log(err);
@@ -91,9 +103,9 @@ class SampleComponent extends Component {
                 </TableCell>
               </TableRow>
             </TableHead>
-            {ings.map((ing) => (
-              <TableBody>
-                <TableRow key={ing.id}>
+            {ings.map((ing, index) => (
+              <TableBody key={ing.id}>
+                <TableRow>
                   <TableCell component="th" scope="row">
                     <label className={classes.ing_name}>
                       {ing.name}
@@ -130,4 +142,4 @@ const mapStateToProps = state => {
 const mapDispatchToProps = {
 };
 
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(SampleComponent));
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(IngredientDependencyPage));
