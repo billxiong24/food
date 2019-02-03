@@ -18,6 +18,13 @@ const initialState = {
 export default function manufacturingGoalReducer(state = initialState, action) {
   switch (action.type) {
     case mangoal_actions.MANGOAL_GET_CALCULATIONS:
+      console.log(Object.assign({}, state, {
+        activeGoal: {
+          ...state.activeGoal,
+          ingredients: action.data.ingredients,
+          errMsg: action.data.errMsg
+        }
+      }));
       return Object.assign({}, state, {
         activeGoal: {
           ...state.activeGoal,
