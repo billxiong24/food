@@ -10,7 +10,8 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import withStyles from '@material-ui/core/styles/withStyles';
 import { connect } from 'react-redux';
-import { userLoginAttempt, routeToPage } from '../../Redux/Actions'
+import { userLoginAttempt, routeToPage } from '../../Redux/Actions';
+import { Redirect } from 'react-router-dom';
 
 const styles = theme => ({
   main: {
@@ -69,15 +70,14 @@ class LoginPage extends Component {
   submitFormCheck(e) {
     e.preventDefault();
     this.props.userLoginAttempt(Object.assign({},this.state))
-    .then(()=>{
-      if(this.props.users.uname){
-        this.props.routeToPage(0);
-      }
-    })
   }
 
   render() {
     const { classes, users } = this.props;
+    if (users.id) {
+      return <Redirect to='/manufacturing_goals'/>
+    }
+
     return (
       <main className={classes.main}>
         <CssBaseline />

@@ -15,6 +15,8 @@ import {routeToPage} from '../../Redux/Actions/index';
 import axios from 'axios';
 import common from '../../Resources/common';
 import FileDownload from 'js-file-download';
+import {mangoalGetCalculations} from '../../Redux/Actions/ManufacturingGoalActionCreators';
+import {Link} from 'react-router-dom';
 
 const styles = theme => ({
   root: {
@@ -47,6 +49,10 @@ class CalculatorPage extends Component {
     super(props);
   }
 
+  componentWillMount() {
+    this.props.mangoalGetCalculations(this.props.activeGoal);
+  }
+
   exportCalculations() {
     axios.post(common.hostname + 'manufacturing_goals/exported_file', {
       data: this.props.activeGoal.ingredients,
@@ -63,8 +69,10 @@ class CalculatorPage extends Component {
   render() {
 
     const { classes, ingredients, activeGoal} = this.props;
+    console.log(ingredients);
 
     return (
+      (ingredients) ? 
       <div className={classes.root}>
         <ReactToPrint
           trigger={() => 
@@ -86,9 +94,10 @@ class CalculatorPage extends Component {
         <Button
           variant="contained"
           className={classes.button + ' ' + classes.goal_button}
-          onClick={()=>{this.props.routeToPage(3)}}
+          component={Link}
+          to={'/manufacturing_goals'}
         >
-          Return to Manufacturing Goal
+          Return to Manufacturing Goals
         </Button>
         <div ref={el => (this.componentRef = el)}>
           <Paper className={classes.calculation_container}>
@@ -124,6 +133,8 @@ class CalculatorPage extends Component {
           </Paper>
         </div>
       </div>
+      :
+      <div></div>
     )
   }
 }
@@ -136,7 +147,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
-  routeToPage,
+  mangoalGetCalculations,
 };
 
 export default withStyles(styles)(connect(mapStateToProps,mapDispatchToProps)(CalculatorPage));
