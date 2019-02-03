@@ -3,17 +3,48 @@ import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
+import labels from '../../Resources/labels';
 
 const styles = {
     textField:{
         width: '500px',
-        borderRadius: 10
     },
     text:{
         width: '500px',
         pointerEvents:'none',
         borderRadius: 10
-    }
+    },
+    input: {
+        color: "white",
+        borderColor: 'white'
+      },
+    active_input:{
+        color: "white"
+    },
+    cssLabel: {
+        color : 'white',
+      },
+    
+      cssOutlinedInput: {
+        '&$cssFocused $notchedOutline': {
+          borderColor: labels.colors.primaryColor,
+        },
+        color:'white'
+      },
+    
+      cssFocused: {
+        '&$cssFocused': {
+            borderColor: labels.colors.primaryColor,
+            color: labels.colors.primaryColor,
+        }
+      },
+    
+      notchedOutline: {
+        color:'white',
+        borderWidth: '1px',
+        borderColor: 'white'
+        
+      },
 };
 
 class EditableText extends Component {
@@ -53,6 +84,18 @@ class EditableText extends Component {
                     className={classes.textField}
                     margin="normal"
                     variant="outlined"
+                    InputLabelProps={{
+                        classes: {
+                          root: classes.cssLabel,
+                          focused: classes.cssFocused,
+                        },
+                      }}
+                      InputProps={{
+                        classes: {
+                          root: classes.cssOutlinedInput,
+                          focused: classes.cssFocused,
+                          notchedOutline: classes.notchedOutline,
+                    },}}
                 />
             )
         }else if(multiline && !editing){
@@ -67,6 +110,18 @@ class EditableText extends Component {
                     className={classes.text}
                     margin="normal"
                     variant="outlined"
+                    InputLabelProps={{
+                        classes: {
+                          root: classes.cssLabel,
+                          focused: classes.cssFocused,
+                        },
+                      }}
+                      InputProps={{
+                        classes: {
+                          root: classes.cssOutlinedInput,
+                          focused: classes.cssFocused,
+                          notchedOutline: classes.notchedOutline,
+                    },}}
                 />
             )
         }else if(!multiline && editing){
@@ -79,6 +134,18 @@ class EditableText extends Component {
                     onChange={this.handleChange('name')}
                     margin="normal"
                     variant="outlined"
+                    InputLabelProps={{
+                        classes: {
+                          root: classes.cssLabel,
+                          focused: classes.cssFocused,
+                        },
+                      }}
+                      InputProps={{
+                        classes: {
+                          root: classes.cssOutlinedInput,
+                          focused: classes.cssFocused,
+                          notchedOutline: classes.notchedOutline,
+                    },}}
                 />
             )
         }else{
@@ -91,6 +158,18 @@ class EditableText extends Component {
                     onChange={this.handleChange('name')}
                     margin="normal"
                     variant="outlined"
+                    InputLabelProps={{
+                        classes: {
+                          root: classes.cssLabel,
+                          focused: classes.cssFocused,
+                        },
+                      }}
+                      InputProps={{
+                        classes: {
+                          root: classes.cssOutlinedInput,
+                          focused: classes.cssFocused,
+                          notchedOutline: classes.notchedOutline,
+                    },}}
                 />
             )
         }

@@ -1,10 +1,12 @@
-import {  SKU_DET_GET_ING,SKU_DET_ADD_ING,SKU_DET_UPDATE_SKU,SKU_DET_DELETE_SKU,SKU_DET_DELETE_ING,SKU_DET_SET_SKU, SKU_DET_INGREDIENT_AUTOCOMPLETE, SKU_DET_PRODUCT_LINE_LIST } from "../Actions/SKUDetailActionTypes";
+import {  SKU_DET_GET_ING,SKU_DET_ADD_ING,SKU_DET_UPDATE_SKU,SKU_DET_DELETE_SKU,SKU_DET_DELETE_ING,SKU_DET_SET_SKU, SKU_DET_INGREDIENT_AUTOCOMPLETE, SKU_DET_PRODUCT_LINE_LIST, SKU_DET_ADD_ING_LOCAL, SKU_DET_DELETE_ING_LOCAL } from "../Actions/SKUDetailActionTypes";
+import { addToList, removeFromList } from "../../Resources/common";
 
 const initialState = {
     name: "Campbell SKU Name",
     case_upc:42,
     unit_upc:34,
     num:12,
+    id:null,
     unit_size:"45 Pomericans",
     count_per_case:"34",
     prd_line:"Campbell Home Products",
@@ -12,7 +14,7 @@ const initialState = {
     comments:"Insert Funny Side Comment",
     completion:"All Good",
     product_lines:[],
-    ingredient_suggestions:[]
+    current_ingredients:[]
 }
 
 export default function SKUDetailReducer(state = initialState, action) {
@@ -23,6 +25,7 @@ export default function SKUDetailReducer(state = initialState, action) {
             console.log(action.data)
             return Object.assign({}, state, {
                 ingredients:action.data,
+                current_ingredients: action.data
             });
         case SKU_DET_ADD_ING:
             console.log("SKU_DET_ADD_ING REDUCER")
@@ -58,7 +61,8 @@ export default function SKUDetailReducer(state = initialState, action) {
                 count_per_case:null,
                 prd_line:null,
                 ingredients:null,
-                comments:null
+                comments:null,
+                id:null
             });
         case SKU_DET_DELETE_ING:
             console.log("SKU_DET_DELETE_ING REDUCER")
@@ -82,7 +86,8 @@ export default function SKUDetailReducer(state = initialState, action) {
                 unit_size:action.data.unit_size,
                 count_per_case:action.data.count_per_case,
                 prd_line:action.data.prd_line,
-                comments:action.data.comments
+                comments:action.data.comments,
+                id:action.data.id
             });
         case SKU_DET_INGREDIENT_AUTOCOMPLETE:
             console.log("SKU_DET_INGREDIENT_AUTOCOMPLETE REDUCER")
@@ -96,6 +101,23 @@ export default function SKUDetailReducer(state = initialState, action) {
             return Object.assign({}, state, {
                 product_lines: action.data
             });
+        case SKU_DET_ADD_ING_LOCAL:
+            console.log("SKU_DET_ADD_ING_LOCAL REDUCER")
+            console.log(action.data)
+            console.log(state)
+            console.log(addToList(action.data,state.current_ingredients))
+            return Object.assign({}, state, {
+                current_ingredients:addToList(action.data,state.current_ingredients),
+            });
+        case SKU_DET_DELETE_ING_LOCAL:
+            console.log("SKU_DET_DELETE_ING_LOCAL REDUCER")
+            console.log(action.data)
+            console.log(state)
+            console.log(removeFromList(action.data, state.current_ingredients))
+            return Object.assign({}, state, {
+                current_ingredients:removeFromList(action.data, state.current_ingredients),
+            });
+            
             
         // case ING_DET_UPDATE_ING:
         //     console.log("ING_DET_UPDATE_ING")

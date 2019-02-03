@@ -6,26 +6,29 @@ import { Typography, Button } from '@material-ui/core';
 import EditableText from '../GenericComponents/EditableText';
 import labels from '../../Resources/labels';
 import { ingDetUpdateIng } from '../../Redux/Actions/ActionCreators/IngredientDetailsActionCreators';
-import { routeToPage } from '../../Redux/Actions';
+import { routeToPage, ingDeleteIng } from '../../Redux/Actions';
 import IngredientSKUList from './IngredientSKUList';
 const styles = {
     ingredient_page_container:{
         display:'flex',
         flexDirection: 'row',
     },
-    ingredient_detail_view:{
+    ingredient_detail_view:{    
         display:'flex',
         flexDirection: 'column',
         alignItems: 'center',
         padding: '50px',
-        backgroundColor: labels.colors.primaryColor,
-        borderRadius: 12
+        backgroundColor: 'rgb(111,58,211,0.75)',
+        borderRadius: 12,
+        color:'white'
     },
     textField:{
         width: '500px',
+        color:'white'
     },
     text:{
-        width: '500px'
+        width: '500px',
+        color:'white'
     },
     button:{
         width: '300px',
@@ -91,6 +94,23 @@ class IngredientDetailViewPage extends Component {
             console.log(ing)
             this.props.update(ing)
         }
+    }
+
+    onDelete = () => {
+        
+        const ing = {
+            name:this.state.ingredientName,
+            num:this.state.ingredientNum,
+            vend_info:this.state.vend_info,
+            pkg_size:this.state.packageSize,
+            pkg_cost:this.state.costPerPackage,
+            comments:this.state.comment,
+            id:this.props.id
+        }
+        console.log("INGREDIENTDETAILVIEW")
+        console.log(ing)
+        this.props.delete(ing)
+        
     }
 
     render() {
@@ -165,6 +185,20 @@ class IngredientDetailViewPage extends Component {
                         >
                         {this.state.buttonText}
                     </Button>
+                    {
+                        this.state.editing?
+                        <Button 
+                            className={classes.button} 
+                            editing={this.state.editing}
+                            onClick = {this.onDelete}
+                        >
+                            {"DELETE"}
+                        </Button>
+                        :
+                        <div></div>
+                    }
+
+                    
                 </div>
                 <div>
                     <Typography>
@@ -197,7 +231,11 @@ const mapDispatchToProps = dispatch => {
         {
             dispatch(ingDetUpdateIng(ing))
         },
-        back: () => dispatch(routeToPage(0))
+        back: () => dispatch(routeToPage(0)),
+        delete: (ing) => {
+            dispatch(ingDeleteIng(ing))
+            dispatch(routeToPage(0))
+        }
     };
 };
 

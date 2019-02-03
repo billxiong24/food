@@ -11,6 +11,7 @@ import { skuDetUpdateSku, skuDetAddIng, skuDetDeleteIng, skuDetDeleteSku } from 
 import SKUIngredientList from './SKUIngredientList';
 import SKUDetailIngredientAutocomplete from './SKUDetailIngredientAutocomplete';
 import ProductLineDropdown from './ProductLineDropdown';
+import { findDifferences } from '../../Resources/common';
 
 const styles = {
     ingredient_page_container:{
@@ -99,8 +100,6 @@ class SKUDetailViewPage extends Component {
                 editing:false,
             });
             const sku = {
-                buttonText:"Edit",
-                editing:false,
                 name:this.state.name,
                 case_upc:this.state.case_upc,
                 unit_upc:this.state.unit_upc,
@@ -109,13 +108,27 @@ class SKUDetailViewPage extends Component {
                 count_per_case:this.state.count_per_case,
                 prd_line:this.state.prd_line,
                 comments:this.state.comments,
-                ingredients:this.state.ingredients,
                 id:this.props.id
             }
             console.log("SKUDETAILVIEW")
             console.log(sku)
-            this.props.update(sku,[],[])
+            this.props.update(sku,this.props.current_ingredients,this.props.ingredients)
         }
+    }
+
+    onDelete = () => {
+        const sku = {
+            name:this.state.name,
+            case_upc:this.state.case_upc,
+            unit_upc:this.state.unit_upc,
+            num:this.state.num,
+            unit_size:this.state.unit_size,
+            count_per_case:this.state.count_per_case,
+            prd_line:this.state.prd_line,
+            comments:this.state.comments,
+            id:this.props.id
+        }
+        this.props.delete(sku)
     }
 
     render() {
@@ -190,14 +203,26 @@ class SKUDetailViewPage extends Component {
                         >
                         {this.state.buttonText}
                     </Button>
+                    {
+                        this.state.editing?
+                        <Button 
+                            className={classes.button} 
+                            editing={this.state.editing}
+                            onClick = {this.onDelete}
+                        >
+                            {"DELETE"}
+                        </Button>
+                        :
+                        <div></div>
+                    }
                 </div>
                 <div>
                     <div className={classes.list_autocomplete_container}>
                         <Typography>
                             Ingredient List
                         </Typography>
-                        <SKUDetailIngredientAutocomplete></SKUDetailIngredientAutocomplete>
-                        <SKUIngredientList></SKUIngredientList>
+                        <SKUDetailIngredientAutocomplete editing={this.state.editing}></SKUDetailIngredientAutocomplete>
+                        <SKUIngredientList editing={this.state.editing}></SKUIngredientList>
 
                     </div>
                 </div>
@@ -219,19 +244,29 @@ const mapStateToProps = state => {
         prd_line:state.sku_details.prd_line,
         ingredients:state.sku_details.ingredients,
         comments:state.sku_details.comments,
+        id:state.sku_details.id,
+        current_ingredients:state.sku_details.current_ingredients,
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        update : (sku, ingredients_to_delete, ingredients_to_add) =>
+        update : (sku, current_ingredients, ingredients) =>
         {
             dispatch(skuDetUpdateSku(sku))
-            dispatch(skuDetAddIng(sku.id,ingredients_to_add))
-            dispatch(skuDetDeleteIng(sku.id,ingredients_to_delete))
+            let object = findDifferences(current_ingredients, ingredients)
+            console.log(object.original)
+            console.log(object.newlist)
+            console.log(object.additions)
+            console.log(object.deletions)
+            dispatch(skuDetAddIng(sku,object.additions))
+            dispatch(skuDetDeleteIng(sku,object.deletions))
         },
         back: () => dispatch(routeToPage(1)),
-        delete: (sku) => dispatch(skuDetDeleteSku(sku.id))
+        delete: (sku) => {
+            dispatch(skuDetDeleteSku(sku))
+            dispatch(routeToPage(1))
+        }
     };
 };
 

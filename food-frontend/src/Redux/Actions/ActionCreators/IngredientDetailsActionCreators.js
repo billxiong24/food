@@ -8,6 +8,7 @@ export const ingDetUpdateIng = (ing) => {
     let params = {
         ...ing
     }
+    console.log("ING_DET_UPDATE_ING ACTION CREATOR")
     console.log(params)
     return (dispatch) => {
       return axios.put(hostname + 'ingredients/' + params.id, params)

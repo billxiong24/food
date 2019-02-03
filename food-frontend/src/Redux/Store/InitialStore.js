@@ -10,7 +10,7 @@ export const InitialStore = {
     errMsg: null
   },
   // Persistent data concerning routing
-  route: 1,
+  route: 0,
   // Persistent data concnerning ingredients view
   ingredients: {
     filters: [],
@@ -58,13 +58,13 @@ export const InitialStore = {
     errMsg: null
   },
   ingredient_details:{
-    ingredientName:"Cheese __",
-    ingredientNum:"56 __",
-    packageSize:"56 lbs. __",
-    costPerPackage:"15.99 __",
-    comment:"This cheese is good __",
-    id:31,
-    skus:dummy_ing_det_skus
+    ingredientName:null,
+    ingredientNum:null,
+    packageSize:null,
+    costPerPackage:null,
+    comment:null,
+    id:null,
+    skus:[]
   },
   sku_details:{
       name: "Campbell SKU Name",
@@ -74,10 +74,12 @@ export const InitialStore = {
       unit_size:"45 Pomericans",
       count_per_case:"34",
       prd_line:"Campbell Home Products",
-      ingredients:dummy_ingredients,
+      ingredients:[],
       comments:"Insert Funny Side Comment",
       completion:"All Good",
+      id:null,
       product_lines:[],
-      ingredient_suggestions:[]
+      ingredient_suggestions:[],
+      current_ingredients:[]
   }
 }

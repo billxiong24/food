@@ -15,13 +15,15 @@ import { Icon, IconButton } from '@material-ui/core';
 import delete_icon from '../../Resources/Images/delete_button_1.svg'
 import labels from '../../Resources/labels';
 import { addToList, removeFromList } from '../../Resources/common';
+import { skuDetDeleteIngLocal } from '../../Redux/Actions/ActionCreators/SKUDetailsActionCreators';
 
 const styles = {
     card: {
         width: '100 %',
         marginBottom:20,
         marginTop:20,
-        backgroundColor:labels.colors.primaryColor
+        backgroundColor:labels.colors.primaryColor,
+        padding:10
       },
       cardAction:{
         padding:10
@@ -67,46 +69,58 @@ class SKUIngredientList extends Component {
     }
 
     onClick = (item) =>{
-        this.setState({
-            deleted_list: addToList(item, this.state.deleted_list)
-        })
-        // console.log(removeFromList(this.state.deleted_list, this.state.active_list))
-        this.setState({
-            active_list: removeFromList(this.state.deleted_list, this.state.active_list)
-        })
-        // console.log("SKUINGREDIENTLIST COMPONENT")
-        // console.log("DELETED LIST")
-        // console.log(this.state.deleted_list)
-        // console.log("ACTIVE LIST")
-        // console.log(this.state.active_list)
+        console.log("deleted")
+        this.props.delete(item)
     }
 
     render() {
-        const { classes } = this.props
+        const { classes, current_ingredients, editing } = this.props
         
+        console.log("SKUINGREDIENTLIST COMPONENT LIST")
+        console.log(current_ingredients)
+
         return (
+            editing ?
             <div>
                 {
-                this.state.active_list.map((item, index) => (
+                (current_ingredients.map((item, index) => (
                     <Card className={classes.card} key={index}>
-                        <CardActionArea
-                        className = {classes.cardAction}
-                        >
-                        <CardContent onClick={() => this.onClick(item)}>
+                        
+                        <CardContent >
                             <Typography className={classes.ingredrient_name} color="textSecondary" gutterBottom>
                                 {item.name}
                             </Typography>
                             <Typography className={classes.ingredient_id} color="textSecondary" gutterBottom>
                                 {item.num}
                             </Typography>
-                            <IconButton className={classes.icon} onClick ={(e) => console.log("deleted")}>
+                            <IconButton className={classes.icon} onClick={() => this.onClick(item)}>
                                 <img src={delete_icon} />
                              </IconButton>
                         </CardContent>
-                        </CardActionArea>
+                        
                     </Card>
                 ))
-                }
+                )}
+            </div>
+            :
+            <div>
+                {
+                (current_ingredients.map((item, index) => (
+                    <Card className={classes.card} key={index}>
+                        
+                        <CardContent >
+                            <Typography className={classes.ingredrient_name} color="textSecondary" gutterBottom>
+                                {item.name}
+                            </Typography>
+                            <Typography className={classes.ingredient_id} color="textSecondary" gutterBottom>
+                                {item.num}
+                            </Typography>
+                            
+                        </CardContent>
+                        
+                    </Card>
+                ))
+                )}
             </div>
 
         );
@@ -115,11 +129,14 @@ class SKUIngredientList extends Component {
 
 const mapStateToProps = state => {
     return {
-        ingredients: state.sku_details.ingredients
+        current_ingredients: state.sku_details.current_ingredients,
     };
 };
 
 const mapDispatchToProps = dispatch => {
+    return {
+        delete: (ing) => { dispatch(skuDetDeleteIngLocal(ing))}
+    }
     
 };  
 

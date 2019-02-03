@@ -3,14 +3,14 @@ import { ING_DET_GET_SKUS, ING_DET_UPDATE_ING, ING_DET_SET_INGREDIENT } from '..
 import { dummy_ing_det_skus } from '../Store/DummyData';
   
   const initialState = {
-        ingredientName:"Cheeseded __",
-        ingredientNum:"56ede __",
-        vend_info:"Campbells",
-        packageSize:"56 lbs.dede __",
-        costPerPackage:"15.99eded __",
-        comment:"This cheese is goodded __",
-        id:31,
-        skus:dummy_ing_det_skus
+        ingredientName:null,
+        ingredientNum:null,
+        vend_info:null,
+        packageSize:null,
+        costPerPackage:null,
+        comment:null,
+        id:null,
+        skus:[]
     }
   
   export default function ingredientDetailReducer(state = initialState, action) {
@@ -35,7 +35,8 @@ import { dummy_ing_det_skus } from '../Store/DummyData';
                 vend_info: action.data.vend_info,
                 packageSize: action.data.pkg_size,
                 costPerPackage: action.data.pkg_cost,
-                comment:action.data.comments
+                comment:action.data.comments,
+                id:action.data.id
             });
         case ING_DET_GET_SKUS:
             console.log("ING_DET_GET_SKUS REDUCER")

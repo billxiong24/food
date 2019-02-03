@@ -1,6 +1,6 @@
 import axios from 'axios';
 import common from '../../../Resources/common';
-import { SKU_DET_GET_ING,SKU_DET_ADD_ING ,SKU_DET_UPDATE_SKU ,SKU_DET_DELETE_SKU ,SKU_DET_DELETE_ING ,SKU_DET_SET_SKU, SKU_DET_PRODUCT_LINE_LIST, SKU_DET_INGREDIENT_AUTOCOMPLETE
+import { SKU_DET_GET_ING,SKU_DET_ADD_ING ,SKU_DET_UPDATE_SKU ,SKU_DET_DELETE_SKU ,SKU_DET_DELETE_ING ,SKU_DET_SET_SKU, SKU_DET_PRODUCT_LINE_LIST, SKU_DET_INGREDIENT_AUTOCOMPLETE, SKU_DET_ADD_ING_LOCAL, SKU_DET_DELETE_ING_LOCAL
 } from '../SKUDetailActionTypes';
 
 const hostname = common.hostname;
@@ -28,14 +28,17 @@ export const skuDetGetIng = (sku_id) => {
   }
 
 // POST /sku/:id/ingredients
-export const skuDetAddIng = (sku_id,ingredients) => {
+export const skuDetAddIng = (sku,ingredients) => {
     console.log("SKU_DET_ADD_ING ACTION CREATOR")
-    console.log(sku_id,ingredients)
+    console.log(sku.id,ingredients)
     // [{ingred_num: 1, quantity: 1}, {ingred_num: 2, quantity: 2}]
-    
+
     return (dispatch) => {
-      return axios.post(hostname + 'sku/'+sku_id+'/ingredients', {
-        ingredients
+      return axios.post(hostname + 'sku/'+sku.id+'/ingredients', {
+        ingredients: ingredients.map((ingredient) => ({
+          ingred_num:ingredient.num,
+          quantity: ingredient.quantity})
+          )
       })
       .then(response => {
         console.log(response)
@@ -54,11 +57,12 @@ export const skuDetAddIng = (sku_id,ingredients) => {
 export const skuDetUpdateSku = (sku) => {
     console.log("SKU_DET_UPDATE_SKU ACTION CREATOR")
     console.log(sku)
+    console.log(sku.id)
     // [{ingred_num: 1, quantity: 1}, {ingred_num: 2, quantity: 2}]
     
     return (dispatch) => {
       return axios.put(hostname + 'sku/'+sku.id, {
-        sku
+        ...sku
       })
       .then(response => {
         console.log(response)
@@ -75,14 +79,13 @@ export const skuDetUpdateSku = (sku) => {
   }
 
   // DELETE /sku/:id/
-export const skuDetDeleteSku = (sku_id) => {
+export const skuDetDeleteSku = (sku, ingredients) => {
     console.log("SKU_DET_DELETE_SKU ACTION CREATOR")
-    console.log(sku_id)
-    // [{ingred_num: 1, quantity: 1}, {ingred_num: 2, quantity: 2}]
+    console.log(sku.id)
+    // [{ingred_num: 1, quantity: 1}, {ingred_  num: 2, quantity: 2}]
     
     return (dispatch) => {
-      return axios.delete(hostname + 'sku/'+sku_id, {
-        
+      return axios.delete(hostname + 'sku/'+sku.id, {
       })
       .then(response => {
         console.log(response)
@@ -99,14 +102,16 @@ export const skuDetDeleteSku = (sku_id) => {
   }
 
 // DELETE /sku/:id/ingredients
-export const skuDetDeleteIng = (sku_id, ingredients) => {
+export const skuDetDeleteIng = (sku, ingredients) => {
     console.log("SKU_DET_DELETE_ING ACTION CREATOR")
-    console.log(sku_id)
+    console.log(sku)
     // [{ingred_num: 1, quantity: 1}, {ingred_num: 2, quantity: 2}]
-    
     return (dispatch) => {
-      return axios.delete(hostname + 'sku/'+sku_id+ '/ingredients',  {
-        ingredients
+      return axios.delete(hostname + 'sku/'+sku.id+ '/ingredients',  {
+        ingredients: ingredients.map((ingredient) => ({
+          ingred_num:ingredient.num,
+          quantity: ingredient.quantity})
+          )
       })
       .then(response => {
         console.log(response)
@@ -164,7 +169,7 @@ export const skuDetGetProductLine = ()  => {
       return (dispatch) => {
         return axios.get(hostname + 'productline/search', {
             params: {
-              name: ""
+              names: ["p"]
             }
           })
       .then(response => {
@@ -178,6 +183,25 @@ export const skuDetGetProductLine = ()  => {
         console.log("error")
         throw(error);
       });
+    }
+  }
+
+
+  export const skuDetAddIngLocal = (ingredient) => {
+    return (dispatch) => {
+      return dispatch({
+        type: SKU_DET_ADD_ING_LOCAL,
+        data: ingredient
+      })
+    }
+  }
+
+  export const skuDetDeleteIngLocal = (ingredient) => {
+    return (dispatch) => {
+      return dispatch({
+        type: SKU_DET_DELETE_ING_LOCAL,
+        data: ingredient
+      })
     }
   }
 

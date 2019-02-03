@@ -110,8 +110,8 @@ export const skuSearch = (filters) => {
     return axios.get(hostname + 'sku/search', {
       params: {
         names:store.getState().skus.filters.filter((el)=>{return el.type === labels.skus.filter_type.SKU_NAME}).map((a)=>{return a.string}),
-        ingredients:store.getState().skus.filters.filter((el)=>{return el.type === labels.skus.filter_type.INGREDIENTS}).map((a)=>{return a.id}),
-        prodlines:store.getState().skus.filters.filter((el)=>{return el.type === labels.skus.filter_type.PRODUCT_LINE}).map((a)=>{return a.id}),
+        ingredients:store.getState().skus.filters.filter((el)=>{return el.type === labels.skus.filter_type.INGREDIENTS}).map((a)=>{return a.string}),
+        prodlines:store.getState().skus.filters.filter((el)=>{return el.type === labels.skus.filter_type.PRODUCT_LINE}).map((a)=>{return a.string}),
       }
     })
     .then(response => {
@@ -539,7 +539,7 @@ export const ingUpdateIng = (ing) => {
 
 export const ingDeleteIng = (ing) => {
   return (dispatch) => {
-    return axios.put(hostname + 'ingredients/' + ing.name, ing)
+    return axios.delete(hostname + 'ingredients/' + ing.id)
     .then((response) => {
       dispatch({
         type: ING_DELETE_ING,
