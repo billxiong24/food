@@ -12,8 +12,10 @@ import SignUpPage from './LoginPage/SignUpPage';
 import ProductLinePage from './ProductLinePage/ProductLinePage';
 import ManufacturingGoalsPage from './ManufacturingGoalsPage/ManufacturingGoalsPage';
 import CalculatorPage from './CalculatorPage/CalculatorPage';
+import LogoutPage from './LoginPage/LogoutPage';
 import { routeToPage } from '../Redux/Actions/index';
 import { connect } from 'react-redux';
+import IngredientDependencyPage from './IngredientDependencyPage/IngredientDependencyPage';
 import SKUsPage from './SKUPage/SKUsPage';
 import IngredientDetailViewPage from './IngredientDetailViewPage/IngredientDetailViewPage';
 import SKUDetailViewPage from './SKUDetailViewPage/SKUDetailViewPage';
@@ -36,6 +38,9 @@ const styles = theme => ({
     width: '100%',
     backgroundColor: theme.palette.background.paper,
   },
+  hidden: {
+    display:'none',
+  }
 });
 
 class ScrollableTabsButtonAuto extends React.Component {
@@ -72,7 +77,11 @@ class ScrollableTabsButtonAuto extends React.Component {
             <Tab label="Bulk Import" />
             <Tab label="Admin" />
             <Tab label="Log In" />
-            <Tab label="Create Account" />
+            <Tab label="Create Account"/>
+            <Tab className={classes.hidden}/>
+            <Tab className={classes.hidden}/>
+            <Tab label="Dependency Report"/>
+            <Tab label="Log Out"/>
           </Tabs>
         </AppBar>
         {value === 0 && <IngredientsPage></IngredientsPage>}
@@ -80,11 +89,13 @@ class ScrollableTabsButtonAuto extends React.Component {
         {value === 2 && <ProductLinePage></ProductLinePage>}
         {value === 3 && <ManufacturingGoalsPage></ManufacturingGoalsPage>}
         {value === 4 && <TabContainer>Item Five</TabContainer>}
-        {value === 5 && <IngredientDetailViewPage></IngredientDetailViewPage>}
-        {value === 6 && <LoginPage>Item Seven</LoginPage>}
-        {value === 7 && <SignUpPage>Item Eight</SignUpPage>}
+        {value === 5 && <TabContainer>Item Six</TabContainer>}
+        {value === 6 && <LoginPage></LoginPage>}
+        {value === 7 && <SignUpPage></SignUpPage>}
         {value === 8 && <CalculatorPage></CalculatorPage>}
         {value === 9 && <SKUDetailViewPage></SKUDetailViewPage>}
+        {value === 10 && <IngredientDependencyPage></IngredientDependencyPage>}
+        {value === 11 && <LogoutPage></LogoutPage>}
       </div>
     );
   }

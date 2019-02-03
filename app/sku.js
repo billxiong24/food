@@ -44,7 +44,7 @@ class SKU extends CRUD {
             for(let i = 0; i < ingredients.length; i++) {
                 let obj = ingredients[i];
                 if(!obj.ingred_num || !obj.quantity)
-                    return promise.reject("ingredient does not have number or quantity");
+                    return Promise.reject("ingredient does not have number or quantity");
                 obj.sku_num = sku_num;
             }
 
@@ -72,14 +72,14 @@ class SKU extends CRUD {
     }
 
     getIngredients(id) {
-        let query = "SELECT DISTINCT ingredients.* FROM sku INNER JOIN sku_ingred ON sku.num = sku_ingred.sku_num INNER JOIN ingredients ON sku_ingred.ingred_num=ingredients.num WHERE sku.id=$1";
+        let query = "SELECT DISTINCT ingredients.*, sku_ingred.quantity FROM sku INNER JOIN sku_ingred ON sku.num = sku_ingred.sku_num INNER JOIN ingredients ON sku_ingred.ingred_num=ingredients.num WHERE sku.id=$1";
         return db.execSingleQuery(query, [id]);
     }
 
     search(names, ingredients, productlines, filter) {
         let q = squel.select()
         .from(this.tableName)
-        .field("sku.*")
+        .field("sku.*, COUNT(*) OVER() as row_count")
         .left_join("sku_ingred", null, "sku.num=sku_ingred.sku_num")
         .left_join("ingredients", null, "sku_ingred.ingred_num=ingredients.num");
 

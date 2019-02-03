@@ -21,7 +21,61 @@ export const InitialStore = {
     current_page_number: 1,
     total_pages: 12,
     skus: [],
-    errMsg: null
+    errMsg: null,
+    ingDependency: [{
+      "name": "skuskus",
+      "num": 698,
+      "vend_info": "someinfo please",
+      "pkg_size": "5lbs",
+      "pkg_cost": "45",
+      "comments": "newcomment wiht id",
+      "id": 2,
+      "skus": [
+        {
+          "name": "sku1",
+          "num": 12,
+          "case_upc": "2449",
+          "unit_upc": "112553",
+          "unit_size": "10 lbs",
+          "count_per_case": 4,
+          "prd_line": "prod4",
+          "comments": "a comment",
+          "id": 4
+        },
+        {
+          "name": "sku1245872",
+          "num": 55,
+          "case_upc": "2477",
+          "unit_upc": "1123",
+          "unit_size": "5 lbs",
+          "count_per_case": 4,
+          "prd_line": "prod69",
+          "comments": "a comment",
+          "id": 1
+        },
+        {
+          "name": "sku2355",
+          "num": 1,
+          "case_upc": "5048",
+          "unit_upc": "1128",
+          "unit_size": "5 lbs",
+          "count_per_case": 4,
+          "prd_line": "prod69",
+          "comments": "a comment",
+          "id": 3
+        },
+      ]
+    },
+    {
+      "name": "ing234",
+      "num": 47,
+      "vend_info": "please",
+      "pkg_size": "3587 poundsss",
+      "pkg_cost": "15",
+      "comments": "a comment",
+      "id": 5,
+      skus: [],
+    },]
   },
   // Persistent data concerning productline view
   productLine: {
@@ -50,7 +104,8 @@ export const InitialStore = {
       name: 'Please Select a Manufacturing Goal',
       id: null,
       skus: [],
-      user_id: null
+      user_id: null,
+      ingredients: [],
     },
     skus: [],
     productLines: [],

@@ -4,83 +4,7 @@ let router = express.Router();
 const Filter = require("../app/filter");
 
 
-router.get('/dummyData', function(req, res, next) {
-
-    let data = [
-    {
-        "name":"Cheddar Cheese",
-        "num":53,
-        "vend_info":"Walmart",
-        "pkg_size":"345lbs",
-        "pkg_cost":"45",
-        "comments":"cheese is awesome",
-        "id":1
-    },
-    {
-        "name":"Chicken Thigh",
-        "num":6,
-        "vend_info":"Target",
-        "pkg_size":"345lbs",
-        "pkg_cost":"45",
-        "comments":"how about them thighs tho",
-        "id":1
-    },
-    {
-        "name":"2% Milk",
-        "num":6,
-        "vend_info":"Walmart",
-        "pkg_size":"345lbs",
-        "pkg_cost":"45",
-        "comments":"got milk","id":1
-    },
-    {
-        "name":"Georgian Oranges",
-        "num":12,
-        "vend_info":null,
-        "pkg_size":"55 gallons",
-        "pkg_cost":"10",
-        "comments":null,
-        "id":9
-    },
-    {
-        "name":"Water",
-        "num":698,
-        "vend_info":"Ozark",
-        "pkg_size":"5lbs",
-        "pkg_cost":"45",
-        "comments":"its not actually spring water",
-        "id":2
-    },
-    {
-        "name":"Sesame Seeds",
-        "num":698,
-        "vend_info":"Haldirams'",
-        "pkg_size":"5lbs",
-        "pkg_cost":"45",
-        "comments":"that indian thing",
-        "id":76
-    },
-    {
-        "name":"Cauliflower",
-        "num":698,
-        "vend_info":"Albertson's",
-        "pkg_size":"5lbs",
-        "pkg_cost":"45",
-        "comments":"Call me Flower ;)",
-        "id":234
-    },
-    {
-        "name":"Rice",
-        "num":5633,
-        "vend_info":"Its better than the university",
-        "pkg_size":"266",
-        "pkg_cost":"5300",
-        "comments":null,
-        "id":12
-    }];
-    res.status(200).json(data);
-});
-
+//TODO 22P02
 router.get('/search', function(req, res, next) {
     let names = req.query.names;
     let list = req.query.skus;
@@ -144,10 +68,11 @@ router.post('/', function(req, res, next) {
 
 router.get('/:id/skus', function(req, res, next) {
     let id = req.params.id;
-    if(!id) {
+    if(isNaN((id))) {
         return res.status(400).json({
             error: "Malformed URL."
         });
+
     }
 
     const ing = new Ingredient();
@@ -163,6 +88,12 @@ router.get('/:id/skus', function(req, res, next) {
 });
 
 router.put('/:id', function(req, res, next) {
+    let id = req.params.id;
+    if(isNaN((id))) {
+        return res.status(400).json({
+            error: "Malformed URL."
+        });
+    }
 
     if(Object.keys(req.body).length === 0) {
         return req.json({
@@ -170,7 +101,7 @@ router.put('/:id', function(req, res, next) {
         });
     }
     const ing = new Ingredient();
-    ing.update(req.body, req.params.id)
+    ing.update(req.body, id)
     .then((result) => {
         res.status(200).json({
             rowCount: result.rowCount
@@ -185,6 +116,11 @@ router.put('/:id', function(req, res, next) {
 
 router.delete('/:id', function(req, res, next) {
     let id = req.params.id;
+    if(isNaN((id))) {
+        return res.status(400).json({
+            error: "Malformed URL."
+        });
+    }
     const ing = new Ingredient();
     ing.remove(id)
     .then((result) => {

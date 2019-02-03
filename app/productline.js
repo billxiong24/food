@@ -36,7 +36,8 @@ class ProductLine extends CRUD {
     search(names, filter) {
         names = QueryGenerator.transformQueryArr(names);
         let query = squel.select()
-        .from(this.tableName);
+        .from(this.tableName)
+        .field("*, COUNT(*) OVER() as row_count");
 
         const queryGen = new QueryGenerator(query);
         queryGen.chainAndFilter(names, "name LIKE ?");

@@ -1,8 +1,8 @@
-import { FETCH_GITHUB_DATA, GET_INGREDIENTS_DUMMY_DATA } from './ActionTypes';
-import { USER_LOG_IN_ATTEMPT, USER_CREATE_ATTEMPT } from './UserActionTypes';
+import { GET_INGREDIENTS_DUMMY_DATA } from './ActionTypes';
+import { USER_LOG_OUT, USER_LOG_IN_ATTEMPT, USER_CREATE_ATTEMPT } from './UserActionTypes';
 import { ROUTERS_ROUTE_TO_PAGE } from './RoutingActionTypes';
-import { ING_ADD_FILTER, ING_REMOVE_FILTER, ING_SEARCH, ING_SORT_BY,
-    ING_ADD_ING, ING_GET_SKUS, ING_UPDATE_ING, ING_DELETE_ING, ING_SET_FILTER_TYPE } from './IngredientActionTypes';
+import { ING_ADD_DEPENDENCY, ING_REMOVE_DEPENDENCY, ING_ADD_FILTER, ING_REMOVE_FILTER, ING_SEARCH, ING_SORT_BY,
+  ING_ADD_ING, ING_GET_SKUS, ING_UPDATE_ING, ING_DELETE_ING, ING_SET_FILTER_TYPE } from './IngredientActionTypes';
 import { SKU_ADD_FILTER, SKU_REMOVE_FILTER, SKU_SEARCH, SKU_SORT_BY,
     SKU_GET_ING, SKU_ADD_ING, SKU_DELETE_ING, SKU_ADD_SKU, SKU_UPDATE_SKU,
     SKU_DELETE_SKU, 
@@ -29,7 +29,7 @@ export const getDummyIngredients = () => {
         )
       })
       .catch(error => {
-        throw(error);
+        throw (error);
       });
   };
 };
@@ -114,18 +114,18 @@ export const skuSearch = (filters) => {
         prodlines:store.getState().skus.filters.filter((el)=>{return el.type === labels.skus.filter_type.PRODUCT_LINE}).map((a)=>{return a.string}),
       }
     })
-    .then(response => {
-      dispatch({
-        type: SKU_SEARCH,
-        data: {
-          items: response.data,
-          errMsg: ''
-        }
+      .then(response => {
+        dispatch({
+          type: SKU_SEARCH,
+          data: {
+            items: response.data,
+            errMsg: ''
+          }
+        })
       })
-    })
-    .catch(error => {
-      throw(error);
-    })
+      .catch(error => {
+        throw (error);
+      })
   }
 }
 
@@ -152,199 +152,242 @@ export const skuSortBy = (category) => {
 export const skuGetIng = (sku) => {
   return (dispatch) => {
     return axios.get(hostname + 'sku/' + sku.case_upc + '/ingredients')
-    .then((response) => {
-      dispatch({
-        type: SKU_GET_ING,
-        data: {
-          ingredients: response.data,
-          errMsg: ''
-        }
+      .then((response) => {
+        dispatch({
+          type: SKU_GET_ING,
+          data: {
+            ingredients: response.data,
+            errMsg: ''
+          }
+        })
       })
-    })
-    .catch((err) => {
-      if(err.response.status === 400) {
-        dispatch({
-          type: SKU_GET_ING,
-          data: {
-            errMsg: err.response.data.error
-          }
-        });
-      } else {
-        dispatch({
-          type: SKU_GET_ING,
-          data: {
-            errMsg: 'Something unexpected went wrong'
-          }
-        });
-        throw(err.response);
-      }
-    });
+      .catch((err) => {
+        if (err.response.status === 400) {
+          dispatch({
+            type: SKU_GET_ING,
+            data: {
+              errMsg: err.response.data.error
+            }
+          });
+        } else {
+          dispatch({
+            type: SKU_GET_ING,
+            data: {
+              errMsg: 'Something unexpected went wrong'
+            }
+          });
+          throw (err.response);
+        }
+      });
   }
 }
 
 export const skuAddIng = (sku, ing) => {
   return (dispatch) => {
     return axios.post(hostname + 'sku/' + sku.case_upc + '/ingredients', ing)
-    .then((reponse)=>{
-      dispatch({
-        type: SKU_ADD_ING,
-        data: {
-          errMsg: ''
-        }
-      })
-    })
-    .catch((err)=>{
-      if(err.response.status===400 || err.reponse.status===409) {
+      .then((reponse) => {
         dispatch({
           type: SKU_ADD_ING,
           data: {
-            errMsg: err.response.data.error
+            errMsg: ''
           }
         })
-      } else {
-        dispatch({
-          type: SKU_ADD_ING,
-          data: {
-            errMsg: 'Something unexpected went wrong'
-          }
-        });
-        throw(err.reponse);
-      }
-    });
+      })
+      .catch((err) => {
+        if (err.response.status === 400 || err.reponse.status === 409) {
+          dispatch({
+            type: SKU_ADD_ING,
+            data: {
+              errMsg: err.response.data.error
+            }
+          })
+        } else {
+          dispatch({
+            type: SKU_ADD_ING,
+            data: {
+              errMsg: 'Something unexpected went wrong'
+            }
+          });
+          throw (err.reponse);
+        }
+      });
   }
 }
 
 export const skuDeleteIng = (sku, ing) => {
   return (dispatch) => {
     return axios.delete(hostname + 'sku/' + sku.case_upc + 'ingredients', ing)
-    .then((response)=>{
-      dispatch({
-        type: SKU_DELETE_ING,
-        data: {
-          errMsg: ''
-        }
-      })
-    })
-    .catch((err) => {
-      if(err.response.status === 400 || err.response.status === 409) {
+      .then((response) => {
         dispatch({
           type: SKU_DELETE_ING,
           data: {
-            errMsg: err.response.data.error
+            errMsg: ''
           }
         })
-      } else {
-        dispatch({
-          type: SKU_DELETE_ING,
-          data: {
-            errMsg: 'Something unexpected went wrong'
-          }
-        });
-        throw(err.response);
-      }
-    })
+      })
+      .catch((err) => {
+        if (err.response.status === 400 || err.response.status === 409) {
+          dispatch({
+            type: SKU_DELETE_ING,
+            data: {
+              errMsg: err.response.data.error
+            }
+          })
+        } else {
+          dispatch({
+            type: SKU_DELETE_ING,
+            data: {
+              errMsg: 'Something unexpected went wrong'
+            }
+          });
+          throw (err.response);
+        }
+      })
   }
 }
 
 export const skuAddSku = (sku) => {
   return (dispatch) => {
     return axios.post(hostname + 'sku/', sku)
-    .then((result) => {
-      dispatch({
-        type: SKU_ADD_SKU,
-        data: {
-          errMsg: ''
-        }
-      });
-    })
-    .catch((err) => {
-      if(err.response.status === 409) {
+      .then((result) => {
         dispatch({
           type: SKU_ADD_SKU,
           data: {
-            errMsg: err.response.data.error
-          }
-        })
-      } else {
-        dispatch({
-          type: SKU_ADD_SKU,
-          data: {
-            errMsg: 'Something unexpected went wrong'
+            errMsg: ''
           }
         });
-        throw(err.response);
-      }
-    })
+      })
+      .catch((err) => {
+        if (err.response.status === 409) {
+          dispatch({
+            type: SKU_ADD_SKU,
+            data: {
+              errMsg: err.response.data.error
+            }
+          })
+        } else {
+          dispatch({
+            type: SKU_ADD_SKU,
+            data: {
+              errMsg: 'Something unexpected went wrong'
+            }
+          });
+          throw (err.response);
+        }
+      })
   }
 }
 
 export const skuUpdateSku = (sku) => {
   return (dispatch) => {
     return axios.put(hostname + 'sku/' + sku.case_upc, sku)
-    .then((result) => {
-      dispatch({
-        type: SKU_UPDATE_SKU,
-        data: {
-          errMsg: ''
-        }
-      });
-    })
-    .catch((err) => {
-      if(err.response.status === 400 || err.response.status === 409) {
+      .then((result) => {
         dispatch({
           type: SKU_UPDATE_SKU,
           data: {
-            errMsg: err.response.data.error
-          }
-        })
-      } else {
-        dispatch({
-          type: SKU_UPDATE_SKU,
-          data: {
-            errMsg: 'Something unexpected went wrong'
+            errMsg: ''
           }
         });
-        throw(err.response);
-      }
-    })
+      })
+      .catch((err) => {
+        if (err.response.status === 400 || err.response.status === 409) {
+          dispatch({
+            type: SKU_UPDATE_SKU,
+            data: {
+              errMsg: err.response.data.error
+            }
+          })
+        } else {
+          dispatch({
+            type: SKU_UPDATE_SKU,
+            data: {
+              errMsg: 'Something unexpected went wrong'
+            }
+          });
+          throw (err.response);
+        }
+      })
   }
 }
 
 export const skuDeleteSku = (sku) => {
   return (dispatch) => {
     return axios.put(hostname + 'sku/' + sku.case_upc)
-    .then((response) => {
-      dispatch({
-        type: SKU_DELETE_SKU,
-        data: {
-          errMsg: ''
-        }
+      .then((response) => {
+        dispatch({
+          type: SKU_DELETE_SKU,
+          data: {
+            errMsg: ''
+          }
+        })
       })
-    })
-    .catch((err) => {
-      if(err.response.status === 400 || err.response.status === 409) {
-        dispatch({
-          type: SKU_DELETE_SKU,
-          data: {
-            errMsg: err.response.data.error
-          }
-        });
-      } else {
-        dispatch({
-          type: SKU_DELETE_SKU,
-          data: {
-            errMsg: 'Something unexpected went wrong'
-          }
-        });
-        throw(err.response);
-      }
-    });
+      .catch((err) => {
+        if (err.response.status === 400 || err.response.status === 409) {
+          dispatch({
+            type: SKU_DELETE_SKU,
+            data: {
+              errMsg: err.response.data.error
+            }
+          });
+        } else {
+          dispatch({
+            type: SKU_DELETE_SKU,
+            data: {
+              errMsg: 'Something unexpected went wrong'
+            }
+          });
+          throw (err.response);
+        }
+      });
   }
 }
 
 /*
 ========================================================( Ingredients Action Creators )========================================================
 */
+export const ingRemoveDependency = (ing) => {
+  return (dispatch) => {
+    return dispatch({
+      type: ING_REMOVE_DEPENDENCY,
+      data: ing
+    })
+  }
+}
+
+export const ingAddDependency = (ing) => {
+  return (dispatch) => {
+    return axios.get(hostname + 'ingredients/' + ing.id + '/skus')
+      .then((response) => {
+        dispatch({
+          type: ING_ADD_DEPENDENCY,
+          data: {
+            ingDependency: {
+              ...ing,
+              skus: response.data
+            }
+          }
+        })
+      })
+      .catch((err) => {
+        if (err.response.status === 400) {
+          dispatch({
+            type: ING_ADD_DEPENDENCY,
+            data: {
+              errMsg: err.response.data.error
+            }
+          });
+        } else {
+          dispatch({
+            type: ING_ADD_DEPENDENCY,
+            data: {
+              errMsg: 'Something unexpected went wrong'
+            }
+          });
+          throw (err.response);
+        }
+      })
+  }
+}
 
 
 export const ingAddFilter = (filter) => {
@@ -381,17 +424,16 @@ export const ingSearch = () => {
     return axios.get(hostname + 'ingredients/search', {
       params
     })
-    .then(response => {
-      console.log(response)
-      dispatch({
-        type: ING_SEARCH,
-        data: response.data
+      .then(response => {
+        console.log(response)
+        dispatch({
+          type: ING_SEARCH,
+          data: response.data
+        })
       })
-    })
-    .catch(error => {
-      console.log("error")
-      throw(error);
-    });
+      .catch(error => {
+        throw (error);
+      });
   }
 }
 
@@ -419,32 +461,32 @@ export const ingSetFilterType = (filter_type) => {
 export const ingAddIng = (ing) => {
   return (dispatch) => {
     return axios.post(hostname + 'ingredients/', ing)
-    .then((response) => {
-      dispatch({
+      .then((response) => {
+        dispatch({
           type: ING_ADD_ING,
           data: {
             errMsg: ''
           }
+        })
       })
-    })
-    .catch((err) => {
-      if(err.response.status === 409) {
-        dispatch({
-          type: ING_ADD_ING,
-          data: {
-            errMsg: err.response.data.error
-          }
-        });
-      } else {
-        dispatch({
-          type: ING_ADD_ING,
-          data: {
-            errMsg: 'Something unexpected went wrong'
-          }
-        });
-        throw(err.response);
-      }
-    });
+      .catch((err) => {
+        if (err.response.status === 409) {
+          dispatch({
+            type: ING_ADD_ING,
+            data: {
+              errMsg: err.response.data.error
+            }
+          });
+        } else {
+          dispatch({
+            type: ING_ADD_ING,
+            data: {
+              errMsg: 'Something unexpected went wrong'
+            }
+          });
+          throw (err.response);
+        }
+      });
   }
 }
 
@@ -479,7 +521,6 @@ export const ingGetSkus = (ing) => {
   //     }
   //   });
   // }
-  console.log("ING SKU SEARCH")
   return (dispatch) => {
     let params = {
       names:[ing],
@@ -508,32 +549,33 @@ export const ingGetSkus = (ing) => {
 export const ingUpdateIng = (ing) => {
   return (dispatch) => {
     return axios.put(hostname + 'ingredients/' + ing.name, ing)
-    .then((response) => {
-      dispatch({
-        type: ING_UPDATE_ING,
-        data: {
-          errMsg: ''
-        }
-      })
-    })
-    .catch((err) => {
-      if(err.response.status === 409) {
+      .then((response) => {
         dispatch({
           type: ING_UPDATE_ING,
           data: {
-            errMsg: err.response.data.error
-          }}
-        );
-      } else {
-        dispatch({
-          type: ING_UPDATE_ING,
-          data: {
-            errMsg: 'Something unexpected went wrong'
+            errMsg: ''
           }
-        });
-        throw(err.response);
-      }
-    });
+        })
+      })
+      .catch((err) => {
+        if (err.response.status === 409) {
+          dispatch({
+            type: ING_UPDATE_ING,
+            data: {
+              errMsg: err.response.data.error
+            }
+          }
+          );
+        } else {
+          dispatch({
+            type: ING_UPDATE_ING,
+            data: {
+              errMsg: 'Something unexpected went wrong'
+            }
+          });
+          throw (err.response);
+        }
+      });
   }
 }
 
@@ -548,24 +590,24 @@ export const ingDeleteIng = (ing) => {
         }
       })
     })
-    .catch((err) => {
-      if(err.response.status === 409) {
-        dispatch({
-          type: ING_DELETE_ING,
-          data: {
-            errMsg: err.response.data.error
-          }
-        });
-      } else {
-        dispatch({
-          type: ING_DELETE_ING,
-          data: {
-            errMsg: 'Something unexpected went wrong'
-          }
-        });
-        throw(err.response);
-      }
-    });
+      .catch((err) => {
+        if (err.response.status === 409) {
+          dispatch({
+            type: ING_DELETE_ING,
+            data: {
+              errMsg: err.response.data.error
+            }
+          });
+        } else {
+          dispatch({
+            type: ING_DELETE_ING,
+            data: {
+              errMsg: 'Something unexpected went wrong'
+            }
+          });
+          throw (err.response);
+        }
+      });
   }
 }
 
@@ -580,118 +622,118 @@ export const prdlineSearch = (name) => {
         name: name
       }
     })
-    .then(response => {
-      dispatch({
-        type: PRDLINE_SEARCH,
-        data: {
-          productLines: response.data,
-          errMsg: ''
-        }
+      .then(response => {
+        dispatch({
+          type: PRDLINE_SEARCH,
+          data: {
+            productLines: response.data,
+            errMsg: ''
+          }
+        })
       })
-    })
-    .catch(error => {
-      throw(error);
-    })
+      .catch(error => {
+        throw (error);
+      })
   }
 }
 
 export const prdlineAddPrdline = (prdline) => {
   return (dispatch) => {
     return axios.post(hostname + 'productline/', prdline)
-    .then((response) => {
-      dispatch({
-        type: PRDLINE_ADD_PRDLINE,
-        data: {
-          errMsg: ''
-        }
-      })
-    })
-    .catch((err) => {
-      console.log(err);
-      if(err.response.status === 409) {
+      .then((response) => {
         dispatch({
           type: PRDLINE_ADD_PRDLINE,
           data: {
-            errMsg: err.response.data.error
+            errMsg: ''
           }
         })
-      } else {
-        dispatch({
-          type: PRDLINE_ADD_PRDLINE,
-          data: {
-            errMsg: 'Something unexpected went wrong'
-          }
-        });
-        throw(err.response);
-      }
-    });
+      })
+      .catch((err) => {
+        console.log(err);
+        if (err.response.status === 409) {
+          dispatch({
+            type: PRDLINE_ADD_PRDLINE,
+            data: {
+              errMsg: err.response.data.error
+            }
+          })
+        } else {
+          dispatch({
+            type: PRDLINE_ADD_PRDLINE,
+            data: {
+              errMsg: 'Something unexpected went wrong'
+            }
+          });
+          throw (err.response);
+        }
+      });
   }
 }
 
 export const prdlineUpdatePrdline = (prdline) => {
   return (dispatch) => {
     return axios.put(hostname + 'productline/' + prdline.id, prdline)
-    .then((response) => {
-      delete prdline.oldname;
-      dispatch({
-        type: PRDLINE_UPDATE_PRDLINE,
-        data: {
-          productLineToUpdate: prdline,
-          errMsg: ''
+      .then((response) => {
+        delete prdline.oldname;
+        dispatch({
+          type: PRDLINE_UPDATE_PRDLINE,
+          data: {
+            productLineToUpdate: prdline,
+            errMsg: ''
+          }
+        })
+      })
+      .catch((err) => {
+        if (err.response.status === 400) {
+          dispatch({
+            type: PRDLINE_UPDATE_PRDLINE,
+            data: {
+              errMsg: err.response.data.error
+            }
+          })
+        } else {
+          dispatch({
+            type: PRDLINE_UPDATE_PRDLINE,
+            data: {
+              errMsg: 'Something unexpected went wrong'
+            }
+          })
+          throw (err.response);
         }
       })
-    })
-    .catch((err) => {
-      if(err.response.status === 400) {
-        dispatch({
-          type: PRDLINE_UPDATE_PRDLINE,
-          data: {
-            errMsg: err.response.data.error
-          }
-        })
-      } else {
-        dispatch({
-          type: PRDLINE_UPDATE_PRDLINE,
-          data: {
-            errMsg: 'Something unexpected went wrong'
-          }
-        })
-        throw(err.response);
-      }
-    })
   }
 }
 
 export const prdlineDeletePrdline = (prdline) => {
   return (dispatch) => {
     return axios.delete(hostname + 'productline/' + prdline.id)
-    .then((response) => {
-      dispatch({
-        type: PRDLINE_DELETE_PRDLINE,
-        data: {
-          productLineToDelete: prdline,
-          errMsg: ''
-        }
-      })
-    })
-    .catch((err) => {
-      if(err.response.status === 409) {
+      .then((response) => {
         dispatch({
           type: PRDLINE_DELETE_PRDLINE,
           data: {
-            errMsg: err.response.data.error
+            productLineToDelete: prdline,
+            errMsg: ''
           }
         })
-      } else {
-        dispatch({
-          type: PRDLINE_DELETE_PRDLINE,
-          data: {
-            errMsg: 'Something unexpected went wrong'
-          }
-        });
-        throw(err.response);
-      }
-    })
+      })
+      .catch((err) => {
+        if (err.response.status === 409) {
+          dispatch({
+            type: PRDLINE_DELETE_PRDLINE,
+            data: {
+              errMsg: err.response.data.error
+            }
+          })
+        } else {
+          dispatch({
+            type: PRDLINE_DELETE_PRDLINE,
+            data: {
+              errMsg: 'Something unexpected went wrong'
+            }
+          });
+          throw (err.response);
+        }
+      })
   }
 }
 
@@ -713,6 +755,15 @@ export const routeToPage = (val) => {
 ========================================================( Users Action Creators )========================================================
 */
 
+// User Log Out
+export const userLogout = () => {
+  return (dispatch) => {
+    dispatch({
+      type: USER_LOG_OUT
+    })
+  }
+}
+
 // User Creation
 export const userCreateAttempt = (dataObj) => {
   return (dispatch) => {
@@ -720,34 +771,34 @@ export const userCreateAttempt = (dataObj) => {
       uname: dataObj.uname,
       password: dataObj.password
     })
-    .then(response => {
-      dispatch({
-        type: USER_CREATE_ATTEMPT,
-        data: {
-          isSuccess: true,
-          errMsg: ''
-        }
-      });
-    })
-    .catch(err => {
-      if(err.response.status == 400 || err.response.status == 409) {
+      .then(response => {
         dispatch({
           type: USER_CREATE_ATTEMPT,
           data: {
-            isSuccess: false,
-            errMsg: err.response.data.error
+            isSuccess: true,
+            errMsg: ''
           }
         });
-      } else {
-        dispatch({
-          type: USER_LOG_IN_ATTEMPT,
-          data: {
-            errMsg: "Something unexpected went wrong"
-          }
-        });
-        throw(err.response);
-      }
-    })
+      })
+      .catch(err => {
+        if (err.response.status == 400 || err.response.status == 409) {
+          dispatch({
+            type: USER_CREATE_ATTEMPT,
+            data: {
+              isSuccess: false,
+              errMsg: err.response.data.error
+            }
+          });
+        } else {
+          dispatch({
+            type: USER_LOG_IN_ATTEMPT,
+            data: {
+              errMsg: "Something unexpected went wrong"
+            }
+          });
+          throw (err.response);
+        }
+      })
   }
 }
 
@@ -758,40 +809,40 @@ export const userLoginAttempt = (dataObj) => {
       uname: dataObj.uname,
       password: dataObj.password
     })
-    .then(response => {
-      dispatch({
-        type: USER_LOG_IN_ATTEMPT,
-        data: {
-          uname: response.data.uname,
-          id: response.data.id,
-          errMsg: ''
+      .then(response => {
+        dispatch({
+          type: USER_LOG_IN_ATTEMPT,
+          data: {
+            uname: response.data.uname,
+            id: response.data.id,
+            errMsg: ''
+          }
+        });
+      })
+      .catch(error => {
+        let msg = '';
+        if (error.response.status == 400) {
+          if (error.response.data.error == "User Doesn't Exist") {
+            msg = "Incorrect Username or Password";
+          } else {
+            msg = "Incorrect Password";
+          }
+          dispatch({
+            type: USER_LOG_IN_ATTEMPT,
+            data: {
+              errMsg: msg
+            }
+          });
+        } else {
+          dispatch({
+            type: USER_LOG_IN_ATTEMPT,
+            data: {
+              errMsg: "Something unexpected went wrong"
+            }
+          });
+          throw (error.response);
         }
       });
-    })
-    .catch(error => {
-      let msg = '';
-      if(error.response.status == 400) {
-        if(error.response.data.error == "User Doesn't Exist") {
-          msg = "Incorrect Username or Password";
-        } else {
-          msg = "Incorrect Password";
-        }
-        dispatch({
-          type: USER_LOG_IN_ATTEMPT,
-          data: {
-            errMsg: msg
-          }
-        });
-      } else {
-        dispatch({
-          type: USER_LOG_IN_ATTEMPT,
-          data: {
-            errMsg: "Something unexpected went wrong"
-          }
-        });
-        throw(error.response);
-      }
-    });
   }
 }
 

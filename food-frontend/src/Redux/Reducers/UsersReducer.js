@@ -1,4 +1,4 @@
-import { USER_LOG_IN_ATTEMPT, USER_CREATE_ATTEMPT } from '../Actions/UserActionTypes';
+import { USER_LOG_OUT, USER_LOG_IN_ATTEMPT, USER_CREATE_ATTEMPT } from '../Actions/UserActionTypes';
 
 const initialState = {
   uname: null,
@@ -9,6 +9,8 @@ const initialState = {
 
 export default function userReducer(state = initialState, action) {
   switch (action.type) {
+    case USER_LOG_OUT:
+      return Object.assign({}, initialState);
     case USER_LOG_IN_ATTEMPT:
       return Object.assign({}, state, action.data);
     case USER_CREATE_ATTEMPT:

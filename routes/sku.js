@@ -3,6 +3,7 @@ const Sku = require('../app/sku');
 const Filter = require("../app/filter");
 let router = express.Router();
 
+//TODO 22P02, 42703
 router.get('/search', function(req, res, next) {
     let names = req.query.names;
     let ingredients = req.query.ingredients;
@@ -48,12 +49,14 @@ router.get('/search', function(req, res, next) {
     });
 });
 
+//TODO 22P02
 router.get('/:id/ingredients', function(req, res, next) {
     let id = req.params.id;
-    if(!id) {
+    if(isNaN((id))) {
         return res.status(400).json({
             error: "Malformed URL."
         });
+
     }
 
     const sku = new Sku();
@@ -68,12 +71,18 @@ router.get('/:id/ingredients', function(req, res, next) {
     });
 });
 
-
+//TODO 23053, 22P02, 
 router.post('/:id/ingredients', function(req, res, next) {
     let id = req.params.id;
-    if(!id) {
+    if(isNaN((id))) {
         return res.status(400).json({
             error: "Malformed URL."
+        });
+
+    }
+    if(!req.body.ingredients || req.body.ingredients.length == 0) {
+        return res.status(200).json({
+            rowCount: 0
         });
     }
     const sku = new Sku();
@@ -90,6 +99,7 @@ router.post('/:id/ingredients', function(req, res, next) {
     });
 });
 
+//TODO 22P02, 42703 
 router.post('/', function(req, res, next) {
     const sku = new Sku();
     sku.create(req.body)
@@ -105,8 +115,9 @@ router.post('/', function(req, res, next) {
     });
 });
 
+//TODO 23505, 22P02, 42703 
 router.put('/:id', function(req, res, next) {
-    if(!req.params.id) {
+    if(isNaN((req.params.id))) {
         return res.status(400).json({
             error: "Malformed URL."
         });
@@ -132,8 +143,9 @@ router.put('/:id', function(req, res, next) {
     });
 });
 
+//TODO 22P02
 router.delete('/:id', function(req, res, next) {
-    if(!req.params.id) {
+    if(isNaN((id))) {
         return res.status(400).json({
             error: "Malformed URL."
         });
@@ -152,6 +164,8 @@ router.delete('/:id', function(req, res, next) {
     });
 });
 
+
+//TODO 22P02
 router.delete('/:id/ingredients', function(req, res, next) {
     if(!req.params.id) {
         return res.status(400).json({
@@ -160,7 +174,7 @@ router.delete('/:id/ingredients', function(req, res, next) {
     }
 
     let ingredients = req.body.ingredients;
-    if(!ingredients) {
+    if(!ingredients || ingredients.length === 0) {
         return res.status(200).json({
             rowCount: 0
         });
