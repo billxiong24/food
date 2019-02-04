@@ -5,6 +5,7 @@ const CRUD = require("./CRUD");
 const squel = require("squel").useFlavour('postgres');
 const QueryGenerator = require("./query_generator");
 const Filter = require('./filter');
+const csv=require('csvtojson');
 
 class SKU extends CRUD {
 
@@ -140,56 +141,45 @@ class SKU extends CRUD {
 
     bulkImport(csv_file) {
         let table = this.tableName;
-        db.execSingleQuery("CREATE TEMP TABLE sku_temp(LIKE sku INCLUDING ALL)", [])
-        .then(function(res) {
+        csv().fromFile(csv_file)
+        .then(function(rows) {
             db.getSingleClient()
             .then(function(client) {
-                let stream = client.query(copyFrom("COPY sku_temp FROM STDIN WITH DELIMITER ','"));
-                let fileStream = fs.createReadStream(csv_file);
-                stream.on('error', function(err) {
-                    console.log(err);
-                })
-                fileStream.on('error', function(err) {
-                    console.log(err);
-                })
-                stream.on('end', function() {
-                    client.query("SELECT * FROM sku_temp")
-                    .then(function(res) {
-                        let error = false;
-                        let prom = client.query("BEGIN");
-                        let rows = res.rows;
-                        for(let i = 0; i < rows.length; i++) {
-                            let query = QueryGenerator.genInsQuery(rows[i], table).toString();
-                            console.log(query);
-                            prom = prom.then(function(r) {
-                                return client.query("SAVEPOINT point" + i).then(function(res) {
-                                    return client.query(query).catch(function(err) {
-                                        error = true;
-                                        console.log(err.code);
-                                        client.query("ROLLBACK TO SAVEPOINT point" + i);
-                                    });
+                let error = false;
+                let prom = client.query("BEGIN");
+                for(let i = 0; i < rows.length; i++) {
+                    let query = QueryGenerator.genInsQuery(rows[i], table).toString();
+                    console.log(query);
+                    prom = prom.then(function(r) {
+                        return client.query("SAVEPOINT point" + i).then(function(res) {
+                            return client.query(query).catch(function(err) {
+                                error = true;
+                                //TODO SAVE THE ERROR MESSAGES
+                                console.log(err.code);
+                                client.query("ROLLBACK TO SAVEPOINT point" + i);
+                            });
 
-                                });
-                            })
-                        }
-                        prom.then(function(res) {
-                            console.log(error);
-                            //client.query("ROLLBACK");
-                            client.query("ABORT");
                         });
-                    });
-
+                    })
+                }
+                prom.then(function(res) {
+                    if(error) {
+                        console.log("there was an error.");
+                        client.query("ROLLBACK");
+                        client.query("ABORT");
+                    }
+                    else {
+                        console.log("No errors, committing transaction");
+                        client.query("COMMIT");
+                    }
                 });
-                fileStream.pipe(stream);
-            })
-        })
-        .catch(function(err) {
-            console.log(err);
+            });
         });
     }
+
 }
-const sku = new SKU();
-sku.bulkImport("./file.csv");
+//const sku = new SKU();
+//sku.bulkImport("./file.csv");
 
 //sku.removeIngredient(5043, 44).then(function(res) {
     //console.log(res);
