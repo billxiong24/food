@@ -2,6 +2,7 @@ let express = require('express');
 const Ingredient = require('../app/ingredient');
 let router = express.Router();
 const Filter = require("../app/filter");
+const error_controller = require('../app/controller/error_controller');
 
 
 //TODO 22P02
@@ -36,20 +37,12 @@ router.get('/search', function(req, res, next) {
     })
     .catch((err) => {
         res.status(400).json({
-            error: err
+            error: error_controller.getErrMsg(err)
         });
     });
 });
 
 router.post('/', function(req, res, next) {
-    //{
-        //name: req.body.name,
-        //num: req.body.num,
-        //vend_info: req.body.vend_info,
-        //pkg_size: req.body.pkg_size,
-        //pkg_cost: req.body.pkg_cost,
-        //comments: req.body.comments
-    //};
     const ing = new Ingredient();
     ing.create(req.body)
     .then((result) => {
@@ -61,7 +54,7 @@ router.post('/', function(req, res, next) {
     .catch((err) => {
         //HTTP 409 is conflict status
         res.status(409).json({
-            error: err
+            error: error_controller.getErrMsg(err)
         });
     });
 });
@@ -82,7 +75,7 @@ router.get('/:id/skus', function(req, res, next) {
     })
     .catch((err) => {
         res.status(400).json({
-            error: err
+            error: error_controller.getErrMsg(err)
         });
     });
 });
@@ -109,7 +102,7 @@ router.put('/:id', function(req, res, next) {
     })
     .catch((err) => {
         res.status(409).json({
-            error: err
+            error: error_controller.getErrMsg(err)
         });
     });
 });
@@ -130,7 +123,7 @@ router.delete('/:id', function(req, res, next) {
     })
     .catch((err) => {
         res.status(409).json({
-            error: err
+            error: error_controller.getErrMsg(err)
         });
     });
 });

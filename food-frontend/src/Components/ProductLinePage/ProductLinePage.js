@@ -14,16 +14,18 @@ import TextField from '@material-ui/core/TextField';
 import ProductLineCard from './ProductLineCard';
 import Fab from '@material-ui/core/Fab';
 import labels from '../../Resources/labels'
-import { prdlineSearch, prdlineAddPrdline, prdlineUpdatePrdline, prdlineDeletePrdline } from '../../Redux/Actions/index'
+import { prdlineChangeLimit, prdlineNextPage, prdlinePrevPage, prdlineSearch, prdlineAddPrdline, prdlineUpdatePrdline, prdlineDeletePrdline } from '../../Redux/Actions/index'
 import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
+import back from '../../Resources/Images/baseline-navigate_before-24px.svg'
+import next from '../../Resources/Images/baseline-navigate_next-24px.svg'
+import { IconButton } from '@material-ui/core';
 
 const styles = {
   ingredients_list:{
-    height: '85vh',
+    height: '100%',
     width: '65%',
     margin: 'auto',
     padding: 5,
-    overflow: 'auto'
   },
   ingredients_list_divider:{
     width:'100%',
@@ -36,7 +38,7 @@ const styles = {
   },
   top_section:{
     width: '100%',
-    'text-align':'left'
+    'text-align':'left',
   },
   search_bar:{
     width: '90%',
@@ -48,8 +50,27 @@ const styles = {
     'padding-left':'2%',
     'padding-right':'2%',
   },
+  list_container:{
+    overflow:'auto',
+  },
   hide: {
     display:'none'
+  },
+  page_selection_container: {
+    flexDirection: 'row',
+    display: 'flex',
+    alignItems: 'center',
+    paddingLeft: '30%',
+    paddingRight: '30%',
+  },
+  page_number_text: {
+    fontSize: '14px',
+    fontFamily: 'Open Sans',
+    fontWeight: 300,
+    margin:'auto',
+  },
+  button: {
+    margin:'auto',
   }
 };
 
@@ -79,9 +100,7 @@ class ProductLinePage extends Component {
   }
 
   handleQuery(){
-    if(this.state.query) {
-      this.props.prdlineSearch(this.state.query.slice());
-    }
+    this.props.prdlineSearch(this.state.query.slice());
   }
 
   addProductLine(prdline){
@@ -143,6 +162,21 @@ class ProductLinePage extends Component {
     });
   }
 
+  incrementPage() {
+    this.props.prdlineNextPage();
+    this.handleQuery();
+  }
+
+  decrementPage() {
+    this.props.prdlinePrevPage();
+    this.handleQuery();
+  }
+
+  changeLimit(val) {
+    this.props.prdlineChangeLimit(val);
+    this.handleQuery();
+  }
+
 
   render() {
     const { classes, productLine } = this.props
@@ -175,27 +209,41 @@ class ProductLinePage extends Component {
               </Fab>
             </div>
           </div>
-          
+          <DisplayButton
+          classes={classes}
+          limit={productLine.limit}
+          changeLimit={(val)=>this.changeLimit(val)}
+          >
+          </DisplayButton>
           <NewProductLine
             addProductLine={(prdline) => { this.addProductLine(prdline) }}
             uname={this.props.users.uname}
             classes={classes}
           ></NewProductLine>
+          <div className={classes.list_container}>
+            <ItemList items={productLine.productLines}>
+              <ProductLineCard
+                onEnter={(prdline) => { this.updateProductLine(prdline) }}
+                editable={this.props.users.uname === labels.users.ADMIN}
+                persistent={true}
+                deleteProductLine={(prdline) => { this.removeProductLine(prdline) }}
+              ></ProductLineCard>
+            </ItemList>
+          </div>
 
-          <ItemList items={ productLine.productLines }>
-            <ProductLineCard 
-            onEnter={(prdline) =>{ this.updateProductLine(prdline) }}
-            editable={this.props.users.uname === labels.users.ADMIN}
-            persistent={true}
-            deleteProductLine={(prdline) => { this.removeProductLine(prdline)}}
-            ></ProductLineCard>
-          </ItemList>
-
-          <div className={productLine.productLines.length === 0 ? classes.hide : ''}>
-            <div variant="inset" className={classes.ingredients_list_divider}/>
-            <Typography className={classes.page_number_text}>
-              Page {productLine.current_page_number} of {productLine.total_pages}
-            </Typography>
+          <div className={(productLine.productLines.length === 0 || !productLine.limit) ? classes.hide : ''}>
+            <div variant="inset" className={classes.ingredients_list_divider} />
+            <div className={classes.page_selection_container}>
+              <IconButton color="primary" className={classes.button} onClick={()=>{this.decrementPage()}}>
+                <img src={back} />
+              </IconButton>
+              <Typography className={classes.page_number_text}>
+                Page {productLine.current_page_number} of {productLine.total_pages}
+              </Typography>
+              <IconButton color="primary" className={classes.button} onClick={()=>{this.incrementPage()}}>
+                <img src={next} />
+              </IconButton>
+            </div>
           </div>
         </div>
         <SimpleSnackbar
@@ -206,6 +254,23 @@ class ProductLinePage extends Component {
         </SimpleSnackbar>
       </div>
     );
+  }
+}
+
+function DisplayButton(props) {
+  const { classes } = props
+  if(props.limit) {
+    return (
+      <Button variant="contained" className={classes.button} onClick={()=>props.changeLimit(null)}>
+        Show All Entries
+      </Button>
+    )
+  } else {
+    return (
+      <Button variant="contained" className={classes.button} onClick={()=>props.changeLimit(10)}>
+        Show 10 Entries Per Page
+      </Button>
+    )
   }
 }
 
@@ -238,7 +303,10 @@ const mapDispatchToProps = {
   prdlineSearch,
   prdlineAddPrdline,
   prdlineDeletePrdline,
-  prdlineUpdatePrdline
+  prdlineUpdatePrdline,
+  prdlineNextPage,
+  prdlinePrevPage,
+  prdlineChangeLimit,
 };
 
 

@@ -197,9 +197,9 @@ class ManufacturingGoalsSkuSearch extends React.Component {
             styles={selectStyles}
             options={suggestions}
             components={components}
-            value={this.props.sku}
+            value={this.props.value}
             onChange={(e)=>{this.props.onChange(e)}}
-            placeholder="Search for SKUs to Add"
+            placeholder={this.props.placeholder}
             isClearable
           />
         </NoSsr>

@@ -2,6 +2,7 @@ let express = require('express');
 const Sku = require('../app/sku');
 const Filter = require("../app/filter");
 let router = express.Router();
+const error_controller = require('../app/controller/error_controller');
 
 //TODO 22P02, 42703
 router.get('/search', function(req, res, next) {
@@ -44,19 +45,17 @@ router.get('/search', function(req, res, next) {
     })
     .catch((err) => {
         res.status(400).json({
-            error: err
+            error: error_controller.getErrMsg(err)
         });
     });
 });
 
-//TODO 22P02
 router.get('/:id/ingredients', function(req, res, next) {
     let id = req.params.id;
     if(isNaN((id))) {
         return res.status(400).json({
             error: "Malformed URL."
         });
-
     }
 
     const sku = new Sku();
@@ -66,12 +65,12 @@ router.get('/:id/ingredients', function(req, res, next) {
     })
     .catch((err) => {
         res.status(400).json({
-            error: err
+            error: error_controller.getErrMsg(err)
         });
     });
 });
 
-//TODO 23053, 22P02, 
+//TODO 23503, 22P02, 
 router.post('/:id/ingredients', function(req, res, next) {
     let id = req.params.id;
     if(isNaN((id))) {
@@ -94,7 +93,7 @@ router.post('/:id/ingredients', function(req, res, next) {
     })
     .catch((err) => {
         res.status(409).json({
-            error: err
+            error: error_controller.getErrMsg(err)
         });
     });
 });
@@ -110,7 +109,7 @@ router.post('/', function(req, res, next) {
     })
     .catch((err) => {
         res.status(409).json({
-            error: err
+            error: error_controller.getErrMsg(err)
         });
     });
 });
@@ -138,7 +137,7 @@ router.put('/:id', function(req, res, next) {
     })
     .catch((err) => {
         res.status(409).json({
-            error: err
+            error: error_controller.getErrMsg(err)
         });
     });
 });
@@ -159,7 +158,7 @@ router.delete('/:id', function(req, res, next) {
     })
     .catch((err) => {
         res.status(409).json({
-            error: err
+            error: error_controller.getErrMsg(err)
         });
     });
 });
@@ -191,7 +190,7 @@ router.delete('/:id/ingredients', function(req, res, next) {
     })
     .catch((err) => {
         res.status(409).json({
-            error: err
+            error: error_controller.getErrMsg(err)
         });
     });
 });

@@ -14,10 +14,26 @@ var skuRouter = require('./routes/sku');
 var mgRouter = require('./routes/manufacturing_goals');
 
 var http = require('http');
+var https = require('https');
+const fs = require('fs');
 const PORT = 8000;
 
 var app = express();
 app.use(cors());
+
+// Certificate Setup
+// Certificate
+const privateKey = fs.readFileSync('/etc/letsencrypt/live/cmdev.colab.duke.edu/privkey.pem', 'utf8');
+const certificate = fs.readFileSync('/etc/letsencrypt/live/cmdev.colab.duke.edu/cert.pem', 'utf8');
+const ca = fs.readFileSync('/etc/letsencrypt/live/cmdev.colab.duke.edu/chain.pem', 'utf8');
+
+const credentials = {
+	key: privateKey,
+	cert: certificate,
+	ca: ca
+};
+
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
@@ -60,8 +76,14 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-app.listen(PORT, () => {
-    console.log("Server started on port " + PORT);
+const httpsServer = https.createServer(credentials, app);
+
+// app.listen(PORT, () => {
+//     console.log("Server started on port " + PORT);
+// });
+
+httpsServer.listen(PORT, () => {
+  console.log("HTTPS Server started on port " + PORT);
 });
 
 module.exports = app;

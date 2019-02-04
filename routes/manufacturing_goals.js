@@ -1,9 +1,16 @@
 let express = require('express');
 const ManufacturingGoals = require('../app/manufacturing_goal');
+const error_controller = require('../app/controller/error_controller');
 let router = express.Router();
 
 
+
 router.get('/', function(req, res, next) {
+    if(!req.query.user_id || isNaN(req.query.user_id)) {
+        return res.status(400).json({
+            error: "Malformed URL."
+        });
+    }
     const mg = new ManufacturingGoals();
     mg.search(req.query.user_id)
     .then((result) => {
@@ -11,12 +18,18 @@ router.get('/', function(req, res, next) {
     })
     .catch((err) => {
         res.status(400).json({
-            error: err
+            error: error_controller.getErrMsg(err)
         });
     });
 });
 
 router.get('/:id/skus', function(req, res, next) {
+    let id = req.params.id;
+    if(isNaN((id))) {
+        return res.status(400).json({
+            error: "Malformed URL."
+        });
+    }
     const mg = new ManufacturingGoals();
     mg.getSkus(req.params.id)
     .then((result) => {
@@ -24,12 +37,19 @@ router.get('/:id/skus', function(req, res, next) {
     })
     .catch((err) => {
         res.status(400).json({
-            error: err
+            error: error_controller.getErrMsg(err)
         });
     });
 });
 
 router.post('/:id/skus', function(req, res, next) {
+    let id = req.params.id;
+    if(isNaN((id))) {
+        return res.status(400).json({
+            error: "Malformed URL."
+        });
+    }
+
     if(!req.body.skus || req.body.skus.length == 0) {
         return res.status(200).json({
             rowCount: 0
@@ -44,12 +64,18 @@ router.post('/:id/skus', function(req, res, next) {
     })
     .catch((err) => {
         res.status(400).json({
-            error: err
+            error: error_controller.getErrMsg(err)
         });
     });
 });
 
 router.delete('/:id/skus', function(req, res, next) {
+    let id = req.params.id;
+    if(isNaN((id))) {
+        return res.status(400).json({
+            error: "Malformed URL."
+        });
+    }
     const mg = new ManufacturingGoals();
     mg.removeSkus(req.params.id, req.body.skus)
     .then((result) => {
@@ -59,12 +85,18 @@ router.delete('/:id/skus', function(req, res, next) {
     })
     .catch((err) => {
         res.status(400).json({
-            error: err
+            error: error_controller.getErrMsg(err)
         });
     });
 });
 
 router.get('/:id/calculations', function(req, res, next) {
+    let id = req.params.id;
+    if(isNaN((id))) {
+        return res.status(400).json({
+            error: "Malformed URL."
+        });
+    }
     const mg = new ManufacturingGoals();
     mg.calculateQuantities(req.params.id)
     .then((result) => {
@@ -72,7 +104,7 @@ router.get('/:id/calculations', function(req, res, next) {
     })
     .catch((err) => {
         res.status(400).json({
-            error: err
+            error: error_controller.getErrMsg(err)
         });
     });
 });
@@ -109,12 +141,18 @@ router.post('/', function(req, res, next) {
     })
     .catch((err) => {
         res.status(409).json({
-            error: err
+            error: error_controller.getErrMsg(err)
         });
     });
 });
 
 router.put('/:id', function(req, res, next) {
+    let id = req.params.id;
+    if(isNaN((id))) {
+        return res.status(400).json({
+            error: "Malformed URL."
+        });
+    }
     const mg = new ManufacturingGoals();
     mg.update(req.body, req.params.id)
     .then((result) => {
@@ -124,12 +162,18 @@ router.put('/:id', function(req, res, next) {
     })
     .catch((err) => {
         res.status(400).json({
-            error: err
+            error: error_controller.getErrMsg(err)
         });
     });
 });
 
 router.delete('/:id', function(req, res, next) {
+    let id = req.params.id;
+    if(isNaN((id))) {
+        return res.status(400).json({
+            error: "Malformed URL."
+        });
+    }
     const mg = new ManufacturingGoals();
     mg.remove(req.params.id)
     .then((result) => {
@@ -139,7 +183,7 @@ router.delete('/:id', function(req, res, next) {
     })
     .catch((err) => {
         res.status(409).json({
-            error: err
+            error: error_controller.getErrMsg(err)
         });
     });
 });

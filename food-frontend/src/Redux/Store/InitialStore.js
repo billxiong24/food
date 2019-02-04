@@ -84,7 +84,8 @@ export const InitialStore = {
     productLines: [],
     current_page_number: 1,
     total_pages: 1,
-    errMsg: null
+    limit: 10,
+    errMsg: null,
   },
   // Persistent data concerning skus view
   skus: {

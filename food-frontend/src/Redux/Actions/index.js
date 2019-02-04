@@ -9,7 +9,7 @@ import { SKU_ADD_FILTER, SKU_REMOVE_FILTER, SKU_SEARCH, SKU_SORT_BY,
     SKU_SET_FILTER_TYPE,
     SKU_ING_NAME_AUTOCOMPLETE,
     SKU_PRODUCT_LINE_NAME_AUTOCOMPLETE} from './SkuActionType';
-import { PRDLINE_ADD_PRDLINE, PRDLINE_UPDATE_PRDLINE, PRDLINE_DELETE_PRDLINE, PRDLINE_SEARCH } from './ProductLineActionTypes';
+import { PRDLINE_CHANGE_LIMITS, PRDLINE_NEXT_PAGE, PRDLINE_PREV_PAGE, PRDLINE_ADD_PRDLINE, PRDLINE_UPDATE_PRDLINE, PRDLINE_DELETE_PRDLINE, PRDLINE_SEARCH } from './ProductLineActionTypes';
 import labels from "../../Resources/labels";
 import axios from 'axios';
 import common from "../../Resources/common";
@@ -616,19 +616,61 @@ export const ingDeleteIng = (ing) => {
 ========================================================( Product Line Action Creators )========================================================
 */
 
+export const prdlineChangeLimit = (val) => {
+  return (dispatch) => {
+    return dispatch({
+      type: PRDLINE_CHANGE_LIMITS,
+      data: {
+        limit: val
+      }
+    })
+  }
+}
+
+export const prdlinePrevPage = () => {
+  return (dispatch) => {
+    const curPage = store.getState().productLine.current_page_number;
+    return dispatch({
+      type: PRDLINE_NEXT_PAGE,
+      data: {
+        current_page_number: curPage === 1 ? curPage : curPage - 1,
+      }
+    })
+  }
+}
+
+export const prdlineNextPage = () => {
+  return (dispatch) => {
+    const curPage = store.getState().productLine.current_page_number;
+    return dispatch({
+      type: PRDLINE_PREV_PAGE,
+      data: {
+        current_page_number: curPage === store.getState().productLine.total_pages ? curPage : curPage + 1,
+      }
+    })
+  }
+}
+
 export const prdlineSearch = (name) => {
   return (dispatch) => {
+    const curPage = store.getState().productLine.current_page_number;
+    const limit = store.getState().productLine.limit;
+    let offset = limit ? (curPage - 1) * limit : 0;
     return axios.get(hostname + 'productline/search', {
       params: {
-        name: name
+        name: name,
+        offset: offset,
+        limit: limit,
       }
     })
       .then(response => {
+        let totalRows = response.data.length > 0 ? response.data[0].row_count : 0;
         dispatch({
           type: PRDLINE_SEARCH,
           data: {
             productLines: response.data,
-            errMsg: ''
+            total_pages: Math.ceil(totalRows / limit),
+            errMsg: '',
           }
         })
       })

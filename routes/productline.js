@@ -2,6 +2,7 @@ let express = require('express');
 const ProductLine = require('../app/productline');
 let router = express.Router();
 const Filter = require('../app/filter');
+const error_controller = require('../app/controller/error_controller');
 
 router.get('/search', function(req, res, next) {
     let names = req.query.names;
@@ -27,7 +28,7 @@ router.get('/search', function(req, res, next) {
     })
     .catch((err) => {
         res.status(400).json({
-            error: err
+            error: error_controller.getErrMsg(err)
         });
     });
 });
@@ -43,12 +44,18 @@ router.post('/', function(req, res, next) {
     })
     .catch((err) => {
         res.status(409).json({
-            error: err
+            error: error_controller.getErrMsg(err)
         });
     });
 });
 
 router.put('/:id', function(req, res, next) {
+    let id = req.params.id;
+    if(isNaN((id))) {
+        return res.status(400).json({
+            error: "Malformed URL."
+        });
+    }
 
     if(!req.body.name) {
         return res.status(400).send({
@@ -65,12 +72,18 @@ router.put('/:id', function(req, res, next) {
     })
     .catch((err) => {
         res.status(400).json({
-            error: err
+            error: error_controller.getErrMsg(err)
         });
     });
 });
 
 router.delete('/:id', function(req, res, next) {
+    let id = req.params.id;
+    if(isNaN((id))) {
+        return res.status(400).json({
+            error: "Malformed URL."
+        });
+    }
     const prdline = new ProductLine();
 
     prdline.remove(req.params.id)
@@ -81,7 +94,7 @@ router.delete('/:id', function(req, res, next) {
     })
     .catch((err) => {
         res.status(409).json({
-            error: err
+            error: error_controller.getErrMsg(err)
         });
     });
 });
