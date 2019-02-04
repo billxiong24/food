@@ -8,9 +8,9 @@ const path = require('path');
 const app = express();
 
 // Certificate
-const privateKey = fs.readFileSync('/etc/letsencrypt/live/cmDev.colab.duke.edu/privkey.pem', 'utf8');
-const certificate = fs.readFileSync('/etc/letsencrypt/live/cmDev.colab.duke.edu/cert.pem', 'utf8');
-const ca = fs.readFileSync('/etc/letsencrypt/live/cmDev.colab.duke.edu/chain.pem', 'utf8');
+const privateKey = fs.readFileSync('/etc/letsencrypt/live/cmdev.colab.duke.edu/privkey.pem', 'utf8');
+const certificate = fs.readFileSync('/etc/letsencrypt/live/cmdev.colab.duke.edu/cert.pem', 'utf8');
+const ca = fs.readFileSync('/etc/letsencrypt/live/cmdev.colab.duke.edu/chain.pem', 'utf8');
 
 const credentials = {
 	key: privateKey,
