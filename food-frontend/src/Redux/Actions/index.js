@@ -412,6 +412,7 @@ export const ingRemoveFilter = (filter_id) => {
 
 export const ingSearch = () => {
   console.log("ING SEARCH")
+  console.log(store.getState().ingredients.sortby)
   let params = {
     names:store.getState().ingredients.filters.filter((el)=>{return el.type === labels.ingredients.filter_type.INGREDIENTS}).map((a)=>{return a.string}),
     skus: store.getState().ingredients.filters.filter((el)=>{return el.type === labels.ingredients.filter_type.SKU_NAME}).map((a)=>{return a.id})

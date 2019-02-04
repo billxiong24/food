@@ -8,6 +8,7 @@ import labels from '../../Resources/labels';
 import { ingDetUpdateIng } from '../../Redux/Actions/ActionCreators/IngredientDetailsActionCreators';
 import { routeToPage, ingDeleteIng } from '../../Redux/Actions';
 import IngredientSKUList from './IngredientSKUList';
+import { Link } from 'react-router-dom';
 const styles = {
     ingredient_page_container:{
         display:'flex',
@@ -117,7 +118,7 @@ class IngredientDetailViewPage extends Component {
         const { classes } = this.props
         return (
             <div className = {classes.ingredient_page_container}>
-                <Button onClick={this.props.back}>
+                <Button component={Link} to={'/ingredients'}>
                     Back
                 </Button>
                 <div className = {classes.ingredient_detail_view}>
@@ -231,7 +232,9 @@ const mapDispatchToProps = dispatch => {
         {
             dispatch(ingDetUpdateIng(ing))
         },
-        back: () => dispatch(routeToPage(0)),
+        back: () => {
+            dispatch(routeToPage(0))
+        },
         delete: (ing) => {
             dispatch(ingDeleteIng(ing))
             dispatch(routeToPage(0))
