@@ -23,21 +23,6 @@ var app = express();
 app.use(cors());
 const encrypt = process.env.HTTPS;
 
-// Certificate Setup
-// Certificate
-if(encrypt == 'true') {
-    const privateKey = fs.readFileSync('/etc/letsencrypt/live/cmdev.colab.duke.edu/privkey.pem', 'utf8');
-    const certificate = fs.readFileSync('/etc/letsencrypt/live/cmdev.colab.duke.edu/cert.pem', 'utf8');
-    const ca = fs.readFileSync('/etc/letsencrypt/live/cmdev.colab.duke.edu/chain.pem', 'utf8');
-
-    const credentials = {
-        key: privateKey,
-        cert: certificate,
-        ca: ca
-    };
-
-}
-
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -82,6 +67,17 @@ app.use(function(err, req, res, next) {
 });
 
 if(encrypt == 'true') {
+    // Certificate Setup
+    // Certificate
+    const privateKey = fs.readFileSync('/etc/letsencrypt/live/cmdev.colab.duke.edu/privkey.pem', 'utf8');
+    const certificate = fs.readFileSync('/etc/letsencrypt/live/cmdev.colab.duke.edu/cert.pem', 'utf8');
+    const ca = fs.readFileSync('/etc/letsencrypt/live/cmdev.colab.duke.edu/chain.pem', 'utf8');
+
+    const credentials = {
+        key: privateKey,
+        cert: certificate,
+        ca: ca
+    };
     const httpsServer = https.createServer(credentials, app);
     httpsServer.listen(PORT, () => {
       console.log("HTTPS Server started on port " + PORT);
