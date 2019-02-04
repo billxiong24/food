@@ -15,6 +15,7 @@ var mgRouter = require('./routes/manufacturing_goals');
 
 var http = require('http');
 var https = require('https');
+const fs = require('fs');
 const PORT = 8000;
 
 var app = express();
