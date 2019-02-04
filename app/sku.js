@@ -111,7 +111,7 @@ class SKU extends CRUD {
             return Promise.reject("Not all required fields are present.");
         }
 
-        let query = QueryGenerator.genInsQuery(dataObj, this.tableName).toString();
+        let query = QueryGenerator.genInsQuery(dataObj, this.tableName).returning("id").toString();
         console.log(query);
         //product line must exist
         return this.checkProductLineExists(dataObj.prd_line)
@@ -232,12 +232,12 @@ class SKU extends CRUD {
     }
 
 }
-const sku = new SKU();
-sku.bulkImport("./file.csv", function(err) {
-    if(err) {
-        console.log(err);
-    }
-});
+//const sku = new SKU();
+//sku.bulkImport("./file.csv", function(err) {
+    //if(err) {
+        //console.log(err);
+    //}
+//});
 
 //sku.removeIngredient(5043, 44).then(function(res) {
     //console.log(res);

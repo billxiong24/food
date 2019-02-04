@@ -13,6 +13,7 @@ class QueryGenerator {
         return arr;
     }
 
+
     static genInsQuery(dataObj, tableName) {
         let query = squel.insert()
         .into(tableName)

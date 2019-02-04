@@ -1,3 +1,4 @@
+require('dotenv').config();
 var createError = require('http-errors');
 var express = require('express');
 var cors = require('cors');
@@ -20,18 +21,22 @@ const PORT = 8000;
 
 var app = express();
 app.use(cors());
+const encrypt = process.env.HTTPS;
 
 // Certificate Setup
 // Certificate
-const privateKey = fs.readFileSync('/etc/letsencrypt/live/cmdev.colab.duke.edu/privkey.pem', 'utf8');
-const certificate = fs.readFileSync('/etc/letsencrypt/live/cmdev.colab.duke.edu/cert.pem', 'utf8');
-const ca = fs.readFileSync('/etc/letsencrypt/live/cmdev.colab.duke.edu/chain.pem', 'utf8');
+if(encrypt == 'true') {
+    const privateKey = fs.readFileSync('/etc/letsencrypt/live/cmdev.colab.duke.edu/privkey.pem', 'utf8');
+    const certificate = fs.readFileSync('/etc/letsencrypt/live/cmdev.colab.duke.edu/cert.pem', 'utf8');
+    const ca = fs.readFileSync('/etc/letsencrypt/live/cmdev.colab.duke.edu/chain.pem', 'utf8');
 
-const credentials = {
-	key: privateKey,
-	cert: certificate,
-	ca: ca
-};
+    const credentials = {
+        key: privateKey,
+        cert: certificate,
+        ca: ca
+    };
+
+}
 
 
 // view engine setup
@@ -76,14 +81,18 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-const httpsServer = https.createServer(credentials, app);
+if(encrypt == 'true') {
+    const httpsServer = https.createServer(credentials, app);
+    httpsServer.listen(PORT, () => {
+      console.log("HTTPS Server started on port " + PORT);
+    });
+}
+else {
+    app.listen(PORT, () => {
+        console.log("Server started on port " + PORT);
+    });
+}
 
-// app.listen(PORT, () => {
-//     console.log("Server started on port " + PORT);
-// });
 
-httpsServer.listen(PORT, () => {
-  console.log("HTTPS Server started on port " + PORT);
-});
 
 module.exports = app;
