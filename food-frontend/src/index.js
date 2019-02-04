@@ -4,7 +4,6 @@ import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
 import './index.css';
-import 'react-bootstrap-typeahead/css/Typeahead.css';
 
 import Root from './Root.js';
 import * as serviceWorker from './serviceWorker';
