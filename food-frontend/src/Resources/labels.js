@@ -9,6 +9,14 @@ export default {
             INGREDIENT_NAME: "Name",
             PACKAGE_COST: "Package Cost"
         },
+        sort_by_map:{
+            "Package Size":"pkg_size",
+            "No.":"num",
+            "Comments":"comments",
+            "Vendor Info":"vend_info",
+            "Name":"name",
+            "Package Cost":"pkg_cost"
+        },
         filter_type:{
             INGREDIENTS: "Ingredients",
             SKU_NAME: "SKU"
@@ -22,7 +30,18 @@ export default {
             UNIT_UPC: "Unit UPC No.",
             UNIT_SIZE: "Unit Size",
             COUNT_PER_CASE: "Count Per Case",
-            PRODUCT_LINE: "Product Line"
+            PRODUCT_LINE: "Product Line",
+            COMMENTS:"Comments"
+        },
+        sort_by_map:{
+            "Name":"name",
+            "SKU No.":"num",
+            "Case UPC No.":"case_upc",
+            "Unit UPC No.":"unit_upc",
+            "Unit Size":"unit_size",
+            "Count Per Case":"count_per_case",
+            "Product Line":"prd_line",
+            "Comments":"comments"
         },
         filter_type:{
             SKU_NAME: "SKU",

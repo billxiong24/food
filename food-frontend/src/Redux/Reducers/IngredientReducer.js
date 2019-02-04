@@ -51,10 +51,23 @@ export default function ingredientReducer(state = initialState, action) {
         })
       });
     case ING_SEARCH:
-      console.log("hello")
-      console.log(action.data)
+      console.log("ING_SEARCH")
+      console.log(action)
+      let items = action.data
+      let row_count = 0
+      let offset = action.offset
+      if (items === undefined || items.length == 0) {
+          
+      }else{
+        row_count = items[0].row_count
+      }
+      console.log(row_count)
+      console.log("Full:"+action.false)
       return Object.assign({}, state, {
-        items: action.data
+        items,
+        row_count,
+        offset,
+        full: action.full
       });
     case ING_SORT_BY:
       return Object.assign({}, state, {

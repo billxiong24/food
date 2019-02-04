@@ -112,6 +112,7 @@ export const skuSearch = (filters) => {
         names:store.getState().skus.filters.filter((el)=>{return el.type === labels.skus.filter_type.SKU_NAME}).map((a)=>{return a.string}),
         ingredients:store.getState().skus.filters.filter((el)=>{return el.type === labels.skus.filter_type.INGREDIENTS}).map((a)=>{return a.string}),
         prodlines:store.getState().skus.filters.filter((el)=>{return el.type === labels.skus.filter_type.PRODUCT_LINE}).map((a)=>{return a.string}),
+        orderKey:labels.skus.sort_by_map[store.getState().skus.sortby]
       }
     })
       .then(response => {
@@ -119,7 +120,8 @@ export const skuSearch = (filters) => {
           type: SKU_SEARCH,
           data: {
             items: response.data,
-            errMsg: ''
+            errMsg: '',
+            other:response
           }
         })
       })
@@ -410,12 +412,33 @@ export const ingRemoveFilter = (filter_id) => {
   }
 }
 
-export const ingSearch = () => {
-  console.log("ING SEARCH")
-  console.log(store.getState().ingredients.sortby)
-  let params = {
-    names:store.getState().ingredients.filters.filter((el)=>{return el.type === labels.ingredients.filter_type.INGREDIENTS}).map((a)=>{return a.string}),
-    skus: store.getState().ingredients.filters.filter((el)=>{return el.type === labels.ingredients.filter_type.SKU_NAME}).map((a)=>{return a.id})
+export const ingSearch = (offset) => {
+  console.log("ING SEARCH ACTION CREATOR")
+  console.log(labels.ingredients.sort_by_map[store.getState().ingredients.sortby])
+  console.log(store.getState().ingredients.limit)
+  console.log(store.getState().ingredients.offset)
+  let params;
+  let full = store.getState().ingredients.full
+  if(offset === undefined){
+    offset = 0
+  }else if(offset == -1){
+    offset = 0
+    full = true
+    params = {
+      names:store.getState().ingredients.filters.filter((el)=>{return el.type === labels.ingredients.filter_type.INGREDIENTS}).map((a)=>{return a.string}),
+      skus: store.getState().ingredients.filters.filter((el)=>{return el.type === labels.ingredients.filter_type.SKU_NAME}).map((a)=>{return a.id}),
+      orderKey:labels.ingredients.sort_by_map[store.getState().ingredients.sortby],
+      offset,
+    }
+  }else{
+    console.log("Regular Request")
+    params = {
+      names:store.getState().ingredients.filters.filter((el)=>{return el.type === labels.ingredients.filter_type.INGREDIENTS}).map((a)=>{return a.string}),
+      skus: store.getState().ingredients.filters.filter((el)=>{return el.type === labels.ingredients.filter_type.SKU_NAME}).map((a)=>{return a.id}),
+      orderKey:labels.ingredients.sort_by_map[store.getState().ingredients.sortby],
+      limit: store.getState().ingredients.limit,
+      offset,
+    }
   }
   console.log(store.getState().ingredients.filters)
   console.log(params)
@@ -429,7 +452,10 @@ export const ingSearch = () => {
         console.log(response)
         dispatch({
           type: ING_SEARCH,
-          data: response.data
+          data: response.data,
+          other:response,
+          offset,
+          full
         })
       })
       .catch(error => {
