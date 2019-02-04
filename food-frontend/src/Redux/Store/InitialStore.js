@@ -4,8 +4,8 @@ import labels from "../../Resources/labels";
 export const InitialStore = {
   // For now, only persistent data about users is who is actually logged in if there is someone logged in
   users: {
-    uname: '',
-    id: null,
+    uname: 'admin',
+    id: 7,
     isSuccess: false,
     errMsg: null
   },
@@ -84,7 +84,8 @@ export const InitialStore = {
     productLines: [],
     current_page_number: 1,
     total_pages: 1,
-    errMsg: null
+    limit: 10,
+    errMsg: null,
   },
   // Persistent data concerning skus view
   skus: {

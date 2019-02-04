@@ -149,6 +149,28 @@ export const mangoalUpdateFilters = (filters) => {
   }
 }
 
+export const mangoalAddFilter = (prdline) => {
+  return (dispatch) => {
+    return dispatch({
+      type: mangoal_actions.MANGOAL_ADD_FILTER,
+      data: {
+        filterToAdd: prdline
+      }
+    });
+  }
+}
+
+export const mangoalRemoveFilter = (prdline) => {
+  return (dispatch) => {
+    return dispatch({
+      type: mangoal_actions.MANGOAL_REMOVE_FILTER,
+      data: {
+        filterToRemove: prdline
+      }
+    });
+  }
+}
+
 export const mangoalGetProductLines = () => {
   return (dispatch) => {
     return axios.get(hostname + 'productline/search', {
@@ -174,10 +196,10 @@ export const mangoalSearchSkus = (name, prdlines) => {
   return (dispatch) => {
     return axios.get(hostname + 'sku/search', {
       params: {
-        name: name.name,
+        names: name.name,
         prodlines: prdlines.map((el) => {
           return el.name
-        })
+        }),
       }
     })
       .then((response) => {

@@ -17,14 +17,23 @@ const initialState = {
 
 export default function manufacturingGoalReducer(state = initialState, action) {
   switch (action.type) {
+    case mangoal_actions.MANGOAL_REMOVE_FILTER:
+      return Object.assign({}, state, {
+        productLines: [
+          ...state.productLines,
+          action.data.filterToRemove,
+        ].sort((a,b)=>{return a.name.localeCompare(b.name)}),
+        filters: state.filters.filter((prdline) => {return prdline.id !== action.data.filterToRemove.id})
+      });
+    case mangoal_actions.MANGOAL_ADD_FILTER:
+      return Object.assign({}, state, {
+        productLines: state.productLines.filter((prdline) => {return prdline.id !== action.data.filterToAdd.id}),
+        filters: [
+          ...state.filters,
+          action.data.filterToAdd
+        ]
+      })
     case mangoal_actions.MANGOAL_GET_CALCULATIONS:
-      console.log(Object.assign({}, state, {
-        activeGoal: {
-          ...state.activeGoal,
-          ingredients: action.data.ingredients,
-          errMsg: action.data.errMsg
-        }
-      }));
       return Object.assign({}, state, {
         activeGoal: {
           ...state.activeGoal,

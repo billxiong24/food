@@ -9,7 +9,7 @@ import AddIcon from '@material-ui/icons/Add';
 import DeleteIcon from '@material-ui/icons/Delete';
 import ManufacturingGoalsCard from './ManufacturingGoalsCard';
 import ManufacturingGoalsFilterSelect from './ManufacturingGoalsFilterSelect';
-import { mangoalDeleteMangoalSkus, mangaolDeleteMangoal, mangaolUpdateMangoalSkus, mangoalUpdateFilters, mangoalGetProductLines, mangoalSetActiveMangoal, mangoalGetMangoals, mangoalCreateMangoal, mangoalSearchSkus } from '../../Redux/Actions/ManufacturingGoalActionCreators';
+import { mangoalAddFilter, mangoalRemoveFilter, mangoalDeleteMangoalSkus, mangaolDeleteMangoal, mangaolUpdateMangoalSkus, mangoalUpdateFilters, mangoalGetProductLines, mangoalSetActiveMangoal, mangoalGetMangoals, mangoalCreateMangoal, mangoalSearchSkus } from '../../Redux/Actions/ManufacturingGoalActionCreators';
 import ManufacturingGoalsSkuSearch from './ManufacturingGoalsSkuSearch';
 import TextField from '@material-ui/core/TextField';
 import SkuCard from './SkuCard';
@@ -18,6 +18,16 @@ import common from '../../Resources/common';
 import FileDownload from 'js-file-download';
 import {routeToPage} from '../../Redux/Actions/index';
 import {Link} from 'react-router-dom';
+import Input from '@material-ui/core/Input';
+import OutlinedInput from '@material-ui/core/OutlinedInput';
+import FilledInput from '@material-ui/core/FilledInput';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+import Chip from '@material-ui/core/Chip';
+import DoneIcon from '@material-ui/icons/Done';
 
 const styles = {
   man_goal_page_container: {
@@ -113,6 +123,17 @@ const styles = {
   filter_container: {
     display: 'flex',
     height: '50%',
+    marginLeft: 5,
+  },
+  drop_down: {
+  },
+  active_filter_container: {
+  },
+  filter_chip: {
+    position: 'relative',
+    top: '50%',
+    transform: 'translateY(-50%)',
+    marginLeft: 5,
   },
   sku_list_container: {
     overflow: 'auto',
@@ -151,7 +172,7 @@ const styles = {
   },
   hidden: {
     display: 'none'
-  }
+  },
 };
 
 class ManufacturingGoalsPage extends Component {
@@ -179,6 +200,16 @@ class ManufacturingGoalsPage extends Component {
     .then((value) => {
       this.getSkuSuggestions();
     });
+  }
+
+  addFilter(prdline) {
+    if (prdline) {
+      this.props.mangoalAddFilter(prdline);
+    }
+  }
+
+  removeFilter(prdline) {
+    this.props.mangoalRemoveFilter(prdline);
   }
 
   addManufacturingGoal(manGoal) {
@@ -236,7 +267,7 @@ class ManufacturingGoalsPage extends Component {
           sku.count_per_case
       }));
       this.setState({
-        suggestions: newSuggestions.slice(0,6) // TODO update this when the query changes so we don't get all skus for autocomplete
+        suggestions: newSuggestions // TODO update this when the query changes so we don't get all skus for autocomplete
       });
     })
   }
@@ -335,8 +366,9 @@ class ManufacturingGoalsPage extends Component {
                 <div className={classes.sku_search_bar}>
                   <ManufacturingGoalsSkuSearch
                     suggestions={this.state.suggestions}
-                    sku={this.state.sku}
+                    value={this.state.sku}
                     onChange={this.handleQueryChange('sku')}
+                    placeholder={"Search for SKUs to Add"}
                   ></ManufacturingGoalsSkuSearch>
                 </div>
                 <TextField
@@ -360,11 +392,33 @@ class ManufacturingGoalsPage extends Component {
                 </Fab>
               </div>
               <div className={classes.filter_container}>
-                <ManufacturingGoalsFilterSelect
-                  prdlines={manGoals.productLines}
-                  updateFilters={(filters) => { this.updateFilters(filters) }}
-                  name={manGoals.filters}
-                ></ManufacturingGoalsFilterSelect>
+                <FormControl className={classes.drop_down}>
+                  <InputLabel htmlFor="age-simple">Product Line</InputLabel>
+                  <Select
+                    value=""
+                    onChange={(e)=>{this.addFilter(e.target.value)}}
+                  >
+                    <MenuItem value="">
+                      <em></em>
+                    </MenuItem>
+                    {manGoals.productLines.map((prdline)=>(
+                      <MenuItem key={prdline.id} value={prdline} data={prdline}>{prdline.name}</MenuItem>
+                    ))}
+                  </Select>
+                  <FormHelperText>Some important helper text</FormHelperText>
+                </FormControl>
+                <div className={classes.active_filter_container}>
+                  {manGoals.filters.map((prdline) => (
+                    <Chip
+                      label={prdline.name}
+                      value={prdline}
+                      key={prdline.id}
+                      clickable={false}
+                      onDelete={()=>{this.removeFilter(prdline)}}
+                      className={classes.filter_chip}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
             <div variant="inset" className={classes.divider} />
@@ -423,6 +477,8 @@ const mapDispatchToProps = {
   mangaolUpdateMangoalSkus,
   mangaolDeleteMangoal,
   mangoalDeleteMangoalSkus,
+  mangoalRemoveFilter,
+  mangoalAddFilter,
 }
 
 

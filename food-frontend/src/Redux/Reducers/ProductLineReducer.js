@@ -1,4 +1,4 @@
-import { PRDLINE_ADD_PRDLINE, PRDLINE_UPDATE_PRDLINE, PRDLINE_DELETE_PRDLINE, PRDLINE_SEARCH } from '../Actions/ProductLineActionTypes';
+import { PRDLINE_CHANGE_LIMITS, PRDLINE_PREV_PAGE, PRDLINE_ADD_PRDLINE, PRDLINE_UPDATE_PRDLINE, PRDLINE_DELETE_PRDLINE, PRDLINE_SEARCH, PRDLINE_NEXT_PAGE } from '../Actions/ProductLineActionTypes';
 
 const initialState = {
   keyword: "",
@@ -10,6 +10,12 @@ const initialState = {
 
 export default function productLineReducer(state = initialState, action) {
   switch(action.type) {
+    case PRDLINE_CHANGE_LIMITS:
+      return Object.assign({}, state, action.data);
+    case PRDLINE_PREV_PAGE:
+      return Object.assign({}, state, action.data);
+    case PRDLINE_NEXT_PAGE:
+      return Object.assign({}, state, action.data);
     case PRDLINE_ADD_PRDLINE:
       return Object.assign({}, state, action.data);
     case PRDLINE_DELETE_PRDLINE:
