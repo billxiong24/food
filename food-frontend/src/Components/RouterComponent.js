@@ -15,6 +15,7 @@ import SignUpPage from './LoginPage/SignUpPage';
 import LogoutPage from './LoginPage/LogoutPage';
 import BulkTransactionPage from './BulkTransactionPage/BulkTransactionPage'
 import CalculatorPage from './CalculatorPage/CalculatorPage';
+import IngredientDetailViewPage from './IngredientDetailViewPage/IngredientDetailViewPage';
 
 const styles = {
 
@@ -26,7 +27,7 @@ class RouterComponent extends Component {
   }
 
   render() {
-    const {manGoals} = this.props;
+    const {manGoals, ingredient_id} = this.props;
 
     return (
       <Router>
@@ -36,6 +37,8 @@ class RouterComponent extends Component {
             <Route path="/login" component={LoginPage} />
             <PrivateRoute exact={true} path="/manufacturing_goals" component={ManufacturingGoalsPage} />
             <PrivateRoute exact={true} path="/ingredients" component={IngredientsPage} />
+            <PrivateRoute exact={true} path="/ingredients/details" component={IngredientDetailViewPage}
+            block={!ingredient_id} altPath="/ingredients" />
             <PrivateRoute exact={true} path="/skus" component={SKUsPage} />
             <PrivateRoute exact={true} path="/product_lines" component={ProductLinePage} />
             <PrivateRoute exact={true} path="/ingredients/dependency" component={IngredientDependencyPage} />
@@ -55,6 +58,7 @@ class RouterComponent extends Component {
 const mapStateToProps = state => {
   return {
       manGoals: state.manGoals,
+      ingredient_id: state.ingredient_details.id
   };
 };
 

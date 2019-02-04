@@ -10,6 +10,7 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { CardActionArea } from '@material-ui/core';
 import { routeToPage } from '../../Redux/Actions';
+import { withRouter } from 'react-router-dom'
 import { ingDetSetIng, ingDetGetSkus } from '../../Redux/Actions/ActionCreators/IngredientDetailsActionCreators';
 
 const styles = {
@@ -59,11 +60,11 @@ class IngredientList extends Component {
 
     onClick = (item) =>{
          console.log(item)
-         this.props.setIngredient(item)
+         this.props.setIngredient(item, this.props.history)
     }
 
     render() {
-        const { classes, ingredients } = this.props
+        const { classes, ingredients, history } = this.props
         
         return (
             <div>
@@ -99,12 +100,12 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        setIngredient: ing => {
+        setIngredient: (ing, history) => {
             dispatch(ingDetSetIng(ing))
             dispatch(ingDetGetSkus(ing.id))
-            dispatch(routeToPage(5))
+            history.push('/ingredients/details')
         }
     };
 };  
 
-export default withStyles(styles)(connect(mapStateToProps,mapDispatchToProps)(IngredientList));
+export default withRouter(withStyles(styles)(connect(mapStateToProps,mapDispatchToProps)(IngredientList)));
