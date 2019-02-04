@@ -14,7 +14,7 @@ var skuRouter = require('./routes/sku');
 var mgRouter = require('./routes/manufacturing_goals');
 
 var http = require('http');
-const PORT = 8000;
+const PORT = 80;
 
 var app = express();
 app.use(cors());
@@ -59,6 +59,8 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+app.use(express.static(__dirname, { dotfiles: 'allow' } ));
 
 app.listen(PORT, () => {
     console.log("Server started on port " + PORT);
