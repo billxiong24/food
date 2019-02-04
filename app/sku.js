@@ -1,4 +1,6 @@
 const db = require("./db");
+const fs = require('fs')
+const copyFrom = require('pg-copy-streams').from;
 const CRUD = require("./CRUD");
 const squel = require("squel").useFlavour('postgres');
 const QueryGenerator = require("./query_generator");
@@ -135,9 +137,59 @@ class SKU extends CRUD {
         }
         return db.execSingleQuery("DELETE FROM " + this.tableName + " WHERE id = $1", [id]);
     }
-}
 
+    bulkImport(csv_file) {
+        let table = this.tableName;
+        db.execSingleQuery("CREATE TEMP TABLE sku_temp(LIKE sku INCLUDING ALL)", [])
+        .then(function(res) {
+            db.getSingleClient()
+            .then(function(client) {
+                let stream = client.query(copyFrom("COPY sku_temp FROM STDIN WITH DELIMITER ','"));
+                let fileStream = fs.createReadStream(csv_file);
+                stream.on('error', function(err) {
+                    console.log(err);
+                })
+                fileStream.on('error', function(err) {
+                    console.log(err);
+                })
+                stream.on('end', function() {
+                    client.query("SELECT * FROM sku_temp")
+                    .then(function(res) {
+                        let error = false;
+                        let prom = client.query("BEGIN");
+                        let rows = res.rows;
+                        for(let i = 0; i < rows.length; i++) {
+                            let query = QueryGenerator.genInsQuery(rows[i], table).toString();
+                            console.log(query);
+                            prom = prom.then(function(r) {
+                                return client.query("SAVEPOINT point" + i).then(function(res) {
+                                    return client.query(query).catch(function(err) {
+                                        error = true;
+                                        console.log(err.code);
+                                        client.query("ROLLBACK TO SAVEPOINT point" + i);
+                                    });
+
+                                });
+                            })
+                        }
+                        prom.then(function(res) {
+                            console.log(error);
+                            //client.query("ROLLBACK");
+                            client.query("ABORT");
+                        });
+                    });
+
+                });
+                fileStream.pipe(stream);
+            })
+        })
+        .catch(function(err) {
+            console.log(err);
+        });
+    }
+}
 const sku = new SKU();
+sku.bulkImport("./file.csv");
 
 //sku.removeIngredient(5043, 44).then(function(res) {
     //console.log(res);
