@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
-import { Icon, IconButton } from '@material-ui/core';
+import { Icon, IconButton, Button } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import back from '../../Resources/Images/baseline-navigate_before-24px.svg'
 import next from '../../Resources/Images/baseline-navigate_next-24px.svg'
 import labels from '../../Resources/labels';
+import { ingSearch } from '../../Redux/Actions';
 
 const styles = {
     page_selection_container: {
@@ -17,6 +18,13 @@ const styles = {
         fontSize: '14px',
         fontFamily: 'Open Sans',
         fontWeight: 300,
+    },
+    off:{
+        pointerEvents: 'none',
+        opacity: 0.5
+    },
+    showAll: {
+        marginLeft: 'auto',
     }
 };
 
@@ -31,19 +39,70 @@ class PageSelector extends Component {
 
     }
 
+    decreaseOffset = () => {
+        console.log("PAGE SELECTOR")
+        console.log(this.props.offset)
+        console.log(this.props.limit)
+        this.props.search(this.props.offset - this.props.limit)
+    }
+
+    increaseOffset = () => {
+        console.log("PAGE SELECTOR")
+        console.log(this.props.offset)
+        console.log(this.props.limit)
+        this.props.search(this.props.offset + this.props.limit)
+    }
+
     render() {
-        const { classes } = this.props
+        const { classes , offset, limit, items, row_count} = this.props
+        let enableDecrease = offset > 0
+        let enableIncrease = offset + items.length + 1 < row_count
         return (
             <div className={classes.page_selection_container}>
-            <IconButton color={labels.colors.primaryColor} className={classes.button} aria-label="Add an alarm">
-              <img src={back}/>
-            </IconButton>
+            { enableDecrease ?
+                <IconButton 
+                    color={labels.colors.primaryColor}
+                    className={classes.button}
+                    aria-label="Add an alarm"
+                    onClick={this.decreaseOffset}
+                >
+                    <img src={back}/>
+                </IconButton>
+                :
+                <IconButton 
+                    color={labels.colors.primaryColor}
+                    className={classes.off}
+                    aria-label="Add an alarm"
+                    opacity={0.5}
+                >
+                    <img src={back}/>
+                </IconButton>
+            }
             <Typography className={classes.page_number_text}>
-              Page 1 of 12
+              Showing items {offset} - {Math.max(offset + items.length - 1, 0)} out of {row_count}
             </Typography>
-            <IconButton color={labels.colors.primaryColor} className={classes.button} aria-label="Add an alarm">
-              <img src={next}/>
-            </IconButton>
+            { enableIncrease ?
+                <IconButton 
+                    color={labels.colors.primaryColor}
+                    className={classes.button}
+                    aria-label="Add an alarm"
+                    onClick={this.increaseOffset}
+                >
+                    <img src={next}/>
+                </IconButton>
+                :
+                <IconButton 
+                    color={labels.colors.primaryColor}
+                    className={classes.off}
+                    aria-label="Add an alarm"
+                    opacity={0.5}
+                >
+                    <img src={next}/>
+                </IconButton>
+            }
+            <Button className={classes.showAll}>
+                Show All
+            </Button>
           </div>
         );
     }
@@ -51,12 +110,18 @@ class PageSelector extends Component {
 
 const mapStateToProps = state => {
     return {
-        
+        offset: state.ingredients.offset,
+        limit: state.ingredients.limit,
+        items: state.ingredients.items,
+        row_count: state.ingredients.row_count
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
+        search: (offset) => {
+            dispatch(ingSearch(offset))
+        }
     };
 };
 

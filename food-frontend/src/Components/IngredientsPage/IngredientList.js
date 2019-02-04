@@ -79,7 +79,7 @@ class IngredientList extends Component {
                                 {item.name}
                             </Typography>
                             <Typography className={classes.ingredient_id} color="textSecondary" gutterBottom>
-                                {item.id}
+                                {item.num}
                             </Typography>
                         </CardContent>
                         </CardActionArea>

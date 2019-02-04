@@ -20,6 +20,10 @@ export const InitialStore = {
     filter_type: labels.ingredients.filter_type.SKU_NAME,
     current_page_number: 1,
     total_pages: 12,
+    offset:0,
+    limit:10,
+    full:false,
+    row_count:0,
     skus: [],
     errMsg: null,
     ingDependency: [
