@@ -29,6 +29,10 @@ class DB {
         });
     }
 
+    getSingleClient() {
+        return this.pool.connect();
+    }
+
     closePool() {
         this.pool.end();
     
