@@ -139,13 +139,58 @@ class SKU extends CRUD {
         return db.execSingleQuery("DELETE FROM " + this.tableName + " WHERE id = $1", [id]);
     }
 
-    bulkImport(csv_file) {
+    checkDuplicateRecords(jsonList) {
+
+    }
+
+    bulkCleanData(jsonList) {
+
+        for(let i = 0; i < jsonList.length; i++) {
+            let obj = jsonList[i];
+            for(let key in obj) {
+                if(obj[key].length === 0) {
+                    obj[key] = null;
+                }
+            }
+        }
+    }
+
+    generateErrorResult(errMsgs) {
+        let errObj = {};
+        errObj.abort = false;
+        errObj.errors = [];
+        for(let i = 0; i < errMsgs.length; i++) {
+            let tempObj = errMsgs[i];
+            let code = errMsgs[i].code;
+            if(code === "22P02") {
+                tempObj.detail = "Syntax error at record " + i;
+            }
+            errObj.errors.push({
+                code: tempObj.code,
+                detail: tempObj.detail
+            });
+            
+            //syntax error, not null violation, foreign key violation
+            if(code === "22P02" || code === "23502" || code === "23503") {
+                errObj.abort = true;
+            }
+        }
+        return errObj;
+    }
+
+    bulkImport(csv_file, cb) {
         let table = this.tableName;
+        let that = this;
         csv().fromFile(csv_file)
         .then(function(rows) {
-            db.getSingleClient()
+            that.bulkCleanData(rows);
+            return rows;
+        })
+        .then(function(rows) {
+            return db.getSingleClient()
             .then(function(client) {
                 let error = false;
+                let errMsgs = [];
                 let prom = client.query("BEGIN");
                 for(let i = 0; i < rows.length; i++) {
                     let query = QueryGenerator.genInsQuery(rows[i], table).toString();
@@ -155,7 +200,7 @@ class SKU extends CRUD {
                             return client.query(query).catch(function(err) {
                                 error = true;
                                 //TODO SAVE THE ERROR MESSAGES
-                                console.log(err.code);
+                                errMsgs.push(err);
                                 client.query("ROLLBACK TO SAVEPOINT point" + i);
                             });
 
@@ -163,8 +208,15 @@ class SKU extends CRUD {
                     })
                 }
                 prom.then(function(res) {
+                    let errObj = null;
                     if(error) {
-                        console.log("there was an error.");
+                        errObj = that.generateErrorResult(errMsgs)
+                        //for(let i = 0;  i < errMsgs.length; i++) {
+                            //console.log(errMsgs[i].code);
+                            //console.log(errMsgs[i].detail);
+                        //}
+                        console.log("There was an error, rolling back");
+
                         client.query("ROLLBACK");
                         client.query("ABORT");
                     }
@@ -172,14 +224,20 @@ class SKU extends CRUD {
                         console.log("No errors, committing transaction");
                         client.query("COMMIT");
                     }
+
+                    cb(errObj);
                 });
             });
         });
     }
 
 }
-//const sku = new SKU();
-//sku.bulkImport("./file.csv");
+const sku = new SKU();
+sku.bulkImport("./file.csv", function(err) {
+    if(err) {
+        console.log(err);
+    }
+});
 
 //sku.removeIngredient(5043, 44).then(function(res) {
     //console.log(res);
