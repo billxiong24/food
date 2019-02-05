@@ -23,6 +23,7 @@ const PORT = 8000;
 var app = express();
 app.use(cors());
 const encrypt = process.env.HTTPS;
+const domain = process.env.DOMAIN;
 
 
 // view engine setup
@@ -71,9 +72,9 @@ app.use(function(err, req, res, next) {
 if(encrypt == 'true') {
     // Certificate Setup
     // Certificate
-    const privateKey = fs.readFileSync('/etc/letsencrypt/live/cmdev.colab.duke.edu/privkey.pem', 'utf8');
-    const certificate = fs.readFileSync('/etc/letsencrypt/live/cmdev.colab.duke.edu/cert.pem', 'utf8');
-    const ca = fs.readFileSync('/etc/letsencrypt/live/cmdev.colab.duke.edu/chain.pem', 'utf8');
+    const privateKey = fs.readFileSync('/etc/letsencrypt/live/' + domain + '/privkey.pem', 'utf8');
+    const certificate = fs.readFileSync('/etc/letsencrypt/live/' + domain + '/cert.pem', 'utf8');
+    const ca = fs.readFileSync('/etc/letsencrypt/live/' + domain + '/chain.pem', 'utf8');
 
     const credentials = {
         key: privateKey,

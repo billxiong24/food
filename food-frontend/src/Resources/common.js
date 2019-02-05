@@ -1,5 +1,7 @@
+
 export default {
-  hostname: 'https://cmdev.colab.duke.edu:8000/'
+  hostname: 'https://cmdev.colab.duke.edu:8000/',
+  admin: 7,
 }
 
 export function addToList(item, list){
