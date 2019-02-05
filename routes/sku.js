@@ -4,6 +4,13 @@ const Filter = require("../app/filter");
 let router = express.Router();
 const error_controller = require('../app/controller/error_controller');
 
+function sortByKey(array, key) {
+    return array.sort(function(a, b) {
+            var x = a[key]; var y = b[key];
+            return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+        });
+}
+
 //TODO 22P02, 42703
 router.get('/search', function(req, res, next) {
     let names = req.query.names;
@@ -41,6 +48,8 @@ router.get('/search', function(req, res, next) {
 
     sku.search(names, ingredients, prodlines, filter) 
     .then((result) => {
+        if(req.query.group_prd_line === "1")
+            sortByKey(result.rows, "prd_line");
         res.status(200).json(result.rows);
     })
     .catch((err) => {
