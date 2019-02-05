@@ -2,6 +2,28 @@ export default {
   hostname: 'https://cmdev.colab.duke.edu:8000/'
 }
 
+String.prototype.hashCode = function() {
+  var hash = 0, i, chr;
+  if (this.length === 0) return hash;
+  for (i = 0; i < this.length; i++) {
+    chr   = this.charCodeAt(i);
+    hash  = ((hash << 5) - hash) + chr;
+    hash |= 0; // Convert to 32bit integer
+  }
+  return hash;
+};
+
+export function hashcode(string){
+  var hash = 0, i, chr;
+  if (string.length === 0) return hash;
+  for (i = 0; i < string.length; i++) {
+    chr   = string.charCodeAt(i);
+    hash  = ((hash << 5) - hash) + chr;
+    hash |= 0; // Convert to 32bit integer
+  }
+  return hash;
+}
+
 export function addToList(item, list){
   var set = new Set();
   for(var i = 0; i < list.length; i++){
@@ -65,6 +87,129 @@ function removeListFromList(listToRemove, original){
   let newlist = original.filter(item => !set.has(item.id))
   console.log(newlist)
   return newlist
+}
+export function isInteger(string){
+  return String(string).match(/^[0-9]+$/) != null;
+}
+
+
+export function isPrice(string){
+  return String(string).match(/(\d)+(\.(\d){1,2}|)/) != null;
+}
+
+export function isUPCNumber(string){
+  return String(string).match(/^(?=.*0)[0-9]{12}$/) != null;
+}
+
+// const ing = {
+//   name:this.state.ingredientName,
+//   num:this.state.ingredientNum,
+//   vend_info:this.state.vend_info,
+//   pkg_size:this.state.packageSize,
+//   pkg_cost:this.state.costPerPackage,
+//   comments:this.state.comment,
+//   id:this.props.id
+// }
+
+export function getIngErrors(ing){
+  let errors = []
+  let message;
+  if(ing.name === undefined || ing.name == ""){
+    message = "Name is Empty"
+    errors.push({errMsg:message,id:hashcode(message)})
+  }
+  if(ing.num === undefined){
+    message = "Ingredient Number is Empty"
+    errors.push({errMsg:message,id:hashcode(message)})
+  }
+
+  if(ing.pkg_size === undefined || ing.pkg_size == ""){
+    message = "Package Size is Empty"
+    errors.push({errMsg:message,id:hashcode(message)})
+  }
+
+  if(ing.pkg_cost === undefined){
+    message = "Package Cost is Empty"
+    errors.push({errMsg:message,id:hashcode(message)})
+  }
+
+  if(!isInteger(ing.num)){
+    message = "Ingredient Number is Invalid"
+    errors.push({errMsg:message,id:hashcode(message)})
+  }
+  if(!isPrice(ing.pkg_cost)){
+    message = "Price is Invalid"
+    errors.push({errMsg:message,id:hashcode(message)})
+  }
+  return errors
+}
+
+
+// {      
+//   name: "sku3",     
+//   case_upc: 123305,     
+//   unit_upc: 655653,     
+//   unit_size: "12 lbs",     
+//   count_per_case: 998,    
+//   prd_line: "prod4",    
+//   comments: "commentingg"    
+// }
+
+export function getSkuErrors(sku){
+  let errors = []
+  let message;
+  if(sku.name === undefined || sku.name == ""){
+    message = "Name is Empty"
+    errors.push({errMsg:message,id:hashcode(message)})
+  }
+  if(sku.num === undefined){
+    message = "SKU Number is Empty"
+    errors.push({errMsg:message,id:hashcode(message)})
+  }
+
+  if(sku.case_upc === undefined){
+    message = "Case UPC is Empty"
+    errors.push({errMsg:message,id:hashcode(message)})
+  }
+
+  if(sku.unit_upc === undefined){
+    message = "Unit UPC is Empty"
+    errors.push({errMsg:message,id:hashcode(message)})
+  }
+
+
+  if(sku.unit_size === undefined || sku.unit_size == ""){
+    message = "Unit Size is Empty"
+    errors.push({errMsg:message,id:hashcode(message)})
+  }
+
+  if(sku.count_per_case === undefined){
+    message = "Count Per Case is Empty"
+    errors.push({errMsg:message,id:hashcode(message)})
+  }
+
+  if(sku.prd_line === undefined || sku.prd_line == ""){
+    message = "Product Line is Empty"
+    errors.push({errMsg:message,id:hashcode(message)})
+  }
+
+  if(!isInteger(sku.num)){
+    message = "Ingredient Number is Invalid"
+    errors.push({errMsg:message,id:hashcode(message)})
+  }
+  if(!isInteger(sku.count_per_case)){
+    message = "Count Per Case is Invalid"
+    errors.push({errMsg:message,id:hashcode(message)})
+  }
+  if(!isUPCNumber(sku.case_upc)){
+    message = "Case UPC Number does not conform to UPC-A standard"
+    errors.push({errMsg:message,id:hashcode(message)})
+  }
+  if(!isUPCNumber(sku.unit_upc)){
+    message = "Unit UPC Number does not conform to UPC-A standard"
+    errors.push({errMsg:message,id:hashcode(message)})
+  }
+  return errors
 }
 
 

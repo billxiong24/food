@@ -24,8 +24,10 @@ export const InitialStore = {
     limit:10,
     full:false,
     row_count:0,
+    end:false,
     skus: [],
     errMsg: null,
+    errors:[],
     ingDependency: [
     {
       "name": "skuskus",
@@ -101,7 +103,13 @@ export const InitialStore = {
     total_pages: 1,
     ingredient_names: [],
     product_line_names:[],
-    errMsg: null
+    errMsg: null,
+    offset:0,
+    limit:10,
+    full:false,
+    row_count:0,
+    end:false,
+    errors:[]
   },
   // Manufacturing Goals
   manGoals: {
@@ -125,7 +133,8 @@ export const InitialStore = {
     costPerPackage:null,
     comment:null,
     id:null,
-    skus:[]
+    skus:[],
+    errors:[]
   },
   sku_details:{
       name: "Campbell SKU Name",
@@ -141,6 +150,7 @@ export const InitialStore = {
       id:null,
       product_lines:[],
       ingredient_suggestions:[],
-      current_ingredients:[]
+      current_ingredients:[],
+      errors:[]
   }
 }

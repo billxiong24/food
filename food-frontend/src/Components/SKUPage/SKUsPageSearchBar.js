@@ -3,7 +3,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import IntegrationAutosuggest from '../GenericComponents/IntegrationAutosuggest';
 import labels from '../../Resources/labels';
-import { skuAddFilter, skuSearch, ingredientNameAutocomplete, productLineNameAutoComplete } from '../../Redux/Actions';
+import { skuAddFilter, skuSearch, ingredientNameAutocomplete, productLineNameAutoComplete, skuAddError, skuDeleteError } from '../../Redux/Actions';
 
 const styles = {
     autosuggest:{
@@ -25,7 +25,8 @@ class SKUsPageSearchBar extends Component {
     }
 
     onIngredientFilterEnter = (input) => {
-
+        let message = "Choose Ingredient Filter from Suggestions List"
+        this.props.pushError({errMsg: message, id:message.hashCode()})
     }
 
     onIngredientFilterSuggest = (input, num) => {
@@ -44,6 +45,8 @@ class SKUsPageSearchBar extends Component {
     }
 
     onProductLineFilterEnter = (input) => {
+        let message = "Choose Product Line Filter from Suggestions List"
+        this.props.pushError({errMsg: message, id:message.hashCode()})
 
     }
 
@@ -154,7 +157,12 @@ const mapDispatchToProps = dispatch => {
             dispatch(skuSearch())
         },
         getIngredients: name => dispatch(ingredientNameAutocomplete(name)),
-        getProductLines: name => dispatch(productLineNameAutoComplete(name))
+        getProductLines: name => dispatch(productLineNameAutoComplete(name)),
+        pushError: err => {
+            dispatch(skuAddError(err))
+            setTimeout(function(){dispatch(skuDeleteError(err))}, 2000);
+        }
+
     };
 };
 

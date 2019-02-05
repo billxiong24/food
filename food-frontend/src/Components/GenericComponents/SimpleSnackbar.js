@@ -9,6 +9,10 @@ const styles = theme => ({
   close: {
     padding: theme.spacing.unit / 2,
   },
+  snack:{
+    position:'relative',
+    zIndex:1
+  }
 });
 
 class SimpleSnackbar extends React.Component {

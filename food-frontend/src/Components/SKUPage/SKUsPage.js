@@ -27,6 +27,11 @@ import FilterDropdown from './FilterDropdown';
 import SortByDropdown from './SortByDropdown';
 import PageSelector from './PageSelector';
 import SKUsPageSearchBar from './SKUsPageSearchBar';
+import { withRouter } from 'react-router-dom'
+import { skuDetSetSku } from '../../Redux/Actions/ActionCreators/SKUDetailsActionCreators';
+import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
+import { skuDeleteError } from '../../Redux/Actions';
+
 
 const styles = {
   card: {
@@ -112,6 +117,17 @@ const styles = {
     fontSize: 14,
     fontFamily: 'Open Sans',
     fontWeight: 300
+  },
+  other_actions: {
+    width: '100%',
+    flexDirection: 'row',
+    display: 'flex'
+  },
+  add_ingredient:{
+    marginRight: 'auto'
+  },
+  export_to_csv:{
+    marginLeft: 'auto'
   }
 };
 
@@ -120,6 +136,13 @@ class SKUsPage extends Component {
   componentWillMount() {
   }
 
+  onAddClick = () =>{
+    this.props.setSKU(this.props.history)
+  }
+
+  onExportClick = () => {
+
+  }
 
 
   render() {
@@ -146,11 +169,34 @@ class SKUsPage extends Component {
             <SKUsPageSearchBar></SKUsPageSearchBar>
             <div className={classes.SKUs_search_bar}>
             </div>
+            <div className={classes.other_actions}>
+            <Button
+              className={classes.add_ingredient}
+              onClick={this.onAddClick}
+            >
+              Add SKU
+            </Button>
+            <Button
+              className={classes.export_to_csv}
+            >
+              Export to CSV
+            </Button>
+          </div>
             <SKUList></SKUList>
           </div>
           <div variant="inset" className={classes.SKUs_list_divider} />
           <PageSelector></PageSelector>
         </div>
+        {
+          this.props.errors.map((error, index) => (
+            <SimpleSnackbar
+              open={true} 
+              handleClose={()=>{this.props.deleteError(error)}}
+              message={error.errMsg}
+            >
+            </SimpleSnackbar>
+          ))
+          }
       </div>
     );
   }
@@ -158,9 +204,32 @@ class SKUsPage extends Component {
 
 const mapStateToProps = state => {
   return {
-    dummy_SKUs: state.dummy_SKUs
+    dummy_SKUs: state.dummy_SKUs,
+    errors: state.skus.errors
   };
 };
 
+const mapDispatchToProps = dispatch => {
+  return{
+    setSKU: (history) => {
+      dispatch(skuDetSetSku({      
+        name: "",     
+        case_upc: null,     
+        unit_upc: null,     
+        unit_size: "",     
+        count_per_case: null,    
+        prd_line: "",    
+        comments: "",
+        id:null    
+    }))
+    console.log("History")
+      history.push('/skus/details')
+    },
+    deleteError: (error) => {
+      dispatch(skuDeleteError(error))
+    }
+  }
+}
 
-export default withStyles(styles)(connect(mapStateToProps, null)(SKUsPage));
+
+export default withRouter(withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(SKUsPage)));

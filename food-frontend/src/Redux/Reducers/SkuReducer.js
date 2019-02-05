@@ -3,7 +3,11 @@ import { SKU_ADD_FILTER, SKU_REMOVE_FILTER, SKU_SEARCH, SKU_SORT_BY,
   SKU_DELETE_SKU, 
   SKU_SET_FILTER_TYPE,
   SKU_ING_NAME_AUTOCOMPLETE,
-  SKU_PRODUCT_LINE_NAME_AUTOCOMPLETE} from '../Actions/SkuActionType';
+  SKU_PRODUCT_LINE_NAME_AUTOCOMPLETE,
+  SKU_ADD_ERROR,
+  SKU_DELETE_ERROR} from '../Actions/SkuActionType';
+
+  import { addToList, removeFromList } from '../../Resources/common';
 
 const initialState = {
   filters: [],
@@ -43,9 +47,33 @@ export default function skuReducer(state = initialState, action) {
       });
     case SKU_SEARCH:
       console.log("SKU_SEARCH")
-      console.log(action.data)
+      console.log(action.data.items)
+      console.log(action)
+      let items = action.data.items
+      let row_count = 0
+      let offset = action.offset
+      let end = false
+      if (items === undefined || items.length == 0) {
+          end = true
+      }else{
+        console.log("END STUFF")
+        console.log(state.limit)
+        console.log(items.length)
+        end = !(state.limit + 1 == items.length)
+        row_count = items[0].row_count
+      }
+      console.log(row_count)
+      console.log("Full:"+action.full)
+      let full = action.full
+      if(!full){
+        items = items.slice(0,state.limit)
+      }
       return Object.assign({}, state, {
-        items: action.data.items
+        items,
+        row_count,
+        offset,
+        full: action.full,
+        end
       });
     case SKU_SORT_BY:
       return Object.assign({}, state, {
@@ -79,6 +107,18 @@ export default function skuReducer(state = initialState, action) {
       console.log("SKU filter type set to " + action.data)
       return Object.assign({}, state, {
         filter_type: action.data
+      });
+    case SKU_ADD_ERROR:
+      console.log("SKU_ADD_ERROR REDUCER")
+      console.log(action.data)
+      return Object.assign({}, state, {
+        errors: addToList(action.data, state.errors)
+      });
+    case SKU_DELETE_ERROR:
+      console.log("SKU_DELETE_ERROR REDUCER")
+      console.log(action.data)
+      return Object.assign({}, state, {
+        errors: removeFromList(action.data, state.errors)
       });
     default:
       return state;

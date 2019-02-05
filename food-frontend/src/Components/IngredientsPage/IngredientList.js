@@ -12,6 +12,7 @@ import { CardActionArea } from '@material-ui/core';
 import { routeToPage } from '../../Redux/Actions';
 import { withRouter } from 'react-router-dom'
 import { ingDetSetIng, ingDetGetSkus } from '../../Redux/Actions/ActionCreators/IngredientDetailsActionCreators';
+import labels from '../../Resources/labels';
 
 const styles = {
     card: {
@@ -64,7 +65,7 @@ class IngredientList extends Component {
     }
 
     render() {
-        const { classes, ingredients, history } = this.props
+        const { classes, ingredients, history, sortby } = this.props
         
         return (
             <div>
@@ -79,7 +80,7 @@ class IngredientList extends Component {
                                 {item.name}
                             </Typography>
                             <Typography className={classes.ingredient_id} color="textSecondary" gutterBottom>
-                                {item.num}
+                                {sortby == labels.ingredients.sort_by.INGREDIENT_NAME? item.num : item[labels.ingredients.sort_by_map[sortby]]}
                             </Typography>
                         </CardContent>
                         </CardActionArea>
@@ -94,7 +95,8 @@ class IngredientList extends Component {
 
 const mapStateToProps = state => {
     return {
-        ingredients: state.ingredients.items
+        ingredients: state.ingredients.items,
+        sortby: state.ingredients.sortby
     };
 };
 

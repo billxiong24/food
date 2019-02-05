@@ -1,4 +1,4 @@
-import {  SKU_DET_GET_ING,SKU_DET_ADD_ING,SKU_DET_UPDATE_SKU,SKU_DET_DELETE_SKU,SKU_DET_DELETE_ING,SKU_DET_SET_SKU, SKU_DET_INGREDIENT_AUTOCOMPLETE, SKU_DET_PRODUCT_LINE_LIST, SKU_DET_ADD_ING_LOCAL, SKU_DET_DELETE_ING_LOCAL } from "../Actions/SKUDetailActionTypes";
+import {  SKU_DET_GET_ING,SKU_DET_ADD_ING,SKU_DET_UPDATE_SKU,SKU_DET_DELETE_SKU,SKU_DET_DELETE_ING,SKU_DET_SET_SKU, SKU_DET_INGREDIENT_AUTOCOMPLETE, SKU_DET_PRODUCT_LINE_LIST, SKU_DET_ADD_ING_LOCAL, SKU_DET_DELETE_ING_LOCAL, SKU_DET_ADD_SKU, SKU_DET_ADD_ERROR, SKU_DET_DELETE_ERROR } from "../Actions/SKUDetailActionTypes";
 import { addToList, removeFromList } from "../../Resources/common";
 
 const initialState = {
@@ -117,6 +117,25 @@ export default function SKUDetailReducer(state = initialState, action) {
             return Object.assign({}, state, {
                 current_ingredients:removeFromList(action.data, state.current_ingredients),
             });
+        case SKU_DET_ADD_SKU:
+            console.log("SKU_DET_ADD_SKU REDUCER")
+            console.log(action.data)
+            return Object.assign({}, state, {
+ 
+            });
+        case SKU_DET_ADD_ERROR:
+            console.log("SKU_DET_ADD_ERROR REDUCER")
+            console.log(action.data)
+            return Object.assign({}, state, {
+              errors: addToList(action.data, state.errors)
+            });
+        case SKU_DET_DELETE_ERROR:
+            console.log("SKU_DET_DELETE_ERROR REDUCER")
+            console.log(action.data)
+            return Object.assign({}, state, {
+              errors: removeFromList(action.data, state.errors)
+            });
+
             
             
         // case ING_DET_UPDATE_ING:

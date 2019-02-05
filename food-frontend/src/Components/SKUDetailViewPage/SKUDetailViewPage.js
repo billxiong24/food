@@ -7,11 +7,14 @@ import EditableText from '../GenericComponents/EditableText';
 import labels from '../../Resources/labels';
 import { ingDetUpdateIng } from '../../Redux/Actions/ActionCreators/IngredientDetailsActionCreators';
 import { routeToPage } from '../../Redux/Actions';
-import { skuDetUpdateSku, skuDetAddIng, skuDetDeleteIng, skuDetDeleteSku } from '../../Redux/Actions/ActionCreators/SKUDetailsActionCreators';
+import { skuDetUpdateSku, skuDetAddIng, skuDetDeleteIng, skuDetDeleteSku, skuDetAddSku, skuDetDeleteError, skuDetAddError } from '../../Redux/Actions/ActionCreators/SKUDetailsActionCreators';
 import SKUIngredientList from './SKUIngredientList';
 import SKUDetailIngredientAutocomplete from './SKUDetailIngredientAutocomplete';
 import ProductLineDropdown from './ProductLineDropdown';
 import { findDifferences } from '../../Resources/common';
+import { withRouter, Link } from 'react-router-dom';
+import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
+import { isValidIng, getSkuErrors } from '../../Resources/common';
 
 const styles = {
     ingredient_page_container:{
@@ -60,7 +63,16 @@ class SKUDetailViewPage extends Component {
             prd_line:this.props.prd_line,
             ingredients:this.props.ingredients,
             comments:this.props.comments,
+            new:false
         }
+        console.log("SKU DETAIL VIEW")
+        console.log(this.props.id)
+        if(this.props.id == null){
+            this.state.editing = true
+            this.state.new = true
+            this.state.buttonText = "Add"
+        }
+
     }
 
 
@@ -89,31 +101,68 @@ class SKUDetailViewPage extends Component {
     
 
     onButtonClick = () => {
+        const sku = {
+            name:this.state.name,
+            case_upc:this.state.case_upc,
+            unit_upc:this.state.unit_upc,
+            num:this.state.num,
+            unit_size:this.state.unit_size,
+            count_per_case:this.state.count_per_case,
+            prd_line:this.state.prd_line,
+            comments:this.state.comments,
+            id:this.props.id
+        }
+        
         if(this.state.buttonText == "Edit"){
             this.setState({
                 buttonText: "Save",
                 editing:true,
             });
         }else{
+            let errors = getSkuErrors(sku)
+            if(errors.length == 0){
+                this.setState({
+                    buttonText: "Edit",
+                    editing:false,
+                });
+                console.log("SKUDETAILVIEW")
+                console.log(sku)
+                this.props.update(sku,this.props.current_ingredients,this.props.ingredients)
+            }else{
+                for (var i = 0; i < errors.length; i++) {
+                    this.props.pushError(errors[i])
+                }
+            }
+        }
+    }
+
+    onAddClick = () => {
+        const sku = {
+            name:this.state.name,
+            case_upc:this.state.case_upc,
+            unit_upc:this.state.unit_upc,
+            num:this.state.num,
+            unit_size:this.state.unit_size,
+            count_per_case:this.state.count_per_case,
+            prd_line:this.state.prd_line,
+            comments:this.state.comments,
+        }
+        let errors = getSkuErrors(sku)
+        if(errors.length == 0){
             this.setState({
                 buttonText: "Edit",
                 editing:false,
+                new: false
             });
-            const sku = {
-                name:this.state.name,
-                case_upc:this.state.case_upc,
-                unit_upc:this.state.unit_upc,
-                num:this.state.num,
-                unit_size:this.state.unit_size,
-                count_per_case:this.state.count_per_case,
-                prd_line:this.state.prd_line,
-                comments:this.state.comments,
-                id:this.props.id
-            }
-            console.log("SKUDETAILVIEW")
+            console.log("INGREDIENTDETAILVIEW")
             console.log(sku)
-            this.props.update(sku,this.props.current_ingredients,this.props.ingredients)
+            this.props.add(sku)
+        }else{
+            for (var i = 0; i < errors.length; i++) {
+                this.props.pushError(errors[i])
+            }
         }
+        
     }
 
     onDelete = () => {
@@ -133,9 +182,11 @@ class SKUDetailViewPage extends Component {
 
     render() {
         const { classes } = this.props
+        console.log("Editiing:" + this.state.editing)
+        console.log("New:"+this.state.new)
         return (
             <div className = {classes.ingredient_page_container}>
-                <Button onClick={this.props.back}>
+                <Button component={Link} to={'/skus'}>
                     Back
                 </Button>
                 <div className = {classes.ingredient_detail_view}>
@@ -196,21 +247,33 @@ class SKUDetailViewPage extends Component {
                         multiline={true}>
                         {this.state.comments}
                     </EditableText>
-                    <Button 
-                        className={classes.button} 
-                        editing={this.state.editing}
-                        onClick = {this.onButtonClick}
-                        >
-                        {this.state.buttonText}
-                    </Button>
                     {
-                        this.state.editing?
+                        this.state.new ?
+                        <Button 
+                            className={classes.button} 
+                            editing={this.state.editing}
+                            onClick = {this.onAddClick}
+                        >
+                            {this.state.buttonText}
+                        </Button>
+                        :
+                        <Button 
+                            className={classes.button} 
+                            editing={this.state.editing}
+                            onClick = {this.onButtonClick}
+                        >
+                            {this.state.buttonText}
+                        </Button>
+
+                    }
+                    {
+                        (this.state.editing && !this.state.new)?
                         <Button 
                             className={classes.button} 
                             editing={this.state.editing}
                             onClick = {this.onDelete}
                         >
-                            {"DELETE"}
+                            DELETE
                         </Button>
                         :
                         <div></div>
@@ -226,6 +289,16 @@ class SKUDetailViewPage extends Component {
 
                     </div>
                 </div>
+                {
+          this.props.errors.map((error, index) => (
+            <SimpleSnackbar
+              open={true} 
+              handleClose={()=>{this.props.deleteError(error)}}
+              message={error.errMsg}
+            >
+            </SimpleSnackbar>
+          ))
+          }
             </div>
         );
     }
@@ -246,10 +319,11 @@ const mapStateToProps = state => {
         comments:state.sku_details.comments,
         id:state.sku_details.id,
         current_ingredients:state.sku_details.current_ingredients,
+        errors: state.sku_details.errors
     };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch, ownProps) => {
     return {
         update : (sku, current_ingredients, ingredients) =>
         {
@@ -262,12 +336,22 @@ const mapDispatchToProps = dispatch => {
             dispatch(skuDetAddIng(sku,object.additions))
             dispatch(skuDetDeleteIng(sku,object.deletions))
         },
-        back: () => dispatch(routeToPage(1)),
+        back: () => ownProps.history.push('/skus'),
         delete: (sku) => {
             dispatch(skuDetDeleteSku(sku))
-            dispatch(routeToPage(1))
+            ownProps.history.push('/skus')
+        },
+        add: (sku) =>{
+            dispatch(skuDetAddSku(sku))
+        },
+        deleteError: (error) => {
+            dispatch(skuDetDeleteError(error))
+        },
+        pushError: err => {
+            dispatch(skuDetAddError(err))
+            setTimeout(function(){dispatch(skuDetDeleteError(err))}, 2000);
         }
     };
 };
 
-export default withStyles(styles)(connect(mapStateToProps,mapDispatchToProps)(SKUDetailViewPage));
+export default withRouter(withStyles(styles)(connect(mapStateToProps,mapDispatchToProps)(SKUDetailViewPage)));

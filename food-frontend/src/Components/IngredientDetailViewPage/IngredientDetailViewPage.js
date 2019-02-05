@@ -5,10 +5,15 @@ import TextField from '@material-ui/core/TextField';
 import { Typography, Button } from '@material-ui/core';
 import EditableText from '../GenericComponents/EditableText';
 import labels from '../../Resources/labels';
-import { ingDetUpdateIng } from '../../Redux/Actions/ActionCreators/IngredientDetailsActionCreators';
+import { ingDetUpdateIng, ingDetAddIng, ingDetDeleteError, ingDetAddError } from '../../Redux/Actions/ActionCreators/IngredientDetailsActionCreators';
 import { routeToPage, ingDeleteIng } from '../../Redux/Actions';
 import IngredientSKUList from './IngredientSKUList';
-import { Link } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
+import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
+import EditableNumeric from '../GenericComponents/EditableNumeric';
+import { isValidIng, getIngErrors } from '../../Resources/common';
+
+
 const styles = {
     ingredient_page_container:{
         display:'flex',
@@ -34,7 +39,8 @@ const styles = {
     button:{
         width: '300px',
         backgroundColor: 'white'
-    }
+    },
+
 
 };
 
@@ -51,12 +57,19 @@ class IngredientDetailViewPage extends Component {
             packageSize:this.props.packageSize,
             costPerPackage:this.props.costPerPackage,
             comment:this.props.comment,
+            new:false
+        }
+        console.log("INGREDIENT DETAIL VIEW")
+        console.log(this.props.id)
+        if(this.props.id == null){
+            this.state.editing = true
+            this.state.new = true
+            this.state.buttonText = "Add"
         }
     }
 
 
     componentWillMount() {
-
     }
 
     onChange = (input,key) => {
@@ -71,29 +84,66 @@ class IngredientDetailViewPage extends Component {
 
     
 
+    
+
     onButtonClick = () => {
+        const ing = {
+            name:this.state.ingredientName,
+            num:this.state.ingredientNum,
+            vend_info:this.state.vend_info,
+            pkg_size:this.state.packageSize,
+            pkg_cost:this.state.costPerPackage,
+            comments:this.state.comment,
+            id:this.props.id
+        }
+        
         if(this.state.buttonText == "Edit"){
             this.setState({
                 buttonText: "Save",
                 editing:true,
             });
         }else{
+            let errors = getIngErrors(ing);
+            if(errors.length == 0){
+                this.setState({
+                    buttonText: "Edit",
+                    editing:false,
+                });
+                console.log("INGREDIENTDETAILVIEW")
+                console.log(ing)
+                
+                this.props.update(ing)
+            }else{
+                for (var i = 0; i < errors.length; i++) {
+                    this.props.pushError(errors[i])
+                }
+            }
+        }
+    }
+
+    onAddClick = () => {
+        const ing = {
+            name:this.state.ingredientName,
+            num:this.state.ingredientNum,
+            vend_info:this.state.vend_info,
+            pkg_size:this.state.packageSize,
+            pkg_cost:this.state.costPerPackage,
+            comments:this.state.comment,
+        }
+        let errors = getIngErrors(ing);
+        if(errors.length == 0){
             this.setState({
                 buttonText: "Edit",
                 editing:false,
+                new: false
             });
-            const ing = {
-                name:this.state.ingredientName,
-                num:this.state.ingredientNum,
-                vend_info:this.state.vend_info,
-                pkg_size:this.state.packageSize,
-                pkg_cost:this.state.costPerPackage,
-                comments:this.state.comment,
-                id:this.props.id
-            }
             console.log("INGREDIENTDETAILVIEW")
             console.log(ing)
-            this.props.update(ing)
+            this.props.add(ing)
+        }else{
+            for (var i = 0; i < errors.length; i++) {
+                this.props.pushError(errors[i])
+            }
         }
     }
 
@@ -134,14 +184,15 @@ class IngredientDetailViewPage extends Component {
                         {this.state.ingredientName}
                     </EditableText>
 
-                    <EditableText 
+
+                    <EditableNumeric
                         label={"Ingredient No."}
                         editing={this.state.editing}
                         key={"ingredientNum"}
                         field={"ingredientNum"}
                         onChange={this.onChange}>
                         {this.state.ingredientNum}
-                    </EditableText>
+                    </EditableNumeric>
 
                     <EditableText 
                         label={"Vendor Info"}
@@ -161,14 +212,15 @@ class IngredientDetailViewPage extends Component {
                         {this.state.packageSize}
                     </EditableText>
 
-                    <EditableText 
+
+                    <EditableNumeric
                         label={"Cost per Package"} 
                         editing={this.state.editing}
                         key={"costPerPackage"}
                         field={"costPerPackage"}
                         onChange={this.onChange}>
                         {this.state.costPerPackage}
-                    </EditableText>
+                    </EditableNumeric>
 
                     <EditableText 
                         label={"Comment"} 
@@ -179,21 +231,33 @@ class IngredientDetailViewPage extends Component {
                         multiline={true}>
                         {this.state.comment}
                     </EditableText>
-                    <Button 
-                        className={classes.button} 
-                        editing={this.state.editing}
-                        onClick = {this.onButtonClick}
-                        >
-                        {this.state.buttonText}
-                    </Button>
                     {
-                        this.state.editing?
+                        this.state.new ?
+                        <Button 
+                            className={classes.button} 
+                            editing={this.state.editing}
+                            onClick = {this.onAddClick}
+                        >
+                            {this.state.buttonText}
+                        </Button>
+                        :
+                        <Button 
+                            className={classes.button} 
+                            editing={this.state.editing}
+                            onClick = {this.onButtonClick}
+                        >
+                            {this.state.buttonText}
+                        </Button>
+
+                    }
+                    {
+                        (this.state.editing && !this.state.new)?
                         <Button 
                             className={classes.button} 
                             editing={this.state.editing}
                             onClick = {this.onDelete}
                         >
-                            {"DELETE"}
+                            DELETE
                         </Button>
                         :
                         <div></div>
@@ -207,6 +271,16 @@ class IngredientDetailViewPage extends Component {
                     </Typography>
                     <IngredientSKUList></IngredientSKUList>
                 </div>
+                {
+          this.props.errors.map((error, index) => (
+            <SimpleSnackbar
+              open={true} 
+              handleClose={()=>{this.props.deleteError(error)}}
+              message={error.errMsg}
+            >
+            </SimpleSnackbar>
+          ))
+          }
             </div>
         );
     }
@@ -222,11 +296,12 @@ const mapStateToProps = state => {
         packageSize: state.ingredient_details.packageSize,
         costPerPackage: state.ingredient_details.costPerPackage,
         comment: state.ingredient_details.comment,
-        id: state.ingredient_details.id
+        id: state.ingredient_details.id,
+        errors: state.ingredient_details.errors
     };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch, ownProps) => {
     return {
         update : (ing) =>
         {
@@ -237,9 +312,19 @@ const mapDispatchToProps = dispatch => {
         },
         delete: (ing) => {
             dispatch(ingDeleteIng(ing))
-            dispatch(routeToPage(0))
+            ownProps.history.push('/ingredients')
+        },
+        add: (ing) =>{
+            dispatch(ingDetAddIng(ing))
+        },
+        deleteError: (error) => {
+            dispatch(ingDetDeleteError(error))
+        },
+        pushError: err => {
+            dispatch(ingDetAddError(err))
+            setTimeout(function(){dispatch(ingDetDeleteError(err))}, 2000);
         }
     };
 };
 
-export default withStyles(styles)(connect(mapStateToProps,mapDispatchToProps)(IngredientDetailViewPage));
+export default withRouter(withStyles(styles)(connect(mapStateToProps,mapDispatchToProps)(IngredientDetailViewPage)));

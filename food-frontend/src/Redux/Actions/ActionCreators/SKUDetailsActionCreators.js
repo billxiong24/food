@@ -1,6 +1,6 @@
 import axios from 'axios';
 import common from '../../../Resources/common';
-import { SKU_DET_GET_ING,SKU_DET_ADD_ING ,SKU_DET_UPDATE_SKU ,SKU_DET_DELETE_SKU ,SKU_DET_DELETE_ING ,SKU_DET_SET_SKU, SKU_DET_PRODUCT_LINE_LIST, SKU_DET_INGREDIENT_AUTOCOMPLETE, SKU_DET_ADD_ING_LOCAL, SKU_DET_DELETE_ING_LOCAL
+import { SKU_DET_ADD_SKU,SKU_DET_GET_ING,SKU_DET_ADD_ING ,SKU_DET_UPDATE_SKU ,SKU_DET_DELETE_SKU ,SKU_DET_DELETE_ING ,SKU_DET_SET_SKU, SKU_DET_PRODUCT_LINE_LIST, SKU_DET_INGREDIENT_AUTOCOMPLETE, SKU_DET_ADD_ING_LOCAL, SKU_DET_DELETE_ING_LOCAL, SKU_DET_ADD_ERROR, SKU_DET_DELETE_ERROR
 } from '../SKUDetailActionTypes';
 
 const hostname = common.hostname;
@@ -201,6 +201,48 @@ export const skuDetGetProductLine = ()  => {
       return dispatch({
         type: SKU_DET_DELETE_ING_LOCAL,
         data: ingredient
+      })
+    }
+  }
+
+  export const skuDetAddSku = (sku) => {
+    console.log("SKU_DET_ADD_SKU ACTION CREATOR")
+    console.log(sku)
+    // [{ingred_num: 1, quantity: 1}, {ingred_num: 2, quantity: 2}]
+    return (dispatch) => {
+      return axios.put(hostname + 'sku/', {
+        ...sku
+      })
+      .then(response => {
+        console.log(response)
+        dispatch({
+          type: SKU_DET_ADD_SKU,
+          data: response.data
+        })
+      })
+      .catch(error => {
+        console.log("error")
+        throw(error);
+      });
+    }
+  }
+
+  export const skuDetAddError = (err) => {
+    console.log("SKU_DET_ADD_ERROR ACTION CREATOR")
+    return (dispatch) => {
+      return dispatch({
+        type: SKU_DET_ADD_ERROR,
+        data: err
+      })
+    }
+  }
+  
+  export const skuDetDeleteError = (err) => {
+    console.log("SKU_DET_DELETE_ERROR ACTION CREATOR")
+    return (dispatch) => {
+      return dispatch({
+        type: SKU_DET_DELETE_ERROR,
+        data: err
       })
     }
   }

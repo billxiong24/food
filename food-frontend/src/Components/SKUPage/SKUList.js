@@ -10,7 +10,9 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { CardActionArea } from '@material-ui/core';
 import { routeToPage } from '../../Redux/Actions';
+import { withRouter } from 'react-router-dom'
 import { skuDetSetSku, skuDetGetIng, skuDetGetProductLine } from '../../Redux/Actions/ActionCreators/SKUDetailsActionCreators';
+import labels from '../../Resources/labels';
 
 const styles = {
     card: {
@@ -62,7 +64,7 @@ class SKUList extends Component {
     }
 
     render() {
-        const { classes, SKUs } = this.props
+        const { classes, SKUs, sortby } = this.props
         return (
             <div>
             {
@@ -76,7 +78,7 @@ class SKUList extends Component {
                             {item.name}
                         </Typography>
                         <Typography className={classes.ingredient_id} color="textSecondary" gutterBottom>
-                            {item.num}
+                            {sortby == labels.skus.sort_by.SKU_NAME ? item.num : item[labels.skus.sort_by_map[sortby]]}
                         </Typography>
                     </CardContent>
                     </CardActionArea>
@@ -90,18 +92,20 @@ class SKUList extends Component {
 
 const mapStateToProps = state => {
     return {
-        SKUs: state.skus.items
+        SKUs: state.skus.items,
+        sortby: state.skus.sortby
     };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch,ownProps) => {
     return {
         setSku: sku => {
             Promise.resolve(dispatch(skuDetGetProductLine())) // dispatch
                 .then(function (response) {
                     dispatch(skuDetSetSku(sku))
                     dispatch(skuDetGetIng(sku.id))
-                    dispatch(routeToPage(9))
+                    ownProps.history.push('/skus/details')
+
                 return response;
                 })
                 .then(function(response){console.log("@RESPONSE",response)})
@@ -109,4 +113,4 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default withStyles(styles)(connect(mapStateToProps,mapDispatchToProps)(SKUList));
+export default withRouter(withStyles(styles)(connect(mapStateToProps,mapDispatchToProps)(SKUList)));

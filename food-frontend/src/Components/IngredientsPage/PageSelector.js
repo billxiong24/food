@@ -53,11 +53,19 @@ class PageSelector extends Component {
         this.props.search(this.props.offset + this.props.limit)
     }
 
+    showAll = () => {
+        this.props.search(-1)
+    }
+
+    showSome = () => {
+        this.props.search(-2)
+    }
+
     render() {
-        const { classes , offset, limit, items, row_count} = this.props
+        const { classes , offset, limit, items, row_count, full,end} = this.props
         let enableDecrease = offset > 0
-        let enableIncrease = offset + items.length + 1 < row_count
-        return (
+        let enableIncrease = !end
+        return (!full?
             <div className={classes.page_selection_container}>
             { enableDecrease ?
                 <IconButton 
@@ -79,7 +87,7 @@ class PageSelector extends Component {
                 </IconButton>
             }
             <Typography className={classes.page_number_text}>
-              Showing items {offset} - {Math.max(offset + items.length - 1, 0)} out of {row_count}
+              Showing items {offset} - {Math.max(offset + items.length - 1, 0)}
             </Typography>
             { enableIncrease ?
                 <IconButton 
@@ -100,10 +108,27 @@ class PageSelector extends Component {
                     <img src={next}/>
                 </IconButton>
             }
-            <Button className={classes.showAll}>
+            <Button
+                className={classes.showAll}
+                onClick = {this.showAll}
+            >
                 Show All
             </Button>
           </div>
+          :
+          <div className={classes.page_selection_container}>
+          
+          <Typography className={classes.page_number_text}>
+            Showing items All {items.length} items
+          </Typography>
+          
+          <Button
+              className={classes.showAll}
+              onClick = {this.showSome}
+          >
+              Show Some
+          </Button>
+        </div>
         );
     }
 }
@@ -113,7 +138,9 @@ const mapStateToProps = state => {
         offset: state.ingredients.offset,
         limit: state.ingredients.limit,
         items: state.ingredients.items,
-        row_count: state.ingredients.row_count
+        row_count: state.ingredients.row_count,
+        full: state.ingredients.full,
+        end: state.ingredients.end
     };
 };
 
@@ -121,7 +148,7 @@ const mapDispatchToProps = dispatch => {
     return {
         search: (offset) => {
             dispatch(ingSearch(offset))
-        }
+        },
     };
 };
 

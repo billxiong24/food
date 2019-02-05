@@ -16,6 +16,8 @@ import LogoutPage from './LoginPage/LogoutPage';
 import BulkTransactionPage from './BulkTransactionPage/BulkTransactionPage'
 import CalculatorPage from './CalculatorPage/CalculatorPage';
 import IngredientDetailViewPage from './IngredientDetailViewPage/IngredientDetailViewPage';
+import SKUDetailViewPage from './SKUDetailViewPage/SKUDetailViewPage'
+import BulkImportPage from './BulkImport/BulkImportPage'
 
 const styles = {
 
@@ -36,13 +38,14 @@ class RouterComponent extends Component {
           <Switch>
             <Route path="/login" component={LoginPage} />
             <PrivateRoute exact={true} path="/manufacturing_goals" component={ManufacturingGoalsPage} />
-            <PrivateRoute exact={true} path="/ingredients" component={IngredientsPage} />
-            <PrivateRoute exact={true} path="/ingredients/details" component={IngredientDetailViewPage}
-            block={!ingredient_id} altPath="/ingredients" />
+            <PrivateRoute exact={true} path="/bulkimportexport" component={ BulkImportPage } />
+            <PrivateRoute exact={true} path="/ingredients" component={ IngredientsPage} />
+            <PrivateRoute exact={true} path="/ingredients/details" component={ IngredientDetailViewPage}/>
             <PrivateRoute exact={true} path="/skus" component={SKUsPage} />
+            <PrivateRoute exact={true} path="/skus/details" component={SKUDetailViewPage} />
             <PrivateRoute exact={true} path="/product_lines" component={ProductLinePage} />
             <PrivateRoute exact={true} path="/ingredients/dependency" component={IngredientDependencyPage} />
-            <PrivateRoute exact={true} path="/bulk" component={BulkTransactionPage} />
+            <PrivateRoute exact={true} path="/bulk" component={BulkImportPage} />
             <PrivateRoute exact={true} path="/create_user" component={SignUpPage} />
             <PrivateRoute exact={true} path="/logout" component={LogoutPage} />
             <PrivateRoute exact={true} path="/manufacturing_goals/calculations" component={CalculatorPage}

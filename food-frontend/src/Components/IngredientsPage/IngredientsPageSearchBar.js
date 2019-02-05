@@ -3,7 +3,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import IntegrationAutosuggest from '../GenericComponents/IntegrationAutosuggest';
 import labels from '../../Resources/labels';
-import { ingAddFilter, ingSearch, ingGetSkus } from '../../Redux/Actions';
+import { ingAddFilter, ingSearch, ingGetSkus, ingAddError, ingDeleteError } from '../../Redux/Actions';
 import { skuFormatter } from '../../Scripts/Formatters';
 
 const styles = {
@@ -48,7 +48,8 @@ class IngredientsPageSearchBar extends Component {
     }
 
     onSKUFilterEnter = (input) => {
-        
+        this.props.pushError({errMsg: "Choose SKU Filter from Suggestions List", id:"Choose SKU Filter from Suggestions List".hashCode()})
+        //this.props.pushError({errMsg: input, id:input.hashCode()})
     }
     
     onSKUFilterSuggest = (input, num) => {
@@ -106,7 +107,11 @@ const mapDispatchToProps = dispatch => {
             dispatch(ingAddFilter(filter))
             dispatch(ingSearch())
         },
-        getSKUs: ing => dispatch(ingGetSkus(ing))
+        getSKUs: ing => dispatch(ingGetSkus(ing)),
+        pushError: err => {
+            dispatch(ingAddError(err))
+            setTimeout(function(){dispatch(ingDeleteError(err))}, 2000);
+        }
     };
 };
 

@@ -9,7 +9,7 @@ import Card from '@material-ui/core/Card';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import { connect } from 'react-redux';
-import { getDummyIngredients } from '../../Redux/Actions';
+import { getDummyIngredients, ingDeleteError } from '../../Redux/Actions';
 import DropdownButton from '../GenericComponents/DropdownButton';
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
@@ -28,6 +28,9 @@ import FilterDropdown from './FilterDropdown';
 import SortByDropdown from './SortByDropdown';
 import PageSelector from './PageSelector';
 import IngredientsPageSearchBar from './IngredientsPageSearchBar';
+import { ingDetSetIng } from '../../Redux/Actions/ActionCreators/IngredientDetailsActionCreators';
+import { withRouter } from 'react-router-dom'
+import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
 
 const styles = {
   card: {
@@ -113,15 +116,32 @@ const styles = {
     fontSize: 14,
     fontFamily: 'Open Sans',
     fontWeight: 300
+  },
+  other_actions: {
+    width: '100%',
+    flexDirection: 'row',
+    display: 'flex'
+  },
+  add_ingredient:{
+    marginRight: 'auto'
+  },
+  export_to_csv:{
+    marginLeft: 'auto'
   }
 };
 
 class IngredientsPage extends Component {
 
   componentWillMount() {
-    this.props.getDummyIngredients()
   }
 
+  onAddClick = () =>{
+    this.props.setIngredient(this.props.history)
+  }
+
+  onExportClick = () => {
+
+  }
 
 
   render() {
@@ -148,11 +168,34 @@ class IngredientsPage extends Component {
               <IngredientsPageSearchBar></IngredientsPageSearchBar>
             <div className={classes.ingredients_search_bar}>
           </div>
+          <div className={classes.other_actions}>
+            <Button
+              className={classes.add_ingredient}
+              onClick={this.onAddClick}
+            >
+              Add Ingredient
+            </Button>
+            <Button
+              className={classes.export_to_csv}
+            >
+              Export to CSV
+            </Button>
+          </div>
             <IngredientList></IngredientList>
         </div>
           <div variant="inset" className={classes.ingredients_list_divider} />
           <PageSelector></PageSelector>
         </div>
+        {
+          this.props.errors.map((error, index) => (
+            <SimpleSnackbar
+              open={true} 
+              handleClose={()=>{this.props.deleteError(error)}}
+              message={error.errMsg}
+            >
+            </SimpleSnackbar>
+          ))
+          }
       </div>
     );
   }
@@ -160,9 +203,31 @@ class IngredientsPage extends Component {
 
 const mapStateToProps = state => {
   return {
-    dummy_ingredients: state.dummy_ingredients
+    dummy_ingredients: state.dummy_ingredients,
+    errors: state.ingredients.errors
   };
 };
 
+const mapDispatchToProps = dispatch => {
+  return{
+    setIngredient: (history) => {
+      dispatch(ingDetSetIng({
+        name: "",
+        num: null,
+        vend_info: "",
+        pkg_size: "",
+        pkg_cost: "",
+        comments: "",
+        id: null
+    }))
+    console.log("History")
+      history.push('/ingredients/details')
+    },
+    deleteError: (error) => {
+      dispatch(ingDeleteError(error))
+    }
+  }
+}
 
-export default withStyles(styles)(connect(mapStateToProps, { getDummyIngredients })(IngredientsPage));
+
+export default withRouter(withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(IngredientsPage)));
