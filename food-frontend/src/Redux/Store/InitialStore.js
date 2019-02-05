@@ -1,4 +1,3 @@
-import { dummy_filters, dummy_ingredients, dummy_ingredient_names, dummy_ing_det_skus } from "./DummyData";
 import labels from "../../Resources/labels";
 
 export const InitialStore = {
@@ -26,61 +25,7 @@ export const InitialStore = {
     row_count:0,
     skus: [],
     errMsg: null,
-    ingDependency: [
-    {
-      "name": "skuskus",
-      "num": 698,
-      "vend_info": "someinfo please",
-      "pkg_size": "5lbs",
-      "pkg_cost": "45",
-      "comments": "newcomment wiht id",
-      "id": 2,
-      "skus": [
-        {
-          "name": "sku1",
-          "num": 12,
-          "case_upc": "2449",
-          "unit_upc": "112553",
-          "unit_size": "10 lbs",
-          "count_per_case": 4,
-          "prd_line": "prod4",
-          "comments": "a comment",
-          "id": 4
-        },
-        {
-          "name": "sku1245872",
-          "num": 55,
-          "case_upc": "2477",
-          "unit_upc": "1123",
-          "unit_size": "5 lbs",
-          "count_per_case": 4,
-          "prd_line": "prod69",
-          "comments": "a comment",
-          "id": 1
-        },
-        {
-          "name": "sku2355",
-          "num": 1,
-          "case_upc": "5048",
-          "unit_upc": "1128",
-          "unit_size": "5 lbs",
-          "count_per_case": 4,
-          "prd_line": "prod69",
-          "comments": "a comment",
-          "id": 3
-        },
-      ]
-    },
-      {
-        "name": "ing234",
-        "num": 47,
-        "vend_info": "please",
-        "pkg_size": "3587 poundsss",
-        "pkg_cost": "15",
-        "comments": "a comment",
-        "id": 5,
-        skus: [],
-      },]
+    ingDependency: [],
   },
   // Persistent data concerning productline view
   productLine: {

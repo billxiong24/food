@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
-import { Provider } from 'react-redux';
 import './index.css';
 
 import Root from './Root.js';
@@ -10,7 +9,7 @@ import * as serviceWorker from './serviceWorker';
 import rootReducer from './Redux/Reducers';
 import { InitialStore } from './Redux/Store/InitialStore';
 require("typeface-open-sans");
-require("typeface-roboto")
+require("typeface-roboto");
 
 
 export const store = createStore(rootReducer, InitialStore, applyMiddleware(thunk));

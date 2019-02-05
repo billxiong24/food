@@ -19,6 +19,7 @@ import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
 import back from '../../Resources/Images/baseline-navigate_before-24px.svg'
 import next from '../../Resources/Images/baseline-navigate_next-24px.svg'
 import { IconButton } from '@material-ui/core';
+import common from '../../Resources/common';
 
 const styles = {
   ingredients_list:{
@@ -217,14 +218,14 @@ class ProductLinePage extends Component {
           </DisplayButton>
           <NewProductLine
             addProductLine={(prdline) => { this.addProductLine(prdline) }}
-            uname={this.props.users.uname}
+            user={this.props.users.id}
             classes={classes}
           ></NewProductLine>
           <div className={classes.list_container}>
             <ItemList items={productLine.productLines}>
               <ProductLineCard
                 onEnter={(prdline) => { this.updateProductLine(prdline) }}
-                editable={this.props.users.uname === labels.users.ADMIN}
+                editable={this.props.users.id === common.admin}
                 persistent={true}
                 deleteProductLine={(prdline) => { this.removeProductLine(prdline) }}
               ></ProductLineCard>
@@ -275,7 +276,7 @@ function DisplayButton(props) {
 }
 
 function NewProductLine(props) {
-  if(props.uname===labels.users.ADMIN) {
+  if(props.user===common.id) {
     return (
       <div>
         <ProductLineCard
