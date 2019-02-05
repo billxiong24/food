@@ -510,4 +510,119 @@ With request body:
 }
 ```   
 Creates a csv file, with name and num as columns, and "a, 1", "b, 2", and "c, 3" as rows.   
+  
+## Bulk Imports
+###  Validate bulk import
+* Check validity of operations in csv file   
+**URL**: ```POST /bulk/bulk_import```    
+**PARAMETERS**    
+    
+| Parameter      | Description | Type |    
+| ----------- | ----------- |---------|    
+| type | **Required**. Either "sku", "ingredient", or "formula". Specifies which type of file it is. | String |      
+| csvfile | **Required**. CSV file itself. | File |       
+
+    
+   
+* **EXAMPLE**     
+```POST /bulk/bulk_import```   
+With request body:
+```
+{  
+        type: "sku",
+        csvfile: file
+}  
+```  
+with corresponding HTML:  
+```  
+<form action="/bulk/bulk_import" method="post" enctype="multipart/form-data">
+  <input type="file" name="csvfile" />
+</form>
+```  
+Validates the file and returns errors, if any, and whether or not to abort the operations. Sample response:    
+```
+{
+    "abort": true,
+    "errors": [
+        {
+            "code": "23503",
+            "detail": "Key (prd_line)=(prod444) is not present in table \"productline\"."   
+        },
+        {
+            "code": "23505",
+            "detail": "Ambiguous record in row 3"   
+        }
+    ],
+    "rows": [
+        {
+            "num": "5",
+            "case_upc": "222222",
+            "unit_upc": "23511",
+            "unit_size": "55lbs",
+            "count_per_case": "22",
+            "prd_line": "prod69",
+            "update": true
+        },
+        {
+            "name": "skutran",
+            "num": "53444",
+            "case_upc": "25333",
+            "unit_upc": "65653",
+            "unit_size": "12 lbs",
+            "count_per_case": "998",
+            "prd_line": "prod4"
+        }
+    ]
+}
+```   
+If ```abort``` is false, use the ```errors``` field to display error messages to user. You can then feed the ```rows``` field into ```POST /bulk/accept_bulk_import``` to actually commit transaction.   
+  
+    
+###  Commit bulk import
+* Commit contents of csv file to database.     
+**URL**: ```POST /bulk/accept_bulk_import```      
+**PARAMETERS**    
+      
+| Parameter      | Description | Type |    
+| ----------- | ----------- |---------|    
+| type | **Required**. Either "sku", "ingredient", or "formula". Specifies which type of file it is. | String |      
+| rows | **Required**. List of JSON rows to commit. Use the response from ```/POST/bulk/bulk_import```. | List |       
+
+    
+   
+* **EXAMPLE**     
+```POST /bulk/accept_bulk_import```   
+With request body:  
+```
+{
+        type: "sku",
+        rows: [
+        {
+            "num": "5",
+            "case_upc": "222222",
+            "unit_upc": "23511",
+            "unit_size": "55lbs",
+            "count_per_case": "22",
+            "prd_line": "prod69",
+            "update": true
+        },
+        {
+            "name": "skutran",
+            "num": "53444",
+            "case_upc": "25333",
+            "unit_upc": "65653",
+            "unit_size": "12 lbs",
+            "count_per_case": "998",
+            "prd_line": "prod4"
+        }
+    ]
+}
+```   
+As you can see, the ```rows``` field is taken from the response of the previous route. This can be done if ```abort``` is false.   
+   
+   
+  
+    
+
+
 

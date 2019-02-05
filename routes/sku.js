@@ -103,9 +103,10 @@ router.post('/', function(req, res, next) {
     const sku = new Sku();
     sku.create(req.body)
     .then((result) => {
-        res.status(201).json({
-            rowCount: result.rowCount
-        });
+        if(!result.rows || result.rows.length === 0) {
+            return res.status(400).json("Bad request.");
+        }
+        res.status(201).json(result.rows[0]);
     })
     .catch((err) => {
         res.status(409).json({

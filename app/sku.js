@@ -1,8 +1,11 @@
 const db = require("./db");
+const fs = require('fs')
+const copyFrom = require('pg-copy-streams').from;
 const CRUD = require("./CRUD");
 const squel = require("squel").useFlavour('postgres');
 const QueryGenerator = require("./query_generator");
 const Filter = require('./filter');
+const csv=require('csvtojson');
 
 class SKU extends CRUD {
 
@@ -16,13 +19,13 @@ class SKU extends CRUD {
         let num = obj.num;
         let case_upc = obj.case_upc;
         if(num && case_upc) {
-            return db.execSingleQuery("SELECT case_upc FROM " + this.tableName + " WHERE case_upc = $1 OR num = $2", [case_upc, num]);
+            return db.execSingleQuery("SELECT COUNT(*) FROM " + this.tableName + " WHERE case_upc = $1 OR num = $2", [case_upc, num]);
         }
         else if(case_upc){
-            return db.execSingleQuery("SELECT case_upc FROM " + this.tableName + " WHERE case_upc = $1", [case_upc]);
+            return db.execSingleQuery("SELECT COUNT(*) FROM " + this.tableName + " WHERE case_upc = $1", [case_upc]);
         }
         else if(num) {
-            return db.execSingleQuery("SELECT case_upc FROM " + this.tableName + " WHERE num= $1", [num]);
+            return db.execSingleQuery("SELECT COUNT(*) FROM " + this.tableName + " WHERE num= $1", [num]);
         }
         
         return Promise.reject("No valid name or num provided.");
@@ -108,7 +111,7 @@ class SKU extends CRUD {
             return Promise.reject("Not all required fields are present.");
         }
 
-        let query = QueryGenerator.genInsQuery(dataObj, this.tableName).toString();
+        let query = QueryGenerator.genInsQuery(dataObj, this.tableName).returning("id").toString();
         console.log(query);
         //product line must exist
         return this.checkProductLineExists(dataObj.prd_line)
@@ -129,6 +132,24 @@ class SKU extends CRUD {
         }
     }
 
+    conflictUpdate(dataObj) {
+        let q = super.getUpdateQueryObj(dataObj);
+        let expr = squel.expr();
+        expr = expr.or("case_upc = ?", dataObj.case_upc);
+        if(dataObj.num) {
+            expr = expr.or("num = ?", dataObj.num);
+        }
+        q = q.where(expr);
+        q = q.toString();
+        return q;
+    }
+
+    duplicateObjs(jsonList) {
+        let b = super.checkDuplicateInObject('num', jsonList); 
+        let c = super.checkDuplicateInObject('case_upc', jsonList); 
+        return b || c;
+    }
+
     remove(id) {
         if(!id) {
             return Promise.reject("Bad num.");
@@ -136,8 +157,12 @@ class SKU extends CRUD {
         return db.execSingleQuery("DELETE FROM " + this.tableName + " WHERE id = $1", [id]);
     }
 }
-
-const sku = new SKU();
+//const sku = new SKU();
+//sku.bulkImport("./file.csv", function(err) {
+    //if(err) {
+        //console.log(err);
+    //}
+//});
 
 //sku.removeIngredient(5043, 44).then(function(res) {
     //console.log(res);

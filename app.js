@@ -1,3 +1,4 @@
+require('dotenv').config();
 var createError = require('http-errors');
 var express = require('express');
 var cors = require('cors');
@@ -12,6 +13,7 @@ var ingredientsRouter = require('./routes/ingredients');
 var productlineRouter = require('./routes/productline');
 var skuRouter = require('./routes/sku');
 var mgRouter = require('./routes/manufacturing_goals');
+var bulkRouter = require('./routes/bulk');
 
 var http = require('http');
 var https = require('https');
@@ -20,18 +22,7 @@ const PORT = 8000;
 
 var app = express();
 app.use(cors());
-
-// Certificate Setup
-// Certificate
-const privateKey = fs.readFileSync('/etc/letsencrypt/live/cmdev.colab.duke.edu/privkey.pem', 'utf8');
-const certificate = fs.readFileSync('/etc/letsencrypt/live/cmdev.colab.duke.edu/cert.pem', 'utf8');
-const ca = fs.readFileSync('/etc/letsencrypt/live/cmdev.colab.duke.edu/chain.pem', 'utf8');
-
-const credentials = {
-	key: privateKey,
-	cert: certificate,
-	ca: ca
-};
+const encrypt = process.env.HTTPS;
 
 
 // view engine setup
@@ -59,6 +50,7 @@ app.use('/ingredients', ingredientsRouter);
 app.use('/productline', productlineRouter);
 app.use('/sku', skuRouter);
 app.use('/manufacturing_goals', mgRouter);
+app.use('/bulk', bulkRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -76,14 +68,29 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-const httpsServer = https.createServer(credentials, app);
+if(encrypt == 'true') {
+    // Certificate Setup
+    // Certificate
+    const privateKey = fs.readFileSync('/etc/letsencrypt/live/cmdev.colab.duke.edu/privkey.pem', 'utf8');
+    const certificate = fs.readFileSync('/etc/letsencrypt/live/cmdev.colab.duke.edu/cert.pem', 'utf8');
+    const ca = fs.readFileSync('/etc/letsencrypt/live/cmdev.colab.duke.edu/chain.pem', 'utf8');
 
-// app.listen(PORT, () => {
-//     console.log("Server started on port " + PORT);
-// });
+    const credentials = {
+        key: privateKey,
+        cert: certificate,
+        ca: ca
+    };
+    const httpsServer = https.createServer(credentials, app);
+    httpsServer.listen(PORT, () => {
+      console.log("HTTPS Server started on port " + PORT);
+    });
+}
+else {
+    app.listen(PORT, () => {
+        console.log("Server started on port " + PORT);
+    });
+}
 
-httpsServer.listen(PORT, () => {
-  console.log("HTTPS Server started on port " + PORT);
-});
+
 
 module.exports = app;
