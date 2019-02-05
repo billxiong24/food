@@ -61,7 +61,7 @@ class CRUD {
             let obj = jsonList[i];
             for(let key in obj) {
                 if(obj[key].length === 0) {
-                    obj[key] = null;
+                    delete obj[key];
                 }
             }
         }

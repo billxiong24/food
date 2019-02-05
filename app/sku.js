@@ -134,7 +134,12 @@ class SKU extends CRUD {
 
     conflictUpdate(dataObj) {
         let q = super.getUpdateQueryObj(dataObj);
-        q = q.where("case_upc=? OR num=?", dataObj.case_upc, dataObj.num);
+        let expr = squel.expr();
+        expr = expr.or("case_upc = ?", dataObj.case_upc);
+        if(dataObj.num) {
+            expr = expr.or("num = ?", dataObj.num);
+        }
+        q = q.where(expr);
         q = q.toString();
         return q;
     }

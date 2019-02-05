@@ -74,6 +74,17 @@ class Ingredient extends CRUD {
     update(dataObj, id) {
         return super.change(dataObj, id, "id");
     }
+    conflictUpdate(dataObj) {
+        let q = super.getUpdateQueryObj(dataObj);
+        let expr = squel.expr();
+        expr = expr.or("name = ?", dataObj.name);
+        if(dataObj.num) {
+            expr = expr.or("num = ?", dataObj.num);
+        }
+        q = q.where(expr);
+        q = q.toString();
+        return q;
+    }
 
     remove(id) {
         if(!id) {
