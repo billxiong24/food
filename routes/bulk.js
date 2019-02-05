@@ -8,6 +8,7 @@ const upload = multer({
 const CRUD = require('../app/CRUD');
 const SKU = require('../app/sku');
 const Ingredient = require('../app/ingredient');
+const SKUIngred = require("../app/sku_ingred");
 
 function getCRUD(type) {
     let crud = null;
@@ -20,7 +21,7 @@ function getCRUD(type) {
         crud = new Ingredient();
     }
     else if(type === 'formula') {
-        return null;
+        crud = new SKUIngred();
     }
     else {
         return null;
