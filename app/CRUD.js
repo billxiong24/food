@@ -117,14 +117,18 @@ class CRUD {
             let error = false;
             let errMsgs = [];
             let prom = client.query("BEGIN");
+            let updates = 0;
+            let inserts = 0;
             for(let i = 0; i < rows.length; i++) {
                 let update = rows[i].update;
                 delete rows[i].update;
                 let query = "";
                 if(update) {
+                    updates++;
                     query = that.conflictUpdate(rows[i]);
                 }
                 else {
+                    inserts++;
                     query = QueryGenerator.genInsQuery(rows[i], table).toString();
                 }
                 console.log("QUERY: " + query);
@@ -143,12 +147,16 @@ class CRUD {
                     console.log("there's an error, rolling back");
                     client.query("ROLLBACK");
                     client.query("ABORT");
+                    cb(errMsgs);
                 }
                 else {
                     console.log("No errors, committing transaction");
                     client.query("COMMIT");
+                    cb({
+                        updates: updates,
+                        inserts: inserts
+                    });
                 }
-                cb(errMsgs);
             });
         });
     }

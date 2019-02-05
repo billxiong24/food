@@ -38,7 +38,10 @@ class SKUIngred extends CRUD {
                         console.log("no errors in formulas, commiting");
                         client.query("COMMIT");
                     }
-                    cb(null);
+                    cb({
+                        inserts: rows.length,
+                        updates: 0
+                    });
                 })
                 .catch(function(err) {
                     errMsg = {
