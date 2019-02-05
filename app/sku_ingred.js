@@ -41,7 +41,14 @@ class SKUIngred extends CRUD {
                     cb(null);
                 })
                 .catch(function(err) {
-                    errMsg = err;
+                    errMsg = {
+                        errors: [ 
+                            { 
+                                code: err.code,
+                                detail: err.detail
+                            }
+                        ]
+                    };
                     console.log("Error, aborting formulas");
                     client.query("ABORT");
                     cb(errMsg);

@@ -86,6 +86,12 @@ class Ingredient extends CRUD {
         return q;
     }
 
+    duplicateObjs(jsonList) {
+        let b = super.checkDuplicateInObject('num', jsonList); 
+        let c = super.checkDuplicateInObject('name', jsonList); 
+        return b || c;
+    }
+
     remove(id) {
         if(!id) {
             return Promise.reject("Bad id.");

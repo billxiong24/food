@@ -144,6 +144,12 @@ class SKU extends CRUD {
         return q;
     }
 
+    duplicateObjs(jsonList) {
+        let b = super.checkDuplicateInObject('num', jsonList); 
+        let c = super.checkDuplicateInObject('case_upc', jsonList); 
+        return b || c;
+    }
+
     remove(id) {
         if(!id) {
             return Promise.reject("Bad num.");

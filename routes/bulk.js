@@ -56,8 +56,4 @@ router.post('/accept_bulk_import', function(req, res, next) {
     });
 });
 
-router.post('/bulk_export', function(req, res, next) {
-
-});
-
 module.exports = router;

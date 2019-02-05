@@ -56,6 +56,26 @@ class CRUD {
         return db.execSingleQuery(q, []);
     }
 
+    checkDuplicateInObject(propertyName, inputArray) {
+      let seenDuplicate = false;
+      let testObject = {};
+    
+      inputArray.map(function(item) {
+          var itemPropertyName = item[propertyName];    
+          if (itemPropertyName in testObject) {
+                testObject[itemPropertyName].duplicate = true;
+                item.duplicate = true;
+                seenDuplicate = true;
+              }
+          else {
+                testObject[itemPropertyName] = item;
+                delete item.duplicate;
+              }
+        });
+    
+      return seenDuplicate;
+    }
+
     bulkCleanData(jsonList) {
         for(let i = 0; i < jsonList.length; i++) {
             let obj = jsonList[i];
@@ -142,6 +162,15 @@ class CRUD {
             return rows;
         })
         .then(function(rows) {
+            if(that.duplicateObjs(rows)) {
+                return cb({ errors: [ 
+                            { 
+                                detail: "Duplicate rows in file."
+                            }
+                        ]
+                    });
+            }
+
             return db.getSingleClient()
             .then(function(client) {
                 let abort = false;
@@ -217,6 +246,14 @@ class CRUD {
     }
 
     search(name) {
+
+    }
+
+    conflictUpdate(dataObj) {
+
+    }
+
+    duplicateObjs(jsonList) {
 
     }
 }
