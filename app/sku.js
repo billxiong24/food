@@ -19,13 +19,13 @@ class SKU extends CRUD {
         let num = obj.num;
         let case_upc = obj.case_upc;
         if(num && case_upc) {
-            return db.execSingleQuery("SELECT case_upc FROM " + this.tableName + " WHERE case_upc = $1 OR num = $2", [case_upc, num]);
+            return db.execSingleQuery("SELECT COUNT(*) FROM " + this.tableName + " WHERE case_upc = $1 OR num = $2", [case_upc, num]);
         }
         else if(case_upc){
-            return db.execSingleQuery("SELECT case_upc FROM " + this.tableName + " WHERE case_upc = $1", [case_upc]);
+            return db.execSingleQuery("SELECT COUNT(*) FROM " + this.tableName + " WHERE case_upc = $1", [case_upc]);
         }
         else if(num) {
-            return db.execSingleQuery("SELECT case_upc FROM " + this.tableName + " WHERE num= $1", [num]);
+            return db.execSingleQuery("SELECT COUNT(*) FROM " + this.tableName + " WHERE num= $1", [num]);
         }
         
         return Promise.reject("No valid name or num provided.");
@@ -132,105 +132,30 @@ class SKU extends CRUD {
         }
     }
 
+    conflictUpdate(dataObj) {
+        let q = super.getUpdateQueryObj(dataObj);
+        let expr = squel.expr();
+        expr = expr.or("case_upc = ?", dataObj.case_upc);
+        if(dataObj.num) {
+            expr = expr.or("num = ?", dataObj.num);
+        }
+        q = q.where(expr);
+        q = q.toString();
+        return q;
+    }
+
+    duplicateObjs(jsonList) {
+        let b = super.checkDuplicateInObject('num', jsonList); 
+        let c = super.checkDuplicateInObject('case_upc', jsonList); 
+        return b || c;
+    }
+
     remove(id) {
         if(!id) {
             return Promise.reject("Bad num.");
         }
         return db.execSingleQuery("DELETE FROM " + this.tableName + " WHERE id = $1", [id]);
     }
-
-    checkDuplicateRecords(jsonList) {
-
-    }
-
-    bulkCleanData(jsonList) {
-
-        for(let i = 0; i < jsonList.length; i++) {
-            let obj = jsonList[i];
-            for(let key in obj) {
-                if(obj[key].length === 0) {
-                    obj[key] = null;
-                }
-            }
-        }
-    }
-
-    generateErrorResult(errMsgs) {
-        let errObj = {};
-        errObj.abort = false;
-        errObj.errors = [];
-        for(let i = 0; i < errMsgs.length; i++) {
-            let tempObj = errMsgs[i];
-            let code = errMsgs[i].code;
-            if(code === "22P02") {
-                tempObj.detail = "Syntax error at record " + i;
-            }
-            errObj.errors.push({
-                code: tempObj.code,
-                detail: tempObj.detail
-            });
-            
-            //syntax error, not null violation, foreign key violation
-            if(code === "22P02" || code === "23502" || code === "23503") {
-                errObj.abort = true;
-            }
-        }
-        return errObj;
-    }
-
-    bulkImport(csv_file, cb) {
-        let table = this.tableName;
-        let that = this;
-        csv().fromFile(csv_file)
-        .then(function(rows) {
-            that.bulkCleanData(rows);
-            return rows;
-        })
-        .then(function(rows) {
-            return db.getSingleClient()
-            .then(function(client) {
-                let error = false;
-                let errMsgs = [];
-                let prom = client.query("BEGIN");
-                for(let i = 0; i < rows.length; i++) {
-                    let query = QueryGenerator.genInsQuery(rows[i], table).toString();
-                    console.log(query);
-                    prom = prom.then(function(r) {
-                        return client.query("SAVEPOINT point" + i).then(function(res) {
-                            return client.query(query).catch(function(err) {
-                                error = true;
-                                //TODO SAVE THE ERROR MESSAGES
-                                errMsgs.push(err);
-                                client.query("ROLLBACK TO SAVEPOINT point" + i);
-                            });
-
-                        });
-                    })
-                }
-                prom.then(function(res) {
-                    let errObj = null;
-                    if(error) {
-                        errObj = that.generateErrorResult(errMsgs)
-                        //for(let i = 0;  i < errMsgs.length; i++) {
-                            //console.log(errMsgs[i].code);
-                            //console.log(errMsgs[i].detail);
-                        //}
-                        console.log("There was an error, rolling back");
-
-                        client.query("ROLLBACK");
-                        client.query("ABORT");
-                    }
-                    else {
-                        console.log("No errors, committing transaction");
-                        client.query("COMMIT");
-                    }
-
-                    cb(errObj);
-                });
-            });
-        });
-    }
-
 }
 //const sku = new SKU();
 //sku.bulkImport("./file.csv", function(err) {

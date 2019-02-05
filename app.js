@@ -13,6 +13,7 @@ var ingredientsRouter = require('./routes/ingredients');
 var productlineRouter = require('./routes/productline');
 var skuRouter = require('./routes/sku');
 var mgRouter = require('./routes/manufacturing_goals');
+var bulkRouter = require('./routes/bulk');
 
 var http = require('http');
 var https = require('https');
@@ -49,6 +50,7 @@ app.use('/ingredients', ingredientsRouter);
 app.use('/productline', productlineRouter);
 app.use('/sku', skuRouter);
 app.use('/manufacturing_goals', mgRouter);
+app.use('/bulk', bulkRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

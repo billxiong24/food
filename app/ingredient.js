@@ -15,13 +15,13 @@ class Ingredient extends CRUD {
         let num = obj.num;
         let name = obj.name;
         if(num && name) {
-            return db.execSingleQuery("SELECT name FROM " + this.tableName + " WHERE name = $1 OR num = $2", [name, num]);
+            return db.execSingleQuery("SELECT COUNT(*) FROM " + this.tableName + " WHERE name = $1 OR num = $2", [name, num]);
         }
         else if(name){
-            return db.execSingleQuery("SELECT name FROM " + this.tableName + " WHERE name = $1", [name]);
+            return db.execSingleQuery("SELECT COUNT(*) FROM " + this.tableName + " WHERE name = $1", [name]);
         }
         else if(num) {
-            return db.execSingleQuery("SELECT name FROM " + this.tableName + " WHERE num= $1", [num]);
+            return db.execSingleQuery("SELECT COUNT(*) FROM " + this.tableName + " WHERE num= $1", [num]);
         }
         
         return Promise.reject("No valid name or num provided.");
@@ -73,6 +73,23 @@ class Ingredient extends CRUD {
 
     update(dataObj, id) {
         return super.change(dataObj, id, "id");
+    }
+    conflictUpdate(dataObj) {
+        let q = super.getUpdateQueryObj(dataObj);
+        let expr = squel.expr();
+        expr = expr.or("name = ?", dataObj.name);
+        if(dataObj.num) {
+            expr = expr.or("num = ?", dataObj.num);
+        }
+        q = q.where(expr);
+        q = q.toString();
+        return q;
+    }
+
+    duplicateObjs(jsonList) {
+        let b = super.checkDuplicateInObject('num', jsonList); 
+        let c = super.checkDuplicateInObject('name', jsonList); 
+        return b || c;
     }
 
     remove(id) {
