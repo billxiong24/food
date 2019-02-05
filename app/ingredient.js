@@ -15,13 +15,13 @@ class Ingredient extends CRUD {
         let num = obj.num;
         let name = obj.name;
         if(num && name) {
-            return db.execSingleQuery("SELECT name FROM " + this.tableName + " WHERE name = $1 OR num = $2", [name, num]);
+            return db.execSingleQuery("SELECT COUNT(*) FROM " + this.tableName + " WHERE name = $1 OR num = $2", [name, num]);
         }
         else if(name){
-            return db.execSingleQuery("SELECT name FROM " + this.tableName + " WHERE name = $1", [name]);
+            return db.execSingleQuery("SELECT COUNT(*) FROM " + this.tableName + " WHERE name = $1", [name]);
         }
         else if(num) {
-            return db.execSingleQuery("SELECT name FROM " + this.tableName + " WHERE num= $1", [num]);
+            return db.execSingleQuery("SELECT COUNT(*) FROM " + this.tableName + " WHERE num= $1", [num]);
         }
         
         return Promise.reject("No valid name or num provided.");
