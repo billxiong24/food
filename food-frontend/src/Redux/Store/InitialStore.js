@@ -26,6 +26,7 @@ export const InitialStore = {
     end:false,
     skus: [],
     errMsg: null,
+    errors:[],
     ingDependency: [],
   },
   // Persistent data concerning productline view
@@ -98,5 +99,8 @@ export const InitialStore = {
       current_ingredients:[],
       errors:[],
       new: false
+  },
+  bulk_import:{
+    errors:[]
   }
 }

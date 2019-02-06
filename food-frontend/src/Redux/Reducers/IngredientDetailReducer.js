@@ -43,7 +43,7 @@ import { addToList, removeFromList } from '../../Resources/common';
             console.log("ING_DET_GET_SKUS REDUCER")
             console.log(action.data)
             return Object.assign({}, state, {
-                skus:[]
+                skus:action.data
             });
         case ING_DET_ADD_ING:
             console.log("ING_DET_ADD_ING REDUCER")

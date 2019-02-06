@@ -17,6 +17,9 @@ import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
 import { isValidIng, getSkuErrors } from '../../Resources/common';
 import EditableNumeric from '../GenericComponents/EditableNumeric';
 import {store} from "../../index"
+import axios from 'axios';
+import FileDownload from 'js-file-download';
+import common from '../../Resources/common';
 
 const styles = {
     ingredient_page_container:{
@@ -98,6 +101,23 @@ class SKUDetailViewPage extends Component {
             prd_line:product_line
         })
     }
+
+    onExportClick = () => {
+        axios.post(common.hostname + 'manufacturing_goals/exported_file', {
+            data: this.props.current_ingredients.map((ing) => ({
+                sku_num:this.state.num,
+                ingred_num:ing.name,
+                quantity: ing.quantity
+              })),
+          format: "csv",
+        })
+          .then((response) => {
+            FileDownload(response.data, 'formulas.csv');
+          })
+          .catch(err => {
+            console.log(err);
+          })
+      }
 
     
 
@@ -285,6 +305,18 @@ class SKUDetailViewPage extends Component {
                             onClick = {this.onDelete}
                         >
                             DELETE
+                        </Button>
+                        :
+                        <div></div>
+                    }
+                    {
+                        (!editing && !newValue)?
+                        <Button 
+                            className={classes.button} 
+                            editing={this.state.editing}
+                            onClick = {this.onExportClick}
+                        >
+                            EXPORT TO CSV
                         </Button>
                         :
                         <div></div>

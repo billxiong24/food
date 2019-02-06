@@ -16,12 +16,9 @@ import LogoutPage from './LoginPage/LogoutPage';
 import BulkTransactionPage from './BulkTransactionPage/BulkTransactionPage'
 import CalculatorPage from './CalculatorPage/CalculatorPage';
 import IngredientDetailViewPage from './IngredientDetailViewPage/IngredientDetailViewPage';
-<<<<<<< HEAD
 import SKUDetailViewPage from './SKUDetailViewPage/SKUDetailViewPage'
 import BulkImportPage from './BulkImport/BulkImportPage'
-=======
 import common from '../Resources/common';
->>>>>>> 19d71b7730ae478e0678efc365c890d11130ba10
 
 const styles = {
 
