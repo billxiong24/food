@@ -16,7 +16,7 @@ class Users extends CRUD {
             return Promise.reject("Bad Username.");
         }
 
-        let query = "SELECT uname FROM " + this.tableName + " WHERE uname=$1";
+        let query = "SELECT COUNT(*) FROM " + this.tableName + " WHERE uname=$1";
         return db.execSingleQuery(query, [dataObj.uname]);
     }
 
