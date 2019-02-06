@@ -771,7 +771,7 @@ export const prdlineSearch = (name) => {
     let offset = limit ? (curPage - 1) * limit : 0;
     return axios.get(hostname + 'productline/search', {
       params: {
-        name: name,
+        names: name,
         offset: offset,
         limit: limit,
       }
