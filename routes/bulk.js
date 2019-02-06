@@ -6,6 +6,7 @@ const CRUD = require('../app/CRUD');
 const SKU = require('../app/sku');
 const Ingredient = require('../app/ingredient');
 const SKUIngred = require("../app/sku_ingred");
+const ProdLine = require("../app/productline");
 const upload = multer({
     storage: multer.memoryStorage()
 }).single('csvfile')
@@ -24,6 +25,9 @@ function getCRUD(type) {
     }
     else if(type === 'formula') {
         crud = new SKUIngred();
+    }
+    else if(type === 'productline') {
+        crud = new ProdLine();
     }
     else {
         return null;

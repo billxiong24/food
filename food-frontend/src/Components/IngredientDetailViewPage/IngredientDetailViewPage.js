@@ -6,18 +6,27 @@ import { Typography, Button } from '@material-ui/core';
 import EditableText from '../GenericComponents/EditableText';
 import labels from '../../Resources/labels';
 import { ingDetUpdateIng, ingDetAddIng, ingDetDeleteError, ingDetAddError, ingDetSetEditing, ingDetSetNew } from '../../Redux/Actions/ActionCreators/IngredientDetailsActionCreators';
-import { routeToPage, ingDeleteIng, ingAddDependency } from '../../Redux/Actions';
+import { routeToPage, ingDeleteIng, ingAddDependency, ingRemoveDependency } from '../../Redux/Actions';
 import IngredientSKUList from './IngredientSKUList';
 import { withRouter, Link } from 'react-router-dom';
 import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
 import EditableNumeric from '../GenericComponents/EditableNumeric';
 import common, { isValidIng, getIngErrors } from '../../Resources/common';
 import {store} from "../../index"
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
+
 
 const styles = {
     ingredient_page_container:{
         display:'flex',
         flexDirection: 'row',
+    },
+    left:{
+        display:'flex',
+        flexDirection: 'column',
+        alignItems:'center',
+        width:'40vh'
     },
     ingredient_detail_view:{    
         display:'flex',
@@ -57,7 +66,10 @@ class IngredientDetailViewPage extends Component {
             packageSize:this.props.packageSize,
             costPerPackage:this.props.costPerPackage,
             comment:this.props.comment,
-            new:false
+            new:false,
+            checked:this.props.dependency.filter((ing) => {
+              return ing.id === this.props.id;
+            }).length === 1,
         }
         console.log("INGREDIENT DETAIL VIEW")
         console.log(this.props.id)
@@ -153,6 +165,31 @@ class IngredientDetailViewPage extends Component {
         console.log(ing)
         this.props.delete(ing)
         
+    }
+
+    dependencyChange = () =>{
+      const ing = {
+        name:this.state.ingredientName,
+        num:this.state.ingredientNum,
+        vend_info:this.state.vend_info,
+        pkg_size:this.state.packageSize,
+        pkg_cost:this.state.costPerPackage,
+        comments:this.state.comment,
+        id:this.props.id,
+        skus:this.props.skus
+    }
+    console.log(this.state.checked);
+      if(this.state.checked) {
+        this.props.removeIngFromReport(ing)
+        this.setState({
+          checked: false,
+        })
+      } else {
+        this.props.addIngToReport(ing)
+        this.setState({
+          checked: true,
+        });
+      }
     }
 
     addToReport = () => {
@@ -287,20 +324,23 @@ class IngredientDetailViewPage extends Component {
                     }
                     {
                         (!newValue && !editing)?
-                        <Button 
-                            className={classes.button} 
-                            editing={editing}
-                            onClick = {this.addToReport}
-                        >
-                            ADD TO REPORT
-                        </Button>
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    checked={this.state.checked}
+                                    onChange={this.dependencyChange}
+                                    color="primary"
+                                />
+                            }
+                            label="Add to Dependency"
+                        />
                         :
                         <div></div>
                     }
 
                     
                 </div>
-                <div>
+                <div className={classes.left}>
                     <Typography>
                         SKU List
                     </Typography>
@@ -323,7 +363,6 @@ class IngredientDetailViewPage extends Component {
 
 
 const mapStateToProps = state => {
-    console.log(state)
     return {
         ingredientName: state.ingredient_details.ingredientName,
         ingredientNum: state.ingredient_details.ingredientNum,
@@ -337,7 +376,8 @@ const mapStateToProps = state => {
         users: state.users,
         valid: state.ingredient_details.valid,
         editing: state.ingredient_details.editing,
-        newValue: state.ingredient_details.new
+        newValue: state.ingredient_details.new,
+        dependency: state.ingredients.ingDependency,
     };
 };
 
@@ -372,6 +412,9 @@ const mapDispatchToProps = (dispatch, ownProps) => {
         },
         edit: () => {
             dispatch(ingDetSetEditing(true))
+        },
+        removeIngFromReport: ing => {
+            dispatch(ingRemoveDependency(ing))
         }
     };
 };

@@ -1,25 +1,20 @@
 import React, { Component } from 'react';
 import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
-import SimpleList from '../GenericComponents/ItemList';
 import ItemList from '../GenericComponents/ItemList';
-import IntegrationReactSelect from '../GenericComponents/IntegrationReactSelect';
-import { purple } from '@material-ui/core/colors';
-import color from '@material-ui/core/colors/cyan';
-import Card from '@material-ui/core/Card';
 import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
 import { connect } from 'react-redux';
 import TextField from '@material-ui/core/TextField';
 import ProductLineCard from './ProductLineCard';
 import Fab from '@material-ui/core/Fab';
-import labels from '../../Resources/labels'
 import { prdlineChangeLimit, prdlineNextPage, prdlinePrevPage, prdlineSearch, prdlineAddPrdline, prdlineUpdatePrdline, prdlineDeletePrdline } from '../../Redux/Actions/index'
 import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
 import back from '../../Resources/Images/baseline-navigate_before-24px.svg'
 import next from '../../Resources/Images/baseline-navigate_next-24px.svg'
 import { IconButton } from '@material-ui/core';
 import common from '../../Resources/common';
+import axios from 'axios';
+import FileDownload from 'js-file-download';
 
 const styles = {
   ingredients_list:{
@@ -40,16 +35,18 @@ const styles = {
   top_section:{
     width: '100%',
     'text-align':'left',
+    display:'flex',
+    flexDirection:'row',
   },
   search_bar:{
-    width: '90%',
+    width: '80%',
     display:'inline-flex'
   },
   query_button:{
     display:'inline-flex',
     width: '6%',
     'padding-left':'2%',
-    'padding-right':'2%',
+    marginTop:15,
   },
   list_container:{
     overflow:'auto',
@@ -101,7 +98,8 @@ class ProductLinePage extends Component {
   }
 
   handleQuery(){
-    this.props.prdlineSearch(this.state.query.slice());
+    console.log(this.state.query);
+    this.props.prdlineSearch(this.state.query);
   }
 
   addProductLine(prdline){
@@ -178,6 +176,23 @@ class ProductLinePage extends Component {
     this.handleQuery();
   }
 
+  onExportClick = () => {
+    axios.post(common.hostname + 'manufacturing_goals/exported_file', {
+      data: this.props.productLine.productLines.map((e)=>{
+        return {
+          name: e.name,
+        }
+      }),
+      format: "csv",
+    })
+      .then((response) => {
+        FileDownload(response.data, 'product_lines.csv');
+      })
+      .catch(err => {
+        console.log(err);
+      })
+  }
+
 
   render() {
     const { classes, productLine } = this.props
@@ -187,26 +202,37 @@ class ProductLinePage extends Component {
           <div className={classes.top_section}>
             <div className={classes.search_bar}>
               <TextField
-              id="outlined-search"
-              label="Search Product Line"
-              type="search"
-              className={classes.textField}
-              margin="normal"
-              variant="outlined"
-              fullWidth
-              value={this.state.query}
-              onChange={(e)=>{this.handleQueryChange(e)}}
-              onKeyPress={(e)=>{this.handleEnter(e)}}
+                id="outlined-search"
+                label="Search Product Line"
+                type="search"
+                className={classes.textField}
+                margin="normal"
+                variant="outlined"
+                fullWidth
+                value={this.state.query}
+                onChange={(e) => { this.handleQueryChange(e) }}
+                onKeyPress={(e) => { this.handleEnter(e) }}
               />
             </div>
             <div className={classes.query_button}>
               <Fab
-              variant="extended" 
-              aria-label="Delete" 
-              className={classes.fab}
-              onClick={(e)=>{this.handleQuery()}}
+                variant="extended"
+                aria-label="Delete"
+                className={classes.fab}
+                onClick={(e) => { this.handleQuery() }}
               >
                 Search
+              </Fab>
+            </div>
+            <div className={classes.query_button}>
+              <Fab
+                variant="extended"
+                aria-label="Delete"
+                className={classes.fab}
+                onClick={this.onExportClick}
+                disabled={productLine.productLines.length === 0}
+              >
+                Export Search
               </Fab>
             </div>
           </div>

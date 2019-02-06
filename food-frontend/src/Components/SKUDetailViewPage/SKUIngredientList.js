@@ -23,7 +23,9 @@ const styles = {
         marginBottom:20,
         marginTop:20,
         backgroundColor:labels.colors.primaryColor,
-        padding:10
+        padding:10,
+        width:'300px',
+        height:'50px'
       },
       cardAction:{
         padding:10
@@ -49,6 +51,10 @@ const styles = {
       },
       button:{
           width:'100%'
+      },
+      icon:{
+          float:'right',
+          margin: 'auto 0'
       }
 
 };
@@ -84,21 +90,23 @@ class SKUIngredientList extends Component {
             <div>
                 {
                 (current_ingredients.map((item, index) => (
+                    
                     <Card className={classes.card} key={index}>
                         
                         <CardContent >
                             <Typography className={classes.ingredrient_name} color="textSecondary" gutterBottom>
-                                {item.name}
-                            </Typography>
-                            <Typography className={classes.ingredient_id} color="textSecondary" gutterBottom>
-                                {item.num}
+                                {item.name + " " + item.num}
                             </Typography>
                             <IconButton className={classes.icon} onClick={() => this.onClick(item)}>
                                 <img src={delete_icon} />
-                             </IconButton>
+                            </IconButton>
+                            
+                            
                         </CardContent>
                         
                     </Card>
+                    
+                    
                 ))
                 )}
             </div>
@@ -110,11 +118,9 @@ class SKUIngredientList extends Component {
                         
                         <CardContent >
                             <Typography className={classes.ingredrient_name} color="textSecondary" gutterBottom>
-                                {item.name}
+                                {item.name + item.num}
                             </Typography>
-                            <Typography className={classes.ingredient_id} color="textSecondary" gutterBottom>
-                                {item.num}
-                            </Typography>
+                            
                             
                         </CardContent>
                         

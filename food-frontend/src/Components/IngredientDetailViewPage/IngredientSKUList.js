@@ -14,7 +14,7 @@ import { ingDetSetIng } from '../../Redux/Actions/ActionCreators/IngredientDetai
 
 const styles = {
     card: {
-        width: '100 %',
+        width: '200px',
         marginBottom:20,
         marginTop:20,
       },
@@ -74,10 +74,7 @@ class IngredientSKUList extends Component {
                         >
                         <CardContent onClick={console.log("")}>
                             <Typography className={classes.ingredrient_name} color="textSecondary" gutterBottom>
-                                {item.name}
-                            </Typography>
-                            <Typography className={classes.ingredient_id} color="textSecondary" gutterBottom>
-                                {item.unit_upc}
+                                {item.name + ":" + item.unit_size + "*" + item.count_per_case }
                             </Typography>
                         </CardContent>
                         </CardActionArea>

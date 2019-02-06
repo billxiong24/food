@@ -46,7 +46,8 @@ const styles = {
     list_autocomplete_container:{
         display:'flex',
         flexDirection: 'column',
-        alignItems: 'center'
+        alignItems: 'center',
+        width: '50vh'
     },
 
 };
@@ -192,7 +193,7 @@ class SKUDetailViewPage extends Component {
         const { classes , editing, newValue} = this.props
         return (
             <div className = {classes.ingredient_page_container}>
-                <Button component={Link} to={'/skus'}>
+                <Button onClick={this.props.back}>
                     Back
                 </Button>
                 <div className = {classes.ingredient_detail_view}>
@@ -325,7 +326,7 @@ class SKUDetailViewPage extends Component {
                         <div></div>
                     }
                 </div>
-                <div>
+                
                     <div className={classes.list_autocomplete_container}>
                         <Typography>
                             Ingredient List
@@ -334,7 +335,7 @@ class SKUDetailViewPage extends Component {
                         <SKUIngredientList editing={editing}></SKUIngredientList>
 
                     </div>
-                </div>
+                
                 {
           this.props.errors.map((error, index) => (
             <SimpleSnackbar

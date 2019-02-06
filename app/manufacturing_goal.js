@@ -12,7 +12,7 @@ class ManufacturingGoals extends CRUD {
     }
 
     checkExisting(dataObj) {
-        let query = "SELECT * FROM " + this.tableName + " WHERE user_id = $1 AND name = $2";
+        let query = "SELECT COUNT(*) FROM " + this.tableName + " WHERE user_id = $1 AND name = $2";
         return db.execSingleQuery(query, [dataObj.user_id, dataObj.name]);
     }
 
@@ -23,6 +23,7 @@ class ManufacturingGoals extends CRUD {
         let query = squel.insert()
         .into(this.tableName)
         .setFieldsRows([dataObj]).toString();
+        console.log(query);
         return super.insert(query, dataObj, "This goal exists already.");
     }
 
