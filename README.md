@@ -4,9 +4,9 @@
 Ubuntu 18.04     
 Node.JS v8.10    
 PostgreSQL v10.6    
-      
-## Deployment Guide
 
+## Deployment Guide
+   
 ```
 git clone https://github.com/billxiong24/food.git   
 cd food/
@@ -60,9 +60,18 @@ Follow prompts.
 ```npm start``` from root of repository will start server on port 8000.    
 
   
-
+   
 
     
+   
+     
+## Development Guide
+Follow the deployment guide above to set up local environment. 
+In the ```.env``` file, set ```HTTPS='false'```, to disable HTTPS.   
+
+After that, run ```npm start```. There will be a server on ```localhost:8000```.
+To start the React Server, ```cd food-frontend/ && npm start```. A browser tab should appear.   
+
     
 ## API documentation      
 ## SKUS      
