@@ -16,7 +16,7 @@ class ProductLine extends CRUD {
             return Promise.reject("Bad productline name.");
         }
 
-        let query = "SELECT * FROM " + this.tableName + " WHERE name=$1";
+        let query = "SELECT COUNT(*) FROM " + this.tableName + " WHERE name=$1";
         return db.execSingleQuery(query, [dataObj.name]);
     }
 
@@ -59,6 +59,19 @@ class ProductLine extends CRUD {
             //verify that no SKUs depend on this product line
             return db.execSingleQuery("DELETE FROM " + this.tableName + " WHERE id=$1", [id]);
         });
+    }
+
+    duplicateObjs(jsonList) {
+        return super.checkDuplicateInObject('name', jsonList); 
+    }
+
+    conflictUpdate(dataObj) {
+        let q = super.getUpdateQueryObj(dataObj);
+        let expr = squel.expr();
+        expr = expr.or("name= ?", dataObj.name);
+        q = q.where(expr);
+        q = q.toString();
+        return q;
     }
 }
 
