@@ -137,7 +137,7 @@ class CRUD {
                     return client.query(query).catch(function(err) {
                         error = true;
                         errMsgs.push(err);
-                        console.log(err);
+                        console.log("found error.");
                         client.query("ROLLBACK");
                     });
                 });
@@ -148,7 +148,7 @@ class CRUD {
                     console.log("there's an error, rolling back");
                     client.query("ROLLBACK");
                     client.query("ABORT");
-                    cb(errMsgs);
+                    cb(that.generateErrorResult(errMsgs));
                 }
                 else {
                     console.log("No errors, committing transaction");
