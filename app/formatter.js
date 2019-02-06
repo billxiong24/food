@@ -21,13 +21,19 @@ class Formatter {
     generateCSV(jsonList) {
         if(jsonList.length === 0)
             return "";
-        let fields = [];
-        let obj = jsonList[0];
-        for(let key in obj) {
-            fields.push(key);
+        let fields = {};
+        for(let i = 0; i < jsonList.length; i++) {
+            let obj = jsonList[i];
+            for(let key in obj) {
+                fields.key = true;
+            }
+        }
+        let header = [];
+        for(let k in fields) {
+            header.push(fields[k]);
         }
 
-        const opts = { fields };
+        const opts = { header };
         let csv = null;
 
         try {
