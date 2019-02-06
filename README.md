@@ -65,7 +65,11 @@ Follow prompts.
     
    
      
-## Development Guide
+## Development Guide  
+We use NodeJS and ExpressJS to build our REST API. We use PostgreSQL to store all our data.   
+Each entity (SKU, Ingredient, Product line) is its own table. There are tables for relationships,
+such as SKU and Ingred, goals and SKUs. The data tables are in ```food.sql```.  
+We use ReactJS to build the views and front end.  
 Follow the deployment guide above to set up local environment. 
 In the ```.env``` file, set ```HTTPS='false'```, to disable HTTPS.   
 
