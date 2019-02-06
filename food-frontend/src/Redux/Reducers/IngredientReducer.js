@@ -1,5 +1,5 @@
 import { ING_ADD_FILTER, ING_REMOVE_FILTER, ING_SEARCH, ING_SORT_BY,
-  ING_ADD_ING, ING_GET_SKUS, ING_UPDATE_ING, ING_DELETE_ING, ING_SET_FILTER_TYPE, ING_ADD_DEPENDENCY, ING_REMOVE_DEPENDENCY, ING_ADD_ERROR, ING_DELETE_ERROR } from '../Actions/IngredientActionTypes';
+  ING_ADD_ING, ING_GET_SKUS, ING_UPDATE_ING, ING_DELETE_ING, ING_SET_FILTER_TYPE, ING_ADD_DEPENDENCY, ING_REMOVE_DEPENDENCY, ING_ADD_ERROR, ING_DELETE_ERROR, ING_ADD_ING_TO_DEP_REPORT } from '../Actions/IngredientActionTypes';
 import { addToList, removeFromList } from '../../Resources/common';
 
 const initialState = {
@@ -110,7 +110,12 @@ export default function ingredientReducer(state = initialState, action) {
       return Object.assign({}, state, {
         errors: removeFromList(action.data, state.errors)
       });
-
+    case ING_ADD_ING_TO_DEP_REPORT:
+      console.log("ING_ADD_ING_TO_DEP_REPORT REDUCER")
+      console.log(action.data)
+      return Object.assign({}, state, {
+        ingDependency: addToList(action.data, state.ingDependency)
+      });
     default:
       return state;
   }

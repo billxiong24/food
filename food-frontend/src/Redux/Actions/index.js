@@ -2,7 +2,7 @@ import { GET_INGREDIENTS_DUMMY_DATA } from './ActionTypes';
 import { USER_LOG_OUT, USER_LOG_IN_ATTEMPT, USER_CREATE_ATTEMPT } from './UserActionTypes';
 import { ROUTERS_ROUTE_TO_PAGE } from './RoutingActionTypes';
 import { ING_ADD_DEPENDENCY, ING_REMOVE_DEPENDENCY, ING_ADD_FILTER, ING_REMOVE_FILTER, ING_SEARCH, ING_SORT_BY,
-  ING_ADD_ING, ING_GET_SKUS, ING_UPDATE_ING, ING_DELETE_ING, ING_SET_FILTER_TYPE, ING_ADD_ERROR, ING_DELETE_ERROR } from './IngredientActionTypes';
+  ING_ADD_ING, ING_GET_SKUS, ING_UPDATE_ING, ING_DELETE_ING, ING_SET_FILTER_TYPE, ING_ADD_ERROR, ING_DELETE_ERROR, ING_ADD_ING_TO_DEP_REPORT } from './IngredientActionTypes';
 import { SKU_ADD_FILTER, SKU_REMOVE_FILTER, SKU_SEARCH, SKU_SORT_BY,
     SKU_GET_ING, SKU_ADD_ING, SKU_DELETE_ING, SKU_ADD_SKU, SKU_UPDATE_SKU,
     SKU_DELETE_SKU, 
@@ -569,6 +569,15 @@ export const ingAddIng = (ing) => {
           throw (err.response);
         }
       });
+  }
+}
+
+export const ingAddToDependencyReport = (ing) => {
+  return (dispatch) => {
+    return dispatch({
+      type: ING_ADD_ING_TO_DEP_REPORT,
+      data: ing
+    })
   }
 }
 

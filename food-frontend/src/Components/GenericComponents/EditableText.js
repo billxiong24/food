@@ -14,37 +14,37 @@ const styles = {
         pointerEvents:'none',
         borderRadius: 10
     },
-    input: {
-        color: "white",
-        borderColor: 'white'
-      },
-    active_input:{
-        color: "white"
-    },
-    cssLabel: {
-        color : 'white',
-      },
+    // input: {
+    //     color: "white",
+    //     borderColor: 'white'
+    //   },
+    // active_input:{
+    //     color: "white"
+    // },
+    // cssLabel: {
+    //     color : 'white',
+    //   },
     
-      cssOutlinedInput: {
-        '&$cssFocused $notchedOutline': {
-          borderColor: labels.colors.primaryColor,
-        },
-        color:'white'
-      },
+    //   cssOutlinedInput: {
+    //     '&$cssFocused $notchedOutline': {
+    //       borderColor: labels.colors.primaryColor,
+    //     },
+    //     color:'white'
+    //   },
     
-      cssFocused: {
-        '&$cssFocused': {
-            borderColor: labels.colors.primaryColor,
-            color: labels.colors.primaryColor,
-        }
-      },
+    //   cssFocused: {
+    //     '&$cssFocused': {
+    //         borderColor: labels.colors.primaryColor,
+    //         color: labels.colors.primaryColor,
+    //     }
+    //   },
     
-      notchedOutline: {
-        color:'white',
-        borderWidth: '1px',
-        borderColor: 'white'
+    //   notchedOutline: {
+    //     color:'white',
+    //     borderWidth: '1px',
+    //     borderColor: 'white'
         
-      },
+    //   },
 };
 
 class EditableText extends Component {

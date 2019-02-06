@@ -134,7 +134,8 @@ export const InitialStore = {
     comment:null,
     id:null,
     skus:[],
-    errors:[]
+    errors:[],
+    new: false
   },
   sku_details:{
       name: "Campbell SKU Name",
@@ -151,6 +152,7 @@ export const InitialStore = {
       product_lines:[],
       ingredient_suggestions:[],
       current_ingredients:[],
-      errors:[]
+      errors:[],
+      new: false
   }
 }

@@ -31,6 +31,9 @@ import IngredientsPageSearchBar from './IngredientsPageSearchBar';
 import { ingDetSetIng } from '../../Redux/Actions/ActionCreators/IngredientDetailsActionCreators';
 import { withRouter } from 'react-router-dom'
 import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
+import axios from 'axios';
+import FileDownload from 'js-file-download';
+import common from '../../Resources/common';
 
 const styles = {
   card: {
@@ -140,7 +143,16 @@ class IngredientsPage extends Component {
   }
 
   onExportClick = () => {
-
+    axios.post(common.hostname + 'manufacturing_goals/exported_file', {
+      data: this.props.items,
+      format: "csv",
+    })
+      .then((response) => {
+        FileDownload(response.data, 'ingredients.csv');
+      })
+      .catch(err => {
+        console.log(err);
+      })
   }
 
 
@@ -177,6 +189,7 @@ class IngredientsPage extends Component {
             </Button>
             <Button
               className={classes.export_to_csv}
+              onClick={this.onExportClick}
             >
               Export to CSV
             </Button>
@@ -204,7 +217,8 @@ class IngredientsPage extends Component {
 const mapStateToProps = state => {
   return {
     dummy_ingredients: state.dummy_ingredients,
-    errors: state.ingredients.errors
+    errors: state.ingredients.errors,
+    items: state.ingredients.items
   };
 };
 

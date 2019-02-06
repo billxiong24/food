@@ -36,11 +36,14 @@ class ProductLineDropdown extends Component {
         console.log("PRODUCTLINEDROPDOWN COMPONENT")
         console.log(current_product_line)
         console.log(product_lines)
-        let selected_index = 0;
+        let selected_index = -1;
         for (var i = 0; i < this.state.items.length; i++) {
             if(current_product_line == this.state.items[i]){
                 selected_index = i
             }
+       }
+       if(selected_index == -1){
+           selected_index = 0
        }
         return (
             <DropdownButton 

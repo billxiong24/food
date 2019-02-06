@@ -28,10 +28,12 @@ import SortByDropdown from './SortByDropdown';
 import PageSelector from './PageSelector';
 import SKUsPageSearchBar from './SKUsPageSearchBar';
 import { withRouter } from 'react-router-dom'
-import { skuDetSetSku } from '../../Redux/Actions/ActionCreators/SKUDetailsActionCreators';
+import { skuDetSetSku, skuDetGetProductLine, skuDetSetNew } from '../../Redux/Actions/ActionCreators/SKUDetailsActionCreators';
 import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
 import { skuDeleteError } from '../../Redux/Actions';
-
+import axios from 'axios';
+import FileDownload from 'js-file-download';
+import common from '../../Resources/common';
 
 const styles = {
   card: {
@@ -141,7 +143,17 @@ class SKUsPage extends Component {
   }
 
   onExportClick = () => {
-
+    console.log(this.props.items)
+    axios.post(common.hostname + 'manufacturing_goals/exported_file', {
+      data: this.props.items,
+      format: "csv",
+    })
+      .then((response) => {
+        FileDownload(response.data, 'skus.csv');
+      })
+      .catch(err => {
+        console.log(err);
+    })
   }
 
 
@@ -178,6 +190,7 @@ class SKUsPage extends Component {
             </Button>
             <Button
               className={classes.export_to_csv}
+              onClick={this.onExportClick}
             >
               Export to CSV
             </Button>
@@ -205,28 +218,36 @@ class SKUsPage extends Component {
 const mapStateToProps = state => {
   return {
     dummy_SKUs: state.dummy_SKUs,
-    errors: state.skus.errors
+    errors: state.skus.errors,
+    items: state.skus.items
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return{
-    setSKU: (history) => {
-      dispatch(skuDetSetSku({      
-        name: "",     
-        case_upc: null,     
-        unit_upc: null,     
-        unit_size: "",     
-        count_per_case: null,    
-        prd_line: "",    
-        comments: "",
-        id:null    
-    }))
-    console.log("History")
-      history.push('/skus/details')
-    },
     deleteError: (error) => {
       dispatch(skuDeleteError(error))
+    },
+    setSKU: (history) => {
+      Promise.resolve(dispatch(skuDetGetProductLine())) // dispatch
+          .then(function (response) {
+            dispatch(skuDetSetSku({      
+              name: "",     
+              case_upc: null,     
+              unit_upc: null,     
+              unit_size: "",     
+              count_per_case: null,    
+              prd_line: "",    
+              comments: "",
+              id:null    
+          }))
+          dispatch(skuDetSetNew(true))
+          console.log("History")
+            history.push('/skus/details')
+
+          return response;
+          })
+          .then(function(response){console.log("@RESPONSE",response)})
     }
   }
 }

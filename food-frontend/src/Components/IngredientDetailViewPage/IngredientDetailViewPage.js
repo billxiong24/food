@@ -6,7 +6,7 @@ import { Typography, Button } from '@material-ui/core';
 import EditableText from '../GenericComponents/EditableText';
 import labels from '../../Resources/labels';
 import { ingDetUpdateIng, ingDetAddIng, ingDetDeleteError, ingDetAddError } from '../../Redux/Actions/ActionCreators/IngredientDetailsActionCreators';
-import { routeToPage, ingDeleteIng } from '../../Redux/Actions';
+import { routeToPage, ingDeleteIng, ingAddDependency } from '../../Redux/Actions';
 import IngredientSKUList from './IngredientSKUList';
 import { withRouter, Link } from 'react-router-dom';
 import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
@@ -164,6 +164,20 @@ class IngredientDetailViewPage extends Component {
         
     }
 
+    addToReport = () => {
+        const ing = {
+            name:this.state.ingredientName,
+            num:this.state.ingredientNum,
+            vend_info:this.state.vend_info,
+            pkg_size:this.state.packageSize,
+            pkg_cost:this.state.costPerPackage,
+            comments:this.state.comment,
+            id:this.props.id,
+            skus:this.props.skus
+        }
+        this.props.addIngToReport(ing)
+    }
+
     render() {
         const { classes } = this.props
         return (
@@ -262,6 +276,18 @@ class IngredientDetailViewPage extends Component {
                         :
                         <div></div>
                     }
+                    {
+                        (!this.state.new && !this.state.editing)?
+                        <Button 
+                            className={classes.button} 
+                            editing={this.state.editing}
+                            onClick = {this.addToReport}
+                        >
+                            ADD TO REPORT
+                        </Button>
+                        :
+                        <div></div>
+                    }
 
                     
                 </div>
@@ -297,7 +323,8 @@ const mapStateToProps = state => {
         costPerPackage: state.ingredient_details.costPerPackage,
         comment: state.ingredient_details.comment,
         id: state.ingredient_details.id,
-        errors: state.ingredient_details.errors
+        errors: state.ingredient_details.errors,
+        skus: state.ingredient_details.skus
     };
 };
 
@@ -323,6 +350,9 @@ const mapDispatchToProps = (dispatch, ownProps) => {
         pushError: err => {
             dispatch(ingDetAddError(err))
             setTimeout(function(){dispatch(ingDetDeleteError(err))}, 2000);
+        },
+        addIngToReport: ing => {
+            dispatch(ingAddDependency(ing))
         }
     };
 };

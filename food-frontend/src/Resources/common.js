@@ -194,7 +194,7 @@ export function getSkuErrors(sku){
   }
 
   if(!isInteger(sku.num)){
-    message = "Ingredient Number is Invalid"
+    message = "SKU Number is Invalid"
     errors.push({errMsg:message,id:hashcode(message)})
   }
   if(!isInteger(sku.count_per_case)){
@@ -212,5 +212,6 @@ export function getSkuErrors(sku){
   return errors
 }
 
-
-
+export function createError(message){
+  return {errMsg:message,id:hashcode(message)}
+}

@@ -1,6 +1,6 @@
 import axios from 'axios';
-import common from '../../../Resources/common';
-import { SKU_DET_ADD_SKU,SKU_DET_GET_ING,SKU_DET_ADD_ING ,SKU_DET_UPDATE_SKU ,SKU_DET_DELETE_SKU ,SKU_DET_DELETE_ING ,SKU_DET_SET_SKU, SKU_DET_PRODUCT_LINE_LIST, SKU_DET_INGREDIENT_AUTOCOMPLETE, SKU_DET_ADD_ING_LOCAL, SKU_DET_DELETE_ING_LOCAL, SKU_DET_ADD_ERROR, SKU_DET_DELETE_ERROR
+import common, { createError } from '../../../Resources/common';
+import { SKU_DET_ADD_SKU,SKU_DET_GET_ING,SKU_DET_ADD_ING ,SKU_DET_UPDATE_SKU ,SKU_DET_DELETE_SKU ,SKU_DET_DELETE_ING ,SKU_DET_SET_SKU, SKU_DET_PRODUCT_LINE_LIST, SKU_DET_INGREDIENT_AUTOCOMPLETE, SKU_DET_ADD_ING_LOCAL, SKU_DET_DELETE_ING_LOCAL, SKU_DET_ADD_ERROR, SKU_DET_DELETE_ERROR, SKU_DET_SET_NEW
 } from '../SKUDetailActionTypes';
 
 const hostname = common.hostname;
@@ -210,7 +210,7 @@ export const skuDetGetProductLine = ()  => {
     console.log(sku)
     // [{ingred_num: 1, quantity: 1}, {ingred_num: 2, quantity: 2}]
     return (dispatch) => {
-      return axios.put(hostname + 'sku/', {
+      return axios.post(hostname + 'sku/', {
         ...sku
       })
       .then(response => {
@@ -221,8 +221,11 @@ export const skuDetGetProductLine = ()  => {
         })
       })
       .catch(error => {
-        console.log("error")
-        throw(error);
+        console.log(error)
+        dispatch({
+          type: SKU_DET_ADD_ERROR,
+          data: createError("SKU Conflicts")
+        })
       });
     }
   }
@@ -243,6 +246,16 @@ export const skuDetGetProductLine = ()  => {
       return dispatch({
         type: SKU_DET_DELETE_ERROR,
         data: err
+      })
+    }
+  }
+
+  export const skuDetSetNew = (newVal) => {
+    console.log("SKU_DET_SET_NEW ACTION CREATOR")
+    return (dispatch) => {
+      return dispatch({
+        type: SKU_DET_SET_NEW,
+        data: newVal
       })
     }
   }

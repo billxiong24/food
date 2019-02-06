@@ -15,6 +15,8 @@ import { findDifferences } from '../../Resources/common';
 import { withRouter, Link } from 'react-router-dom';
 import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
 import { isValidIng, getSkuErrors } from '../../Resources/common';
+import EditableNumeric from '../GenericComponents/EditableNumeric';
+import {store} from "../../index"
 
 const styles = {
     ingredient_page_container:{
@@ -26,7 +28,6 @@ const styles = {
         flexDirection: 'column',
         alignItems: 'center',
         padding: '50px',
-        backgroundColor: labels.colors.primaryColor,
         borderRadius: 12
     },
     textField:{
@@ -149,14 +150,9 @@ class SKUDetailViewPage extends Component {
         }
         let errors = getSkuErrors(sku)
         if(errors.length == 0){
-            this.setState({
-                buttonText: "Edit",
-                editing:false,
-                new: false
-            });
             console.log("INGREDIENTDETAILVIEW")
             console.log(sku)
-            this.props.add(sku)
+            this.props.add(sku, this.props.current_ingredients)
         }else{
             for (var i = 0; i < errors.length; i++) {
                 this.props.pushError(errors[i])
@@ -181,9 +177,14 @@ class SKUDetailViewPage extends Component {
     }
 
     render() {
-        const { classes } = this.props
+        const { classes , newValue} = this.props
         console.log("Editiing:" + this.state.editing)
         console.log("New:"+this.state.new)
+        let buttonText = this.state.buttonText
+        let editing = this.state.editing
+        if(!newValue){
+            buttonText = "Edit"
+        }
         return (
             <div className = {classes.ingredient_page_container}>
                 <Button component={Link} to={'/skus'}>
@@ -195,43 +196,53 @@ class SKUDetailViewPage extends Component {
                     </Typography>
                     <EditableText 
                         label={"SKU Name"} 
-                        editing={this.state.editing}
+                        editing={editing}
                         field={"name"}
                         onChange={this.onChange}>
                         {this.state.name}
                     </EditableText>
 
-                    <EditableText 
+                    <EditableNumeric
+                        label={"SKU No."}
+                        editing={editing}
+                        key={"num"}
+                        field={"num"}
+                        onChange={this.onChange}>
+                        {this.state.num}
+                    </EditableNumeric>
+
+
+                    <EditableNumeric 
                         label={"Case UPC No."}
-                        editing={this.state.editing}
+                        editing={editing}
                         field={"case_upc"}
                         onChange={this.onChange}>
                         {this.state.case_upc}
-                    </EditableText>
+                    </EditableNumeric>
 
-                    <EditableText 
+                    <EditableNumeric 
                         label={"Unit UPC No."}
-                        editing={this.state.editing}
+                        editing={editing}
                         field={"unit_upc"}
                         onChange={this.onChange}>
                         {this.state.unit_upc}
-                    </EditableText>
+                    </EditableNumeric>
 
                     <EditableText 
                         label={"Unit Size"} 
-                        editing={this.state.editing}
+                        editing={editing}
                         field={"unit_size"}
                         onChange={this.onChange}>
                         {this.state.unit_size}
                     </EditableText>
 
-                    <EditableText 
+                    <EditableNumeric
                         label={"Count Per Case"} 
-                        editing={this.state.editing}
+                        editing={editing}
                         field={"count_per_case"}
                         onChange={this.onChange}>
                         {this.state.count_per_case}
-                    </EditableText>
+                    </EditableNumeric>
 
                     <ProductLineDropdown
                         onChange={this.onProductLineChange}
@@ -241,17 +252,17 @@ class SKUDetailViewPage extends Component {
 
                     <EditableText 
                         label={"Comment"} 
-                        editing={this.state.editing}
+                        editing={editing}
                         field={"comments"}
                         onChange={this.onChange}
                         multiline={true}>
                         {this.state.comments}
                     </EditableText>
                     {
-                        this.state.new ?
+                        newValue?
                         <Button 
                             className={classes.button} 
-                            editing={this.state.editing}
+                            editing={editing}
                             onClick = {this.onAddClick}
                         >
                             {this.state.buttonText}
@@ -259,7 +270,7 @@ class SKUDetailViewPage extends Component {
                         :
                         <Button 
                             className={classes.button} 
-                            editing={this.state.editing}
+                            editing={editing}
                             onClick = {this.onButtonClick}
                         >
                             {this.state.buttonText}
@@ -267,10 +278,10 @@ class SKUDetailViewPage extends Component {
 
                     }
                     {
-                        (this.state.editing && !this.state.new)?
+                        (editing && !newValue)?
                         <Button 
                             className={classes.button} 
-                            editing={this.state.editing}
+                            editing={editing}
                             onClick = {this.onDelete}
                         >
                             DELETE
@@ -285,7 +296,7 @@ class SKUDetailViewPage extends Component {
                             Ingredient List
                         </Typography>
                         <SKUDetailIngredientAutocomplete editing={this.state.editing}></SKUDetailIngredientAutocomplete>
-                        <SKUIngredientList editing={this.state.editing}></SKUIngredientList>
+                        <SKUIngredientList editing={editing}></SKUIngredientList>
 
                     </div>
                 </div>
@@ -319,7 +330,8 @@ const mapStateToProps = state => {
         comments:state.sku_details.comments,
         id:state.sku_details.id,
         current_ingredients:state.sku_details.current_ingredients,
-        errors: state.sku_details.errors
+        errors: state.sku_details.errors,
+        newValue: state.sku_details.new
     };
 };
 
@@ -341,8 +353,18 @@ const mapDispatchToProps = (dispatch, ownProps) => {
             dispatch(skuDetDeleteSku(sku))
             ownProps.history.push('/skus')
         },
-        add: (sku) =>{
-            dispatch(skuDetAddSku(sku))
+        add: (sku, current_ingredients) =>{
+            Promise.resolve(dispatch(skuDetAddSku(sku))) // dispatch
+                .then(function (response) {
+                    sku.id = store.getState().sku_details.id
+                    console.log(ownProps)
+                    if(sku.id !== null){
+                        dispatch(skuDetAddIng(sku,current_ingredients))
+                    }
+                return response;
+                })
+          .then(function(response){console.log("@RESPONSE",response)})
+            
         },
         deleteError: (error) => {
             dispatch(skuDetDeleteError(error))
