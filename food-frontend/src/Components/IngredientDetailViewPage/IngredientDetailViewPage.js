@@ -175,6 +175,7 @@ class IngredientDetailViewPage extends Component {
             id:this.props.id,
             skus:this.props.skus
         }
+        console.log(this.props.skus)
         this.props.addIngToReport(ing)
     }
 

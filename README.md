@@ -4,9 +4,9 @@
 Ubuntu 18.04     
 Node.JS v8.10    
 PostgreSQL v10.6    
-      
-## Deployment Guide
 
+## Deployment Guide
+   
 ```
 git clone https://github.com/billxiong24/food.git   
 cd food/
@@ -60,9 +60,22 @@ Follow prompts.
 ```npm start``` from root of repository will start server on port 8000.    
 
   
-
+   
 
     
+   
+     
+## Development Guide  
+We use NodeJS and ExpressJS to build our REST API. We use PostgreSQL to store all our data.   
+Each entity (SKU, Ingredient, Product line) is its own table. There are tables for relationships,
+such as SKU and Ingred, goals and SKUs. The data tables are in ```food.sql```.  
+We use ReactJS to build the views and front end.  
+Follow the deployment guide above to set up local environment. 
+In the ```.env``` file, set ```HTTPS='false'```, to disable HTTPS.   
+
+After that, run ```npm start```. There will be a server on ```localhost:8000```.
+To start the React Server, ```cd food-frontend/ && npm start```. A browser tab should appear.   
+
     
 ## API documentation      
 ## SKUS      

@@ -145,7 +145,16 @@ class SKUsPage extends Component {
   onExportClick = () => {
     console.log(this.props.items)
     axios.post(common.hostname + 'manufacturing_goals/exported_file', {
-      data: this.props.items,
+      data: this.props.items.map((sku) => ({
+        num:sku.num,
+        name:sku.name,
+        case_upc:sku.case_upc,
+        unit_upc:sku.unit_upc,
+        unit_size:sku.unit_size,
+        count_per_case:sku.count_per_case,
+        prd_line:sku.prd_line,
+        comments:sku.comments
+      })),
       format: "csv",
     })
       .then((response) => {

@@ -10,11 +10,13 @@ import { routeToPage, ingDeleteIng } from '../../Redux/Actions';
 import { withRouter, Link } from 'react-router-dom';
 import axios from 'axios';
 import FileDownload from 'js-file-download';
-import common from '../../Resources/common';
+import common, { isSKUCSV, createError, isIngredientCSV, isFormulaCSV, isProductLineCSV } from '../../Resources/common';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import { CardActionArea } from '@material-ui/core';
+import { bulkImportAddError, bulkImportDeleteError } from '../../Redux/Actions/ActionCreators/BulkImportActionCreators';
+import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
 
 
 
@@ -99,7 +101,10 @@ class BulkImportPage extends Component {
             skuErrors:[],
             skuUpdates:[],
             formulaErrors:[],
-            formulaUpdates:[]
+            formulaUpdates:[],
+            productLineErrors:[],
+            productLineUpdates:[],
+            errors:[]
         }
     }
 
@@ -110,7 +115,14 @@ class BulkImportPage extends Component {
 
 
     skuUpload = file => {
+        if (file === undefined ){
+            return
+        }
         console.log(file)
+        if(!isSKUCSV(file.name)){
+            this.props.pushError(createError("Import SKU File Name Format: \'sku*.csv\'"))
+            return
+        }
         var formData = new FormData();
         formData.append("csvfile", file);
         formData.append("type","sku")
@@ -122,8 +134,12 @@ class BulkImportPage extends Component {
             .then((response) => {
                 this.setState({
                     skuErrors:response.data.errors,
-                    skuUpdates:response.data.rows,
                 })
+                if(response.data.rows !== undefined){
+                    this.setState({
+                        skuUpdates:response.data.rows,
+                    })
+                }
             })
             .catch(err => {
               console.log(err);
@@ -147,8 +163,64 @@ class BulkImportPage extends Component {
         })
     }
 
-      ingredientUpload = file => {
+    productLineUpload = file => {
+        if (file === undefined ){
+            return
+        }
         console.log(file)
+        if(!isProductLineCSV(file.name)){
+            this.props.pushError(createError("Import Product Line File Name Format: \'product_line*.csv\'"))
+            return
+        }
+        var formData = new FormData();
+        formData.append("csvfile", file);
+        formData.append("type","productline")
+        axios.post(common.hostname + 'bulk/bulk_import', formData, {
+            headers: {
+            'Content-Type': 'multipart/form-data'
+            }
+        })
+            .then((response) => {
+                this.setState({
+                    productLineErrors:response.data.errors,
+                })
+                if(response.data.rows !== undefined){
+                    this.setState({
+                        productLineUpdates:response.data.rows,
+                    })
+                }
+            })
+            .catch(err => {
+              console.log(err);
+            })
+      }
+
+    productLineConfirm = () =>{
+        console.log(this.state.skuUpdates)
+        axios.post(common.hostname + 'bulk/accept_bulk_import', {
+            rows: this.state.productLineUpdates,
+            type: "sku",
+          })
+            .then((response) => {
+                this.setState({
+                    productLineErrors:[],
+                    productLineUpdates:[],
+                })
+            })
+            .catch(err => {
+              console.log(err);
+        })
+    }
+
+      ingredientUpload = file => {
+        if (file === undefined ){
+            return
+        }
+        console.log(file)
+        if(!isIngredientCSV(file.name)){
+            this.props.pushError(createError("Import Ingredient File Name Format: \'ingredient*.csv\'"))
+            return
+        }
         var formData = new FormData();
         formData.append("csvfile", file);
         formData.append("type","ingredient")
@@ -161,8 +233,12 @@ class BulkImportPage extends Component {
             .then((response) => {
                 this.setState({
                     ingredientErrors:response.data.errors,
-                    ingredientUpdates:response.data.rows,
                 })
+                if(response.data.rows !== undefined){
+                    this.setState({
+                        ingredientUpdates:response.data.rows,
+                    })  
+                }
             })
             .catch(err => {
               console.log(err);
@@ -187,6 +263,13 @@ class BulkImportPage extends Component {
 
       formulaUpload = file => {
         console.log(file)
+        if (file === undefined ){
+            return
+        }
+        if(!isFormulaCSV(file.name)){
+            this.props.pushError(createError("Import Formula File Name Format: \'formula*.csv\'"))
+            return
+        }
         var formData = new FormData();
         formData.append("csvfile", file);
         formData.append("type","formula")
@@ -196,10 +279,16 @@ class BulkImportPage extends Component {
             }
         })
             .then((response) => {
+                console.log(response)
                 this.setState({
                     formulaErrors:response.data.errors,
-                    formulaUpdates:response.data.rows,
                 })
+                if(response.data.rows !== undefined){
+                    this.setState({
+                        formulaUpdates:response.data.rows,
+                    })
+                }
+                console.log(this.state)
             })
             .catch(err => {
               console.log(err);
@@ -233,12 +322,12 @@ class BulkImportPage extends Component {
                     <input
                         accept=".csv"
                         className={classes.input}
-                        id="contained-button-file"
+                        id="contained-button-file1"
                         type="file"
                         name="csvfile"
                         onChange={e => this.skuUpload(e.target.files[0])}
                     />
-                    <label htmlFor="contained-button-file">
+                    <label htmlFor="contained-button-file1">
                         <Button variant="contained" component="span" className={classes.button}>
                             Upload SKU CSV
                         </Button>
@@ -280,12 +369,12 @@ class BulkImportPage extends Component {
                         <input
                             accept=".csv"
                             className={classes.input}
-                            id="contained-button-file"
+                            id="contained-button-file2"
                             type="file"
                             name="csvfile"
                             onChange={e => this.formulaUpload(e.target.files[0])}
                         />
-                        <label htmlFor="contained-button-file">
+                        <label htmlFor="contained-button-file2">
                             <Button variant="contained" component="span" className={classes.button}>
                             Upload Formula CSV
                             </Button>
@@ -327,12 +416,12 @@ class BulkImportPage extends Component {
                     <input
                         accept=".csv"
                         className={classes.input}
-                        id="contained-button-file"
+                        id="contained-button-file3"
                         type="file"
                         name="csvfile"
                         onChange={e => this.ingredientUpload(e.target.files[0])}
                     />
-                    <label htmlFor="contained-button-file">
+                    <label htmlFor="contained-button-file3">
                         <Button variant="contained" component="span" className={classes.button}>
                         Upload Ingredient CSV
                         </Button>
@@ -370,7 +459,64 @@ class BulkImportPage extends Component {
 
                     }
                 </div>
-                
+                <div className={classes.file_upload_container}>
+                        <input
+                            accept=".csv"
+                            className={classes.input}
+                            id="contained-button-file4"
+                            type="file"
+                            name="csvfile"
+                            onChange={e => this.productLineUpload(e.target.files[0])}
+                        />
+                        <label htmlFor="contained-button-file4">
+                            <Button variant="contained" component="span" className={classes.button}>
+                            Upload Product Line CSV
+                            </Button>
+                        </label>
+                    {
+                        this.state.productLineErrors.map((error, index) => (
+                            <div className={classes.updateItemContainer}>
+                                <Typography className={classes.updateItemText}>
+                                    {error.detail}
+                                </Typography>
+                            </div>      
+                        ))
+                    }
+                    {
+                        this.state.productLineUpdates.map((update, index) => (
+                            <Card className={classes.card} key={index}>
+                                <CardContent onClick={console.log("")}>
+                                    <Typography className={classes.ingredrient_name} color="textSecondary" gutterBottom>
+                                        {update.name}
+                                    </Typography>
+                                    <Typography className={classes.ingredient_id} color="textSecondary" gutterBottom>
+                                        {update.num}
+                                    </Typography>
+                                </CardContent>
+                            </Card>     
+                        ))
+                    }
+                    {
+                        this.state.productLineUpdates.length > 0?
+                        <Button variant="contained" component="span" className={classes.button} onClick={this.productLineConfirm}>
+                            Confirm Changes
+                        </Button>
+                        :
+                        <div></div>
+
+                    }
+                </div>
+                {
+                    this.props.errors.map((error, index) => (
+                        <SimpleSnackbar
+                        open={true} 
+                        handleClose={()=>{this.props.deleteError(error)}}
+                        message={error.errMsg}
+                        >
+                        </SimpleSnackbar>
+                    ))
+                }
+                            
             </div>
         );
     }
@@ -379,13 +525,16 @@ class BulkImportPage extends Component {
 
 const mapStateToProps = state => {
     return {
-        
+        errors: state.bulk_import.errors
     };
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => {
     return {
-        
+        pushError: err => {
+            dispatch(bulkImportAddError(err))
+            setTimeout(function(){dispatch(bulkImportDeleteError(err))}, 2000);
+        }
     };
 };
 

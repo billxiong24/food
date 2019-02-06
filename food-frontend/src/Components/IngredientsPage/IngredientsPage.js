@@ -144,7 +144,14 @@ class IngredientsPage extends Component {
 
   onExportClick = () => {
     axios.post(common.hostname + 'manufacturing_goals/exported_file', {
-      data: this.props.items,
+      data: this.props.items.map((ing) => ({
+        num:ing.num,
+        name:ing.name,
+        vend_info:ing.vend_info,
+        pkg_size:ing.pkg_size,
+        pkg_cost:ing.pkg_cost,
+        comments:ing.comments
+      })),
       format: "csv",
     })
       .then((response) => {
@@ -158,6 +165,7 @@ class IngredientsPage extends Component {
 
   render() {
     console.log(this.props)
+    console.log(this.props.errors)
     const { classes, dummy_ingredients } = this.props
     return (
       <div className={classes.ingredients_page_container}>

@@ -63,11 +63,11 @@ class IngredientSKUList extends Component {
 
     render() {
         const { classes, skus } = this.props
-        
+        console.log(skus)
         return (
             <div>
                 {
-                this.props.skus.map((item, index) => (
+                skus.map((item, index) => (
                     <Card className={classes.card} key={index} onClick = {() => {this.onClick(item)}}>
                         <CardActionArea
                         className = {classes.cardAction}
@@ -97,7 +97,9 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => {
-    
+    return {
+        
+    }
 };  
 
 export default withStyles(styles)(connect(mapStateToProps,mapDispatchToProps)(IngredientSKUList));

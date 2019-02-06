@@ -94,6 +94,21 @@ export function isInteger(string){
   return String(string).match(/^[0-9]+$/) != null;
 }
 
+export function isIngredientCSV(string){
+  return String(string).match(/^ingredients([a-zA-Z0-9_.\-\(\):])*(.csv)$/)
+}
+
+export function isFormulaCSV(string){
+  return String(string).match(/^formula([a-zA-Z0-9_.\-\(\):])*(.csv)$/)
+}
+
+export function isSKUCSV(string){
+  return String(string).match(/^sku([a-zA-Z0-9_.\-\(\):])*(.csv)$/)
+}
+
+export function isProductLineCSV(string){
+  return String(string).match(/^product_line([a-zA-Z0-9_.\-\(\):])*(.csv)$/)
+}
 
 export function isPrice(string){
   return String(string).match(/(\d)+(\.(\d){1,2}|)/) != null;
