@@ -22,22 +22,17 @@ class SKUIngred extends CRUD {
         .then(function(rows) {
             db.getSingleClient().then(function(client) {
                 let prom = client.query("BEGIN");
+                let i;
                 for(let i = 0; i < rows.length; i++) {
                     let query = QueryGenerator.genInsConflictQuery([rows[i]], table,  'ON CONFLICT (sku_num, ingred_num) DO UPDATE SET quantity = EXCLUDED.quantity').toString();
                     prom = prom.then(function(r) {
-                        return client.query(query)
-                    })
+                        return client.query(query);
+                    });
                 }
                 
                 prom = prom.then(function(res) {
-                    if(errMsg != null) {
-                        console.log("error- aborting transaction");
-                        client.query("ABORT");
-                    }
-                    else {
-                        console.log("no errors in formulas, commiting");
-                        client.query("COMMIT");
-                    }
+                    console.log("no errors in formulas, commiting");
+                    client.query("COMMIT");
                     cb({
                         inserts: rows.length,
                         updates: 0
@@ -48,7 +43,7 @@ class SKUIngred extends CRUD {
                         errors: [ 
                             { 
                                 code: err.code,
-                                detail: err.detail
+                                detail: err.detail ? err.detail : "Bad input in csv file - double check that you are inputting sku_num,ingred_num,quantity"
                             }
                         ]
                     };
