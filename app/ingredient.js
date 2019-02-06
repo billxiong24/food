@@ -64,6 +64,8 @@ class Ingredient extends CRUD {
     create(dataObj) {
         if(!dataObj.name || !dataObj.pkg_size || !dataObj.pkg_cost)
             return Promise.reject("Not all required fields are present.");
+        if(dataObj.num === null || dataObj.num === undefined)
+            delete dataObj.num;
 
         let query = squel.insert()
         .into(this.tableName)
