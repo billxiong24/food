@@ -80,7 +80,12 @@ export default {
 ```sudo npm start``` from root of repository will start server on port 8000.    
 
 ### Start frontend server
-```sudo node app.js``` from food/food-frontend/
+From root of repository
+```
+cd food-frontend
+npm install
+sudo node app.js
+```
 
     
    
