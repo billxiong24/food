@@ -80,7 +80,9 @@ export const InitialStore = {
     id:null,
     skus:[],
     errors:[],
-    new: false
+    new: false,
+    valid: false,
+    editing: false,
   },
   sku_details:{
       name: "Campbell SKU Name",
@@ -98,7 +100,8 @@ export const InitialStore = {
       ingredient_suggestions:[],
       current_ingredients:[],
       errors:[],
-      new: false
+      new: false,
+      valid: false,
   },
   bulk_import:{
     errors:[]

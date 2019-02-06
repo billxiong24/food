@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
-import IntegrationAutosuggest from '../GenericComponents/IntegrationAutosuggest';
+import IntegrationAutosuggest2 from '../GenericComponents/IntegrationAutosuggest2';
 import labels from '../../Resources/labels';
 import { ingAddFilter, ingSearch, ingGetSkus } from '../../Redux/Actions';
 import { skuFormatter } from '../../Scripts/Formatters';
@@ -12,7 +12,17 @@ const styles = {
     autosuggest:{
         fontSize: 14,
         fontFamily: 'Open Sans',
-        fontWeight: 300
+        fontWeight: 300,
+        paddingBottom: 3
+    },
+    search:{
+        marginBottom: 5
+    },
+    container:{
+        width: '100%',
+        flexDirection: 'row',
+        display: 'flex',
+        alignItems: 'baseline'
     }
 };
 
@@ -62,15 +72,15 @@ class SKUDetailIngredientAutocomplete extends Component {
         const { classes, ingredient_names, filter_type, editing } = this.props
         return (
             editing ?
-            <div>
-                <IntegrationAutosuggest
+            <div className={classes.container}>
+                <IntegrationAutosuggest2
                     className={classes.autosuggest}
-                    suggestions={ingredient_names.map(ingredient => ({label:ingredient.name, id:ingredient}))}
+                    suggestions={ingredient_names.map(ingredient => ({label:ingredient.name, id:ingredient.id, item: ingredient}))}
                     placeholder={"Enter New Ingredient"}
                     onEnter = {this.onIngredientFilterEnter}
                     onSuggest = {this.onIngredientFilterSuggest}
                     onChange = {this.onChange}
-                ></IntegrationAutosuggest>
+                ></IntegrationAutosuggest2>
                 <TextField
                     id="standard-number"
                     label="Number"

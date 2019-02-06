@@ -7,7 +7,7 @@ import EditableText from '../GenericComponents/EditableText';
 import labels from '../../Resources/labels';
 import { ingDetUpdateIng } from '../../Redux/Actions/ActionCreators/IngredientDetailsActionCreators';
 import { routeToPage } from '../../Redux/Actions';
-import { skuDetUpdateSku, skuDetAddIng, skuDetDeleteIng, skuDetDeleteSku, skuDetAddSku, skuDetDeleteError, skuDetAddError } from '../../Redux/Actions/ActionCreators/SKUDetailsActionCreators';
+import { skuDetUpdateSku, skuDetAddIng, skuDetDeleteIng, skuDetDeleteSku, skuDetAddSku, skuDetDeleteError, skuDetAddError, skuDetSetEditing, skuDetSetNew } from '../../Redux/Actions/ActionCreators/SKUDetailsActionCreators';
 import SKUIngredientList from './SKUIngredientList';
 import SKUDetailIngredientAutocomplete from './SKUDetailIngredientAutocomplete';
 import ProductLineDropdown from './ProductLineDropdown';
@@ -46,7 +46,8 @@ const styles = {
     list_autocomplete_container:{
         display:'flex',
         flexDirection: 'column',
-        alignItems: 'center'
+        alignItems: 'center',
+        width: '50vh'
     },
 
 };
@@ -94,6 +95,10 @@ class SKUDetailViewPage extends Component {
         console.log(this.state)
     }
 
+    onEditClick = () => {
+        this.props.edit()
+    }
+
     onProductLineChange = (product_line) => {
         console.log("SKUDETAILVIEW PRODUCT_LINE CHANGE")
         console.log(product_line)
@@ -121,7 +126,7 @@ class SKUDetailViewPage extends Component {
 
     
 
-    onButtonClick = () => {
+    onSaveClick = () => {
         const sku = {
             name:this.state.name,
             case_upc:this.state.case_upc,
@@ -133,28 +138,16 @@ class SKUDetailViewPage extends Component {
             comments:this.state.comments,
             id:this.props.id
         }
-        
-        if(this.state.buttonText == "Edit"){
-            this.setState({
-                buttonText: "Save",
-                editing:true,
-            });
+        let errors = getSkuErrors(sku)
+        if(errors.length == 0){
+            console.log("SKUDETAILVIEW")
+            this.props.update(sku, this.props.current_ingredients, this.props.ingredients)
         }else{
-            let errors = getSkuErrors(sku)
-            if(errors.length == 0){
-                this.setState({
-                    buttonText: "Edit",
-                    editing:false,
-                });
-                console.log("SKUDETAILVIEW")
-                console.log(sku)
-                this.props.update(sku,this.props.current_ingredients,this.props.ingredients)
-            }else{
-                for (var i = 0; i < errors.length; i++) {
-                    this.props.pushError(errors[i])
-                }
+            for (var i = 0; i < errors.length; i++) {
+                this.props.pushError(errors[i])
             }
         }
+        
     }
 
     onAddClick = () => {
@@ -197,17 +190,10 @@ class SKUDetailViewPage extends Component {
     }
 
     render() {
-        const { classes , newValue} = this.props
-        console.log("Editiing:" + this.state.editing)
-        console.log("New:"+this.state.new)
-        let buttonText = this.state.buttonText
-        let editing = this.state.editing
-        if(!newValue){
-            buttonText = "Edit"
-        }
+        const { classes , editing, newValue} = this.props
         return (
             <div className = {classes.ingredient_page_container}>
-                <Button component={Link} to={'/skus'}>
+                <Button onClick={this.props.back}>
                     Back
                 </Button>
                 <div className = {classes.ingredient_detail_view}>
@@ -278,42 +264,60 @@ class SKUDetailViewPage extends Component {
                         multiline={true}>
                         {this.state.comments}
                     </EditableText>
+                    
                     {
-                        newValue?
+                    (this.props.users.id === common.admin && newValue )?
                         <Button 
                             className={classes.button} 
                             editing={editing}
                             onClick = {this.onAddClick}
                         >
-                            {this.state.buttonText}
-                        </Button>
-                        :
-                        <Button 
-                            className={classes.button} 
-                            editing={editing}
-                            onClick = {this.onButtonClick}
-                        >
-                            {this.state.buttonText}
-                        </Button>
-
-                    }
-                    {
-                        (editing && !newValue)?
-                        <Button 
-                            className={classes.button} 
-                            editing={editing}
-                            onClick = {this.onDelete}
-                        >
-                            DELETE
+                            ADD
                         </Button>
                         :
                         <div></div>
                     }
                     {
-                        (!editing && !newValue)?
+                        (this.props.users.id === common.admin && !editing) ?
                         <Button 
                             className={classes.button} 
-                            editing={this.state.editing}
+                            editing={editing}
+                            onClick = {this.onEditClick}
+                        >
+                            EDIT
+                        </Button>
+
+                    
+                    :
+                    <div></div>
+                    }
+                    {
+                        (editing && !newValue)?
+                        <div>
+                            <Button 
+                                className={classes.button} 
+                                editing={editing}
+                                onClick = {this.onSaveClick}
+                            >
+                                SAVE
+                            </Button>
+
+                            <Button 
+                                className={classes.button} 
+                                editing={editing}
+                                onClick = {this.onDelete}
+                            >
+                                DELETE
+                            </Button>
+                        </div>
+                        :
+                        <div></div>
+                    }
+                    {
+                        (!newValue && !editing)?
+                        <Button 
+                            className={classes.button} 
+                            editing={editing}
                             onClick = {this.onExportClick}
                         >
                             EXPORT TO CSV
@@ -322,16 +326,16 @@ class SKUDetailViewPage extends Component {
                         <div></div>
                     }
                 </div>
-                <div>
+                
                     <div className={classes.list_autocomplete_container}>
                         <Typography>
                             Ingredient List
                         </Typography>
-                        <SKUDetailIngredientAutocomplete editing={this.state.editing}></SKUDetailIngredientAutocomplete>
+                        <SKUDetailIngredientAutocomplete editing={editing}></SKUDetailIngredientAutocomplete>
                         <SKUIngredientList editing={editing}></SKUIngredientList>
 
                     </div>
-                </div>
+                
                 {
           this.props.errors.map((error, index) => (
             <SimpleSnackbar
@@ -363,26 +367,44 @@ const mapStateToProps = state => {
         id:state.sku_details.id,
         current_ingredients:state.sku_details.current_ingredients,
         errors: state.sku_details.errors,
-        newValue: state.sku_details.new
+        newValue: state.sku_details.new,
+        users: state.users,
+        editing: state.sku_details.editing,
+        valid: state.sku_details.valid
     };
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => {
     return {
         update : (sku, current_ingredients, ingredients) =>
+
         {
-            dispatch(skuDetUpdateSku(sku))
-            let object = findDifferences(current_ingredients, ingredients)
-            console.log(object.original)
-            console.log(object.newlist)
-            console.log(object.additions)
-            console.log(object.deletions)
-            dispatch(skuDetAddIng(sku,object.additions))
-            dispatch(skuDetDeleteIng(sku,object.deletions))
+            console.log(current_ingredients)
+            console.log(ingredients)
+            Promise.resolve(dispatch(skuDetUpdateSku(sku))) // dispatch
+                .then(function (response) {
+                    let editing = store.getState().sku_details.editing
+                    console.log(ownProps)
+                    if(!editing){
+                        let object = findDifferences(current_ingredients, ingredients)
+                        console.log(object.original)
+                        console.log(object.newlist)
+                        console.log(object.additions)
+                        console.log(object.deletions)
+                        dispatch(skuDetAddIng(sku,object.additions))
+                        dispatch(skuDetDeleteIng(sku,object.deletions))
+                    }
+                return response;
+                })
         },
-        back: () => ownProps.history.push('/skus'),
+        back: () => {
+            dispatch(skuDetSetEditing(false))
+            dispatch(skuDetSetNew(false))
+            ownProps.history.push('/skus')
+        },
         delete: (sku) => {
             dispatch(skuDetDeleteSku(sku))
+            dispatch(skuDetSetEditing(false))
             ownProps.history.push('/skus')
         },
         add: (sku, current_ingredients) =>{
@@ -404,6 +426,9 @@ const mapDispatchToProps = (dispatch, ownProps) => {
         pushError: err => {
             dispatch(skuDetAddError(err))
             setTimeout(function(){dispatch(skuDetDeleteError(err))}, 2000);
+        },
+        edit: () => {
+            dispatch(skuDetSetEditing(true))
         }
     };
 };

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import common, { createError } from '../../../Resources/common';
-import { SKU_DET_ADD_SKU,SKU_DET_GET_ING,SKU_DET_ADD_ING ,SKU_DET_UPDATE_SKU ,SKU_DET_DELETE_SKU ,SKU_DET_DELETE_ING ,SKU_DET_SET_SKU, SKU_DET_PRODUCT_LINE_LIST, SKU_DET_INGREDIENT_AUTOCOMPLETE, SKU_DET_ADD_ING_LOCAL, SKU_DET_DELETE_ING_LOCAL, SKU_DET_ADD_ERROR, SKU_DET_DELETE_ERROR, SKU_DET_SET_NEW
+import { SKU_DET_ADD_SKU,SKU_DET_GET_ING,SKU_DET_ADD_ING ,SKU_DET_UPDATE_SKU ,SKU_DET_DELETE_SKU ,SKU_DET_DELETE_ING ,SKU_DET_SET_SKU, SKU_DET_PRODUCT_LINE_LIST, SKU_DET_INGREDIENT_AUTOCOMPLETE, SKU_DET_SET_VALID,  SKU_DET_ADD_ING_LOCAL, SKU_DET_DELETE_ING_LOCAL, SKU_DET_ADD_ERROR, SKU_DET_DELETE_ERROR, SKU_DET_SET_NEW, SKU_DET_SET_EDITING
 } from '../SKUDetailActionTypes';
 
 const hostname = common.hostname;
@@ -73,7 +73,16 @@ export const skuDetUpdateSku = (sku) => {
       })
       .catch(error => {
         console.log("error")
-        throw(error);
+        let message;
+        if(error.error !== undefined){
+          message = error.error
+        }else{
+          message = "SKU Conflicts"
+        }
+        dispatch({
+          type: SKU_DET_ADD_ERROR,
+          data: createError(message)
+        })
       });
     }
   }
@@ -221,10 +230,15 @@ export const skuDetGetProductLine = ()  => {
         })
       })
       .catch(error => {
-        console.log(error)
+        let message;
+        if(error.error !== undefined){
+          message = error.error
+        }else{
+          message = "SKU Conflicts"
+        }
         dispatch({
           type: SKU_DET_ADD_ERROR,
-          data: createError("SKU Conflicts")
+          data: createError(message)
         })
       });
     }
@@ -256,6 +270,26 @@ export const skuDetGetProductLine = ()  => {
       return dispatch({
         type: SKU_DET_SET_NEW,
         data: newVal
+      })
+    }
+  }
+
+  export const skuDetSetValid = (validity) => {
+    console.log("SKU_DET_SET_VALID ACTION CREATOR")
+    return (dispatch) => {
+      return dispatch({
+        type: SKU_DET_SET_VALID,
+        data: validity
+      })
+    }
+  }
+
+  export const skuDetSetEditing = (editing) => {
+    console.log("SKU_DET_SET_EDITING ACTION CREATOR")
+    return (dispatch) => {
+      return dispatch({
+        type: SKU_DET_SET_EDITING,
+        data: editing
       })
     }
   }

@@ -9,7 +9,7 @@ import Card from '@material-ui/core/Card';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import { connect } from 'react-redux';
-import { getDummyIngredients, ingDeleteError } from '../../Redux/Actions';
+import { getDummyIngredients, ingDeleteError, ingSearch } from '../../Redux/Actions';
 import DropdownButton from '../GenericComponents/DropdownButton';
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
@@ -28,7 +28,7 @@ import FilterDropdown from './FilterDropdown';
 import SortByDropdown from './SortByDropdown';
 import PageSelector from './PageSelector';
 import IngredientsPageSearchBar from './IngredientsPageSearchBar';
-import { ingDetSetIng } from '../../Redux/Actions/ActionCreators/IngredientDetailsActionCreators';
+import { ingDetSetIng, ingDetSetEditing, ingDetSetNew } from '../../Redux/Actions/ActionCreators/IngredientDetailsActionCreators';
 import { withRouter } from 'react-router-dom'
 import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
 import axios from 'axios';
@@ -136,6 +136,7 @@ const styles = {
 class IngredientsPage extends Component {
 
   componentWillMount() {
+    this.props.search()
   }
 
   onAddClick = () =>{
@@ -189,12 +190,17 @@ class IngredientsPage extends Component {
             <div className={classes.ingredients_search_bar}>
           </div>
           <div className={classes.other_actions}>
-            <Button
-              className={classes.add_ingredient}
-              onClick={this.onAddClick}
-            >
-              Add Ingredient
-            </Button>
+            { this.props.users.id === common.admin ?
+                <Button
+                className={classes.add_ingredient}
+                onClick={this.onAddClick}
+              >
+                Add Ingredient
+              </Button>
+            :
+            <div></div>
+
+            }
             <Button
               className={classes.export_to_csv}
               onClick={this.onExportClick}
@@ -226,7 +232,8 @@ const mapStateToProps = state => {
   return {
     dummy_ingredients: state.dummy_ingredients,
     errors: state.ingredients.errors,
-    items: state.ingredients.items
+    items: state.ingredients.items,
+    users: state.users
   };
 };
 
@@ -242,11 +249,16 @@ const mapDispatchToProps = dispatch => {
         comments: "",
         id: null
     }))
+    dispatch(ingDetSetNew(true))
+    dispatch(ingDetSetEditing(true))
     console.log("History")
       history.push('/ingredients/details')
     },
     deleteError: (error) => {
       dispatch(ingDeleteError(error))
+    },
+    search: () => {
+      dispatch(ingSearch())
     }
   }
 }

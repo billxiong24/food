@@ -11,10 +11,8 @@ function getErrMsg(err) {
     if(!err.code)
         return err;
 
-    console.log(err);
-
     if(!err_obj[err.code])
-        return "Something went wrong.";
+        return "Something went terribly wrong.";
 
     return err_obj[err.code];
 }

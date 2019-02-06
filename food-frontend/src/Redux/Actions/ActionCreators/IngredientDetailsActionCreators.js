@@ -1,6 +1,6 @@
 import axios from 'axios';
-import common from '../../../Resources/common';
-import { ING_DET_UPDATE_ING, ING_DET_SET_INGREDIENT, ING_DET_GET_SKUS, ING_DET_ADD_ING, ING_DET_ADD_ERROR, ING_DET_DELETE_ERROR } from '../IngredientDetailsActionTypes';
+import common, { createError } from '../../../Resources/common';
+import { ING_DET_UPDATE_ING, ING_DET_SET_INGREDIENT, ING_DET_SET_EDITING, ING_DET_GET_SKUS, ING_DET_ADD_ING, ING_DET_ADD_ERROR, ING_DET_DELETE_ERROR, ING_DET_SET_VALID, ING_DET_SET_NEW } from '../IngredientDetailsActionTypes';
 
 const hostname = common.hostname;
 
@@ -21,23 +21,18 @@ export const ingDetUpdateIng = (ing) => {
           }
         })
       })
-      .catch((err) => {
-        if(err.response.status === 409) {
-          dispatch({
-            type: ING_DET_UPDATE_ING,
-            data: {
-              errMsg: err.response.data.error
-            }}
-          );
-        } else {
-          dispatch({
-            type: ING_DET_UPDATE_ING,
-            data: {
-              errMsg: 'Something unexpected went wrong'
-            }
-          });
-          throw(err.response);
+      .catch((error) => {
+        let message;
+        console.log(error)
+        if(error.error !== undefined){
+          message = error.error
+        }else{
+          message = "Ingredient Conflicts"
         }
+        dispatch({
+          type: ING_DET_ADD_ERROR,
+          data: createError(message)
+        })
       });
     }
   }
@@ -89,23 +84,17 @@ export const ingDetUpdateIng = (ing) => {
           }
         })
       })
-      .catch((err) => {
-        if(err.response.status === 409) {
-          dispatch({
-            type: ING_DET_ADD_ING,
-            data: {
-              errMsg: err.response.data.error
-            }}
-          );
-        } else {
-          dispatch({
-            type: ING_DET_ADD_ING,
-            data: {
-              errMsg: 'Something unexpected went wrong'
-            }
-          });
-          throw(err.response);
+      .catch((error) => {
+        let message;
+        if(error.error !== undefined){
+          message = error.error
+        }else{
+          message = "Ingredient Conflicts"
         }
+        dispatch({
+          type: ING_DET_ADD_ERROR,
+          data: createError(message)
+        })
       });
     }
   }
@@ -127,6 +116,38 @@ export const ingDetDeleteError = (err) => {
     return dispatch({
       type: ING_DET_DELETE_ERROR,
       data: err
+    })
+  }
+}
+
+export const ingDetSetValid = (validity) => {
+  console.log("ING_DET_SET_VALID ACTION CREATOR")
+  return (dispatch) => {
+    return dispatch({
+      type: ING_DET_SET_VALID,
+      data: validity
+    })
+  }
+}
+
+export const ingDetSetEditing = (editing) => {
+  console.log("ING_DET_SET_EDITING ACTION CREATOR")
+  console.log(editing)
+  return (dispatch) => {
+    return dispatch({
+      type: ING_DET_SET_EDITING,
+      data: editing
+    })
+  }
+}
+
+export const ingDetSetNew= (newValue) => {
+  console.log("ING_DET_SET_NEW ACTION CREATOR")
+  console.log(newValue)
+  return (dispatch) => {
+    return dispatch({
+      type: ING_DET_SET_NEW,
+      data: newValue
     })
   }
 }

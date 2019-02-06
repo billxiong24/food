@@ -5,13 +5,14 @@ import TextField from '@material-ui/core/TextField';
 import { Typography, Button } from '@material-ui/core';
 import EditableText from '../GenericComponents/EditableText';
 import labels from '../../Resources/labels';
-import { ingDetUpdateIng, ingDetAddIng, ingDetDeleteError, ingDetAddError } from '../../Redux/Actions/ActionCreators/IngredientDetailsActionCreators';
+import { ingDetUpdateIng, ingDetAddIng, ingDetDeleteError, ingDetAddError, ingDetSetEditing, ingDetSetNew } from '../../Redux/Actions/ActionCreators/IngredientDetailsActionCreators';
 import { routeToPage, ingDeleteIng, ingAddDependency, ingRemoveDependency } from '../../Redux/Actions';
 import IngredientSKUList from './IngredientSKUList';
 import { withRouter, Link } from 'react-router-dom';
 import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
 import EditableNumeric from '../GenericComponents/EditableNumeric';
-import { isValidIng, getIngErrors } from '../../Resources/common';
+import common, { isValidIng, getIngErrors } from '../../Resources/common';
+import {store} from "../../index"
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 
@@ -20,6 +21,12 @@ const styles = {
     ingredient_page_container:{
         display:'flex',
         flexDirection: 'row',
+    },
+    left:{
+        display:'flex',
+        flexDirection: 'column',
+        alignItems:'center',
+        width:'40vh'
     },
     ingredient_detail_view:{    
         display:'flex',
@@ -88,10 +95,14 @@ class IngredientDetailViewPage extends Component {
     }
 
     
+    onEditClick = () => {
+        this.props.edit()
+    }
+    
 
     
 
-    onButtonClick = () => {
+    onSaveClick = () => {
         const ing = {
             name:this.state.ingredientName,
             num:this.state.ingredientNum,
@@ -102,28 +113,16 @@ class IngredientDetailViewPage extends Component {
             id:this.props.id
         }
         
-        if(this.state.buttonText == "Edit"){
-            this.setState({
-                buttonText: "Save",
-                editing:true,
-            });
+        let errors = getIngErrors(ing);
+        if(errors.length == 0){
+            console.log("SKUDETAILVIEW")
+            this.props.update(ing) // dispatch
         }else{
-            let errors = getIngErrors(ing);
-            if(errors.length == 0){
-                this.setState({
-                    buttonText: "Edit",
-                    editing:false,
-                });
-                console.log("INGREDIENTDETAILVIEW")
-                console.log(ing)
-                
-                this.props.update(ing)
-            }else{
-                for (var i = 0; i < errors.length; i++) {
-                    this.props.pushError(errors[i])
-                }
+            for (var i = 0; i < errors.length; i++) {
+                this.props.pushError(errors[i])
             }
         }
+        
     }
 
     onAddClick = () => {
@@ -153,7 +152,6 @@ class IngredientDetailViewPage extends Component {
     }
 
     onDelete = () => {
-        
         const ing = {
             name:this.state.ingredientName,
             num:this.state.ingredientNum,
@@ -210,10 +208,10 @@ class IngredientDetailViewPage extends Component {
     }
 
     render() {
-        const { classes } = this.props
+        const { classes, editing, newValue } = this.props
         return (
             <div className = {classes.ingredient_page_container}>
-                <Button component={Link} to={'/ingredients'}>
+                <Button onClick={this.props.back}>
                     Back
                 </Button>
                 <div className = {classes.ingredient_detail_view}>
@@ -222,7 +220,7 @@ class IngredientDetailViewPage extends Component {
                     </Typography>
                     <EditableText 
                         label={"Ingredient Name"} 
-                        editing={this.state.editing}
+                        editing={editing}
                         key={"ingredientName"}
                         field={"ingredientName"}
                         onChange={this.onChange}>
@@ -232,7 +230,7 @@ class IngredientDetailViewPage extends Component {
 
                     <EditableNumeric
                         label={"Ingredient No."}
-                        editing={this.state.editing}
+                        editing={editing}
                         key={"ingredientNum"}
                         field={"ingredientNum"}
                         onChange={this.onChange}>
@@ -241,7 +239,7 @@ class IngredientDetailViewPage extends Component {
 
                     <EditableText 
                         label={"Vendor Info"}
-                        editing={this.state.editing}
+                        editing={editing}
                         key={"vend_info"}
                         field={"vend_info"}
                         onChange={this.onChange}>
@@ -250,7 +248,7 @@ class IngredientDetailViewPage extends Component {
 
                     <EditableText 
                         label={"Package Size"} 
-                        editing={this.state.editing}
+                        editing={editing}
                         key={"packageSize"}
                         field={"packageSize"}
                         onChange={this.onChange}>
@@ -260,7 +258,7 @@ class IngredientDetailViewPage extends Component {
 
                     <EditableNumeric
                         label={"Cost per Package"} 
-                        editing={this.state.editing}
+                        editing={editing}
                         key={"costPerPackage"}
                         field={"costPerPackage"}
                         onChange={this.onChange}>
@@ -269,7 +267,7 @@ class IngredientDetailViewPage extends Component {
 
                     <EditableText 
                         label={"Comment"} 
-                        editing={this.state.editing}
+                        editing={editing}
                         key={"comment"}
                         field={"comment"}
                         onChange={this.onChange}
@@ -277,52 +275,72 @@ class IngredientDetailViewPage extends Component {
                         {this.state.comment}
                     </EditableText>
                     {
-                        this.state.new ?
+                    (this.props.users.id === common.admin && newValue )?
                         <Button 
-                            className={classes.button}
+                            className={classes.button} 
+                            editing={editing}
                             onClick = {this.onAddClick}
                         >
-                            {this.state.buttonText}
-                        </Button>
-                        :
-                        <Button 
-                            className={classes.button}
-                            onClick = {this.onButtonClick}
-                        >
-                            {this.state.buttonText}
-                        </Button>
-
-                    }
-                    {
-                        (this.state.editing && !this.state.new)?
-                        <Button 
-                            className={classes.button}
-                            onClick = {this.onDelete}
-                        >
-                            DELETE
+                            ADD
                         </Button>
                         :
                         <div></div>
                     }
                     {
-                (!this.state.new && !this.state.editing) ?
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={this.state.checked}
-                        onChange={this.dependencyChange}
-                        color="primary"
-                      />
+                        (this.props.users.id === common.admin && !editing) ?
+                        <Button 
+                            className={classes.button} 
+                            editing={editing}
+                            onClick = {this.onEditClick}
+                        >
+                            EDIT
+                        </Button>
+
+                    
+                    :
+                    <div></div>
                     }
-                    label="Add to Dependency"
-                  />
-                  :
-                  <div></div>
-              }
+                    {
+                        (editing && !newValue)?
+                        <div>
+                            <Button 
+                                className={classes.button} 
+                                editing={editing}
+                                onClick = {this.onSaveClick}
+                            >
+                                SAVE
+                            </Button>
+
+                            <Button 
+                                className={classes.button} 
+                                editing={editing}
+                                onClick = {this.onDelete}
+                            >
+                                DELETE
+                            </Button>
+                        </div>
+                        :
+                        <div></div>
+                    }
+                    {
+                        (!newValue && !editing)?
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    checked={this.state.checked}
+                                    onChange={this.dependencyChange}
+                                    color="primary"
+                                />
+                            }
+                            label="Add to Dependency"
+                        />
+                        :
+                        <div></div>
+                    }
 
                     
                 </div>
-                <div>
+                <div className={classes.left}>
                     <Typography>
                         SKU List
                     </Typography>
@@ -355,6 +373,10 @@ const mapStateToProps = state => {
         id: state.ingredient_details.id,
         errors: state.ingredient_details.errors,
         skus: state.ingredient_details.skus,
+        users: state.users,
+        valid: state.ingredient_details.valid,
+        editing: state.ingredient_details.editing,
+        newValue: state.ingredient_details.new,
         dependency: state.ingredients.ingDependency,
     };
 };
@@ -366,10 +388,13 @@ const mapDispatchToProps = (dispatch, ownProps) => {
             dispatch(ingDetUpdateIng(ing))
         },
         back: () => {
-            dispatch(routeToPage(0))
+            dispatch(ingDetSetEditing(false))
+            dispatch(ingDetSetNew(false))
+            ownProps.history.push('/ingredients')
         },
         delete: (ing) => {
             dispatch(ingDeleteIng(ing))
+            dispatch(ingDetSetEditing(false))
             ownProps.history.push('/ingredients')
         },
         add: (ing) =>{
@@ -384,6 +409,9 @@ const mapDispatchToProps = (dispatch, ownProps) => {
         },
         addIngToReport: ing => {
             dispatch(ingAddDependency(ing))
+        },
+        edit: () => {
+            dispatch(ingDetSetEditing(true))
         },
         removeIngFromReport: ing => {
             dispatch(ingRemoveDependency(ing))

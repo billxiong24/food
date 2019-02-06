@@ -132,13 +132,15 @@ class BulkImportPage extends Component {
             }
         })
             .then((response) => {
-                this.setState({
-                    skuErrors:response.data.errors,
-                })
-                if(response.data.rows !== undefined){
+                if(!response.data.abort){
                     this.setState({
-                        skuUpdates:response.data.rows,
+                        skuErrors:response.data.errors,
                     })
+                    if(response.data.rows !== undefined){
+                        this.setState({
+                            skuUpdates:response.data.rows,
+                        })
+                    }
                 }
             })
             .catch(err => {
@@ -181,6 +183,7 @@ class BulkImportPage extends Component {
             }
         })
             .then((response) => {
+                if(!response.data.abort){
                 this.setState({
                     productLineErrors:response.data.errors,
                 })
@@ -189,6 +192,7 @@ class BulkImportPage extends Component {
                         productLineUpdates:response.data.rows,
                     })
                 }
+            }
             })
             .catch(err => {
               console.log(err);
@@ -231,6 +235,7 @@ class BulkImportPage extends Component {
             }
         })
             .then((response) => {
+                if(!response.data.abort){
                 this.setState({
                     ingredientErrors:response.data.errors,
                 })
@@ -239,6 +244,7 @@ class BulkImportPage extends Component {
                         ingredientUpdates:response.data.rows,
                     })  
                 }
+            }
             })
             .catch(err => {
               console.log(err);
@@ -278,21 +284,21 @@ class BulkImportPage extends Component {
             'Content-Type': 'multipart/form-data'
             }
         })
-            .then((response) => {
-                console.log(response)
+        .then((response) => {
+            if(!response.data.abort){
+            this.setState({
+                formulaErrors:response.data.errors,
+            })
+            if(response.data.rows !== undefined){
                 this.setState({
-                    formulaErrors:response.data.errors,
-                })
-                if(response.data.rows !== undefined){
-                    this.setState({
-                        formulaUpdates:response.data.rows,
-                    })
-                }
-                console.log(this.state)
-            })
-            .catch(err => {
-              console.log(err);
-            })
+                    formulaUpdates:response.data.rows,
+                })  
+            }
+        }
+        })
+        .catch(err => {
+          console.log(err);
+        })
       }
 
       formulaConfirm = () =>{
@@ -318,6 +324,14 @@ class BulkImportPage extends Component {
         console.log(this.state.skuUpdates.length)
         return (
             <div className={classes.bulk_import_page}>
+            <Typography>
+                We are using Indivial Mode (please refer to the Bulk Import Specifications)
+            </Typography>
+            <a href="Bulk_Import_Specifications.pdf" download="Bulk_Import_Specifications.pdf">Click to Download Bulk Import Specifications</a>
+            <a href="skus.csv" download="skus.csv">Click to Download Sample SKUs CSV</a>
+            <a href="formulas.csv" download="formulas.csv">Click to Download Sample Formulas CSV</a>
+            <a href="ingredients.csv" download="ingredients.csv">Click to Download Sample Ingredients CSV</a>
+            <a href="product_lines.csv" download="product_lines.csv">Click to Download Sample Product Lines CSV</a>
                 <div className={classes.file_upload_container}>
                     <input
                         accept=".csv"
