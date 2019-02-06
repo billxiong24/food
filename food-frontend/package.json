@@ -28,6 +28,7 @@
     "typeface-roboto": "0.0.54"
   },
   "scripts": {
+    "deploy": "react-scripts build; node app.js",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
