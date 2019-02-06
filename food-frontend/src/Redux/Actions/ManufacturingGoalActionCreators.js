@@ -175,7 +175,8 @@ export const mangoalGetProductLines = () => {
   return (dispatch) => {
     return axios.get(hostname + 'productline/search', {
       params: {
-        name: ''
+        name: '',
+        orderKey: 'name'
       }
     })
       .then((response) => {

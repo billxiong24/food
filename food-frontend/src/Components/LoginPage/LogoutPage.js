@@ -52,7 +52,7 @@ class LogoutPage extends Component {
 
   logOutUser() {
     this.props.userLogout();
-    this.props.routeToPage(6);
+    this.props.routeToPage(0);
   }
 
   render() {

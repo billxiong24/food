@@ -74,21 +74,19 @@ class Navbar extends React.Component {
 
   handleChange = (event, value) => {
     if(this.props.users.id) {
-      this.setState({
-        route: value,
-      });
+      this.props.routeToPage(value);
     }
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, value } = this.props;
 
     return (
       <div className={classes.root}>
         <AppBar position="static" color="default">
           <Tabs 
             onChange={this.handleChange} 
-            value={this.state.route}
+            value={value}
             indicatorColor="primary"
             textColor="primary"
             variant="scrollable"
@@ -116,6 +114,7 @@ Navbar.propTypes = {
 const mapStateToProps = state => {
   return {
     users: state.users,
+    value: state.route,
   }
 }
 

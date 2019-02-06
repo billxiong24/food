@@ -44,6 +44,9 @@ const styles = theme => ({
   },
   hide: {
     display: 'none'
+  },
+  status: {
+    marginTop:20,
   }
 });
 
@@ -149,7 +152,9 @@ class SignUpPage extends Component {
             >
               Create User
             </Button>
-            <label>{this.state.status ? this.state.status : users.errMsg}</label>
+            <div className={classes.status}>
+              <label>{this.state.status ? this.state.status : users.errMsg}</label>
+            </div>
           </form>
         </Paper>
       </main>

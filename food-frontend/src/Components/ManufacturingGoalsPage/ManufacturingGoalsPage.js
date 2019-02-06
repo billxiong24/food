@@ -38,7 +38,7 @@ const styles = {
     marginTop: 5,
     marginBottom: 5,
     padding: 10,
-    backgroundColor: 'purple',
+    backgroundColor: '#6F3AD3',
     borderRadius: 12,
     display: 'flex',
     flexDirection: 'column'
@@ -63,7 +63,7 @@ const styles = {
     paddingRight: '2.5%',
     paddingTop: '1%',
     paddingBottom: '1%',
-    backgroundColor: 'purple',
+    backgroundColor: '#6F3AD3',
     borderRadius: 12,
     display: 'flex',
     flexDirection: 'column',
@@ -409,7 +409,7 @@ class ManufacturingGoalsPage extends Component {
                       <MenuItem key={prdline.id} value={prdline} data={prdline}>{prdline.name}</MenuItem>
                     ))}
                   </Select>
-                  <FormHelperText>Some important helper text</FormHelperText>
+                  <FormHelperText>Select Product Lines to Filter By</FormHelperText>
                 </FormControl>
                 <div className={classes.active_filter_container}>
                   {manGoals.filters.map((prdline) => (
