@@ -55,8 +55,29 @@ sudo certbot certonly --webroot -w ca/ -d <YOUR DOMAIN NAME HERE>
 ```   
 Follow prompts.    
 
+### Set Environment Information
+Create .env in root folder of repository
+```
+PGUSER='billxiong24'
+PGHOST='localhost'
+PGPASSWORD='password'
+PGDATABASE='sku_mgmt'
+PGPORT=5432
+HTTPS='true'
+DOMAIN='<YOUR DOMAIN NAME HERE>'
+```
 
-### Start server
+Navigate to food/food-frontend/src/Resources/common.js
+Edit file so that at the top:
+```
+export default {
+  hostname: '<https://<YOUR DOMAIN NAME>/',
+  admin: 7,
+}
+```
+
+
+### Start backend server
 ```npm start``` from root of repository will start server on port 8000.    
 
   
