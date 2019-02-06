@@ -28,7 +28,7 @@ import SortByDropdown from './SortByDropdown';
 import PageSelector from './PageSelector';
 import SKUsPageSearchBar from './SKUsPageSearchBar';
 import { withRouter } from 'react-router-dom'
-import { skuDetSetSku, skuDetGetProductLine, skuDetSetNew } from '../../Redux/Actions/ActionCreators/SKUDetailsActionCreators';
+import { skuDetSetSku, skuDetGetProductLine, skuDetSetNew, skuDetSetEditing } from '../../Redux/Actions/ActionCreators/SKUDetailsActionCreators';
 import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
 import { skuDeleteError } from '../../Redux/Actions';
 import axios from 'axios';
@@ -191,12 +191,16 @@ class SKUsPage extends Component {
             <div className={classes.SKUs_search_bar}>
             </div>
             <div className={classes.other_actions}>
-            <Button
-              className={classes.add_ingredient}
-              onClick={this.onAddClick}
-            >
-              Add SKU
-            </Button>
+            { 
+              this.props.users.id === common.admin ?
+              <Button
+                className={classes.add_ingredient}
+                onClick={this.onAddClick}>
+                Add SKU
+              </Button>
+              :
+              <div></div>
+            }
             <Button
               className={classes.export_to_csv}
               onClick={this.onExportClick}
@@ -228,7 +232,8 @@ const mapStateToProps = state => {
   return {
     dummy_SKUs: state.dummy_SKUs,
     errors: state.skus.errors,
-    items: state.skus.items
+    items: state.skus.items,
+    users: state.users
   };
 };
 
@@ -251,6 +256,7 @@ const mapDispatchToProps = dispatch => {
               id:null    
           }))
           dispatch(skuDetSetNew(true))
+          dispatch(skuDetSetEditing(true))
           console.log("History")
             history.push('/skus/details')
 

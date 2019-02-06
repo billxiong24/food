@@ -1,4 +1,4 @@
-import {  SKU_DET_GET_ING,SKU_DET_ADD_ING,SKU_DET_UPDATE_SKU,SKU_DET_DELETE_SKU,SKU_DET_DELETE_ING,SKU_DET_SET_SKU, SKU_DET_INGREDIENT_AUTOCOMPLETE, SKU_DET_PRODUCT_LINE_LIST, SKU_DET_ADD_ING_LOCAL, SKU_DET_DELETE_ING_LOCAL, SKU_DET_ADD_SKU, SKU_DET_ADD_ERROR, SKU_DET_DELETE_ERROR, SKU_DET_SET_NEW } from "../Actions/SKUDetailActionTypes";
+import {  SKU_DET_GET_ING,SKU_DET_ADD_ING,SKU_DET_UPDATE_SKU,SKU_DET_DELETE_SKU,SKU_DET_DELETE_ING,SKU_DET_SET_SKU, SKU_DET_INGREDIENT_AUTOCOMPLETE, SKU_DET_PRODUCT_LINE_LIST, SKU_DET_ADD_ING_LOCAL, SKU_DET_DELETE_ING_LOCAL, SKU_DET_ADD_SKU, SKU_DET_ADD_ERROR, SKU_DET_DELETE_ERROR, SKU_DET_SET_NEW, SKU_DET_SET_VALID, SKU_DET_SET_EDITING } from "../Actions/SKUDetailActionTypes";
 import { addToList, removeFromList } from "../../Resources/common";
 
 const initialState = {
@@ -36,7 +36,7 @@ export default function SKUDetailReducer(state = initialState, action) {
                 completion = "Error:"+ action.data.errMsg
             }
             return Object.assign({}, state, {
-                completion:completion
+                completion:completion,
             });
         case SKU_DET_UPDATE_SKU:
             console.log("SKU_DET_UPDATE_SKU REDUCER")
@@ -47,7 +47,8 @@ export default function SKUDetailReducer(state = initialState, action) {
                 completion = "Error:"+ action.data.errMsg
             }
             return Object.assign({}, state, {
-                completion:completion
+                completion:completion,
+                editing: false
             });
         case SKU_DET_DELETE_SKU:
             console.log("SKU_DET_DELETE_SKU REDUCER")
@@ -121,7 +122,9 @@ export default function SKUDetailReducer(state = initialState, action) {
             console.log("SKU_DET_ADD_SKU REDUCER")
             console.log(action.data.id)
             return Object.assign({}, state, {
-                id: action.data.id
+                id: action.data.id,
+                editing: false,
+                new: false,
             });
         case SKU_DET_ADD_ERROR:
             console.log("SKU_DET_ADD_ERROR REDUCER")
@@ -140,6 +143,18 @@ export default function SKUDetailReducer(state = initialState, action) {
             console.log(action.data)
             return Object.assign({}, state, {
                 new: action.data
+            });
+        case SKU_DET_SET_VALID:
+            console.log("SKU_DET_SET_VALID REDUCER")
+            console.log(action.data)
+            return Object.assign({}, state, {
+                valid: action.data
+            });
+        case SKU_DET_SET_EDITING:
+            console.log("SKU_DET_SET_EDITING REDUCER")
+            console.log(action.data)
+            return Object.assign({}, state, {
+                editing: action.data
             });
             
             
