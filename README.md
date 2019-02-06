@@ -76,12 +76,11 @@ export default {
 }
 ```
 
-
 ### Start backend server
-```npm start``` from root of repository will start server on port 8000.    
+```sudo npm start``` from root of repository will start server on port 8000.    
 
-  
-   
+### Start frontend server
+```sudo node app.js``` from food/food-frontend/
 
     
    
