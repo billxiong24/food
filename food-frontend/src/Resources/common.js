@@ -1,6 +1,6 @@
 
 export default {
-  hostname: 'https://cmdev.colab.duke.edu:8000/',
+  hostname: 'https://codemonkeys.colab.duke.edu:8000/',
   admin: 7,
 }
 
