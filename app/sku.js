@@ -110,6 +110,8 @@ class SKU extends CRUD {
         if(!dataObj.name || !dataObj.case_upc || !dataObj.unit_upc || !dataObj.unit_size || !dataObj.count_per_case || !dataObj.prd_line) {
             return Promise.reject("Not all required fields are present.");
         }
+        if(dataObj.num === null || dataObj.num === undefined)
+            delete dataObj.num;
 
         let query = QueryGenerator.genInsQuery(dataObj, this.tableName).returning("id").toString();
         console.log(query);
