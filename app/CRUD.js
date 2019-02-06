@@ -224,7 +224,7 @@ class CRUD {
                         errObj = that.generateErrorResult(errMsgs)
                         if(abort)
                             errObj.abort = true;
-                        errObj.rows = rows;
+                        errObj.rows = errObj.abort ? [] : rows;
                         console.log("There was an error, rolling back");
                         client.query("ROLLBACK");
                         client.query("ABORT");
