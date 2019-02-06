@@ -16,8 +16,12 @@ import LogoutPage from './LoginPage/LogoutPage';
 import BulkTransactionPage from './BulkTransactionPage/BulkTransactionPage'
 import CalculatorPage from './CalculatorPage/CalculatorPage';
 import IngredientDetailViewPage from './IngredientDetailViewPage/IngredientDetailViewPage';
+<<<<<<< HEAD
 import SKUDetailViewPage from './SKUDetailViewPage/SKUDetailViewPage'
 import BulkImportPage from './BulkImport/BulkImportPage'
+=======
+import common from '../Resources/common';
+>>>>>>> 19d71b7730ae478e0678efc365c890d11130ba10
 
 const styles = {
 
@@ -29,7 +33,7 @@ class RouterComponent extends Component {
   }
 
   render() {
-    const {manGoals, ingredient_id} = this.props;
+    const {manGoals, ingredient_id, users} = this.props;
 
     return (
       <Router>
@@ -46,7 +50,8 @@ class RouterComponent extends Component {
             <PrivateRoute exact={true} path="/product_lines" component={ProductLinePage} />
             <PrivateRoute exact={true} path="/ingredients/dependency" component={IngredientDependencyPage} />
             <PrivateRoute exact={true} path="/bulk" component={BulkImportPage} />
-            <PrivateRoute exact={true} path="/create_user" component={SignUpPage} />
+            <PrivateRoute exact={true} path="/create_user" component={SignUpPage} 
+              block={users.id!==common.admin}/>
             <PrivateRoute exact={true} path="/logout" component={LogoutPage} />
             <PrivateRoute exact={true} path="/manufacturing_goals/calculations" component={CalculatorPage}
               block={!manGoals.activeGoal.id} altPath="/manufacturing_goals" />
@@ -61,7 +66,8 @@ class RouterComponent extends Component {
 const mapStateToProps = state => {
   return {
       manGoals: state.manGoals,
-      ingredient_id: state.ingredient_details.id
+      ingredient_id: state.ingredient_details.id,
+      users: state.users,
   };
 };
 

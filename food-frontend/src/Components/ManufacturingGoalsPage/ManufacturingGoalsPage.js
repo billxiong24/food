@@ -8,7 +8,6 @@ import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
 import DeleteIcon from '@material-ui/icons/Delete';
 import ManufacturingGoalsCard from './ManufacturingGoalsCard';
-import ManufacturingGoalsFilterSelect from './ManufacturingGoalsFilterSelect';
 import { mangoalAddFilter, mangoalRemoveFilter, mangoalDeleteMangoalSkus, mangaolDeleteMangoal, mangaolUpdateMangoalSkus, mangoalUpdateFilters, mangoalGetProductLines, mangoalSetActiveMangoal, mangoalGetMangoals, mangoalCreateMangoal, mangoalSearchSkus } from '../../Redux/Actions/ManufacturingGoalActionCreators';
 import ManufacturingGoalsSkuSearch from './ManufacturingGoalsSkuSearch';
 import TextField from '@material-ui/core/TextField';
@@ -16,18 +15,13 @@ import SkuCard from './SkuCard';
 import axios from 'axios';
 import common from '../../Resources/common';
 import FileDownload from 'js-file-download';
-import {routeToPage} from '../../Redux/Actions/index';
 import {Link} from 'react-router-dom';
-import Input from '@material-ui/core/Input';
-import OutlinedInput from '@material-ui/core/OutlinedInput';
-import FilledInput from '@material-ui/core/FilledInput';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Chip from '@material-ui/core/Chip';
-import DoneIcon from '@material-ui/icons/Done';
 
 const styles = {
   man_goal_page_container: {
@@ -44,7 +38,7 @@ const styles = {
     marginTop: 5,
     marginBottom: 5,
     padding: 10,
-    backgroundColor: 'purple',
+    backgroundColor: '#6F3AD3',
     borderRadius: 12,
     display: 'flex',
     flexDirection: 'column'
@@ -69,7 +63,7 @@ const styles = {
     paddingRight: '2.5%',
     paddingTop: '1%',
     paddingBottom: '1%',
-    backgroundColor: 'purple',
+    backgroundColor: '#6F3AD3',
     borderRadius: 12,
     display: 'flex',
     flexDirection: 'column',
@@ -204,12 +198,22 @@ class ManufacturingGoalsPage extends Component {
 
   addFilter(prdline) {
     if (prdline) {
-      this.props.mangoalAddFilter(prdline);
+      new Promise((resolve, reject) => {
+        resolve(this.props.mangoalAddFilter(prdline));
+      })
+      .then((value) => {
+        this.getSkuSuggestions();
+      });
     }
   }
 
   removeFilter(prdline) {
-    this.props.mangoalRemoveFilter(prdline);
+    new Promise((resolve, reject) => {
+      resolve(this.props.mangoalRemoveFilter(prdline));
+    })
+    .then((value) => {
+      this.getSkuSuggestions();
+    });
   }
 
   addManufacturingGoal(manGoal) {
@@ -405,7 +409,7 @@ class ManufacturingGoalsPage extends Component {
                       <MenuItem key={prdline.id} value={prdline} data={prdline}>{prdline.name}</MenuItem>
                     ))}
                   </Select>
-                  <FormHelperText>Some important helper text</FormHelperText>
+                  <FormHelperText>Select Product Lines to Filter By</FormHelperText>
                 </FormControl>
                 <div className={classes.active_filter_container}>
                   {manGoals.filters.map((prdline) => (

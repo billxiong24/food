@@ -1,6 +1,8 @@
 bin/
 node_modules/
 *.swp
-app/.env
+.env
+food-frontend/node_modules/
+food-frontend/build/
 test.js
 *.csv

@@ -1,27 +1,67 @@
-# 458 project        
-        
-## Dependencies        
-```npm install``` to install dependencies.      
-    
-### PostgreSQL    
-    
-CentOS: ```sudo dnf install postgresql-server postgresql-contrib```      
-Ubuntu: ```sudo apt-get install postgresql postgresql-contrib```      
-    
-For ubuntu:    
-Start postgresql server: ```sudo service postgresql start```    
-    
-Fedora:    
-Enable postgresql server: ```sudo systemctl enable postgresql```      
-Start postgresql server: ```sudo systemctl start postgresql```      
-For Fedora, need to initialize db: ```sudo postgresql-setup --itdb --unit postgresql```      
-    
-change ```.env``` file to appropriate credentials for postgres database.    
-    
-    
-Set up database and dummy data: ```Run psql -f db/food.sql```      
-## Start project      
-Run ```npm start```. This will start server on localhost:8000. Use ```nodemon```, so don't have to restart server every time changes are made.        
+# 458 project     
+     
+## Platform requirements   
+Ubuntu 18.04     
+Node.JS v8.10    
+PostgreSQL v10.6    
+      
+## Deployment Guide
+
+```
+git clone https://github.com/billxiong24/food.git   
+cd food/
+```    
+
+### Set up Postgresql    
+```   
+sudo apt-get install postgresql postgresql-contrib   
+sudo update-rc.d postgresql enable  
+sudo service postgresql start  
+sudo su - postgres  
+psql    
+\password    
+```      
+Enter your password. Update credentials in ```.env``` file.    
+     
+#### Create databases   
+As user ```postgres```, Go to the root of the repository.   
+```cd db/ && psql -f food.sql && psql -f unique.sql```    
+
+
+### Set up Node.JS    
+From the root of the repository:    
+```   
+sudo apt-get install -y nodejs   
+sudo apt install npm   
+npm install    
+```   
+
+### Set up CA  
+```
+sudo apt-get update
+sudo apt-get install software-properties-common   
+sudo add-apt-repository universe   
+sudo add-apt-repository ppa:certbot/certbot   
+```   
+Press enter to affirm  
+```   
+sudo apt-get update  
+sudo apt-get install certbot  
+```   
+     
+```
+sudo node ca/app.js   
+sudo certbot certonly --webroot -w ca/ -d <YOUR DOMAIN NAME HERE>   
+```   
+Follow prompts.    
+
+
+### Start server
+```npm start``` from root of repository will start server on port 8000.    
+
+  
+
+
     
     
 ## API documentation      

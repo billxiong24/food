@@ -9,6 +9,7 @@ import { routeToPage } from '../Redux/Actions/index';
 import { connect } from 'react-redux';
 import {Link} from 'react-router-dom';
 import { withRouter } from 'react-router-dom';
+import common from '../Resources/common';
 
 function TabContainer(props) {
   return (
@@ -73,21 +74,19 @@ class Navbar extends React.Component {
 
   handleChange = (event, value) => {
     if(this.props.users.id) {
-      this.setState({
-        route: value,
-      });
+      this.props.routeToPage(value);
     }
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, value } = this.props;
 
     return (
       <div className={classes.root}>
         <AppBar position="static" color="default">
           <Tabs 
             onChange={this.handleChange} 
-            value={this.state.route}
+            value={value}
             indicatorColor="primary"
             textColor="primary"
             variant="scrollable"
@@ -99,7 +98,7 @@ class Navbar extends React.Component {
             <Tab value={3} label="Product Line" component={Link} to={'/product_lines'} />
             <Tab value={4} label="Ingredient Dependency" component={Link} to={'/ingredients/dependency'} />
             <Tab value={5} label="Bulk Import/Export" component={Link} to={'/bulk'} />
-            <Tab value={6} className={this.props.users.id===7 ? '' : classes.hidden} label="Create Account" component={Link} to={'/create_user'} />
+            <Tab value={6} className={this.props.users.id===common.admin ? '' : classes.hidden} label="Create Account" component={Link} to={'/create_user'} />
             <Tab value={7} className={this.props.users.id ? '' : classes.hidden} label="Log Out" component={Link} to={'/logout'} />
           </Tabs>
         </AppBar>
@@ -115,6 +114,7 @@ Navbar.propTypes = {
 const mapStateToProps = state => {
   return {
     users: state.users,
+    value: state.route,
   }
 }
 

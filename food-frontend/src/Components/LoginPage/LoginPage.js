@@ -42,6 +42,9 @@ const styles = theme => ({
   },
   submit: {
     marginTop: theme.spacing.unit * 3,
+  },
+  status: {
+    marginTop:20,
   }
 });
 
@@ -106,7 +109,9 @@ class LoginPage extends Component {
             >
               Sign in
             </Button>
-            <label>{users.errMsg}</label>
+            <div className={classes.status}>
+              <label>{users.errMsg}</label>
+            </div>
           </form>
         </Paper>
       </main>
