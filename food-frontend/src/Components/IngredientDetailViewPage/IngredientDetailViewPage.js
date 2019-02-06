@@ -6,12 +6,14 @@ import { Typography, Button } from '@material-ui/core';
 import EditableText from '../GenericComponents/EditableText';
 import labels from '../../Resources/labels';
 import { ingDetUpdateIng, ingDetAddIng, ingDetDeleteError, ingDetAddError } from '../../Redux/Actions/ActionCreators/IngredientDetailsActionCreators';
-import { routeToPage, ingDeleteIng, ingAddDependency } from '../../Redux/Actions';
+import { routeToPage, ingDeleteIng, ingAddDependency, ingRemoveDependency } from '../../Redux/Actions';
 import IngredientSKUList from './IngredientSKUList';
 import { withRouter, Link } from 'react-router-dom';
 import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
 import EditableNumeric from '../GenericComponents/EditableNumeric';
 import { isValidIng, getIngErrors } from '../../Resources/common';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
 
 
 const styles = {
@@ -57,7 +59,10 @@ class IngredientDetailViewPage extends Component {
             packageSize:this.props.packageSize,
             costPerPackage:this.props.costPerPackage,
             comment:this.props.comment,
-            new:false
+            new:false,
+            checked:this.props.dependency.filter((ing) => {
+              return ing.id === this.props.id;
+            }).length === 1,
         }
         console.log("INGREDIENT DETAIL VIEW")
         console.log(this.props.id)
@@ -164,6 +169,31 @@ class IngredientDetailViewPage extends Component {
         
     }
 
+    dependencyChange = () =>{
+      const ing = {
+        name:this.state.ingredientName,
+        num:this.state.ingredientNum,
+        vend_info:this.state.vend_info,
+        pkg_size:this.state.packageSize,
+        pkg_cost:this.state.costPerPackage,
+        comments:this.state.comment,
+        id:this.props.id,
+        skus:this.props.skus
+    }
+    console.log(this.state.checked);
+      if(this.state.checked) {
+        this.props.removeIngFromReport(ing)
+        this.setState({
+          checked: false,
+        })
+      } else {
+        this.props.addIngToReport(ing)
+        this.setState({
+          checked: true,
+        });
+      }
+    }
+
     addToReport = () => {
         const ing = {
             name:this.state.ingredientName,
@@ -249,16 +279,14 @@ class IngredientDetailViewPage extends Component {
                     {
                         this.state.new ?
                         <Button 
-                            className={classes.button} 
-                            editing={this.state.editing}
+                            className={classes.button}
                             onClick = {this.onAddClick}
                         >
                             {this.state.buttonText}
                         </Button>
                         :
                         <Button 
-                            className={classes.button} 
-                            editing={this.state.editing}
+                            className={classes.button}
                             onClick = {this.onButtonClick}
                         >
                             {this.state.buttonText}
@@ -268,8 +296,7 @@ class IngredientDetailViewPage extends Component {
                     {
                         (this.state.editing && !this.state.new)?
                         <Button 
-                            className={classes.button} 
-                            editing={this.state.editing}
+                            className={classes.button}
                             onClick = {this.onDelete}
                         >
                             DELETE
@@ -278,17 +305,20 @@ class IngredientDetailViewPage extends Component {
                         <div></div>
                     }
                     {
-                        (!this.state.new && !this.state.editing)?
-                        <Button 
-                            className={classes.button} 
-                            editing={this.state.editing}
-                            onClick = {this.addToReport}
-                        >
-                            ADD TO REPORT
-                        </Button>
-                        :
-                        <div></div>
+                (!this.state.new && !this.state.editing) ?
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={this.state.checked}
+                        onChange={this.dependencyChange}
+                        color="primary"
+                      />
                     }
+                    label="Add to Dependency"
+                  />
+                  :
+                  <div></div>
+              }
 
                     
                 </div>
@@ -315,7 +345,6 @@ class IngredientDetailViewPage extends Component {
 
 
 const mapStateToProps = state => {
-    console.log(state)
     return {
         ingredientName: state.ingredient_details.ingredientName,
         ingredientNum: state.ingredient_details.ingredientNum,
@@ -325,7 +354,8 @@ const mapStateToProps = state => {
         comment: state.ingredient_details.comment,
         id: state.ingredient_details.id,
         errors: state.ingredient_details.errors,
-        skus: state.ingredient_details.skus
+        skus: state.ingredient_details.skus,
+        dependency: state.ingredients.ingDependency,
     };
 };
 
@@ -354,6 +384,9 @@ const mapDispatchToProps = (dispatch, ownProps) => {
         },
         addIngToReport: ing => {
             dispatch(ingAddDependency(ing))
+        },
+        removeIngFromReport: ing => {
+            dispatch(ingRemoveDependency(ing))
         }
     };
 };
