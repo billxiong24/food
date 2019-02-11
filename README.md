@@ -10,6 +10,8 @@ PostgreSQL v10.6
 ```
 git clone https://github.com/billxiong24/food.git   
 cd food/
+```npm install```  
+Run ```npm test``` to verify all the tests are working.  
 ```    
 
 ### Set up Postgresql    
@@ -34,7 +36,9 @@ From the root of the repository:
 sudo apt-get install -y nodejs   
 sudo apt install npm   
 npm install    
-```   
+```    
+
+Run ```npm test``` to verify all the tests are working.  
 
 ### Set up CA  
 ```
