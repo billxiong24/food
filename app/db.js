@@ -35,7 +35,6 @@ class DB {
 
     closePool() {
         this.pool.end();
-    
     }
 }
 

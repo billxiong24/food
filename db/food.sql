@@ -34,7 +34,7 @@ COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
 
 --
--- Name: unique_ingred_num_seq(); Type: FUNCTION; Schema: public; Owner: billxiong24
+-- Name: unique_ingred_num_seq(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
 CREATE FUNCTION public.unique_ingred_num_seq(OUT nextfree bigint) RETURNS bigint
@@ -52,10 +52,10 @@ END
 $$;
 
 
-ALTER FUNCTION public.unique_ingred_num_seq(OUT nextfree bigint) OWNER TO billxiong24;
+ALTER FUNCTION public.unique_ingred_num_seq(OUT nextfree bigint) OWNER TO postgres;
 
 --
--- Name: unique_sku_num_seq(); Type: FUNCTION; Schema: public; Owner: billxiong24
+-- Name: unique_sku_num_seq(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
 CREATE FUNCTION public.unique_sku_num_seq(OUT nextfree bigint) RETURNS bigint
@@ -73,14 +73,14 @@ END
 $$;
 
 
-ALTER FUNCTION public.unique_sku_num_seq(OUT nextfree bigint) OWNER TO billxiong24;
+ALTER FUNCTION public.unique_sku_num_seq(OUT nextfree bigint) OWNER TO postgres;
 
 SET default_tablespace = '';
 
 SET default_with_oids = false;
 
 --
--- Name: ingredients; Type: TABLE; Schema: public; Owner: billxiong24
+-- Name: ingredients; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.ingredients (
@@ -95,10 +95,10 @@ CREATE TABLE public.ingredients (
 );
 
 
-ALTER TABLE public.ingredients OWNER TO billxiong24;
+ALTER TABLE public.ingredients OWNER TO postgres;
 
 --
--- Name: ingredients_id_seq; Type: SEQUENCE; Schema: public; Owner: billxiong24
+-- Name: ingredients_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
 CREATE SEQUENCE public.ingredients_id_seq
@@ -109,17 +109,17 @@ CREATE SEQUENCE public.ingredients_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.ingredients_id_seq OWNER TO billxiong24;
+ALTER TABLE public.ingredients_id_seq OWNER TO postgres;
 
 --
--- Name: ingredients_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: billxiong24
+-- Name: ingredients_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
 ALTER SEQUENCE public.ingredients_id_seq OWNED BY public.ingredients.id;
 
 
 --
--- Name: ingredients_num_seq; Type: SEQUENCE; Schema: public; Owner: billxiong24
+-- Name: ingredients_num_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
 CREATE SEQUENCE public.ingredients_num_seq
@@ -130,17 +130,17 @@ CREATE SEQUENCE public.ingredients_num_seq
     CACHE 1;
 
 
-ALTER TABLE public.ingredients_num_seq OWNER TO billxiong24;
+ALTER TABLE public.ingredients_num_seq OWNER TO postgres;
 
 --
--- Name: ingredients_num_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: billxiong24
+-- Name: ingredients_num_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
 ALTER SEQUENCE public.ingredients_num_seq OWNED BY public.ingredients.num;
 
 
 --
--- Name: manufacturing_goal; Type: TABLE; Schema: public; Owner: billxiong24
+-- Name: manufacturing_goal; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.manufacturing_goal (
@@ -150,10 +150,10 @@ CREATE TABLE public.manufacturing_goal (
 );
 
 
-ALTER TABLE public.manufacturing_goal OWNER TO billxiong24;
+ALTER TABLE public.manufacturing_goal OWNER TO postgres;
 
 --
--- Name: manufacturing_goal_id_seq; Type: SEQUENCE; Schema: public; Owner: billxiong24
+-- Name: manufacturing_goal_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
 CREATE SEQUENCE public.manufacturing_goal_id_seq
@@ -164,17 +164,17 @@ CREATE SEQUENCE public.manufacturing_goal_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.manufacturing_goal_id_seq OWNER TO billxiong24;
+ALTER TABLE public.manufacturing_goal_id_seq OWNER TO postgres;
 
 --
--- Name: manufacturing_goal_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: billxiong24
+-- Name: manufacturing_goal_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
 ALTER SEQUENCE public.manufacturing_goal_id_seq OWNED BY public.manufacturing_goal.id;
 
 
 --
--- Name: manufacturing_goal_sku; Type: TABLE; Schema: public; Owner: billxiong24
+-- Name: manufacturing_goal_sku; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.manufacturing_goal_sku (
@@ -184,10 +184,10 @@ CREATE TABLE public.manufacturing_goal_sku (
 );
 
 
-ALTER TABLE public.manufacturing_goal_sku OWNER TO billxiong24;
+ALTER TABLE public.manufacturing_goal_sku OWNER TO postgres;
 
 --
--- Name: manufacturing_goal_sku_id_seq; Type: SEQUENCE; Schema: public; Owner: billxiong24
+-- Name: manufacturing_goal_sku_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
 CREATE SEQUENCE public.manufacturing_goal_sku_id_seq
@@ -198,17 +198,17 @@ CREATE SEQUENCE public.manufacturing_goal_sku_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.manufacturing_goal_sku_id_seq OWNER TO billxiong24;
+ALTER TABLE public.manufacturing_goal_sku_id_seq OWNER TO postgres;
 
 --
--- Name: manufacturing_goal_sku_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: billxiong24
+-- Name: manufacturing_goal_sku_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
 ALTER SEQUENCE public.manufacturing_goal_sku_id_seq OWNED BY public.manufacturing_goal_sku.mg_id;
 
 
 --
--- Name: manufacturing_goal_sku_sku_id_seq; Type: SEQUENCE; Schema: public; Owner: billxiong24
+-- Name: manufacturing_goal_sku_sku_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
 CREATE SEQUENCE public.manufacturing_goal_sku_sku_id_seq
@@ -219,17 +219,17 @@ CREATE SEQUENCE public.manufacturing_goal_sku_sku_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.manufacturing_goal_sku_sku_id_seq OWNER TO billxiong24;
+ALTER TABLE public.manufacturing_goal_sku_sku_id_seq OWNER TO postgres;
 
 --
--- Name: manufacturing_goal_sku_sku_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: billxiong24
+-- Name: manufacturing_goal_sku_sku_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
 ALTER SEQUENCE public.manufacturing_goal_sku_sku_id_seq OWNED BY public.manufacturing_goal_sku.sku_id;
 
 
 --
--- Name: manufacturing_goal_user_id_seq; Type: SEQUENCE; Schema: public; Owner: billxiong24
+-- Name: manufacturing_goal_user_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
 CREATE SEQUENCE public.manufacturing_goal_user_id_seq
@@ -240,17 +240,17 @@ CREATE SEQUENCE public.manufacturing_goal_user_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.manufacturing_goal_user_id_seq OWNER TO billxiong24;
+ALTER TABLE public.manufacturing_goal_user_id_seq OWNER TO postgres;
 
 --
--- Name: manufacturing_goal_user_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: billxiong24
+-- Name: manufacturing_goal_user_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
 ALTER SEQUENCE public.manufacturing_goal_user_id_seq OWNED BY public.manufacturing_goal.user_id;
 
 
 --
--- Name: productline; Type: TABLE; Schema: public; Owner: billxiong24
+-- Name: productline; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.productline (
@@ -259,10 +259,10 @@ CREATE TABLE public.productline (
 );
 
 
-ALTER TABLE public.productline OWNER TO billxiong24;
+ALTER TABLE public.productline OWNER TO postgres;
 
 --
--- Name: productline_id_seq; Type: SEQUENCE; Schema: public; Owner: billxiong24
+-- Name: productline_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
 CREATE SEQUENCE public.productline_id_seq
@@ -273,17 +273,17 @@ CREATE SEQUENCE public.productline_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.productline_id_seq OWNER TO billxiong24;
+ALTER TABLE public.productline_id_seq OWNER TO postgres;
 
 --
--- Name: productline_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: billxiong24
+-- Name: productline_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
 ALTER SEQUENCE public.productline_id_seq OWNED BY public.productline.id;
 
 
 --
--- Name: sku; Type: TABLE; Schema: public; Owner: billxiong24
+-- Name: sku; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.sku (
@@ -300,10 +300,10 @@ CREATE TABLE public.sku (
 );
 
 
-ALTER TABLE public.sku OWNER TO billxiong24;
+ALTER TABLE public.sku OWNER TO postgres;
 
 --
--- Name: sku_id_seq; Type: SEQUENCE; Schema: public; Owner: billxiong24
+-- Name: sku_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
 CREATE SEQUENCE public.sku_id_seq
@@ -314,17 +314,17 @@ CREATE SEQUENCE public.sku_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.sku_id_seq OWNER TO billxiong24;
+ALTER TABLE public.sku_id_seq OWNER TO postgres;
 
 --
--- Name: sku_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: billxiong24
+-- Name: sku_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
 ALTER SEQUENCE public.sku_id_seq OWNED BY public.sku.id;
 
 
 --
--- Name: sku_ingred; Type: TABLE; Schema: public; Owner: billxiong24
+-- Name: sku_ingred; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.sku_ingred (
@@ -334,10 +334,10 @@ CREATE TABLE public.sku_ingred (
 );
 
 
-ALTER TABLE public.sku_ingred OWNER TO billxiong24;
+ALTER TABLE public.sku_ingred OWNER TO postgres;
 
 --
--- Name: sku_ingred_ingred_num_seq; Type: SEQUENCE; Schema: public; Owner: billxiong24
+-- Name: sku_ingred_ingred_num_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
 CREATE SEQUENCE public.sku_ingred_ingred_num_seq
@@ -348,17 +348,17 @@ CREATE SEQUENCE public.sku_ingred_ingred_num_seq
     CACHE 1;
 
 
-ALTER TABLE public.sku_ingred_ingred_num_seq OWNER TO billxiong24;
+ALTER TABLE public.sku_ingred_ingred_num_seq OWNER TO postgres;
 
 --
--- Name: sku_ingred_ingred_num_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: billxiong24
+-- Name: sku_ingred_ingred_num_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
 ALTER SEQUENCE public.sku_ingred_ingred_num_seq OWNED BY public.sku_ingred.ingred_num;
 
 
 --
--- Name: sku_ingred_sku_num_seq; Type: SEQUENCE; Schema: public; Owner: billxiong24
+-- Name: sku_ingred_sku_num_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
 CREATE SEQUENCE public.sku_ingred_sku_num_seq
@@ -369,17 +369,17 @@ CREATE SEQUENCE public.sku_ingred_sku_num_seq
     CACHE 1;
 
 
-ALTER TABLE public.sku_ingred_sku_num_seq OWNER TO billxiong24;
+ALTER TABLE public.sku_ingred_sku_num_seq OWNER TO postgres;
 
 --
--- Name: sku_ingred_sku_num_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: billxiong24
+-- Name: sku_ingred_sku_num_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
 ALTER SEQUENCE public.sku_ingred_sku_num_seq OWNED BY public.sku_ingred.sku_num;
 
 
 --
--- Name: sku_num_seq; Type: SEQUENCE; Schema: public; Owner: billxiong24
+-- Name: sku_num_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
 CREATE SEQUENCE public.sku_num_seq
@@ -390,17 +390,17 @@ CREATE SEQUENCE public.sku_num_seq
     CACHE 1;
 
 
-ALTER TABLE public.sku_num_seq OWNER TO billxiong24;
+ALTER TABLE public.sku_num_seq OWNER TO postgres;
 
 --
--- Name: sku_num_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: billxiong24
+-- Name: sku_num_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
 ALTER SEQUENCE public.sku_num_seq OWNED BY public.sku.num;
 
 
 --
--- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: billxiong24
+-- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
 CREATE SEQUENCE public.users_id_seq
@@ -411,10 +411,10 @@ CREATE SEQUENCE public.users_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.users_id_seq OWNER TO billxiong24;
+ALTER TABLE public.users_id_seq OWNER TO postgres;
 
 --
--- Name: users; Type: TABLE; Schema: public; Owner: billxiong24
+-- Name: users; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.users (
@@ -424,73 +424,73 @@ CREATE TABLE public.users (
 );
 
 
-ALTER TABLE public.users OWNER TO billxiong24;
+ALTER TABLE public.users OWNER TO postgres;
 
 --
--- Name: ingredients id; Type: DEFAULT; Schema: public; Owner: billxiong24
+-- Name: ingredients id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.ingredients ALTER COLUMN id SET DEFAULT nextval('public.ingredients_id_seq'::regclass);
 
 
 --
--- Name: manufacturing_goal id; Type: DEFAULT; Schema: public; Owner: billxiong24
+-- Name: manufacturing_goal id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.manufacturing_goal ALTER COLUMN id SET DEFAULT nextval('public.manufacturing_goal_id_seq'::regclass);
 
 
 --
--- Name: manufacturing_goal user_id; Type: DEFAULT; Schema: public; Owner: billxiong24
+-- Name: manufacturing_goal user_id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.manufacturing_goal ALTER COLUMN user_id SET DEFAULT nextval('public.manufacturing_goal_user_id_seq'::regclass);
 
 
 --
--- Name: manufacturing_goal_sku mg_id; Type: DEFAULT; Schema: public; Owner: billxiong24
+-- Name: manufacturing_goal_sku mg_id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.manufacturing_goal_sku ALTER COLUMN mg_id SET DEFAULT nextval('public.manufacturing_goal_sku_id_seq'::regclass);
 
 
 --
--- Name: manufacturing_goal_sku sku_id; Type: DEFAULT; Schema: public; Owner: billxiong24
+-- Name: manufacturing_goal_sku sku_id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.manufacturing_goal_sku ALTER COLUMN sku_id SET DEFAULT nextval('public.manufacturing_goal_sku_sku_id_seq'::regclass);
 
 
 --
--- Name: productline id; Type: DEFAULT; Schema: public; Owner: billxiong24
+-- Name: productline id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.productline ALTER COLUMN id SET DEFAULT nextval('public.productline_id_seq'::regclass);
 
 
 --
--- Name: sku id; Type: DEFAULT; Schema: public; Owner: billxiong24
+-- Name: sku id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.sku ALTER COLUMN id SET DEFAULT nextval('public.sku_id_seq'::regclass);
 
 
 --
--- Name: sku_ingred sku_num; Type: DEFAULT; Schema: public; Owner: billxiong24
+-- Name: sku_ingred sku_num; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.sku_ingred ALTER COLUMN sku_num SET DEFAULT nextval('public.sku_ingred_sku_num_seq'::regclass);
 
 
 --
--- Name: sku_ingred ingred_num; Type: DEFAULT; Schema: public; Owner: billxiong24
+-- Name: sku_ingred ingred_num; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.sku_ingred ALTER COLUMN ingred_num SET DEFAULT nextval('public.sku_ingred_ingred_num_seq'::regclass);
 
 
 --
--- Data for Name: ingredients; Type: TABLE DATA; Schema: public; Owner: billxiong24
+-- Data for Name: ingredients; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.ingredients (name, num, vend_info, pkg_size, pkg_cost, comments, id) FROM stdin;
@@ -535,21 +535,21 @@ ing and name	36	compdsany	1034s	451	\N	43
 
 
 --
--- Name: ingredients_id_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
+-- Name: ingredients_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
 SELECT pg_catalog.setval('public.ingredients_id_seq', 43, true);
 
 
 --
--- Name: ingredients_num_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
+-- Name: ingredients_num_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
 SELECT pg_catalog.setval('public.ingredients_num_seq', 36, true);
 
 
 --
--- Data for Name: manufacturing_goal; Type: TABLE DATA; Schema: public; Owner: billxiong24
+-- Data for Name: manufacturing_goal; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.manufacturing_goal (id, name, user_id) FROM stdin;
@@ -562,14 +562,14 @@ COPY public.manufacturing_goal (id, name, user_id) FROM stdin;
 
 
 --
--- Name: manufacturing_goal_id_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
+-- Name: manufacturing_goal_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
 SELECT pg_catalog.setval('public.manufacturing_goal_id_seq', 9, true);
 
 
 --
--- Data for Name: manufacturing_goal_sku; Type: TABLE DATA; Schema: public; Owner: billxiong24
+-- Data for Name: manufacturing_goal_sku; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.manufacturing_goal_sku (mg_id, sku_id, quantity) FROM stdin;
@@ -591,28 +591,28 @@ COPY public.manufacturing_goal_sku (mg_id, sku_id, quantity) FROM stdin;
 
 
 --
--- Name: manufacturing_goal_sku_id_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
+-- Name: manufacturing_goal_sku_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
 SELECT pg_catalog.setval('public.manufacturing_goal_sku_id_seq', 1, false);
 
 
 --
--- Name: manufacturing_goal_sku_sku_id_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
+-- Name: manufacturing_goal_sku_sku_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
 SELECT pg_catalog.setval('public.manufacturing_goal_sku_sku_id_seq', 1, false);
 
 
 --
--- Name: manufacturing_goal_user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
+-- Name: manufacturing_goal_user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
 SELECT pg_catalog.setval('public.manufacturing_goal_user_id_seq', 1, false);
 
 
 --
--- Data for Name: productline; Type: TABLE DATA; Schema: public; Owner: billxiong24
+-- Data for Name: productline; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.productline (name, id) FROM stdin;
@@ -624,14 +624,14 @@ helloprod	6
 
 
 --
--- Name: productline_id_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
+-- Name: productline_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
 SELECT pg_catalog.setval('public.productline_id_seq', 6, true);
 
 
 --
--- Data for Name: sku; Type: TABLE DATA; Schema: public; Owner: billxiong24
+-- Data for Name: sku; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.sku (name, num, case_upc, unit_upc, unit_size, count_per_case, prd_line, comments, id) FROM stdin;
@@ -669,14 +669,14 @@ skueename	28	100000001	456456345	4 pounds	12	prod69	\N	36
 
 
 --
--- Name: sku_id_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
+-- Name: sku_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
 SELECT pg_catalog.setval('public.sku_id_seq', 36, true);
 
 
 --
--- Data for Name: sku_ingred; Type: TABLE DATA; Schema: public; Owner: billxiong24
+-- Data for Name: sku_ingred; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.sku_ingred (sku_num, ingred_num, quantity) FROM stdin;
@@ -712,28 +712,28 @@ COPY public.sku_ingred (sku_num, ingred_num, quantity) FROM stdin;
 
 
 --
--- Name: sku_ingred_ingred_num_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
+-- Name: sku_ingred_ingred_num_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
 SELECT pg_catalog.setval('public.sku_ingred_ingred_num_seq', 1, false);
 
 
 --
--- Name: sku_ingred_sku_num_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
+-- Name: sku_ingred_sku_num_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
 SELECT pg_catalog.setval('public.sku_ingred_sku_num_seq', 1, false);
 
 
 --
--- Name: sku_num_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
+-- Name: sku_num_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
 SELECT pg_catalog.setval('public.sku_num_seq', 28, true);
 
 
 --
--- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: billxiong24
+-- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.users (uname, id, password) FROM stdin;
@@ -747,14 +747,14 @@ faa	10	$2b$10$uVfDG4KA9rrX7mNdBm8Xt.xAjsFBUITXbyer5z6sOWBh1MAvhhDOq
 
 
 --
--- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
+-- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
 SELECT pg_catalog.setval('public.users_id_seq', 11, true);
 
 
 --
--- Name: ingredients ignredients_name_key; Type: CONSTRAINT; Schema: public; Owner: billxiong24
+-- Name: ingredients ignredients_name_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.ingredients
@@ -762,7 +762,7 @@ ALTER TABLE ONLY public.ingredients
 
 
 --
--- Name: ingredients ingredients_num_key; Type: CONSTRAINT; Schema: public; Owner: billxiong24
+-- Name: ingredients ingredients_num_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.ingredients
@@ -770,7 +770,7 @@ ALTER TABLE ONLY public.ingredients
 
 
 --
--- Name: ingredients ingredients_pkey; Type: CONSTRAINT; Schema: public; Owner: billxiong24
+-- Name: ingredients ingredients_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.ingredients
@@ -778,7 +778,7 @@ ALTER TABLE ONLY public.ingredients
 
 
 --
--- Name: manufacturing_goal manufacturing_goal_pkey; Type: CONSTRAINT; Schema: public; Owner: billxiong24
+-- Name: manufacturing_goal manufacturing_goal_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.manufacturing_goal
@@ -786,7 +786,7 @@ ALTER TABLE ONLY public.manufacturing_goal
 
 
 --
--- Name: manufacturing_goal_sku manufacturing_goal_sku_pkey; Type: CONSTRAINT; Schema: public; Owner: billxiong24
+-- Name: manufacturing_goal_sku manufacturing_goal_sku_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.manufacturing_goal_sku
@@ -794,7 +794,7 @@ ALTER TABLE ONLY public.manufacturing_goal_sku
 
 
 --
--- Name: manufacturing_goal manufacturing_goal_user_id_name_key; Type: CONSTRAINT; Schema: public; Owner: billxiong24
+-- Name: manufacturing_goal manufacturing_goal_user_id_name_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.manufacturing_goal
@@ -802,7 +802,7 @@ ALTER TABLE ONLY public.manufacturing_goal
 
 
 --
--- Name: productline productline_name_key; Type: CONSTRAINT; Schema: public; Owner: billxiong24
+-- Name: productline productline_name_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.productline
@@ -810,7 +810,7 @@ ALTER TABLE ONLY public.productline
 
 
 --
--- Name: productline productline_pkey; Type: CONSTRAINT; Schema: public; Owner: billxiong24
+-- Name: productline productline_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.productline
@@ -818,7 +818,7 @@ ALTER TABLE ONLY public.productline
 
 
 --
--- Name: sku sku_case_upc_key; Type: CONSTRAINT; Schema: public; Owner: billxiong24
+-- Name: sku sku_case_upc_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.sku
@@ -826,7 +826,7 @@ ALTER TABLE ONLY public.sku
 
 
 --
--- Name: sku_ingred sku_ingred_pkey; Type: CONSTRAINT; Schema: public; Owner: billxiong24
+-- Name: sku_ingred sku_ingred_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.sku_ingred
@@ -834,7 +834,7 @@ ALTER TABLE ONLY public.sku_ingred
 
 
 --
--- Name: sku sku_num; Type: CONSTRAINT; Schema: public; Owner: billxiong24
+-- Name: sku sku_num; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.sku
@@ -842,7 +842,7 @@ ALTER TABLE ONLY public.sku
 
 
 --
--- Name: sku sku_pkey; Type: CONSTRAINT; Schema: public; Owner: billxiong24
+-- Name: sku sku_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.sku
@@ -850,7 +850,7 @@ ALTER TABLE ONLY public.sku
 
 
 --
--- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: billxiong24
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.users
@@ -858,7 +858,7 @@ ALTER TABLE ONLY public.users
 
 
 --
--- Name: users users_uname; Type: CONSTRAINT; Schema: public; Owner: billxiong24
+-- Name: users users_uname; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.users
@@ -866,7 +866,7 @@ ALTER TABLE ONLY public.users
 
 
 --
--- Name: manufacturing_goal_sku manufacturing_goal_sku_fkey; Type: FK CONSTRAINT; Schema: public; Owner: billxiong24
+-- Name: manufacturing_goal_sku manufacturing_goal_sku_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.manufacturing_goal_sku
@@ -874,7 +874,7 @@ ALTER TABLE ONLY public.manufacturing_goal_sku
 
 
 --
--- Name: manufacturing_goal_sku manufacturing_goal_sku_sku_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: billxiong24
+-- Name: manufacturing_goal_sku manufacturing_goal_sku_sku_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.manufacturing_goal_sku
@@ -882,7 +882,7 @@ ALTER TABLE ONLY public.manufacturing_goal_sku
 
 
 --
--- Name: manufacturing_goal manufacturing_goal_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: billxiong24
+-- Name: manufacturing_goal manufacturing_goal_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.manufacturing_goal
@@ -890,7 +890,7 @@ ALTER TABLE ONLY public.manufacturing_goal
 
 
 --
--- Name: sku_ingred sku_ingred_ingred_num_fkey; Type: FK CONSTRAINT; Schema: public; Owner: billxiong24
+-- Name: sku_ingred sku_ingred_ingred_num_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.sku_ingred
@@ -898,7 +898,7 @@ ALTER TABLE ONLY public.sku_ingred
 
 
 --
--- Name: sku_ingred sku_ingred_sku_num_fkey; Type: FK CONSTRAINT; Schema: public; Owner: billxiong24
+-- Name: sku_ingred sku_ingred_sku_num_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.sku_ingred
@@ -906,7 +906,7 @@ ALTER TABLE ONLY public.sku_ingred
 
 
 --
--- Name: sku sku_prd_line_fkey; Type: FK CONSTRAINT; Schema: public; Owner: billxiong24
+-- Name: sku sku_prd_line_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.sku

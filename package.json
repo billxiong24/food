@@ -9,6 +9,7 @@
     "bcrypt": "^3.0.3",
     "chai": "^4.2.0",
     "chai-http": "^4.2.1",
+    "child_process": "^1.0.2",
     "cookie-parser": "~1.4.3",
     "cors": "^2.8.5",
     "csv": "^5.1.1",

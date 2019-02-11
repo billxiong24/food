@@ -26,7 +26,9 @@ class CRUD {
         return this.checkExisting(dataObj).then(function(res) {
             let count = parseInt(res.rows[0].count);
             //already exists
+            console.log(count);
             if(count > 0) {
+                console.log("entry exists already.");
                 return Promise.reject(errMsg);
             }
             return res;

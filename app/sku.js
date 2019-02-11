@@ -113,7 +113,7 @@ class SKU extends CRUD {
         if(dataObj.num === null || dataObj.num === undefined)
             delete dataObj.num;
 
-        let query = QueryGenerator.genInsQuery(dataObj, this.tableName).returning("id").toString();
+        let query = QueryGenerator.genInsQuery(dataObj, this.tableName).returning("*").toString();
         console.log(query);
         //product line must exist
         return this.checkProductLineExists(dataObj.prd_line)

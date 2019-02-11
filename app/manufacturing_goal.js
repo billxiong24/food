@@ -20,9 +20,7 @@ class ManufacturingGoals extends CRUD {
         if(!dataObj.user_id || !dataObj.name) {
             return Promise.reject("Not all required fields are present");
         }
-        let query = squel.insert()
-        .into(this.tableName)
-        .setFieldsRows([dataObj]).toString();
+        let query = QueryGenerator.genInsQuery(dataObj, this.tableName).returning("*").toString();
         console.log(query);
         return super.insert(query, dataObj, "This goal exists already.");
     }

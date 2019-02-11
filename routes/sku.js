@@ -145,7 +145,7 @@ router.put('/:id', function(req, res, next) {
 
 //TODO 22P02
 router.delete('/:id', function(req, res, next) {
-    if(isNaN((id))) {
+    if(isNaN((req.params.id))) {
         return res.status(400).json({
             error: "Malformed URL."
         });

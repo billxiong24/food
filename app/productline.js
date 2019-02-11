@@ -25,7 +25,7 @@ class ProductLine extends CRUD {
             return Promise.reject("Must include valid name for product line.");
         }
 
-        let query = QueryGenerator.genInsQuery(dataObj, this.tableName).toString();
+        let query = QueryGenerator.genInsQuery(dataObj, this.tableName).returning("*").toString();
         return super.insert(query, dataObj, "Error creating product line: product line exists.");
     }
 

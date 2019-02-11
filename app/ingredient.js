@@ -67,9 +67,7 @@ class Ingredient extends CRUD {
         if(dataObj.num === null || dataObj.num === undefined)
             delete dataObj.num;
 
-        let query = squel.insert()
-        .into(this.tableName)
-        .setFieldsRows([dataObj]).toString();
+        let query = QueryGenerator.genInsQuery(dataObj, this.tableName).returning("*").toString();
         return super.insert(query, dataObj, "Entry with name or num exists already.");
     }
 
