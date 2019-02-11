@@ -21,7 +21,7 @@ class ManufacturingGoals extends CRUD {
             return Promise.reject("Not all required fields are present");
         }
         let query = QueryGenerator.genInsQuery(dataObj, this.tableName).returning("*").toString();
-        console.log(query);
+        //logger.debug(query);
         return super.insert(query, dataObj, "This goal exists already.");
     }
 
@@ -52,7 +52,7 @@ class ManufacturingGoals extends CRUD {
         }
         let query = QueryGenerator.genInsConflictQuery(skus, 'manufacturing_goal_sku',  'ON CONFLICT (mg_id, sku_id) DO UPDATE SET quantity = EXCLUDED.quantity');
         query = query.toString();
-        console.log(query);
+        //logger.debug(query);
         return db.execSingleQuery(query, []);
     }
 
@@ -81,7 +81,7 @@ class ManufacturingGoals extends CRUD {
        .where("mg_id = ?", manufacturing_id)
        .group("ingredients.id")
        .toString();
-       //console.log(query);
+       ////logger.debug(query);
        return db.execSingleQuery(query, []);
    }
 
@@ -90,67 +90,6 @@ class ManufacturingGoals extends CRUD {
         return formatter.generateFormat(jsonList);
     }
 }
-
-
-//const mg = new ManufacturingGoals();
-//mg.calculateQuantities(7)
-//.then(function(res) {
-    ////console.log(res.rows);
-    //const formatter = new Formatter('csv');
-    //formatter.generateFormat(res.rows);
-//})
-//.catch(function(er) {
-    //console.log(er);
-//});
-//mg.removeSkus(4, [2, 3, 5])
-//.then(function(res) {
-    //console.log(res);
-//});
-//mg.getSkus(5)
-//.then(function(res) {
-    //console.log(res.rows);
-//});
-//mg.addSkus(4, [2, 3, 5, 6])
-//.then(function(res) {
-    //console.log(res);
-//})
-//.catch(function(err) {
-    //console.log(err);
-//});
-//mg.calculateQuantities(6, 5)
-//.then(function(res) {
-    //console.log(res.rows);
-//})
-//.catch(function(err) {
-    //console.log(err);
-//});
-//mg.search(43)
-//.then(function(res) {
-    //console.log(res.rows);
-
-//})
-//.catch(function(err) {
-    //console.log(err);
-
-//});
-//mg.remove(6)
-//.then(function(res) {
-    //console.log(res);
-//})
-//.catch(function(err) {
-    //console.log(err);
-//});
-
-//mg.update({
-    //sku_id: 9,
-    //user_id: 7
-//}, 6)
-//.then(function(res) {
-    //console.log(res);
-//})
-//.catch(function(err) {
-    //console.log(err);
-//});
 
 
 module.exports = ManufacturingGoals;

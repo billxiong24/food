@@ -42,7 +42,7 @@ class ProductLine extends CRUD {
         const queryGen = new QueryGenerator(query);
         queryGen.chainAndFilter(names, "name LIKE ?");
         let queryStr = filter.applyFilter(queryGen.getQuery()).toString();
-        console.log(queryStr);
+        //logger.debug(queryStr);
         return db.execSingleQuery(queryStr, []);
     }
 
@@ -75,33 +75,4 @@ class ProductLine extends CRUD {
     }
 }
 
-//const p = new ProductLine();
-
-//p.update({
-    //name: "wagdfivby"
-//}, "prod188")
-//.then(function(res) {
-    //console.log(res);
-//})
-//.catch(function(err) {
-    //console.log(err);
-//});
-
-//p.remove("prod6")
-//.then(function(res) {
-    //console.log(res);
-//})
-//.catch(function(err) {
-    //console.log(err);
-//});
-
-//p.create({
-    //name: "prod44"
-//})
-//.then(function(res) {
-    //console.log(res);
-//})
-//.catch(function(err) {
-    //console.log(err);
-//});
 module.exports = ProductLine;
