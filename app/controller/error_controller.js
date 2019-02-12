@@ -8,6 +8,7 @@ const err_obj = {
 
 function getErrMsg(err) {
     //string message
+    console.log(err);
     if(!err.code)
         return err;
 
