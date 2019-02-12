@@ -4,11 +4,9 @@
 
 -- Dumped from database version 9.6.10
 -- Dumped by pg_dump version 9.6.10
-
-
-DROP DATABASE IF EXISTS sku_mgmt;
-CREATE DATABASE sku_mgmt;
-\c sku_mgmt
+DROP DATABASE IF EXISTS :tabl;
+CREATE DATABASE :tabl;
+\c :tabl
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -79,6 +77,76 @@ ALTER FUNCTION public.unique_sku_num_seq(OUT nextfree bigint) OWNER TO postgres;
 SET default_tablespace = '';
 
 SET default_with_oids = false;
+
+--
+-- Name: formula; Type: TABLE; Schema: public; Owner: billxiong24
+--
+
+CREATE TABLE public.formula (
+    id integer NOT NULL,
+    name character varying(32) NOT NULL,
+    comment text,
+    num integer NOT NULL
+);
+
+
+ALTER TABLE public.formula OWNER TO billxiong24;
+
+--
+-- Name: formula_id_seq; Type: SEQUENCE; Schema: public; Owner: billxiong24
+--
+
+CREATE SEQUENCE public.formula_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.formula_id_seq OWNER TO billxiong24;
+
+--
+-- Name: formula_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: billxiong24
+--
+
+ALTER SEQUENCE public.formula_id_seq OWNED BY public.formula.id;
+
+
+--
+-- Name: formula_ingredients; Type: TABLE; Schema: public; Owner: billxiong24
+--
+
+CREATE TABLE public.formula_ingredients (
+    formula_id integer,
+    ingredients_id integer,
+    quantity integer NOT NULL,
+    unit text NOT NULL
+);
+
+
+ALTER TABLE public.formula_ingredients OWNER TO billxiong24;
+
+--
+-- Name: formula_num_seq; Type: SEQUENCE; Schema: public; Owner: billxiong24
+--
+
+CREATE SEQUENCE public.formula_num_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.formula_num_seq OWNER TO billxiong24;
+
+--
+-- Name: formula_num_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: billxiong24
+--
+
+ALTER SEQUENCE public.formula_num_seq OWNED BY public.formula.num;
+
 
 --
 -- Name: ingredients; Type: TABLE; Schema: public; Owner: postgres
@@ -297,6 +365,7 @@ CREATE TABLE public.sku (
     prd_line text,
     comments text,
     id integer NOT NULL,
+    formula_id integer DEFAULT 1,
     CONSTRAINT sku_count_per_case_check CHECK ((count_per_case > 0))
 );
 
@@ -428,6 +497,20 @@ CREATE TABLE public.users (
 ALTER TABLE public.users OWNER TO postgres;
 
 --
+-- Name: formula id; Type: DEFAULT; Schema: public; Owner: billxiong24
+--
+
+ALTER TABLE ONLY public.formula ALTER COLUMN id SET DEFAULT nextval('public.formula_id_seq'::regclass);
+
+
+--
+-- Name: formula num; Type: DEFAULT; Schema: public; Owner: billxiong24
+--
+
+ALTER TABLE ONLY public.formula ALTER COLUMN num SET DEFAULT nextval('public.formula_num_seq'::regclass);
+
+
+--
 -- Name: ingredients id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -488,6 +571,40 @@ ALTER TABLE ONLY public.sku_ingred ALTER COLUMN sku_num SET DEFAULT nextval('pub
 --
 
 ALTER TABLE ONLY public.sku_ingred ALTER COLUMN ingred_num SET DEFAULT nextval('public.sku_ingred_ingred_num_seq'::regclass);
+
+
+--
+-- Data for Name: formula; Type: TABLE DATA; Schema: public; Owner: billxiong24
+--
+
+COPY public.formula (id, name, comment, num) FROM stdin;
+1	sas	some	1
+\.
+
+
+--
+-- Name: formula_id_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
+--
+
+SELECT pg_catalog.setval('public.formula_id_seq', 1, true);
+
+
+--
+-- Data for Name: formula_ingredients; Type: TABLE DATA; Schema: public; Owner: billxiong24
+--
+
+COPY public.formula_ingredients (formula_id, ingredients_id, quantity, unit) FROM stdin;
+1	16	1	lbs
+1	19	10	lbs
+1	13	10	lbs
+\.
+
+
+--
+-- Name: formula_num_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
+--
+
+SELECT pg_catalog.setval('public.formula_num_seq', 1, false);
 
 
 --
@@ -635,37 +752,37 @@ SELECT pg_catalog.setval('public.productline_id_seq', 6, true);
 -- Data for Name: sku; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.sku (name, num, case_upc, unit_upc, unit_size, count_per_case, prd_line, comments, id) FROM stdin;
-sku2355	1	5048	1128	5 lbs	4	prod69	a comment	3
-sku2356	2	5049	1122	5 lbs	4	prod69	a comment	5
-sku210	3	102	1122	5 lbs sku23	4	prod69	a comment with sku210	6
-sku2154	4	1023	11222	6 lbs sskusku	4	prod69	another comment	7
-sku215423	5	102355	11222	6 lbs sskusku	6	prod69	another comment	8
-sku215423	123	1023553	11222	6 lbs sskusku	6	prod69	another comment	9
-sku1245872	55	2477	1123	5 lbs	4	prod69	a comment	1
-sku69	1234	23116	11222	6 lbs sskusku	6	prod69	another comment	11
-sku690	7	1001	65345	12 lbs sy98vv	98	prod4	commentingg	13
-sku690	8	43434	65345	12 lbs sy98vv	98	prod4	commentingg	14
-sku720	9	12345	65653	12 lbs	998	prod4	commentingg	15
-sku1	12	2449	112553	10 lbs	4	prod4	a comment	4
-sku723	11	123345	65653	12 lbs	998	prod4	commentingg	17
-sku723	13	233	65653	12 lbs	998	prod4	commentingg	19
-sku13462	14	3549	65653	12 lbs	998	prod4	\N	20
-skusku	15	3213	65653	12 lbs	998	prod4	\N	21
-sku6543	5727	5555	696	22	3	prod51	\N	22
-namesku	16	413445546	14235	59 lbs	12	prod4	\N	23
-hryname	17	23874	14235	59 lbs	12	prod4	\N	24
-hrynamesku	18	2387334	134235	59 lb14dds	124	prod4	\N	26
-asku4	19	551234352	443234	1 gallons	2	prod51	\N	27
-namesku3	20	69283413	3649823	ten gallons	6	prod51	\N	28
-namesku3	21	6934483413	364986623	ten gallons	6	prod51	\N	29
-namesku3	22	9823471385	11123984	ten gallons	6	prod51	\N	30
-namesku328	23	132874684753	34523466444	4 pounds	12	prod51	\N	31
-namesku328	24	34578237487	354444444	4 pounds	12	prod69	\N	32
-nameaeriusku328	25	2853729348	354444444	4 pounds	12	prod69	\N	33
-skueename	26	888888384	456456345	4 pounds	12	prod69	\N	34
-skueename	27	34343434	456456345	4 pounds	12	prod69	\N	35
-skueename	28	100000001	456456345	4 pounds	12	prod69	\N	36
+COPY public.sku (name, num, case_upc, unit_upc, unit_size, count_per_case, prd_line, comments, id, formula_id) FROM stdin;
+sku2355	1	5048	1128	5 lbs	4	prod69	a comment	3	1
+sku2356	2	5049	1122	5 lbs	4	prod69	a comment	5	1
+sku210	3	102	1122	5 lbs sku23	4	prod69	a comment with sku210	6	1
+sku2154	4	1023	11222	6 lbs sskusku	4	prod69	another comment	7	1
+sku215423	5	102355	11222	6 lbs sskusku	6	prod69	another comment	8	1
+sku215423	123	1023553	11222	6 lbs sskusku	6	prod69	another comment	9	1
+sku1245872	55	2477	1123	5 lbs	4	prod69	a comment	1	1
+sku69	1234	23116	11222	6 lbs sskusku	6	prod69	another comment	11	1
+sku690	7	1001	65345	12 lbs sy98vv	98	prod4	commentingg	13	1
+sku690	8	43434	65345	12 lbs sy98vv	98	prod4	commentingg	14	1
+sku720	9	12345	65653	12 lbs	998	prod4	commentingg	15	1
+sku1	12	2449	112553	10 lbs	4	prod4	a comment	4	1
+sku723	11	123345	65653	12 lbs	998	prod4	commentingg	17	1
+sku723	13	233	65653	12 lbs	998	prod4	commentingg	19	1
+sku13462	14	3549	65653	12 lbs	998	prod4	\N	20	1
+skusku	15	3213	65653	12 lbs	998	prod4	\N	21	1
+sku6543	5727	5555	696	22	3	prod51	\N	22	1
+namesku	16	413445546	14235	59 lbs	12	prod4	\N	23	1
+hryname	17	23874	14235	59 lbs	12	prod4	\N	24	1
+hrynamesku	18	2387334	134235	59 lb14dds	124	prod4	\N	26	1
+asku4	19	551234352	443234	1 gallons	2	prod51	\N	27	1
+namesku3	20	69283413	3649823	ten gallons	6	prod51	\N	28	1
+namesku3	21	6934483413	364986623	ten gallons	6	prod51	\N	29	1
+namesku3	22	9823471385	11123984	ten gallons	6	prod51	\N	30	1
+namesku328	23	132874684753	34523466444	4 pounds	12	prod51	\N	31	1
+namesku328	24	34578237487	354444444	4 pounds	12	prod69	\N	32	1
+nameaeriusku328	25	2853729348	354444444	4 pounds	12	prod69	\N	33	1
+skueename	26	888888384	456456345	4 pounds	12	prod69	\N	34	1
+skueename	27	34343434	456456345	4 pounds	12	prod69	\N	35	1
+skueename	28	100000001	456456345	4 pounds	12	prod69	\N	36	1
 \.
 
 
@@ -752,6 +869,30 @@ faa	10	$2b$10$uVfDG4KA9rrX7mNdBm8Xt.xAjsFBUITXbyer5z6sOWBh1MAvhhDOq
 --
 
 SELECT pg_catalog.setval('public.users_id_seq', 11, true);
+
+
+--
+-- Name: formula_ingredients formula_ingredients_formula_id_ingredients_id_key; Type: CONSTRAINT; Schema: public; Owner: billxiong24
+--
+
+ALTER TABLE ONLY public.formula_ingredients
+    ADD CONSTRAINT formula_ingredients_formula_id_ingredients_id_key UNIQUE (formula_id, ingredients_id);
+
+
+--
+-- Name: formula formula_num_key; Type: CONSTRAINT; Schema: public; Owner: billxiong24
+--
+
+ALTER TABLE ONLY public.formula
+    ADD CONSTRAINT formula_num_key UNIQUE (num);
+
+
+--
+-- Name: formula formula_pkey; Type: CONSTRAINT; Schema: public; Owner: billxiong24
+--
+
+ALTER TABLE ONLY public.formula
+    ADD CONSTRAINT formula_pkey PRIMARY KEY (id);
 
 
 --
@@ -867,6 +1008,22 @@ ALTER TABLE ONLY public.users
 
 
 --
+-- Name: formula_ingredients formula_ingredients_formula_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: billxiong24
+--
+
+ALTER TABLE ONLY public.formula_ingredients
+    ADD CONSTRAINT formula_ingredients_formula_id_fkey FOREIGN KEY (formula_id) REFERENCES public.formula(id) ON DELETE CASCADE;
+
+
+--
+-- Name: formula_ingredients formula_ingredients_ingredients_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: billxiong24
+--
+
+ALTER TABLE ONLY public.formula_ingredients
+    ADD CONSTRAINT formula_ingredients_ingredients_id_fkey FOREIGN KEY (ingredients_id) REFERENCES public.ingredients(id) ON DELETE CASCADE;
+
+
+--
 -- Name: manufacturing_goal_sku manufacturing_goal_sku_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -888,6 +1045,14 @@ ALTER TABLE ONLY public.manufacturing_goal_sku
 
 ALTER TABLE ONLY public.manufacturing_goal
     ADD CONSTRAINT manufacturing_goal_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- Name: sku sku_formula_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.sku
+    ADD CONSTRAINT sku_formula_id_fkey FOREIGN KEY (formula_id) REFERENCES public.formula(id) ON DELETE CASCADE;
 
 
 --
@@ -917,3 +1082,4 @@ ALTER TABLE ONLY public.sku
 --
 -- PostgreSQL database dump complete
 --
+

@@ -26,6 +26,6 @@ install:
     - npm install
 
 before_script:
-    - psql -f test/dump.sql -U postgres
+    - psql -v tabl=postgres -f db/food.sql -U postgres
 script:
     - npm test
