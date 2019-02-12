@@ -60,9 +60,9 @@ describe('Product lines', function() {
 
     it('should update prodline with PUT /productline', function(done) {
         chai.request(server)
-        .put('/sku/1')
+        .put('/productline/1')
         .send({
-            name: "prod89"
+            name: "prod69"
         })
         .end(function(err, res) {
             res.should.have.status(200);
