@@ -5,6 +5,7 @@
 -- Dumped from database version 9.6.10
 -- Dumped by pg_dump version 9.6.10
 
+SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'sku_mgmt';
 DROP DATABASE IF EXISTS sku_mgmt;
 CREATE DATABASE sku_mgmt;
 \c sku_mgmt
