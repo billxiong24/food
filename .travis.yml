@@ -7,7 +7,7 @@ env:
         - PGHOST=localhost
         - PGUSER=postgres
         - PGPASSWORD=
-        - PGDATABASE=sku_mgmt
+        - PGDATABASE=postgres
         - PGPORT=5432
         - HTTPS=false
         - DOMAIN=cmdev.colab.duke.edu
@@ -24,7 +24,7 @@ install:
     - npm install
 
 before_script:
-    - psql -c "CREATE DATABASE sku_mgmt;" -U postgres
-    - psql -f db/food.sql -U postgres
+    - psql -c "CREATE DATABASE postgres;" -U postgres -d postgres
+    - psql -f test/foodtest.sql -U postgres
 script:
-    - npm test
+    - pwd
