@@ -3,49 +3,9 @@ import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
-import labels from '../../Resources/labels';
+import labels, { editableTextStyles } from '../../Resources/labels';
 
-const styles = {
-    textField:{
-        width: '500px',
-    },
-    text:{
-        width: '500px',
-        pointerEvents:'none',
-        borderRadius: 10
-    },
-    // input: {
-    //     color: "white",
-    //     borderColor: 'white'
-    //   },
-    // active_input:{
-    //     color: "white"
-    // },
-    // cssLabel: {
-    //     color : 'white',
-    //   },
-    
-    //   cssOutlinedInput: {
-    //     '&$cssFocused $notchedOutline': {
-    //       borderColor: labels.colors.primaryColor,
-    //     },
-    //     color:'white'
-    //   },
-    
-    //   cssFocused: {
-    //     '&$cssFocused': {
-    //         borderColor: labels.colors.primaryColor,
-    //         color: labels.colors.primaryColor,
-    //     }
-    //   },
-    
-    //   notchedOutline: {
-    //     color:'white',
-    //     borderWidth: '1px',
-    //     borderColor: 'white'
-        
-    //   },
-};
+export const styles = editableTextStyles
 
 class EditableNumeric extends Component {
 

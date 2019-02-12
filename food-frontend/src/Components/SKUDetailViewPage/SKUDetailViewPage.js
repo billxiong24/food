@@ -25,12 +25,14 @@ const styles = {
     ingredient_page_container:{
         display:'flex',
         flexDirection: 'row',
+        width:'100%',
     },
     ingredient_detail_view:{
         display:'flex',
         flexDirection: 'column',
-        alignItems: 'center',
+        alignItems: 'left',
         padding: '50px',
+        backgroundColor: labels.colors.primaryColor,
         borderRadius: 12
     },
     textField:{
@@ -49,6 +51,17 @@ const styles = {
         alignItems: 'center',
         width: '50vh'
     },
+    title:{
+        fontSize: 14,
+        color: 'white',
+        textAlign: 'left',
+        float: 'left',
+        overflowWrap: 'breakWord',
+        wordWrap: 'breakWord',
+        hyphens: 'auto',
+        fontFamily: 'Open Sans',
+        fontWeight: 400
+    }
 
 };
 
@@ -197,7 +210,9 @@ class SKUDetailViewPage extends Component {
                     Back
                 </Button>
                 <div className = {classes.ingredient_detail_view}>
-                    <Typography>
+                    <Typography
+                        className={classes.title}
+                    >
                         SKU Details
                     </Typography>
                     <EditableText 

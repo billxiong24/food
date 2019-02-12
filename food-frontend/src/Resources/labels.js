@@ -74,3 +74,43 @@ export default {
         primaryColor:'#6F3AD3'
     }
   }
+
+export const editableTextStyles = {
+    input: {
+        color: 'black',
+        borderColor: 'black',
+        fontFamily: 'Open Sans',
+      },
+    active_input:{
+        color: 'black',
+        fontFamily: 'Open Sans',
+    },
+    cssLabel: {
+        color : 'black',
+        fontFamily: 'Open Sans',
+      },
+    
+      cssOutlinedInput: {
+        '&$cssFocused $notchedOutline': {
+          borderColor: 'white',
+          fontFamily: 'Open Sans',
+        },
+        color:'black',
+        fontFamily: 'Open Sans',
+      },
+    
+      cssFocused: {
+        '&$cssFocused': {
+            borderColor: 'white',
+            color: 'white',
+            fontFamily: 'Open Sans',
+        }
+      },
+    
+      notchedOutline: {
+        color:'black',
+        borderWidth: '1px',
+        borderColor: 'black',
+        fontFamily: 'Open Sans',
+      },
+}
