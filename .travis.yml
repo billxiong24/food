@@ -1,7 +1,19 @@
 language: node_js
 node_js:
-    - "node v8.12.0"
+    - "node"
+env:
+    global:
 
+        - PGUSER=postgres
+        - PGHOST=vcm-8440.vm.duke.edu
+        - PGPASSWORD=cOgride4ci
+        - PGDATABASE=sku_mgmt
+        - PGPORT=5432
+        - HTTPS=false
+        - DOMAIN=cmdev.colab.duke.edu
+        - REACT_APP_DOMAIN=cmdev.colab.duke.edu
+        - REACT_APP_ADMINID=7
+        - NODE_ENV=test
 cache:
     directories:
         - "node_modules"
