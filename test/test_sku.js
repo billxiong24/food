@@ -88,18 +88,6 @@ describe('SKUs', function() {
         });
     });
 
-    it('should get ingredients of a sku', function(done) {
-        chai.request(server)
-        .get('/sku/1/ingredients')
-        .end(function(err, res) {
-            res.should.have.status(200);
-            res.body.length.should.equal(4);
-            res.body[0].id.should.equal(1);
-            res.body[1].id.should.equal(23);
-            done();
-        });
-    });
-
     it('should add ingredients of a sku', function(done) {
         chai.request(server)
         .post('/sku/1/ingredients')
@@ -112,7 +100,6 @@ describe('SKUs', function() {
             ]
         })
         .end(function(err, res) {
-            console.log(res.body);
             res.should.have.status(201);
             res.body.should.have.property('rowCount');
             res.body.rowCount.should.equal(1);
