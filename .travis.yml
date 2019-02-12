@@ -24,7 +24,6 @@ install:
     - npm install
 
 before_script:
-    - psql -c "CREATE DATABASE postgres;" -U postgres -d postgres
     - psql -f test/foodtest.sql -U postgres
 script:
-    - pwd
+    - npm test
