@@ -1,4 +1,4 @@
-//require('dotenv').config();
+require('dotenv').config();
 var chai = require('chai');
 var chaiHttp = require('chai-http');
 var should = chai.should();
@@ -35,7 +35,8 @@ describe('SKUs', function() {
         .query({
             names: ["sku"],
             offset: 9,
-            limit: 5
+            limit: 5,
+            orderKey: "name"
         })
         .end(function(err, res) {
             res.should.have.status(200);
@@ -111,6 +112,7 @@ describe('SKUs', function() {
             ]
         })
         .end(function(err, res) {
+            console.log(res.body);
             res.should.have.status(201);
             res.body.should.have.property('rowCount');
             res.body.rowCount.should.equal(1);
