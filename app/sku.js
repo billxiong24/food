@@ -53,7 +53,7 @@ class SKU extends CRUD {
 
             query = QueryGenerator.genInsConflictQuery(ingredients, 'sku_ingred',  'ON CONFLICT (sku_num, ingred_num) DO UPDATE SET quantity = EXCLUDED.quantity');
             query = query.toString();
-            console.log(query);
+            //logger.debug(query);
         })
         .then(function(res) {
             return db.execSingleQuery(query, []);
@@ -69,7 +69,7 @@ class SKU extends CRUD {
             const queryGen = new QueryGenerator(query);
             queryGen.chainOrFilter(ingreds, "ingred_num = ?");
             let queryStr = queryGen.getQuery().toString();
-            console.log(queryStr);
+            //logger.debug(queryStr);
             return db.execSingleQuery(queryStr, []);
         });
     }
@@ -93,7 +93,7 @@ class SKU extends CRUD {
         .chainOrFilter(productlines, "sku.prd_line=?")
         .makeDistinct();
         let queryStr = filter.applyFilter(queryGen.getQuery()).toString();
-        console.log(queryStr);
+        //logger.debug(queryStr);
         return db.execSingleQuery(queryStr, []);
     }
 
@@ -113,8 +113,8 @@ class SKU extends CRUD {
         if(dataObj.num === null || dataObj.num === undefined)
             delete dataObj.num;
 
-        let query = QueryGenerator.genInsQuery(dataObj, this.tableName).returning("id").toString();
-        console.log(query);
+        let query = QueryGenerator.genInsQuery(dataObj, this.tableName).returning("*").toString();
+        //logger.debug(query);
         //product line must exist
         return this.checkProductLineExists(dataObj.prd_line)
         .then((res) => {
@@ -159,83 +159,4 @@ class SKU extends CRUD {
         return db.execSingleQuery("DELETE FROM " + this.tableName + " WHERE id = $1", [id]);
     }
 }
-//const sku = new SKU();
-//sku.bulkImport("./file.csv", function(err) {
-    //if(err) {
-        //console.log(err);
-    //}
-//});
-
-//sku.removeIngredient(5043, 44).then(function(res) {
-    //console.log(res);
-//})
-//.catch(function(err) {
-    //console.log(err);
-//});
-
-//sku.search(["sku2"], [], ["prod69"]).then(function(res) {
-    //console.log(res.rows);
-//})
-//.catch(function(err) {
-    //console.log(err);
-//});
-//sku.addIngredients(23116, [
-    //{
-        //ingred_num: 49,
-        //quantity: 12
-    //},
-    //{
-        //ingred_num: 563,
-        //quantity: 15.4
-    //},
-    //{
-        //ingred_num: 56633,
-        //quantity: 599.3
-    //},
-    //{
-        //ingred_num: 1415,
-        //quantity: 599.3
-    //}
-//])
-//.then(function(res) {
-    //console.log(res);
-//})
-//.catch(function(err) {
-//})
-
-//sku.create({
-    //name: "sku723", 
-    //case_upc: 233, 
-    //unit_upc: 65653, 
-    //unit_size: "12 lbs", 
-    //count_per_case: 998,
-    //prd_line: "prod4",
-    //comments: "commentingg"
-//})
-//.then(function(res) {
-    //console.log(res);
-//})
-//.catch(function(err) {
-    //console.log(err);
-//});
-
-//sku.update({
-    //name: "sku1", 
-    //num: 12, 
-    //case_upc: 2449, 
-    //unit_upc: 112553, 
-    //unit_size: "10 lbs", 
-    //count_per_case: 4,
-    //prd_line: "prod4",
-    //comments: "a comment"
-//}, 12)
-//.then(function(res) {
-    //console.log(res);
-    //console.log("this is a result");
-//})
-//.catch(function(err) {
-    //console.log(err);
-//});
-
-
 module.exports = SKU;

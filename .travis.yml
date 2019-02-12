@@ -1,0 +1,31 @@
+language: node_js
+node_js:
+    - "node"
+addons:
+    postgresql: 9.6
+env:
+    global:
+
+        - PGHOST=localhost
+        - PGUSER=postgres
+        - PGPASSWORD=
+        - PGDATABASE=postgres
+        - PGPORT=5432
+        - HTTPS=false
+        - DOMAIN=cmdev.colab.duke.edu
+        - REACT_APP_DOMAIN=cmdev.colab.duke.edu
+        - REACT_APP_ADMINID=7
+        - NODE_ENV=test
+services:
+    - postgresql
+cache:
+    directories:
+        - "node_modules"
+install:
+    - npm install -g mocha
+    - npm install
+
+before_script:
+    - psql -f test/foodtest.sql -U postgres
+script:
+    - npm test

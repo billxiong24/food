@@ -4,7 +4,6 @@ const error_controller = require('../app/controller/error_controller');
 let router = express.Router();
 
 
-
 router.get('/', function(req, res, next) {
     if(!req.query.user_id || isNaN(req.query.user_id)) {
         return res.status(400).json({
@@ -135,9 +134,7 @@ router.post('/', function(req, res, next) {
     const mg = new ManufacturingGoals();
     mg.create(req.body)
     .then((result) => {
-        res.status(201).json({
-            rowCount: result.rowCount
-        });
+        res.status(201).json(result.rows[0]);
     })
     .catch((err) => {
         res.status(409).json({

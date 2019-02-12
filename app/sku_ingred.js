@@ -31,7 +31,7 @@ class SKUIngred extends CRUD {
                 }
                 
                 prom = prom.then(function(res) {
-                    console.log("no errors in formulas, commiting");
+                    //logger.debug("no errors in formulas, commiting");
                     client.query("COMMIT");
                     cb({
                         inserts: rows.length,
@@ -47,7 +47,7 @@ class SKUIngred extends CRUD {
                             }
                         ]
                     };
-                    console.log("Error, aborting formulas");
+                    //logger.debug("Error, aborting formulas");
                     client.query("ABORT");
                     cb(errMsg);
                 });

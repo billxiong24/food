@@ -44,7 +44,7 @@ class Ingredient extends CRUD {
         .chainOrFilter(skus, "sku.id = ?")
         .makeDistinct();
         let queryStr = filter.applyFilter(queryGen.getQuery()).toString();
-        console.log(queryStr);
+        //logger.debug(queryStr);
         return db.execSingleQuery(queryStr, []);
     }
 
@@ -67,9 +67,7 @@ class Ingredient extends CRUD {
         if(dataObj.num === null || dataObj.num === undefined)
             delete dataObj.num;
 
-        let query = squel.insert()
-        .into(this.tableName)
-        .setFieldsRows([dataObj]).toString();
+        let query = QueryGenerator.genInsQuery(dataObj, this.tableName).returning("*").toString();
         return super.insert(query, dataObj, "Entry with name or num exists already.");
     }
 
@@ -101,53 +99,5 @@ class Ingredient extends CRUD {
         return db.execSingleQuery("DELETE FROM " + this.tableName + " WHERE id = $1", [id]);
     }
 }
-
-//const ing = new Ingredient();
-//ing.search("ing", ["sku23", "sku690", "sku1", "sku2356"])
-//.then(function(res) {
-    //console.log(res.rows);
-//})
-//.catch(function(err) {
-    //console.log(err);
-//});
-
-//ing.searchByName("ing")
-//.then(function(res) {
-    //console.log(res.rows);
-//})
-//.catch(function(err) {
-    //console.log(err);
-//});
-
-
-//ing.create({
-    //name: "name6969", 
-    //num: 12, 
-    ////vend_info: "tnoerhr vending", 
-    //pkg_size: "55 gallons", 
-    //pkg_cost: 10
-    ////comments: "a comment"
-//})
-//.then(function(res) {
-    //console.log(res);
-//})
-//.catch(function(err) {
-    //console.log(err);
-//});
-
-
-//ing.update({
-    //name: "doesnteixt",
-    //vend_info: "please", 
-    //pkg_size: "3587 poundsss", 
-    //pkg_cost: 15
-//}, "fgiusfdgiuarereirud")
-//.then(function(res) {
-    //console.log(res);
-//})
-//.catch(function(err) {
-    //console.log(err);
-    //console.log("ERRRROR");
-//});
 
 module.exports = Ingredient;

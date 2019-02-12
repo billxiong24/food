@@ -6,9 +6,9 @@
 -- Dumped by pg_dump version 9.6.10
 
 
-DROP DATABASE IF EXISTS sku_mgmt;
-CREATE DATABASE sku_mgmt;
-\c sku_mgmt
+DROP DATABASE IF EXISTS postgres;
+CREATE DATABASE postgres;
+\c postgres
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;

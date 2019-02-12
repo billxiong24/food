@@ -38,9 +38,7 @@ router.post('/', function(req, res, next) {
     const prdline = new ProductLine();
     prdline.create(req.body)
     .then((result) => {
-        res.status(201).json({
-            rowCount: result.rowCount
-        });
+        res.status(201).json(result.rows[0]);
     })
     .catch((err) => {
         res.status(409).json({

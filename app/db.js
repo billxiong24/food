@@ -35,21 +35,10 @@ class DB {
 
     closePool() {
         this.pool.end();
-    
     }
 }
 
 const db = new DB();
 Object.freeze(db);
-
-//db.execSingleQuery("SELECT NOW()", []).then(function(res) {
-    //console.log(res.rows);
-//}).then(function(res) {
-
-    //db.execSingleQuery("SELECT NOW()", [])
-    //.then(function(res) {
-        //console.log(res.rows);
-    //})
-//})
 
 module.exports = db;
