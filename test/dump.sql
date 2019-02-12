@@ -4,6 +4,9 @@
 
 -- Dumped from database version 9.6.10
 -- Dumped by pg_dump version 9.6.10
+DROP DATABASE IF EXISTS postgres;
+CREATE DATABASE postgres;
+\c postgres
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -591,6 +594,9 @@ SELECT pg_catalog.setval('public.formula_id_seq', 1, true);
 --
 
 COPY public.formula_ingredients (formula_id, ingredients_id, quantity, unit) FROM stdin;
+1	16	1	lbs
+1	19	10	lbs
+1	13	10	lbs
 \.
 
 

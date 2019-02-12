@@ -29,7 +29,7 @@ class SKU extends CRUD {
         }
         
         return Promise.reject("No valid name or num provided.");
-    } 
+    }
 
     getSKUNumIfExists(id) {
         return db.execSingleQuery("SELECT num FROM sku WHERE id=$1", [id]).then(function(res) {
