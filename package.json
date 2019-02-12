@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "./node_modules/nodemon/bin/nodemon.js app",
-    "test": "cd test/ && ./cleandb.sh && mocha --exit"
+    "test": "cd test/ && mocha --exit"
   },
   "dependencies": {
     "bcrypt": "^3.0.3",

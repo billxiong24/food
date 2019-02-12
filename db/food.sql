@@ -5,8 +5,8 @@
 -- Dumped from database version 9.6.10
 -- Dumped by pg_dump version 9.6.10
 
--- DROP DATABASE IF EXISTS sku_mgmt;
-CREATE DATABASE sku_mgmt;
+
+-- CREATE DATABASE sku_mgmt;
 \c sku_mgmt
 
 SET statement_timeout = 0;

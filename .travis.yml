@@ -24,6 +24,7 @@ install:
     - npm install
 
 before_script:
-    - psql -U postgres -f db/food.sql
+    - psql -c "CREATE DATABASE sku_mgmt;" -U postgres
+    - psql -f db/food.sql -U postgres
 script:
     - npm test
