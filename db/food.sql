@@ -4,10 +4,10 @@
 
 -- Dumped from database version 9.6.10
 -- Dumped by pg_dump version 9.6.10
+
 DROP DATABASE IF EXISTS :tabl;
 CREATE DATABASE :tabl;
 \c :tabl
-
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
@@ -579,6 +579,8 @@ ALTER TABLE ONLY public.sku_ingred ALTER COLUMN ingred_num SET DEFAULT nextval('
 
 COPY public.formula (id, name, comment, num) FROM stdin;
 1	sas	some	1
+3	formula609	\N	2
+4	formula6209	\N	3
 \.
 
 
@@ -586,7 +588,7 @@ COPY public.formula (id, name, comment, num) FROM stdin;
 -- Name: formula_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.formula_id_seq', 1, true);
+SELECT pg_catalog.setval('public.formula_id_seq', 4, true);
 
 
 --
@@ -597,6 +599,10 @@ COPY public.formula_ingredients (formula_id, ingredients_id, quantity, unit) FRO
 1	16	1	lbs
 1	19	10	lbs
 1	13	10	lbs
+4	18	0	lb
+4	19	2	lb
+4	21	4	lb
+4	22	6	lb
 \.
 
 
@@ -604,7 +610,7 @@ COPY public.formula_ingredients (formula_id, ingredients_id, quantity, unit) FRO
 -- Name: formula_num_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.formula_num_seq', 1, false);
+SELECT pg_catalog.setval('public.formula_num_seq', 3, true);
 
 
 --

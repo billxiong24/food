@@ -60,7 +60,7 @@ class Formula extends CRUD {
         for(let i = 0; i < ingredients.length; i++) {
             let obj = ingredients[i];
             if(!obj.ingredients_id || !obj.quantity || !obj.unit)
-                return Promise.reject("ingredient does not have number, quantity, or unit ");
+                return Promise.reject("ingredient does not have id, quantity, or unit ");
             obj.formula_id = id;
         }
 
