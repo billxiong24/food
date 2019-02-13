@@ -2,6 +2,7 @@ const CRUD = require('./CRUD');
 const db = require("./db");
 const squel = require("squel").useFlavour("postgres");
 const QueryGenerator = require("./query_generator");
+const Filter = require("./filter");;
 
 class Formula extends CRUD {
 
@@ -39,8 +40,20 @@ class Formula extends CRUD {
         return db.execSingleQuery("DELETE FROM " + this.tableName + " WHERE id = $1", [id]);
     }
 
-    search(name) {
+    search(names, ingredients, filter) {
+        let q = squel.select()
+        .from(this.tableName)
+        .field("formula.*")
+        .left_join("formula_ingredients", null, "formula.id=formula_ingredients.formula_id");
 
+        //TODO search by number
+        const queryGen = new QueryGenerator(q);
+        names = QueryGenerator.transformQueryArr(names);
+        queryGen.chainAndFilter(names, "formula.name LIKE ?")
+        .chainOrFilter(ingredients, "ingredients_id=?")
+        .makeDistinct();
+        let queryStr = filter.applyFilter(queryGen.getQuery()).toString();
+        return db.execSingleQuery(queryStr, []);
     }
     addIngredients(id, ingredients) {
         let query = "";
@@ -74,7 +87,15 @@ class Formula extends CRUD {
 
 }
 
-//const f = new Formula();
+const f = new Formula();
+f.search(['form', '1'], [14, 16], new Filter())
+.then(function(res) {
+    console.log(res.rows);
+})
+.catch((err) => {
+    console.log(err);
+
+});
 //f.getIngredients(1)
 //.then(function(res) {
     //console.log(res.rows);
