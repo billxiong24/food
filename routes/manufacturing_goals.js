@@ -2,6 +2,7 @@ let express = require('express');
 const ManufacturingGoals = require('../app/manufacturing_goal');
 const error_controller = require('../app/controller/error_controller');
 let router = express.Router();
+const Controller = require('../app/controller/controller');
 
 
 router.get('/', function(req, res, next) {
@@ -11,15 +12,8 @@ router.get('/', function(req, res, next) {
         });
     }
     const mg = new ManufacturingGoals();
-    mg.search(req.query.user_id)
-    .then((result) => {
-        res.status(200).json(result.rows);
-    })
-    .catch((err) => {
-        res.status(400).json({
-            error: error_controller.getErrMsg(err)
-        });
-    });
+    const controller = new Controller();
+    controller.constructGetResponse(res, mg.search(req.query.user_id));
 });
 
 router.get('/:id/skus', function(req, res, next) {
@@ -30,15 +24,8 @@ router.get('/:id/skus', function(req, res, next) {
         });
     }
     const mg = new ManufacturingGoals();
-    mg.getSkus(req.params.id)
-    .then((result) => {
-        res.status(200).json(result.rows);
-    })
-    .catch((err) => {
-        res.status(400).json({
-            error: error_controller.getErrMsg(err)
-        });
-    });
+    const controller = new Controller();
+    controller.constructGetResponse(res, mg.getSkus(req.params.id));
 });
 
 router.post('/:id/skus', function(req, res, next) {
@@ -55,17 +42,8 @@ router.post('/:id/skus', function(req, res, next) {
         });
     }
     const mg = new ManufacturingGoals();
-    mg.addSkus(req.params.id, req.body.skus)
-    .then((result) => {
-        res.status(200).json({
-            rowCount: result.rowCount
-        });
-    })
-    .catch((err) => {
-        res.status(409).json({
-            error: error_controller.getErrMsg(err)
-        });
-    });
+    const controller = new Controller();
+    controller.constructRowCountPostResponse(res, mg.addSkus(req.params.id, req.body.skus));
 });
 
 router.delete('/:id/skus', function(req, res, next) {
@@ -76,17 +54,8 @@ router.delete('/:id/skus', function(req, res, next) {
         });
     }
     const mg = new ManufacturingGoals();
-    mg.removeSkus(req.params.id, req.body.skus)
-    .then((result) => {
-        res.status(200).json({
-            rowCount: result.rowCount
-        });
-    })
-    .catch((err) => {
-        res.status(409).json({
-            error: error_controller.getErrMsg(err)
-        });
-    });
+    const controller = new Controller();
+    controller.constructDeleteResponse(res, mg.removeSkus(req.params.id, req.body.skus));
 });
 
 router.get('/:id/calculations', function(req, res, next) {
@@ -97,15 +66,8 @@ router.get('/:id/calculations', function(req, res, next) {
         });
     }
     const mg = new ManufacturingGoals();
-    mg.calculateQuantities(req.params.id)
-    .then((result) => {
-        res.status(200).json(result.rows);
-    })
-    .catch((err) => {
-        res.status(400).json({
-            error: error_controller.getErrMsg(err)
-        });
-    });
+    const controller = new Controller();
+    controller.constructGetResponse(res, mg.calculateQuantities(req.params.id));
 });
 
 router.post('/exported_file', function(req, res, next) {
@@ -132,15 +94,8 @@ router.post('/exported_file', function(req, res, next) {
 
 router.post('/', function(req, res, next) {
     const mg = new ManufacturingGoals();
-    mg.create(req.body)
-    .then((result) => {
-        res.status(201).json(result.rows[0]);
-    })
-    .catch((err) => {
-        res.status(409).json({
-            error: error_controller.getErrMsg(err)
-        });
-    });
+    const controller = new Controller();
+    controller.constructPostResponse(res, mg.create(req.body));
 });
 
 router.put('/:id', function(req, res, next) {
@@ -151,17 +106,8 @@ router.put('/:id', function(req, res, next) {
         });
     }
     const mg = new ManufacturingGoals();
-    mg.update(req.body, req.params.id)
-    .then((result) => {
-        res.status(200).json({
-            rowCount: result.rowCount
-        });
-    })
-    .catch((err) => {
-        res.status(409).json({
-            error: error_controller.getErrMsg(err)
-        });
-    });
+    const controller = new Controller();
+    controller.constructUpdateResponse(res, mg.update(req.body, req.params.id));
 });
 
 router.delete('/:id', function(req, res, next) {
@@ -172,17 +118,8 @@ router.delete('/:id', function(req, res, next) {
         });
     }
     const mg = new ManufacturingGoals();
-    mg.remove(req.params.id)
-    .then((result) => {
-        res.status(200).json({
-            rowCount: result.rowCount
-        });
-    })
-    .catch((err) => {
-        res.status(409).json({
-            error: error_controller.getErrMsg(err)
-        });
-    });
+    const controller = new Controller();
+    controller.constructUpdateResponse(res, mg.remove(req.params.id));
 });
 
 module.exports = router;

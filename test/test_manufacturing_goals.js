@@ -144,7 +144,7 @@ describe('Manufacturing goals', function() {
             ]
         })
         .end(function(err, res) {
-            res.should.have.status(200);
+            res.should.have.status(201);
             res.body.should.have.property("rowCount");
             res.body.rowCount.should.equal(2);
             done();
