@@ -87,15 +87,15 @@ class Formula extends CRUD {
 
 }
 
-const f = new Formula();
-f.search(['form', '1'], [14, 16], new Filter())
-.then(function(res) {
-    console.log(res.rows);
-})
-.catch((err) => {
-    console.log(err);
+//const f = new Formula();
+//f.search(['form', '1'], [14, 16], new Filter())
+//.then(function(res) {
+    //console.log(res.rows);
+//})
+//.catch((err) => {
+    //console.log(err);
 
-});
+//});
 //f.getIngredients(1)
 //.then(function(res) {
     //console.log(res.rows);

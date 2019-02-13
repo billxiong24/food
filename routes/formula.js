@@ -7,8 +7,7 @@ const Formula = require('../app/formula');
 
 
 router.get('/search', function(req, res, next) {
-}
-router.get('/search', function(req, res, next) {
-}
+
+});
 
 module.exports = router;
