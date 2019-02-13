@@ -44,8 +44,7 @@ describe('SKUs', function() {
             res.body[0].name.should.equal("sku1");
             done();
         });
-    });
-
+    }); 
     it('Create a SKU with POST /sku', function(done) {
         chai.request(server)
         .post('/sku')
@@ -56,7 +55,8 @@ describe('SKUs', function() {
             unit_size: "12 lbs", 
             count_per_case: 1,
             prd_line: "prod4",
-            comments: "commentingg"
+            comments: "commentingg",
+            formula_id: 1
         })
         .end(function(err, res) {
             res.should.have.status(201);
@@ -76,69 +76,6 @@ describe('SKUs', function() {
             done();
         });
     });
-    it('should get ingredients of a sku', function(done) {
-        chai.request(server)
-        .get('/sku/1/ingredients')
-        .end(function(err, res) {
-            res.should.have.status(200);
-            res.body.length.should.equal(4);
-            res.body[0].id.should.equal(1);
-            res.body[1].id.should.equal(23);
-            done();
-        });
-    });
-
-    it('should add ingredients of a sku', function(done) {
-        chai.request(server)
-        .post('/sku/1/ingredients')
-        .send({
-            ingredients: [
-                {
-                    ingred_num: 1414,
-                    quantity: 8
-                }
-            ]
-        })
-        .end(function(err, res) {
-            res.should.have.status(201);
-            res.body.should.have.property('rowCount');
-            res.body.rowCount.should.equal(1);
-            done();
-        });
-    });
-
-    it('should reject adding bad ingredient to a sku', function(done) {
-        chai.request(server)
-        .post('/sku/1/ingredients')
-        .send({
-            ingredients: [
-                {
-                    ingred_num: 234787,
-                    quantity: 8
-                }
-            ]
-        })
-        .end(function(err, res) {
-            res.should.have.status(409);
-            res.body.should.have.property('error');
-            done();
-        });
-    });
-
-    it('delete ingredient from sku', function(done) {
-        chai.request(server)
-        .delete('/sku/1/ingredients')
-        .send({
-            ingredients: [1414]
-        })
-        .end(function(err, res) {
-            res.should.have.status(200);
-            res.body.should.have.property('rowCount');
-            res.body.rowCount.should.equal(1);
-            done();
-        });
-    });
-
     it('update sku', function(done) {
         chai.request(server)
         .put('/sku/1')

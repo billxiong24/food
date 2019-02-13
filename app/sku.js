@@ -107,7 +107,7 @@ class SKU extends CRUD {
     }
 
     create(dataObj) {
-        if(!dataObj.name || !dataObj.case_upc || !dataObj.unit_upc || !dataObj.unit_size || !dataObj.count_per_case || !dataObj.prd_line) {
+        if(!dataObj.name || !dataObj.case_upc || !dataObj.unit_upc || !dataObj.unit_size || !dataObj.count_per_case || !dataObj.prd_line || !dataObj.formula_id) {
             return Promise.reject("Not all required fields are present.");
         }
         if(dataObj.num === null || dataObj.num === undefined)
