@@ -4,19 +4,7 @@ var chaiHttp = require('chai-http');
 var should = chai.should();
 chai.use(chaiHttp);
 var server = require('../app');
-const execSync = require('child_process').execSync;
 const db = ("../app/db");
-
-//mocha --exit
-//function clean(done) {
-    //execSync("./cleandb.sh");
-    //done();
-//}
-
-//before(function(done) {
-    //execSync("./cleandb.sh");
-    //done();
-//});
 
 describe('Manufacturing goals', function() {
     it('should get goals of user', function(done) {

@@ -16,7 +16,7 @@ router.get('/search', function(req, res, next) {
     let offset = parseInt(req.query.offset) || 0;
 
     const filter = new Filter();
-    filter.setOrderKey(orderKey).setAsc(asc).setOffset(req.query.offset).setLimit(req.query.limit);
+    filter.setOrderKey(orderKey).setAsc(asc).setOffset(offset).setLimit(limit);
 
     names = Controller.convertParamToArray(names);
     list = Controller.convertParamToArray(list);

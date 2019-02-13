@@ -8,6 +8,21 @@ const Controller = require('../app/controller/controller');
 
 
 router.get('/search', function(req, res, next) {
+    let names = req.query.names;
+    let ingredients = req.query.ingredients;
+    let orderKey = req.query.orderKey;
+    let asc = (!req.query.asc) || req.query.asc == "1"; 
+    let limit = parseInt(req.query.limit) || 0;
+    let offset = parseInt(req.query.offset) || 0;
+
+    const filter = new Filter();
+    filter.setOrderKey(orderKey).setAsc(asc).setOffset(offset).setLimit(limit);
+
+    names = Controller.convertParamToArray(names) 
+    ingredients = Controller.convertParamToArray(ingredients) 
+    const formula = new Formula();
+    const controller = new Controller();
+    controller.constructGetResponse(res, formula.search(names, ingredients, filter));
 
 });
 
@@ -28,7 +43,7 @@ router.get('/:id/ingredients', function(req, res, next) {
 router.post('/', function(req, res, next) {
     const formula = new Formula();
     const controller = new Controller();
-    controller.constructGetResponse(res, formula.create(req.body));
+    controller.constructPostResponse(res, formula.create(req.body));
 });
 
 router.post('/:id/ingredients', function(req, res, next) {
