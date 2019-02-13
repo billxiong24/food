@@ -167,7 +167,7 @@ describe('Manufacturing goals', function() {
             ]
         })
         .end(function(err, res) {
-            res.should.have.status(400);
+            res.should.have.status(409);
             done();
         });
     });

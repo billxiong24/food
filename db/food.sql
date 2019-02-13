@@ -79,7 +79,7 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- Name: formula; Type: TABLE; Schema: public; Owner: billxiong24
+-- Name: formula; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.formula (
@@ -90,10 +90,10 @@ CREATE TABLE public.formula (
 );
 
 
-ALTER TABLE public.formula OWNER TO billxiong24;
+ALTER TABLE public.formula OWNER TO postgres;
 
 --
--- Name: formula_id_seq; Type: SEQUENCE; Schema: public; Owner: billxiong24
+-- Name: formula_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
 CREATE SEQUENCE public.formula_id_seq
@@ -104,17 +104,17 @@ CREATE SEQUENCE public.formula_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.formula_id_seq OWNER TO billxiong24;
+ALTER TABLE public.formula_id_seq OWNER TO postgres;
 
 --
--- Name: formula_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: billxiong24
+-- Name: formula_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
 ALTER SEQUENCE public.formula_id_seq OWNED BY public.formula.id;
 
 
 --
--- Name: formula_ingredients; Type: TABLE; Schema: public; Owner: billxiong24
+-- Name: formula_ingredients; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.formula_ingredients (
@@ -125,10 +125,10 @@ CREATE TABLE public.formula_ingredients (
 );
 
 
-ALTER TABLE public.formula_ingredients OWNER TO billxiong24;
+ALTER TABLE public.formula_ingredients OWNER TO postgres;
 
 --
--- Name: formula_num_seq; Type: SEQUENCE; Schema: public; Owner: billxiong24
+-- Name: formula_num_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
 CREATE SEQUENCE public.formula_num_seq
@@ -139,10 +139,10 @@ CREATE SEQUENCE public.formula_num_seq
     CACHE 1;
 
 
-ALTER TABLE public.formula_num_seq OWNER TO billxiong24;
+ALTER TABLE public.formula_num_seq OWNER TO postgres;
 
 --
--- Name: formula_num_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: billxiong24
+-- Name: formula_num_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
 ALTER SEQUENCE public.formula_num_seq OWNED BY public.formula.num;
@@ -497,14 +497,14 @@ CREATE TABLE public.users (
 ALTER TABLE public.users OWNER TO postgres;
 
 --
--- Name: formula id; Type: DEFAULT; Schema: public; Owner: billxiong24
+-- Name: formula id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.formula ALTER COLUMN id SET DEFAULT nextval('public.formula_id_seq'::regclass);
 
 
 --
--- Name: formula num; Type: DEFAULT; Schema: public; Owner: billxiong24
+-- Name: formula num; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.formula ALTER COLUMN num SET DEFAULT nextval('public.formula_num_seq'::regclass);
@@ -574,7 +574,7 @@ ALTER TABLE ONLY public.sku_ingred ALTER COLUMN ingred_num SET DEFAULT nextval('
 
 
 --
--- Data for Name: formula; Type: TABLE DATA; Schema: public; Owner: billxiong24
+-- Data for Name: formula; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.formula (id, name, comment, num) FROM stdin;
@@ -583,14 +583,14 @@ COPY public.formula (id, name, comment, num) FROM stdin;
 
 
 --
--- Name: formula_id_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
+-- Name: formula_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
 SELECT pg_catalog.setval('public.formula_id_seq', 1, true);
 
 
 --
--- Data for Name: formula_ingredients; Type: TABLE DATA; Schema: public; Owner: billxiong24
+-- Data for Name: formula_ingredients; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.formula_ingredients (formula_id, ingredients_id, quantity, unit) FROM stdin;
@@ -601,7 +601,7 @@ COPY public.formula_ingredients (formula_id, ingredients_id, quantity, unit) FRO
 
 
 --
--- Name: formula_num_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
+-- Name: formula_num_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
 SELECT pg_catalog.setval('public.formula_num_seq', 1, false);
@@ -872,7 +872,7 @@ SELECT pg_catalog.setval('public.users_id_seq', 11, true);
 
 
 --
--- Name: formula_ingredients formula_ingredients_formula_id_ingredients_id_key; Type: CONSTRAINT; Schema: public; Owner: billxiong24
+-- Name: formula_ingredients formula_ingredients_formula_id_ingredients_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.formula_ingredients
@@ -880,7 +880,7 @@ ALTER TABLE ONLY public.formula_ingredients
 
 
 --
--- Name: formula formula_num_key; Type: CONSTRAINT; Schema: public; Owner: billxiong24
+-- Name: formula formula_num_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.formula
@@ -888,7 +888,7 @@ ALTER TABLE ONLY public.formula
 
 
 --
--- Name: formula formula_pkey; Type: CONSTRAINT; Schema: public; Owner: billxiong24
+-- Name: formula formula_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.formula
@@ -1008,7 +1008,7 @@ ALTER TABLE ONLY public.users
 
 
 --
--- Name: formula_ingredients formula_ingredients_formula_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: billxiong24
+-- Name: formula_ingredients formula_ingredients_formula_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.formula_ingredients
@@ -1016,7 +1016,7 @@ ALTER TABLE ONLY public.formula_ingredients
 
 
 --
--- Name: formula_ingredients formula_ingredients_ingredients_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: billxiong24
+-- Name: formula_ingredients formula_ingredients_ingredients_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.formula_ingredients

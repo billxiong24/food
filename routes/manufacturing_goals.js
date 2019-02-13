@@ -62,7 +62,7 @@ router.post('/:id/skus', function(req, res, next) {
         });
     })
     .catch((err) => {
-        res.status(400).json({
+        res.status(409).json({
             error: error_controller.getErrMsg(err)
         });
     });
@@ -83,7 +83,7 @@ router.delete('/:id/skus', function(req, res, next) {
         });
     })
     .catch((err) => {
-        res.status(400).json({
+        res.status(409).json({
             error: error_controller.getErrMsg(err)
         });
     });
@@ -158,7 +158,7 @@ router.put('/:id', function(req, res, next) {
         });
     })
     .catch((err) => {
-        res.status(400).json({
+        res.status(409).json({
             error: error_controller.getErrMsg(err)
         });
     });
