@@ -15,7 +15,7 @@ describe('ingredients', function() {
         })
         .end(function(err, res) {
             res.should.have.status(200);
-            res.body.length.should.equal(2);
+            res.body.length.should.equal(3);
             done();
         });
     });
@@ -37,10 +37,10 @@ describe('ingredients', function() {
 
     it('should get SKUs of an ingredient with GET /ingredients/skus', function(done) {
         chai.request(server)
-        .get('/ingredients/1/skus')
+        .get('/ingredients/16/skus')
         .end(function(err, res) {
             res.should.have.status(200);
-            res.body.length.should.equal(3);
+            res.body.length.should.equal(6);
             done();
         });
     });
