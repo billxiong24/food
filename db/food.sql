@@ -4,7 +4,6 @@
 
 -- Dumped from database version 9.6.10
 -- Dumped by pg_dump version 9.6.10
-
 DROP DATABASE IF EXISTS :tabl;
 CREATE DATABASE :tabl;
 \c :tabl
@@ -48,7 +47,8 @@ CREATE TYPE public.weights_t AS ENUM (
     'qt',
     'gal',
     'ml',
-    'l'
+    'l',
+    'count'
 );
 
 
@@ -95,6 +95,26 @@ $$;
 
 
 ALTER FUNCTION public.unique_sku_num_seq(OUT nextfree bigint) OWNER TO postgres;
+
+--
+-- Name: unique_users_num_seq(); Type: FUNCTION; Schema: public; Owner: billxiong24
+--
+
+CREATE FUNCTION public.unique_users_num_seq(OUT nextfree bigint) RETURNS bigint
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+LOOP
+   SELECT INTO nextfree val
+   FROM   nextval('users_id_seq'::regclass) val
+   WHERE  NOT EXISTS (SELECT 1 FROM users WHERE id = val);
+   EXIT WHEN FOUND;
+END LOOP; 
+END
+$$;
+
+
+ALTER FUNCTION public.unique_users_num_seq(OUT nextfree bigint) OWNER TO billxiong24;
 
 SET default_tablespace = '';
 
@@ -390,6 +410,7 @@ CREATE TABLE public.sku (
     id integer NOT NULL,
     formula_id integer,
     formula_scale numeric DEFAULT 1.0 NOT NULL,
+    man_rate numeric NOT NULL,
     CONSTRAINT sku_count_per_case_check CHECK ((count_per_case > 0))
 );
 
@@ -494,6 +515,19 @@ ALTER SEQUENCE public.sku_num_seq OWNED BY public.sku.num;
 
 
 --
+-- Name: users; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.users (
+    uname character varying(32) NOT NULL,
+    id integer DEFAULT public.unique_users_num_seq() NOT NULL,
+    password character varying(60) NOT NULL
+);
+
+
+ALTER TABLE public.users OWNER TO postgres;
+
+--
 -- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -506,19 +540,6 @@ CREATE SEQUENCE public.users_id_seq
 
 
 ALTER TABLE public.users_id_seq OWNER TO postgres;
-
---
--- Name: users; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.users (
-    uname character varying(32) NOT NULL,
-    id integer DEFAULT nextval('public.users_id_seq'::regclass) NOT NULL,
-    password character varying(60) NOT NULL
-);
-
-
-ALTER TABLE public.users OWNER TO postgres;
 
 --
 -- Name: formula id; Type: DEFAULT; Schema: public; Owner: postgres
@@ -783,37 +804,37 @@ SELECT pg_catalog.setval('public.productline_id_seq', 6, true);
 -- Data for Name: sku; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.sku (name, num, case_upc, unit_upc, unit_size, count_per_case, prd_line, comments, id, formula_id, formula_scale) FROM stdin;
-sku69	1234	23116	11222	6 lbs sskusku	6	prod69	another comment	11	3	1.0
-sku690	7	1001	65345	12 lbs sy98vv	98	prod4	commentingg	13	3	1.0
-sku690	8	43434	65345	12 lbs sy98vv	98	prod4	commentingg	14	3	1.0
-sku1245872	55	2477	1123	5 lbs	4	prod69	a comment	1	4	1.0
-sku720	9	12345	65653	12 lbs	998	prod4	commentingg	15	4	1.0
-sku1	12	2449	112553	10 lbs	4	prod4	a comment	4	4	1.0
-sku723	11	123345	65653	12 lbs	998	prod4	commentingg	17	4	1.0
-sku723	13	233	65653	12 lbs	998	prod4	commentingg	19	4	1.0
-sku13462	14	3549	65653	12 lbs	998	prod4	\N	20	4	1.0
-skusku	15	3213	65653	12 lbs	998	prod4	\N	21	4	1.0
-sku6543	5727	5555	696	22	3	prod51	\N	22	4	1.0
-namesku	16	413445546	14235	59 lbs	12	prod4	\N	23	4	1.0
-hryname	17	23874	14235	59 lbs	12	prod4	\N	24	4	1.0
-hrynamesku	18	2387334	134235	59 lb14dds	124	prod4	\N	26	4	1.0
-asku4	19	551234352	443234	1 gallons	2	prod51	\N	27	4	1.0
-namesku3	20	69283413	3649823	ten gallons	6	prod51	\N	28	4	1.0
-namesku3	21	6934483413	364986623	ten gallons	6	prod51	\N	29	4	1.0
-namesku3	22	9823471385	11123984	ten gallons	6	prod51	\N	30	4	1.0
-namesku328	23	132874684753	34523466444	4 pounds	12	prod51	\N	31	4	1.0
-namesku328	24	34578237487	354444444	4 pounds	12	prod69	\N	32	4	1.0
-nameaeriusku328	25	2853729348	354444444	4 pounds	12	prod69	\N	33	4	1.0
-skueename	26	888888384	456456345	4 pounds	12	prod69	\N	34	4	1.0
-skueename	27	34343434	456456345	4 pounds	12	prod69	\N	35	4	1.0
-skueename	28	100000001	456456345	4 pounds	12	prod69	\N	36	4	1.0
-sku2355	1	5048	1128	5 lbs	4	prod69	a comment	3	1	1.0
-sku2356	2	5049	1122	5 lbs	4	prod69	a comment	5	1	1.0
-sku210	3	102	1122	5 lbs sku23	4	prod69	a comment with sku210	6	1	1.0
-sku2154	4	1023	11222	6 lbs sskusku	4	prod69	another comment	7	1	1.0
-sku215423	5	102355	11222	6 lbs sskusku	6	prod69	another comment	8	1	1.0
-sku215423	123	1023553	11222	6 lbs sskusku	6	prod69	another comment	9	1	1.0
+COPY public.sku (name, num, case_upc, unit_upc, unit_size, count_per_case, prd_line, comments, id, formula_id, formula_scale, man_rate) FROM stdin;
+sku69	1234	23116	11222	6 lbs sskusku	6	prod69	another comment	11	3	1.0	1.0
+sku690	7	1001	65345	12 lbs sy98vv	98	prod4	commentingg	13	3	1.0	1.0
+sku690	8	43434	65345	12 lbs sy98vv	98	prod4	commentingg	14	3	1.0	1.0
+sku1245872	55	2477	1123	5 lbs	4	prod69	a comment	1	4	1.0	1.0
+sku720	9	12345	65653	12 lbs	998	prod4	commentingg	15	4	1.0	1.0
+sku1	12	2449	112553	10 lbs	4	prod4	a comment	4	4	1.0	1.0
+sku723	11	123345	65653	12 lbs	998	prod4	commentingg	17	4	1.0	1.0
+sku723	13	233	65653	12 lbs	998	prod4	commentingg	19	4	1.0	1.0
+sku13462	14	3549	65653	12 lbs	998	prod4	\N	20	4	1.0	1.0
+skusku	15	3213	65653	12 lbs	998	prod4	\N	21	4	1.0	1.0
+sku6543	5727	5555	696	22	3	prod51	\N	22	4	1.0	1.0
+namesku	16	413445546	14235	59 lbs	12	prod4	\N	23	4	1.0	1.0
+hryname	17	23874	14235	59 lbs	12	prod4	\N	24	4	1.0	1.0
+hrynamesku	18	2387334	134235	59 lb14dds	124	prod4	\N	26	4	1.0	1.0
+asku4	19	551234352	443234	1 gallons	2	prod51	\N	27	4	1.0	1.0
+namesku3	20	69283413	3649823	ten gallons	6	prod51	\N	28	4	1.0	1.0
+namesku3	21	6934483413	364986623	ten gallons	6	prod51	\N	29	4	1.0	1.0
+namesku3	22	9823471385	11123984	ten gallons	6	prod51	\N	30	4	1.0	1.0
+namesku328	23	132874684753	34523466444	4 pounds	12	prod51	\N	31	4	1.0	1.0
+namesku328	24	34578237487	354444444	4 pounds	12	prod69	\N	32	4	1.0	1.0
+nameaeriusku328	25	2853729348	354444444	4 pounds	12	prod69	\N	33	4	1.0	1.0
+skueename	26	888888384	456456345	4 pounds	12	prod69	\N	34	4	1.0	1.0
+skueename	27	34343434	456456345	4 pounds	12	prod69	\N	35	4	1.0	1.0
+skueename	28	100000001	456456345	4 pounds	12	prod69	\N	36	4	1.0	1.0
+sku2355	1	5048	1128	5 lbs	4	prod69	a comment	3	1	1.0	1.0
+sku2356	2	5049	1122	5 lbs	4	prod69	a comment	5	1	1.0	1.0
+sku210	3	102	1122	5 lbs sku23	4	prod69	a comment with sku210	6	1	1.0	1.0
+sku2154	4	1023	11222	6 lbs sskusku	4	prod69	another comment	7	1	1.0	1.0
+sku215423	5	102355	11222	6 lbs sskusku	6	prod69	another comment	8	1	1.0	1.0
+sku215423	123	1023553	11222	6 lbs sskusku	6	prod69	another comment	9	1	1.0	1.0
 \.
 
 

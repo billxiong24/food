@@ -56,6 +56,7 @@ describe('SKUs', function() {
             count_per_case: 1,
             prd_line: "prod4",
             comments: "commentingg",
+            man_rate: 69.69,
             formula_id: 1
         })
         .end(function(err, res) {
