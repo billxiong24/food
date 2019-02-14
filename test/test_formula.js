@@ -36,6 +36,16 @@ describe('Formula', function() {
         });
     });
 
+    it('should get skus of a formula', function(done) {
+        chai.request(server)
+        .get('/formula/3/skus')
+        .end(function(err, res) {
+            res.should.have.status(200);
+            res.body.length.should.equal(3);
+            done();
+        });
+    });
+
     it('should create a formula', function(done) {
         chai.request(server)
         .post('/formula')

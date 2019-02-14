@@ -37,7 +37,19 @@ router.get('/:id/ingredients', function(req, res, next) {
     const formula = new Formula();
     const controller = new Controller();
     controller.constructGetResponse(res, formula.getIngredients(id));
+});
 
+router.get('/:id/skus', function(req, res, next) {
+    let id = req.params.id;
+    if(isNaN((id))) {
+        return res.status(400).json({
+            error: "Malformed URL."
+        });
+    }
+
+    const formula = new Formula();
+    const controller = new Controller();
+    controller.constructGetResponse(res, formula.getSkus(id));
 });
 
 router.post('/', function(req, res, next) {

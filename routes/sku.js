@@ -40,25 +40,6 @@ router.get('/:id/ingredients', function(req, res, next) {
 });
 
 //TODO 23503, 22P02, 
-router.post('/:id/ingredients', function(req, res, next) {
-    let id = req.params.id;
-    if(isNaN((id))) {
-        return res.status(400).json({
-            error: "Malformed URL."
-        });
-
-    }
-    if(!req.body.ingredients || req.body.ingredients.length == 0) {
-        return res.status(200).json({
-            rowCount: 0
-        });
-    }
-    const sku = new Sku();
-    const controller = new Controller();
-    controller.constructRowCountPostResponse(res, sku.addIngredients(id, req.body.ingredients));
-});
-
-//TODO 22P02, 42703 
 router.post('/', function(req, res, next) {
     const sku = new Sku();
     const controller = new Controller();
@@ -94,38 +75,6 @@ router.delete('/:id', function(req, res, next) {
     const sku = new Sku();
     const controller = new Controller();
     controller.constructDeleteResponse(res, sku.remove(req.params.id));
-});
-
-
-//TODO 22P02
-router.delete('/:id/ingredients', function(req, res, next) {
-    if(!req.params.id) {
-        return res.status(400).json({
-            error: "Malformed URL."
-        });
-    }
-
-    let ingredients = req.body.ingredients;
-    if(!ingredients || ingredients.length === 0) {
-        return res.status(200).json({
-            rowCount: 0
-        });
-    }
-    else if (!Array.isArray(ingredients)) {
-        ingredients = [ingredients];
-    }
-    const sku = new Sku();
-    sku.removeIngredients(req.params.id, ingredients)
-    .then((result) => {
-        res.status(200).json({
-            rowCount: result.rowCount
-        });
-    })
-    .catch((err) => {
-        res.status(409).json({
-            error: error_controller.getErrMsg(err)
-        });
-    });
 });
 
 module.exports = router;

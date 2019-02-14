@@ -5,7 +5,7 @@ const CRUD = require("./CRUD");
 const squel = require("squel").useFlavour('postgres');
 const QueryGenerator = require("./query_generator");
 const Filter = require('./filter');
-const csv=require('csvtojson');
+const Ingredient = require('./ingredient');
 
 class SKU extends CRUD {
 
@@ -39,60 +39,25 @@ class SKU extends CRUD {
         });
     }
 
-    //when creating sku, we want to add ingredients.
-    addIngredients(id, ingredients) {
-        let query = "";
-        return this.getSKUNumIfExists(id)
-        .then(function(sku_num) {
-            for(let i = 0; i < ingredients.length; i++) {
-                let obj = ingredients[i];
-                if(!obj.ingred_num || !obj.quantity)
-                    return Promise.reject("ingredient does not have number or quantity");
-                obj.sku_num = sku_num;
-            }
-
-            query = QueryGenerator.genInsConflictQuery(ingredients, 'sku_ingred',  'ON CONFLICT (sku_num, ingred_num) DO UPDATE SET quantity = EXCLUDED.quantity');
-            query = query.toString();
-            //logger.debug(query);
-        })
-        .then(function(res) {
-            return db.execSingleQuery(query, []);
-        });
-    }
-
-    removeIngredients(id, ingreds) {
-        return this.getSKUNumIfExists(id)
-        .then(function(res) {
-            let query = squel.delete()
-            .from("sku_ingred")
-            .where("sku_num=?", res);
-            const queryGen = new QueryGenerator(query);
-            queryGen.chainOrFilter(ingreds, "ingred_num = ?");
-            let queryStr = queryGen.getQuery().toString();
-            //logger.debug(queryStr);
-            return db.execSingleQuery(queryStr, []);
-        });
-    }
-
     getIngredients(id) {
-        let query = "SELECT DISTINCT ingredients.*, sku_ingred.quantity FROM sku INNER JOIN sku_ingred ON sku.num = sku_ingred.sku_num INNER JOIN ingredients ON sku_ingred.ingred_num=ingredients.num WHERE sku.id=$1";
-        return db.execSingleQuery(query, [id]);
+        const ing = new Ingredient();
+        return ing.search([], [id], new Filter());
     }
 
     search(names, ingredients, productlines, filter) {
         let q = squel.select()
         .from(this.tableName)
         .field("sku.*, COUNT(*) OVER() as row_count")
-        .left_join("sku_ingred", null, "sku.num=sku_ingred.sku_num")
-        .left_join("ingredients", null, "sku_ingred.ingred_num=ingredients.num");
+        .left_join("formula_ingredients", null, "sku.formula_id = formula_ingredients.formula_id")
 
         const queryGen = new QueryGenerator(q);
         names = QueryGenerator.transformQueryArr(names);
         queryGen.chainAndFilter(names, "sku.name LIKE ?")
-        .chainOrFilter(ingredients, "ingredients.name=?")
+        .chainOrFilter(ingredients, "formula_ingredients.ingredients_id=?")
         .chainOrFilter(productlines, "sku.prd_line=?")
         .makeDistinct();
         let queryStr = filter.applyFilter(queryGen.getQuery()).toString();
+        console.log(queryStr);
         //logger.debug(queryStr);
         return db.execSingleQuery(queryStr, []);
     }

@@ -28,13 +28,11 @@ class Ingredient extends CRUD {
     }
 
     getSkus(id) {
-        //let query =  "SELECT DISTINCT sku.* FROM sku INNER JOIN sku_ingred ON sku.num = sku_ingred.sku_num INNER JOIN ingredients ON sku_ingred.ingred_num=ingredients.num WHERE ingredients.id=$1";
         let query = "SELECT DISTINCT sku.* FROM sku INNER JOIN formula_ingredients ON sku.formula_id = formula_ingredients.formula_id where formula_ingredients.ingredients_id = $1";
         return db.execSingleQuery(query, [id]);
     }
 
     search(names, skus, filter) {
-        //select distinct ingredients.*, sku.id as sku_id, formula_ingredients.* from ingredients left join formula_ingredients on formula_ingredients.ingredients_id = ingredients.id left join sku on formula_ingredients.formula_id = sku.formula_id where sku.id = 6;
         let q = squel.select()
         .from(this.tableName)
         .field("ingredients.*, COUNT(*) OVER() as row_count")

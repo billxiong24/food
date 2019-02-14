@@ -626,6 +626,7 @@ COPY public.formula (id, name, comment, num) FROM stdin;
 1	sas	some	1
 3	formula609	\N	2
 4	formula6209	\N	3
+5	temp	hi	4
 \.
 
 
@@ -633,7 +634,7 @@ COPY public.formula (id, name, comment, num) FROM stdin;
 -- Name: formula_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.formula_id_seq', 4, true);
+SELECT pg_catalog.setval('public.formula_id_seq', 5, true);
 
 
 --
@@ -656,7 +657,7 @@ COPY public.formula_ingredients (formula_id, ingredients_id, quantity, unit) FRO
 -- Name: formula_num_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.formula_num_seq', 3, true);
+SELECT pg_catalog.setval('public.formula_num_seq', 4, true);
 
 
 --
@@ -813,7 +814,6 @@ sku720	9	12345	65653	12 lbs	998	prod4	commentingg	15	4	1.0	1.0
 sku1	12	2449	112553	10 lbs	4	prod4	a comment	4	4	1.0	1.0
 sku723	11	123345	65653	12 lbs	998	prod4	commentingg	17	4	1.0	1.0
 sku723	13	233	65653	12 lbs	998	prod4	commentingg	19	4	1.0	1.0
-sku13462	14	3549	65653	12 lbs	998	prod4	\N	20	4	1.0	1.0
 skusku	15	3213	65653	12 lbs	998	prod4	\N	21	4	1.0	1.0
 sku6543	5727	5555	696	22	3	prod51	\N	22	4	1.0	1.0
 namesku	16	413445546	14235	59 lbs	12	prod4	\N	23	4	1.0	1.0
@@ -835,6 +835,7 @@ sku210	3	102	1122	5 lbs sku23	4	prod69	a comment with sku210	6	1	1.0	1.0
 sku2154	4	1023	11222	6 lbs sskusku	4	prod69	another comment	7	1	1.0	1.0
 sku215423	5	102355	11222	6 lbs sskusku	6	prod69	another comment	8	1	1.0	1.0
 sku215423	123	1023553	11222	6 lbs sskusku	6	prod69	another comment	9	1	1.0	1.0
+sku13462	14	3549	65653	12 lbs	998	prod4	\N	20	5	1.0	1.0
 \.
 
 

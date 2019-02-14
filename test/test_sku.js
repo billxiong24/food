@@ -19,12 +19,12 @@ describe('SKUs', function() {
         .get('/sku/search')
         .query({
             names: ["sku"],
-            ingredients: ["ing234", "name"],
+            ingredients: [11, 16],
             prodlines: ["prod69"] 
         })
         .end(function(err, res) {
             res.should.have.status(200);
-            res.body.length.should.equal(3);
+            res.body.length.should.equal(7);
             done();
         });
     });
@@ -42,6 +42,25 @@ describe('SKUs', function() {
             res.should.have.status(200);
             res.body.length.should.equal(5);
             res.body[0].name.should.equal("sku1");
+            done();
+        });
+    }); 
+    it('should get ingredients of a SKU', function(done) {
+        chai.request(server)
+        .get('/sku/35/ingredients')
+        .end(function(err, res) {
+            res.should.have.status(200);
+            res.body.length.should.equal(4);
+            done();
+        });
+    }); 
+
+    it('should get ingredients of a SKU with no ingredients', function(done) {
+        chai.request(server)
+        .get('/sku/20/ingredients')
+        .end(function(err, res) {
+            res.should.have.status(200);
+            res.body.length.should.equal(0);
             done();
         });
     }); 

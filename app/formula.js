@@ -85,6 +85,11 @@ class Formula extends CRUD {
         return db.execSingleQuery(query, [id]);
     }
 
+    getSkus(id) {
+        let query = "SELECT * FROM sku WHERE formula_id = $1";
+        return db.execSingleQuery(query, [id]);
+    }
+
 }
 
 //const f = new Formula();
