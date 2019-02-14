@@ -47,7 +47,7 @@ class Ingredient extends CRUD {
         .makeDistinct();
         let queryStr = filter.applyFilter(queryGen.getQuery()).toString();
         //logger.debug(queryStr);
-        console.log(queryStr);
+        //console.log(queryStr);
         return db.execSingleQuery(queryStr, []);
     }
 
@@ -65,7 +65,7 @@ class Ingredient extends CRUD {
      *
      */
     create(dataObj) {
-        if(!dataObj.name || !dataObj.pkg_size || !dataObj.pkg_cost)
+        if(!dataObj.name || !dataObj.pkg_size || !dataObj.pkg_cost || !dataObj.unit)
             return Promise.reject("Not all required fields are present.");
         if(dataObj.num === null || dataObj.num === undefined)
             delete dataObj.num;

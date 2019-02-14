@@ -35,6 +35,24 @@ describe('ingredients', function() {
         });
     });
 
+    it('add an ingredient with POST /ingredients', function(done) {
+        chai.request(server)
+        .post('/ingredients')
+        .send({
+                name: "nomore",
+                pkg_size: 24,
+                unit: "ml",
+                pkg_cost: 555,
+                vend_info: "someinfo"
+            })
+        .end(function(err, res) {
+            res.should.have.status(201);
+            res.body.should.have.property("id");
+            res.body.should.have.property("num");
+            done();
+        });
+    });
+
     it('should get SKUs of an ingredient with GET /ingredients/skus', function(done) {
         chai.request(server)
         .get('/ingredients/16/skus')

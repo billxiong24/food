@@ -8,6 +8,7 @@
 DROP DATABASE IF EXISTS :tabl;
 CREATE DATABASE :tabl;
 \c :tabl
+
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
@@ -31,6 +32,27 @@ CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 
 COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
+
+--
+-- Name: weights_t; Type: TYPE; Schema: public; Owner: billxiong24
+--
+
+CREATE TYPE public.weights_t AS ENUM (
+    'oz',
+    'lb',
+    't',
+    'g',
+    'kg',
+    'fl-oz',
+    'pt',
+    'qt',
+    'gal',
+    'ml',
+    'l'
+);
+
+
+ALTER TYPE public.weights_t OWNER TO billxiong24;
 
 --
 -- Name: unique_ingred_num_seq(); Type: FUNCTION; Schema: public; Owner: postgres
@@ -156,10 +178,11 @@ CREATE TABLE public.ingredients (
     name text NOT NULL,
     num integer DEFAULT public.unique_ingred_num_seq() NOT NULL,
     vend_info text,
-    pkg_size character varying(100) NOT NULL,
     pkg_cost numeric NOT NULL,
     comments text,
     id integer NOT NULL,
+    pkg_size integer NOT NULL,
+    unit public.weights_t NOT NULL,
     CONSTRAINT ingredients_pkg_cost_check CHECK ((pkg_cost > (0)::numeric))
 );
 
@@ -619,44 +642,44 @@ SELECT pg_catalog.setval('public.formula_num_seq', 3, true);
 -- Data for Name: ingredients; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.ingredients (name, num, vend_info, pkg_size, pkg_cost, comments, id) FROM stdin;
-459ff\\c	49	some vending	11 gallons	15	a comment	4
-name	6	vending	345lbs	45	helloworld	1
-ing4545	1414	tnoerhr vending	55 gallons	10	a comment	6
-ing24545	1415	tnoerhr vending	55 gallons	10	a comment	7
-name6969	12	\N	55 gallons	10	\N	9
-ing234	47	please	3587 poundsss	15	a comment	5
-ing1992	563	waterino	66	500	\N	11
-namerino	5633	waterinrterro	266	5300	\N	12
-ing6663	3	dalis	55 gallons	10	commenting	13
-ing1112	4	dalis	55 gallons	10	commenting	14
-ing11123	2533	dalis	55 gallons	10	commenting	15
-ing111253	5	dalis	55 gallons	10	commenting	16
-ing190	7	dalis	55 gallons	10	commenting	18
-ing19309	2364	dalis	55 gallons	10	commenting	19
-4398	888	dalis	55 gallons	10	commenting	20
-114	898	dalis	55 gallons	10	commenting	21
-nameinger	8	dalis	55 gallons	10	commenting	22
-name223	9	dalis	55 gallons	10	commenting	23
-name142	10	dalis	55 gallons	10	commenting	24
-namefii	11	dalis	55 gallons	10	commenting	25
-name25	13	dalis	55 gallons	10	commenting	27
-eriuadf	14	tnoerhr vending	55 gallons	10	a comment	28
-adsoidf	15	\N	55 gallons	10	\N	29
-ing22812	16	\N	12	523	\N	30
-newname	17	\N	55 gallons	10	\N	31
-adsfiuer	18	tnoerhr vending	55 gallons	10	a comment	32
-inginginging	19	tnoerhr vending	aer	10	a comment	33
-skuskus	698	someinfo please	5lbs	45	newcomment wiht id	2
-nameinge	20	hi	10 gs	45	\N	34
-nameingerr	29	hi	10 gs	45	\N	35
-namesepingerr	30	hi	10 gs	45	\N	36
-namerring	31	hi	10 gs	45	\N	38
-ingeroa	32	hier	10 gall	451	\N	39
-roanameing	33	company	1034s	451	\N	40
-name rooro	34	compdsany	1034s	451	\N	41
-name anotering69	35	compdsany	1034s	451	\N	42
-ing and name	36	compdsany	1034s	451	\N	43
+COPY public.ingredients (name, num, vend_info, pkg_cost, comments, id, pkg_size, unit) FROM stdin;
+459ff\\c	49	some vending	15	a comment	4	1	lb
+name	6	vending	45	helloworld	1	1	lb
+ing4545	1414	tnoerhr vending	10	a comment	6	1	lb
+ing24545	1415	tnoerhr vending	10	a comment	7	1	lb
+name6969	12	\N	10	\N	9	1	lb
+ing234	47	please	15	a comment	5	1	lb
+ing1992	563	waterino	500	\N	11	1	lb
+namerino	5633	waterinrterro	5300	\N	12	1	lb
+ing6663	3	dalis	10	commenting	13	1	lb
+ing1112	4	dalis	10	commenting	14	1	lb
+ing11123	2533	dalis	10	commenting	15	1	lb
+ing111253	5	dalis	10	commenting	16	1	lb
+ing190	7	dalis	10	commenting	18	1	lb
+ing19309	2364	dalis	10	commenting	19	1	lb
+4398	888	dalis	10	commenting	20	1	lb
+114	898	dalis	10	commenting	21	1	lb
+nameinger	8	dalis	10	commenting	22	1	lb
+name223	9	dalis	10	commenting	23	1	lb
+name142	10	dalis	10	commenting	24	1	lb
+namefii	11	dalis	10	commenting	25	1	lb
+name25	13	dalis	10	commenting	27	1	lb
+eriuadf	14	tnoerhr vending	10	a comment	28	1	lb
+adsoidf	15	\N	10	\N	29	1	lb
+ing22812	16	\N	523	\N	30	1	lb
+newname	17	\N	10	\N	31	1	lb
+adsfiuer	18	tnoerhr vending	10	a comment	32	1	lb
+inginginging	19	tnoerhr vending	10	a comment	33	1	lb
+skuskus	698	someinfo please	45	newcomment wiht id	2	1	lb
+nameinge	20	hi	45	\N	34	1	lb
+nameingerr	29	hi	45	\N	35	1	lb
+namesepingerr	30	hi	45	\N	36	1	lb
+namerring	31	hi	45	\N	38	1	lb
+ingeroa	32	hier	451	\N	39	1	lb
+roanameing	33	company	451	\N	40	1	lb
+name rooro	34	compdsany	451	\N	41	1	lb
+name anotering69	35	compdsany	451	\N	42	1	lb
+ing and name	36	compdsany	451	\N	43	1	lb
 \.
 
 
