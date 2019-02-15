@@ -84,11 +84,6 @@ class ManufacturingGoals extends CRUD {
        .toString();
        return db.execSingleQuery(query, []);
    }
-
-    exportFile(jsonList, format) {
-        const formatter = new Formatter(format);
-        return formatter.generateFormat(jsonList);
-    }
 }
 
 

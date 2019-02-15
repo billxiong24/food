@@ -3,7 +3,35 @@ const ManufacturingGoals = require('../app/manufacturing_goal');
 const error_controller = require('../app/controller/error_controller');
 let router = express.Router();
 const Controller = require('../app/controller/controller');
+const CRUD = require('../app/CRUD');
+const SKU = require('../app/sku');
+const Ingredient = require('../app/ingredient');
+const SKUIngred = require("../app/sku_ingred");
+const ProdLine = require("../app/productline");
 
+function getCRUD(type) {
+    let crud = null;
+    if(type === "sku") {
+        console.log("creating a SKU");
+        crud = new SKU();
+    }
+    else if(type === 'ingredient') {
+        console.log("creating an ingredient");
+        crud = new Ingredient();
+    }
+    else if(type === 'formula') {
+        crud = new SKUIngred();
+    }
+    else if(type === 'productline') {
+        crud = new ProdLine();
+    }
+    else {
+        return null;
+    }
+
+    return crud;
+
+}
 
 router.get('/', function(req, res, next) {
     if(!req.query.user_id || isNaN(req.query.user_id)) {
@@ -88,7 +116,8 @@ router.post('/exported_file', function(req, res, next) {
     }
 
     const mg = new ManufacturingGoals();
-    let csv = mg.exportFile(jsonList, format);
+    const crud = getCRUD(req.body.type);
+    let csv = crud.exportFile(jsonList, format);
     res.status(200).send(csv);
 });
 

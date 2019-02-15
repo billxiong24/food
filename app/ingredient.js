@@ -8,6 +8,16 @@ class Ingredient extends CRUD {
     constructor() {
         super();
         this.tableName = "ingredients";
+        this.headerToDB = {
+            "Ingr#": "num",
+            "Name": "name",
+            "Vendor Info": "vend_info",
+            "Size": "pkg_size",
+            "Unit": "unit", 
+            "Cost": "pkg_cost",
+            "Comment": "comments"
+        };
+        this.dbToHeader = this.reverseKeys(this.headerToDB);
     }
 
     //override

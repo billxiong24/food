@@ -1,5 +1,5 @@
-name,num,case_upc,unit_upc,unit_size,count_per_case,prd_line,comments
-nametrea,,237722222,2423511,85lbs,2,prod69,commemntnt
-skutran,53444,25333,65653,12 lbs,998,prod4,
-sku1,142424,2333333,112553,10 lbs,4,prod444,a comment
-skuamb,78,102,877733,229834,6,prod4,ambiguouss
+Name,SKU#,Case UPC,Unit UPC,Unit size,Count per case,PL Name,Comment,Formula#,Formula factor,Rate
+nametrea,,237722222,2423511,85lbs,2,prod69,commemntnt,5,1,1
+skutran,53444,25333,65653,12 lbs,998,prod444,,8,1,1
+sku1,142424,2333333,112553,10 lbs,4,prod8989,a comment,4,1,1
+skuamb,78,102,877733,229834,6,prod4,ambiguouss,5,1,1

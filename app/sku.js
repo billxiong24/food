@@ -12,6 +12,20 @@ class SKU extends CRUD {
     constructor() {
         super();
         this.tableName = "sku";
+        this.headerToDB = {
+            "SKU#": "num",
+            "Name": "name",
+            "Case UPC": "case_upc",
+            "Unit UPC": "unit_upc",
+            "Unit size": "unit_size",
+            "Count per case": "count_per_case",
+            "PL Name": "prd_line",
+            "Comment": "comments",
+            "Formula#": "formula_id", //TODO FIX THIS
+            "Formula factor": "formula_scale",
+            "Rate": "man_rate"
+        };
+        this.dbToHeader = this.reverseKeys(this.headerToDB);
     }
 
     //override
@@ -124,4 +138,28 @@ class SKU extends CRUD {
         return db.execSingleQuery("DELETE FROM " + this.tableName + " WHERE id = $1", [id]);
     }
 }
+
+const sku = new SKU();
+console.log(sku.convertHeaderToDB([
+    {
+        "SKU#": "num",
+        "Name": "name",
+        "Case UPC": "case_upc",
+        "Unit UPC": "unit_upc",
+        "Unit size": "unit_size",
+        "Count per case": "count_per_case",
+        "PL Name": "prd_line",
+        "Comment": "comments"
+    },
+    {
+        "SKU#": "num",
+        "Name": "name",
+        "Case UPC": "case_upc",
+        "Unit UPC": "unit_upc",
+        "Unit size": "unit_size",
+        "Count per case": "count_per_case",
+        "PL Name": "prd_line",
+        "Comment": "comments"
+    }
+]));
 module.exports = SKU;
