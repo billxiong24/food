@@ -163,7 +163,7 @@ CREATE TABLE public.formula_ingredients (
     formula_id integer,
     ingredients_id integer,
     quantity integer NOT NULL,
-    unit text NOT NULL
+    unit public.weights_t NOT NULL
 );
 
 
@@ -642,14 +642,14 @@ SELECT pg_catalog.setval('public.formula_id_seq', 5, true);
 --
 
 COPY public.formula_ingredients (formula_id, ingredients_id, quantity, unit) FROM stdin;
-1	16	1	lbs
-1	19	10	lbs
-1	13	10	lbs
+1	16	1	lb
+1	19	10	lb
 4	18	0	lb
 4	19	2	lb
 4	21	4	lb
 4	22	6	lb
-3	11	3	tons
+3	11	3	lb
+1	13	5	lb
 \.
 
 
@@ -665,43 +665,43 @@ SELECT pg_catalog.setval('public.formula_num_seq', 4, true);
 --
 
 COPY public.ingredients (name, num, vend_info, pkg_cost, comments, id, pkg_size, unit) FROM stdin;
-459ff\\c	49	some vending	15	a comment	4	1	lb
-name	6	vending	45	helloworld	1	1	lb
-ing4545	1414	tnoerhr vending	10	a comment	6	1	lb
-ing24545	1415	tnoerhr vending	10	a comment	7	1	lb
-name6969	12	\N	10	\N	9	1	lb
-ing234	47	please	15	a comment	5	1	lb
-ing1992	563	waterino	500	\N	11	1	lb
-namerino	5633	waterinrterro	5300	\N	12	1	lb
-ing6663	3	dalis	10	commenting	13	1	lb
-ing1112	4	dalis	10	commenting	14	1	lb
-ing11123	2533	dalis	10	commenting	15	1	lb
-ing111253	5	dalis	10	commenting	16	1	lb
-ing190	7	dalis	10	commenting	18	1	lb
-ing19309	2364	dalis	10	commenting	19	1	lb
-4398	888	dalis	10	commenting	20	1	lb
-114	898	dalis	10	commenting	21	1	lb
-nameinger	8	dalis	10	commenting	22	1	lb
-name223	9	dalis	10	commenting	23	1	lb
-name142	10	dalis	10	commenting	24	1	lb
-namefii	11	dalis	10	commenting	25	1	lb
-name25	13	dalis	10	commenting	27	1	lb
-eriuadf	14	tnoerhr vending	10	a comment	28	1	lb
-adsoidf	15	\N	10	\N	29	1	lb
-ing22812	16	\N	523	\N	30	1	lb
-newname	17	\N	10	\N	31	1	lb
-adsfiuer	18	tnoerhr vending	10	a comment	32	1	lb
-inginginging	19	tnoerhr vending	10	a comment	33	1	lb
-skuskus	698	someinfo please	45	newcomment wiht id	2	1	lb
-nameinge	20	hi	45	\N	34	1	lb
-nameingerr	29	hi	45	\N	35	1	lb
-namesepingerr	30	hi	45	\N	36	1	lb
-namerring	31	hi	45	\N	38	1	lb
-ingeroa	32	hier	451	\N	39	1	lb
-roanameing	33	company	451	\N	40	1	lb
-name rooro	34	compdsany	451	\N	41	1	lb
-name anotering69	35	compdsany	451	\N	42	1	lb
-ing and name	36	compdsany	451	\N	43	1	lb
+459ff\\c	49	some vending	15	a comment	4	2	lb
+name	6	vending	45	helloworld	1	2	lb
+ing4545	1414	tnoerhr vending	10	a comment	6	2	lb
+ing24545	1415	tnoerhr vending	10	a comment	7	2	lb
+name6969	12	\N	10	\N	9	2	lb
+ing234	47	please	15	a comment	5	2	lb
+ing1992	563	waterino	500	\N	11	2	lb
+namerino	5633	waterinrterro	5300	\N	12	2	lb
+ing6663	3	dalis	10	commenting	13	2	lb
+ing1112	4	dalis	10	commenting	14	2	lb
+ing11123	2533	dalis	10	commenting	15	2	lb
+ing111253	5	dalis	10	commenting	16	2	lb
+ing190	7	dalis	10	commenting	18	2	lb
+ing19309	2364	dalis	10	commenting	19	2	lb
+4398	888	dalis	10	commenting	20	2	lb
+114	898	dalis	10	commenting	21	2	lb
+nameinger	8	dalis	10	commenting	22	2	lb
+name223	9	dalis	10	commenting	23	2	lb
+name142	10	dalis	10	commenting	24	2	lb
+namefii	11	dalis	10	commenting	25	2	lb
+name25	13	dalis	10	commenting	27	2	lb
+eriuadf	14	tnoerhr vending	10	a comment	28	2	lb
+adsoidf	15	\N	10	\N	29	2	lb
+ing22812	16	\N	523	\N	30	2	lb
+newname	17	\N	10	\N	31	2	lb
+adsfiuer	18	tnoerhr vending	10	a comment	32	2	lb
+inginginging	19	tnoerhr vending	10	a comment	33	2	lb
+skuskus	698	someinfo please	45	newcomment wiht id	2	2	lb
+nameinge	20	hi	45	\N	34	2	lb
+nameingerr	29	hi	45	\N	35	2	lb
+namesepingerr	30	hi	45	\N	36	2	lb
+namerring	31	hi	45	\N	38	2	lb
+ingeroa	32	hier	451	\N	39	2	lb
+roanameing	33	company	451	\N	40	2	lb
+name rooro	34	compdsany	451	\N	41	2	lb
+name anotering69	35	compdsany	451	\N	42	2	lb
+ing and name	36	compdsany	451	\N	43	2	lb
 \.
 
 
@@ -744,10 +744,6 @@ SELECT pg_catalog.setval('public.manufacturing_goal_id_seq', 9, true);
 --
 
 COPY public.manufacturing_goal_sku (mg_id, sku_id, quantity) FROM stdin;
-8	3	0
-8	5	0
-8	6	0
-8	11	0
 7	3	0.6
 7	5	0.32
 7	7	0.88
@@ -758,6 +754,10 @@ COPY public.manufacturing_goal_sku (mg_id, sku_id, quantity) FROM stdin;
 9	8	0.4
 9	1	12
 9	9	0.6
+8	3	1.33
+8	5	1.33
+8	6	1.33
+8	11	1.33
 \.
 
 
@@ -806,36 +806,36 @@ SELECT pg_catalog.setval('public.productline_id_seq', 6, true);
 --
 
 COPY public.sku (name, num, case_upc, unit_upc, unit_size, count_per_case, prd_line, comments, id, formula_id, formula_scale, man_rate) FROM stdin;
-sku69	1234	23116	11222	6 lbs sskusku	6	prod69	another comment	11	3	1.0	1.0
-sku690	7	1001	65345	12 lbs sy98vv	98	prod4	commentingg	13	3	1.0	1.0
-sku690	8	43434	65345	12 lbs sy98vv	98	prod4	commentingg	14	3	1.0	1.0
-sku1245872	55	2477	1123	5 lbs	4	prod69	a comment	1	4	1.0	1.0
-sku720	9	12345	65653	12 lbs	998	prod4	commentingg	15	4	1.0	1.0
-sku1	12	2449	112553	10 lbs	4	prod4	a comment	4	4	1.0	1.0
-sku723	11	123345	65653	12 lbs	998	prod4	commentingg	17	4	1.0	1.0
-sku723	13	233	65653	12 lbs	998	prod4	commentingg	19	4	1.0	1.0
-skusku	15	3213	65653	12 lbs	998	prod4	\N	21	4	1.0	1.0
-sku6543	5727	5555	696	22	3	prod51	\N	22	4	1.0	1.0
-namesku	16	413445546	14235	59 lbs	12	prod4	\N	23	4	1.0	1.0
-hryname	17	23874	14235	59 lbs	12	prod4	\N	24	4	1.0	1.0
-hrynamesku	18	2387334	134235	59 lb14dds	124	prod4	\N	26	4	1.0	1.0
-asku4	19	551234352	443234	1 gallons	2	prod51	\N	27	4	1.0	1.0
-namesku3	20	69283413	3649823	ten gallons	6	prod51	\N	28	4	1.0	1.0
-namesku3	21	6934483413	364986623	ten gallons	6	prod51	\N	29	4	1.0	1.0
-namesku3	22	9823471385	11123984	ten gallons	6	prod51	\N	30	4	1.0	1.0
-namesku328	23	132874684753	34523466444	4 pounds	12	prod51	\N	31	4	1.0	1.0
-namesku328	24	34578237487	354444444	4 pounds	12	prod69	\N	32	4	1.0	1.0
-nameaeriusku328	25	2853729348	354444444	4 pounds	12	prod69	\N	33	4	1.0	1.0
-skueename	26	888888384	456456345	4 pounds	12	prod69	\N	34	4	1.0	1.0
-skueename	27	34343434	456456345	4 pounds	12	prod69	\N	35	4	1.0	1.0
-skueename	28	100000001	456456345	4 pounds	12	prod69	\N	36	4	1.0	1.0
-sku2355	1	5048	1128	5 lbs	4	prod69	a comment	3	1	1.0	1.0
-sku2356	2	5049	1122	5 lbs	4	prod69	a comment	5	1	1.0	1.0
-sku210	3	102	1122	5 lbs sku23	4	prod69	a comment with sku210	6	1	1.0	1.0
-sku2154	4	1023	11222	6 lbs sskusku	4	prod69	another comment	7	1	1.0	1.0
-sku215423	5	102355	11222	6 lbs sskusku	6	prod69	another comment	8	1	1.0	1.0
-sku215423	123	1023553	11222	6 lbs sskusku	6	prod69	another comment	9	1	1.0	1.0
-sku13462	14	3549	65653	12 lbs	998	prod4	\N	20	5	1.0	1.0
+sku69	1234	23116	11222	6 lbs sskusku	6	prod69	another comment	11	3	1.5	1.0
+sku6543	5727	5555	696	22	3	prod51	\N	22	4	3.3	1.0
+asku4	19	551234352	443234	1 gallons	2	prod51	\N	27	4	3.3	1.0
+sku1245872	55	2477	1123	5 lbs	4	prod69	a comment	1	4	1.5	1.0
+namesku3	20	69283413	3649823	ten gallons	6	prod51	\N	28	4	3.3	1.0
+namesku3	21	6934483413	364986623	ten gallons	6	prod51	\N	29	4	3.3	1.0
+namesku3	22	9823471385	11123984	ten gallons	6	prod51	\N	30	4	3.3	1.0
+namesku328	23	132874684753	34523466444	4 pounds	12	prod51	\N	31	4	3.3	1.0
+sku2154	4	1023	11222	6 lbs sskusku	4	prod69	another comment	7	1	2.5	1.0
+namesku328	24	34578237487	354444444	4 pounds	12	prod69	\N	32	4	1.5	1.0
+nameaeriusku328	25	2853729348	354444444	4 pounds	12	prod69	\N	33	4	1.5	1.0
+skueename	26	888888384	456456345	4 pounds	12	prod69	\N	34	4	1.5	1.0
+skueename	27	34343434	456456345	4 pounds	12	prod69	\N	35	4	1.5	1.0
+skueename	28	100000001	456456345	4 pounds	12	prod69	\N	36	4	1.5	1.0
+sku2355	1	5048	1128	5 lbs	4	prod69	a comment	3	1	1.5	1.0
+sku2356	2	5049	1122	5 lbs	4	prod69	a comment	5	1	1.5	1.0
+sku210	3	102	1122	5 lbs sku23	4	prod69	a comment with sku210	6	1	1.5	1.0
+sku215423	5	102355	11222	6 lbs sskusku	6	prod69	another comment	8	1	1.5	1.0
+sku215423	123	1023553	11222	6 lbs sskusku	6	prod69	another comment	9	1	1.5	1.0
+sku690	7	1001	65345	12 lbs sy98vv	98	prod4	commentingg	13	3	2.4	1.0
+sku690	8	43434	65345	12 lbs sy98vv	98	prod4	commentingg	14	3	2.4	1.0
+sku720	9	12345	65653	12 lbs	998	prod4	commentingg	15	4	2.4	1.0
+sku1	12	2449	112553	10 lbs	4	prod4	a comment	4	4	2.4	1.0
+sku723	11	123345	65653	12 lbs	998	prod4	commentingg	17	4	2.4	1.0
+sku723	13	233	65653	12 lbs	998	prod4	commentingg	19	4	2.4	1.0
+skusku	15	3213	65653	12 lbs	998	prod4	\N	21	4	2.4	1.0
+namesku	16	413445546	14235	59 lbs	12	prod4	\N	23	4	2.4	1.0
+hryname	17	23874	14235	59 lbs	12	prod4	\N	24	4	2.4	1.0
+hrynamesku	18	2387334	134235	59 lb14dds	124	prod4	\N	26	4	2.4	1.0
+sku13462	14	3549	65653	12 lbs	998	prod4	\N	20	5	2.4	1.0
 \.
 
 
