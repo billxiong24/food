@@ -12,6 +12,9 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import { connect } from 'react-redux';
 import { userLoginAttempt, routeToPage } from '../../Redux/Actions';
 import { Redirect } from 'react-router-dom';
+import querystring from 'querystring';
+import axios from 'axios';
+import common from '../../Resources/common';
 
 const styles = theme => ({
   main: {
@@ -54,6 +57,22 @@ class LoginPage extends Component {
     this.state = {
       uname:"",
       password:""
+    }
+  }
+
+  componentWillMount() {
+    console.log(common);
+    if (window.location.hash) {
+      const hash = querystring.parse(window.location.hash.slice(1));
+      axios.get('https://api.colab.duke.edu/identity/v1/', {
+        headers: {
+          'x-api-key': common.colab_client_id,
+          'Authorization': `Bearer ${hash.access_token}`
+        }
+      })
+      .then((response) => {
+        console.log(response.data);
+      })
     }
   }
 
@@ -108,6 +127,17 @@ class LoginPage extends Component {
               className={classes.submit}
             >
               Sign in
+            </Button>
+            <Button
+              fullWidth
+              variant="contained"
+              className={classes.submit}
+              href={"https://oauth.oit.duke.edu/oauth/authorize.php?client_id=" + common.colab_client_id + 
+                   "&redirect_uri=" + common.colab_redirect_uri + 
+                   "&client_secret=" + common.colab_client_secret + 
+                   "&response_type=token&state=1234&scope=basic"}
+            >
+              NetID Sign In
             </Button>
             <div className={classes.status}>
               <label>{users.errMsg}</label>

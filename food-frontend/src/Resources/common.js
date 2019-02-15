@@ -1,7 +1,36 @@
+const local = {
+  hostname: 'https://cmdev.colab.duke.edu:8000/',
+  url: 'http://localhost:3000/',
+  https: false,
+  colab_client_id: 'code-monkeys-local',
+  colab_client_secret: 'sBzEYfj3%24g%3D%3Ds%3D9ykGvZg%40jkM%24JIAzqdatRwCZ%23cSredSCwoJB',
+  colab_redirect_uri: 'http%3A%2F%2Flocalhost%3A3000%2Flogin',
+}
+
+const dev = {
+  hostname: 'https://cmdev.colab.duke.edu:8000/',
+  url: 'https://cmdev.colab.duke.edu/',
+  https: true,
+  colab_client_id: 'code-monkeys-dev',
+  colab_client_secret: 'Lqwk%2BlPGuFElds3RWUsM%21yaCxlTcDSjfe%23i77%21bVBlzeUXwDac',
+  colab_redirect_uri: 'https%3A%2F%2Fcmdev.colab.duke.edu%2Flogin',
+}
+
+const prod = {
+  hostname: 'https://codemonkeys.colab.duke.edu:8000/',
+  url: 'https://codemonkeys.colab.duke.edu/',
+  https: true,
+  colab_client_id: 'code-monkeys-dev',
+  colab_client_secret: 'Lqwk%2BlPGuFElds3RWUsM%21yaCxlTcDSjfe%23i77%21bVBlzeUXwDac',
+  colab_redirect_uri: 'https%3A%2F%2Fcmdev.colab.duke.edu%2Flogin',
+}
+
+const config = process.env.REACT_APP_STAGE === 'prod' ? prod :
+              (process.env.REACT_APP_STAGE === 'dev' ? dev : local);
 
 export default {
-  hostname: 'https://cmdev.colab.duke.edu:8000/',
   admin: 7,
+  ...local
 }
 
 String.prototype.hashCode = function() {
