@@ -71,10 +71,17 @@ class ManufacturingGoals extends CRUD {
         return db.execSingleQuery(query, []);
     }
 
-   calculateQuantities(manufacturing_id, format='json') {
+   calculateQuantities(manufacturing_id, useUnits = true) {
+       let field = "";
+       if(useUnits)
+           field = "ingredients.*, formula_ingredients.unit as formula_unit, SUM((manufacturing_goal_sku.quantity * sku.formula_scale * formula_ingredients.quantity)) AS calc_res";
+       else
+           field = "ingredients.*, formula_ingredients.unit as formula_unit, SUM((manufacturing_goal_sku.quantity * sku.formula_scale * formula_ingredients.quantity/ingredients.pkg_size)) AS calc_res";
+true 
+       //TODO perform unit conversions
        let query = squel.select()
        .from("manufacturing_goal_sku")
-       .field("ingredients.*, formula_ingredients.unit as formula_unit, SUM((manufacturing_goal_sku.quantity * sku.formula_scale * formula_ingredients.quantity)) AS calc_res")
+       .field(field)
        .join("sku", null, "sku.id = manufacturing_goal_sku.sku_id")
        .join("formula_ingredients", null, "sku.formula_id = formula_ingredients.formula_id")
        .join("ingredients", null, "ingredients.id = formula_ingredients.ingredients_id")

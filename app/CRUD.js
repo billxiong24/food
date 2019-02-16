@@ -283,6 +283,10 @@ class CRUD {
 
 
     //abstract methods
+
+    checkExisting(dataObj) {
+        return Promise.resolve(null);
+    }
     create(dataObj) {
 
     }

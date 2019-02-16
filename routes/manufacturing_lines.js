@@ -4,12 +4,10 @@ const Filter = require("../app/filter");
 let router = express.Router();
 const error_controller = require('../app/controller/error_controller');
 const Controller = require('../app/controller/controller');
+const ManufacturingLine = require('../app/manufacturing_line');
 
-//TODO 22P02, 42703
 router.get('/search', function(req, res, next) {
-    let names = req.query.names;
-    let ingredients = req.query.ingredients;
-    let prodlines = req.query.prodlines;
+    let name = req.query.name;
     let orderKey = req.query.orderKey;
     let asc = (!req.query.asc) || req.query.asc == "1"; 
     let limit = parseInt(req.query.limit) || 0;
@@ -18,49 +16,41 @@ router.get('/search', function(req, res, next) {
     const filter = new Filter();
     filter.setOrderKey(orderKey).setAsc(asc).setOffset(offset).setLimit(limit);
 
-    names = Controller.convertParamToArray(names) 
-    ingredients = Controller.convertParamToArray(ingredients) 
-    prodlines = Controller.convertParamToArray(prodlines) 
-    const sku = new Sku();
+    const ml = new ManufacturingLine();
     const controller = new Controller();
-    controller.constructGetResponse(res, sku.search(names, ingredients, prodlines, filter));
+    controller.constructGetResponse(res, ml.search(name, filter));
 });
 
-router.get('/:id/ingredients', function(req, res, next) {
-    let id = req.params.id;
-    if(isNaN((id))) {
+router.get('/:id/skus', function(req, res, next) {
+    if(isNaN((req.params.id))) {
         return res.status(400).json({
             error: "Malformed URL."
         });
     }
 
-    const sku = new Sku();
+    const ml = new ManufacturingLine();
     const controller = new Controller();
-    controller.constructGetResponse(res, sku.getIngredients(id));
+    controller.constructGetResponse(res, ml.getSkus(req.params.id));
 });
 
-router.get('/:id/manufacturing_lines', function(req, res, next) {
-    let id = req.params.id;
-    if(isNaN((id))) {
-        return res.status(400).json({
-            error: "Malformed URL."
-        });
-    }
-
-    const sku = new Sku();
-    const controller = new Controller();
-    controller.constructGetResponse(res, sku.getManufacturingLines(id));
-});
-
-//TODO 23503, 22P02, 
 router.post('/', function(req, res, next) {
-    const sku = new Sku();
+    const ml = new ManufacturingLine();
     const controller = new Controller();
-    controller.constructPostResponse(res, sku.create(req.body));
+    controller.constructPostResponse(res, ml.create(req.body));
 });
 
+router.post('/:id/skus', function(req, res, next) {
+    if(!req.body.skus || req.body.skus.length == 0) {
+        return res.status(400).json({
+            rowCount: 0
+        });
+    }
+    let skus = Controller.convertParamToArray(req.body.skus) 
+    const ml = new ManufacturingLine();
+    const controller = new Controller();
+    controller.constructRowCountPostResponse(res, ml.addSkus(req.params.id, skus));
+});
 
-//TODO 23505, 22P02, 42703 
 router.put('/:id', function(req, res, next) {
     if(isNaN((req.params.id))) {
         return res.status(400).json({
@@ -74,21 +64,23 @@ router.put('/:id', function(req, res, next) {
         });
     }
 
-    const sku = new Sku();
+    const ml = new ManufacturingLine();
     const controller = new Controller();
-    controller.constructUpdateResponse(res, sku.update(req.body, req.params.id));
+    controller.constructUpdateResponse(res, ml.update(req.body, req.params.id));
 });
 
-//TODO 22P02
+
 router.delete('/:id', function(req, res, next) {
     if(isNaN((req.params.id))) {
         return res.status(400).json({
             error: "Malformed URL."
         });
     }
-    const sku = new Sku();
+
+    const ml = new ManufacturingLine();
     const controller = new Controller();
-    controller.constructDeleteResponse(res, sku.remove(req.params.id));
+    controller.constructDeleteResponse(res, ml.remove(req.params.id));
+
 });
 
 module.exports = router;

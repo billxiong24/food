@@ -87,6 +87,7 @@ router.delete('/:id/skus', function(req, res, next) {
 });
 
 router.get('/:id/calculations', function(req, res, next) {
+    let useUnits = (req.query.units) ? true : false;
     let id = req.params.id;
     if(isNaN((id))) {
         return res.status(400).json({
@@ -95,7 +96,7 @@ router.get('/:id/calculations', function(req, res, next) {
     }
     const mg = new ManufacturingGoals();
     const controller = new Controller();
-    controller.constructGetResponse(res, mg.calculateQuantities(req.params.id));
+    controller.constructGetResponse(res, mg.calculateQuantities(req.params.id, useUnits));
 });
 
 router.post('/exported_file', function(req, res, next) {

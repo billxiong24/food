@@ -15,6 +15,7 @@ var skuRouter = require('./routes/sku');
 var mgRouter = require('./routes/manufacturing_goals');
 var bulkRouter = require('./routes/bulk');
 var formulaRouter = require('./routes/formula');
+var mlRouter = require('./routes/manufacturing_lines');
 
 
 var http = require('http');
@@ -57,6 +58,7 @@ app.use('/sku', skuRouter);
 app.use('/manufacturing_goals', mgRouter);
 app.use('/bulk', bulkRouter);
 app.use('/formula', formulaRouter);
+app.use('/manufacturing_line', mlRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

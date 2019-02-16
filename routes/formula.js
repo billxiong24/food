@@ -74,7 +74,6 @@ router.post('/:id/ingredients', function(req, res, next) {
     const formula = new Formula();
     const controller = new Controller();
     controller.constructRowCountPostResponse(res, formula.addIngredients(id, req.body.ingredients));
-
 });
 
 router.put('/:id', function(req, res, next) {

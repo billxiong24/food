@@ -7,12 +7,6 @@ var server = require('../app');
 const execSync = require('child_process').execSync;
 const db = ("../app/db");
 
-//mocha --exit
-function clean(done) {
-    execSync("./cleandb.sh");
-    done();
-}
-
 describe('SKUs', function() {
     it('should search for sku with a keyword on GET /sku/search', function(done) {
         chai.request(server)
@@ -76,7 +70,9 @@ describe('SKUs', function() {
             prd_line: "prod4",
             comments: "commentingg",
             man_rate: 69.69,
-            formula_id: 1
+            formula_id: 1,
+            man_lines: [1, 2]
+
         })
         .end(function(err, res) {
             res.should.have.status(201);
@@ -85,6 +81,38 @@ describe('SKUs', function() {
             done();
         });
     });
+    it('should fail to create a SKU with POST /sku bc of invalid man line', function(done) {
+        chai.request(server)
+        .post('/sku')
+        .send({
+            name: "validnanme", 
+            case_upc: 2598123787, 
+            unit_upc: 293858686, 
+            unit_size: "12 lbs", 
+            count_per_case: 14,
+            prd_line: "prod4",
+            comments: "commentingg",
+            man_rate: 29,
+            formula_id: 1,
+            man_lines: [9, 10, 11]
+        })
+        .end(function(err, res) {
+            res.should.have.status(409);
+            done();
+        });
+    });
+    it('should not return anything for GET /sku/search', function(done) {
+        chai.request(server)
+        .get('/sku/search')
+        .query({
+            names: ["validname"]
+        })
+        .end(function(err, res) {
+            res.should.have.status(200);
+            res.body.length.should.equal(0);
+            done();
+        });
+    }); 
 
     it('should delete a SKU with DELETE /sku', function(done) {
         chai.request(server)

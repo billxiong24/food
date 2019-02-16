@@ -4,10 +4,10 @@
 
 -- Dumped from database version 9.6.10
 -- Dumped by pg_dump version 9.6.10
+
 DROP DATABASE IF EXISTS :tabl;
 CREATE DATABASE :tabl;
 \c :tabl
-
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
@@ -362,6 +362,53 @@ ALTER SEQUENCE public.manufacturing_goal_user_id_seq OWNED BY public.manufacturi
 
 
 --
+-- Name: manufacturing_line; Type: TABLE; Schema: public; Owner: billxiong24
+--
+
+CREATE TABLE public.manufacturing_line (
+    id integer NOT NULL,
+    name character varying(32) NOT NULL,
+    shortname character varying(5) NOT NULL,
+    comment text
+);
+
+
+ALTER TABLE public.manufacturing_line OWNER TO billxiong24;
+
+--
+-- Name: manufacturing_line_id_seq; Type: SEQUENCE; Schema: public; Owner: billxiong24
+--
+
+CREATE SEQUENCE public.manufacturing_line_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.manufacturing_line_id_seq OWNER TO billxiong24;
+
+--
+-- Name: manufacturing_line_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: billxiong24
+--
+
+ALTER SEQUENCE public.manufacturing_line_id_seq OWNED BY public.manufacturing_line.id;
+
+
+--
+-- Name: manufacturing_line_sku; Type: TABLE; Schema: public; Owner: billxiong24
+--
+
+CREATE TABLE public.manufacturing_line_sku (
+    sku_id integer NOT NULL,
+    manufacturing_line_id integer NOT NULL
+);
+
+
+ALTER TABLE public.manufacturing_line_sku OWNER TO billxiong24;
+
+--
 -- Name: productline; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -591,6 +638,13 @@ ALTER TABLE ONLY public.manufacturing_goal_sku ALTER COLUMN sku_id SET DEFAULT n
 
 
 --
+-- Name: manufacturing_line id; Type: DEFAULT; Schema: public; Owner: billxiong24
+--
+
+ALTER TABLE ONLY public.manufacturing_line ALTER COLUMN id SET DEFAULT nextval('public.manufacturing_line_id_seq'::regclass);
+
+
+--
 -- Name: productline id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -780,6 +834,55 @@ SELECT pg_catalog.setval('public.manufacturing_goal_sku_sku_id_seq', 1, false);
 --
 
 SELECT pg_catalog.setval('public.manufacturing_goal_user_id_seq', 1, false);
+
+
+--
+-- Data for Name: manufacturing_line; Type: TABLE DATA; Schema: public; Owner: billxiong24
+--
+
+COPY public.manufacturing_line (id, name, shortname, comment) FROM stdin;
+1	hi	hi33	\N
+2	hi	manli	\N
+3	hi	mandi	\N
+5	naa	maxi	\N
+\.
+
+
+--
+-- Name: manufacturing_line_id_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
+--
+
+SELECT pg_catalog.setval('public.manufacturing_line_id_seq', 5, true);
+
+
+--
+-- Data for Name: manufacturing_line_sku; Type: TABLE DATA; Schema: public; Owner: billxiong24
+--
+
+COPY public.manufacturing_line_sku (sku_id, manufacturing_line_id) FROM stdin;
+1	1
+1	2
+3	2
+3	1
+3	3
+4	3
+5	3
+5	1
+5	2
+6	1
+32	1
+33	1
+34	1
+21	1
+24	1
+26	1
+21	2
+24	2
+26	2
+21	3
+24	3
+26	3
+\.
 
 
 --
@@ -997,6 +1100,30 @@ ALTER TABLE ONLY public.manufacturing_goal
 
 
 --
+-- Name: manufacturing_line manufacturing_line_pkey; Type: CONSTRAINT; Schema: public; Owner: billxiong24
+--
+
+ALTER TABLE ONLY public.manufacturing_line
+    ADD CONSTRAINT manufacturing_line_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: manufacturing_line manufacturing_line_shortname_key; Type: CONSTRAINT; Schema: public; Owner: billxiong24
+--
+
+ALTER TABLE ONLY public.manufacturing_line
+    ADD CONSTRAINT manufacturing_line_shortname_key UNIQUE (shortname);
+
+
+--
+-- Name: manufacturing_line_sku manufacturing_line_sku_pkey; Type: CONSTRAINT; Schema: public; Owner: billxiong24
+--
+
+ALTER TABLE ONLY public.manufacturing_line_sku
+    ADD CONSTRAINT manufacturing_line_sku_pkey PRIMARY KEY (sku_id, manufacturing_line_id);
+
+
+--
 -- Name: productline productline_name_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1098,6 +1225,22 @@ ALTER TABLE ONLY public.manufacturing_goal_sku
 
 ALTER TABLE ONLY public.manufacturing_goal
     ADD CONSTRAINT manufacturing_goal_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- Name: manufacturing_line_sku manufacturing_line_sku_manufacturing_line_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: billxiong24
+--
+
+ALTER TABLE ONLY public.manufacturing_line_sku
+    ADD CONSTRAINT manufacturing_line_sku_manufacturing_line_id_fkey FOREIGN KEY (manufacturing_line_id) REFERENCES public.manufacturing_line(id);
+
+
+--
+-- Name: manufacturing_line_sku manufacturing_line_sku_sku_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: billxiong24
+--
+
+ALTER TABLE ONLY public.manufacturing_line_sku
+    ADD CONSTRAINT manufacturing_line_sku_sku_id_fkey FOREIGN KEY (sku_id) REFERENCES public.sku(id) ON DELETE CASCADE;
 
 
 --

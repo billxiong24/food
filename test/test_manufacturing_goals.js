@@ -43,11 +43,25 @@ describe('Manufacturing goals', function() {
     it('should get calculations for goal', function(done) {
         chai.request(server)
         .get('/manufacturing_goals/7/calculations')
+        .query({
+            units: 1
+        })
         .end(function(err, res) {
             res.should.have.status(200);
             res.body.length.should.equal(3);
             console.log(res.body);
             res.body[0].calc_res.should.equal("17.900");
+            done();
+        });
+    });
+
+    it('should get calculations for goal with package size', function(done) {
+        chai.request(server)
+        .get('/manufacturing_goals/7/calculations')
+        .end(function(err, res) {
+            res.should.have.status(200);
+            res.body.length.should.equal(3);
+            res.body[0].calc_res.should.equal("8.95000000000000000000");
             done();
         });
     });

@@ -1,6 +1,5 @@
 const db = require("./db");
 const fs = require('fs')
-const copyFrom = require('pg-copy-streams').from;
 const CRUD = require("./CRUD");
 const squel = require("squel").useFlavour('postgres');
 const QueryGenerator = require("./query_generator");
@@ -76,6 +75,16 @@ class SKU extends CRUD {
         return db.execSingleQuery(queryStr, []);
     }
 
+    getManufacturingLines(id) {
+        let query = squel.select()
+        .from("manufacturing_line")
+        .field("manufacturing_line.*")
+        .join("manufacturing_line_sku", null, "manufacturing_line_id = manufacturing_line.id")
+        .where("sku_id= ? ", id)
+        .distinct()
+        .toString();
+        return db.execSingleQuery(query, []);
+    }
     checkProductLineExists(name) {
         return db.execSingleQuery("SELECT * FROM productline WHERE productline.name = $1", [name]).then((res) => {
             if(res.rows.length == 0) {
@@ -86,18 +95,51 @@ class SKU extends CRUD {
     }
 
     create(dataObj) {
-        if(!dataObj.name || !dataObj.case_upc || !dataObj.unit_upc || !dataObj.unit_size || !dataObj.count_per_case || !dataObj.prd_line || !dataObj.formula_id || !dataObj.man_rate) {
+        if(!dataObj.name || !dataObj.case_upc || !dataObj.unit_upc || !dataObj.unit_size || !dataObj.count_per_case || !dataObj.prd_line || !dataObj.formula_id || !dataObj.man_rate || !dataObj.man_lines) {
             return Promise.reject("Not all required fields are present.");
         }
         if(dataObj.num === null || dataObj.num === undefined)
             delete dataObj.num;
 
+        let man_lines = dataObj.man_lines;
+        delete dataObj.man_lines;
+
         let query = QueryGenerator.genInsQuery(dataObj, this.tableName).returning("*").toString();
-        //logger.debug(query);
-        //product line must exist
-        return this.checkProductLineExists(dataObj.prd_line)
-        .then((res) => {
-            return super.insert(query, dataObj, "That SKU entry exists already.");
+        //must do transaction to insert sku first, then if valid, insert manufacture lines
+        return (async () => {
+            const client = await db.getSingleClient();
+
+            try {
+                await client.query('BEGIN');
+                const { rows } = await client.query(query, []);
+
+                //construct man_line id and sku id list to insert
+                let arr = [];
+                for(let i = 0; i < man_lines.length; i++) {
+                    arr.push({
+                        sku_id: rows[0].id,
+                        manufacturing_line_id: man_lines[i]
+                    });
+                }
+
+                let q = squel.insert()
+                .into("manufacturing_line_sku")
+                .setFieldsRows(arr).toString();
+
+                await client.query(q, [])
+                await client.query('COMMIT')
+                return rows;
+            } catch (e) {
+                await client.query('ROLLBACK')
+                throw e
+            } finally {
+                client.release()
+            }
+        })()
+        .then(function(rows) {
+            return {
+                rows: rows
+            };
         });
     }
 
@@ -139,27 +181,50 @@ class SKU extends CRUD {
     }
 }
 
-const sku = new SKU();
-console.log(sku.convertHeaderToDB([
-    {
-        "SKU#": "num",
-        "Name": "name",
-        "Case UPC": "case_upc",
-        "Unit UPC": "unit_upc",
-        "Unit size": "unit_size",
-        "Count per case": "count_per_case",
-        "PL Name": "prd_line",
-        "Comment": "comments"
-    },
-    {
-        "SKU#": "num",
-        "Name": "name",
-        "Case UPC": "case_upc",
-        "Unit UPC": "unit_upc",
-        "Unit size": "unit_size",
-        "Count per case": "count_per_case",
-        "PL Name": "prd_line",
-        "Comment": "comments"
-    }
-]));
+//const sku = new SKU();
+//sku.create(
+    //{
+        //"name": "remove",
+        //"num": 42,
+        //"case_upc": "25389999",
+        //"unit_upc": "253208",
+        //"unit_size": "12 lbs",
+        //"count_per_case": 1,
+        //"prd_line": "prod4",
+        //"comments": "commentingg",
+        //"id": 50,
+        //"formula_id": 3,
+        //"formula_scale": "1.0",
+        //"man_rate": "4.5",
+        //"man_lines": [1, 2]
+    //}
+//)
+//.then(function(res) {
+    //console.log(res.rows[0]);
+//})
+//.catch(function(err) {
+    //console.log(err);
+//})
+//console.log(sku.convertHeaderToDB([
+    //{
+        //"SKU#": "num",
+        //"Name": "name",
+        //"Case UPC": "case_upc",
+        //"Unit UPC": "unit_upc",
+        //"Unit size": "unit_size",
+        //"Count per case": "count_per_case",
+        //"PL Name": "prd_line",
+        //"Comment": "comments"
+    //},
+    //{
+        //"SKU#": "num",
+        //"Name": "name",
+        //"Case UPC": "case_upc",
+        //"Unit UPC": "unit_upc",
+        //"Unit size": "unit_size",
+        //"Count per case": "count_per_case",
+        //"PL Name": "prd_line",
+        //"Comment": "comments"
+    //}
+//]));
 module.exports = SKU;
