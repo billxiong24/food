@@ -3,7 +3,7 @@ const CRUD = require("./CRUD");
 const squel = require("squel").useFlavour("postgres");
 const bcrypt = require("bcrypt");
 
-const saltRounds = 1000;
+const saltRounds = 100;
 
 class Users extends CRUD {
     constructor() {
