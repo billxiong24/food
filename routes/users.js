@@ -2,6 +2,10 @@ const express = require('express');
 const Users = require('../app/users');
 const router = express.Router();
 
+router.get('/logout', function(req, res, next) {
+  req.session.destroy();
+});
+
 router.get('/:name', function(req, res, next) {
     let name = req.params.name;
     const users = new Users();
@@ -16,12 +20,6 @@ router.get('/:name', function(req, res, next) {
           });
     });
 });
-
-router.get('/logout', function(req, res, next) {
-  console.log(req.session);
-  req.session.destroy();
-  res.redirect('/login');
-})
 
 // Verify User password
 router.post('/', function(req, res, next) {
