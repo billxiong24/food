@@ -55,13 +55,13 @@ describe('Manufacturing goals', function() {
         });
     });
 
-    it('should get calculations for goal with package size', function(done) {
+    it('should get calculations for goal with package size, unit conversions', function(done) {
         chai.request(server)
         .get('/manufacturing_goals/7/calculations')
         .end(function(err, res) {
             res.should.have.status(200);
             res.body.length.should.equal(3);
-            res.body[0].calc_res.should.equal("8.95000000000000000000");
+            res.body[0].calc_res.should.equal(0.559375);
             done();
         });
     });

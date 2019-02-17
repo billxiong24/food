@@ -696,14 +696,14 @@ SELECT pg_catalog.setval('public.formula_id_seq', 5, true);
 --
 
 COPY public.formula_ingredients (formula_id, ingredients_id, quantity, unit) FROM stdin;
-1	16	1	lb
-1	19	10	lb
 4	18	0	lb
 4	19	2	lb
 4	21	4	lb
 4	22	6	lb
 3	11	3	lb
-1	13	5	lb
+1	16	1	oz
+1	19	10	oz
+1	13	5	oz
 \.
 
 
