@@ -4,6 +4,7 @@ const router = express.Router();
 
 router.get('/logout', function(req, res, next) {
   req.session.destroy();
+  next();
 });
 
 router.get('/:name', function(req, res, next) {
