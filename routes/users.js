@@ -53,8 +53,8 @@ router.post('/netid', function(req, res, next) {
 
   users.verifyNetId(req.body)
   .then((result) => {
-    req.session.user = result.uname;
-    req.session.admin = result.admin;
+    // req.session.user = result.uname;
+    // req.session.admin = result.admin;
     res.status(200).json(result);
   })
   .catch((err) => {
