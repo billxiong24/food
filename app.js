@@ -43,7 +43,7 @@ app.use(session({
   secret: process.env.SESSION_SECRET,
   store: new (require('connect-pg-simple')(session))(),
   resave: false,
-  saveUninitialized: true,
+  saveUninitialized: false,
     //change this later
   cookie: { secure: encrypt, maxAge: 24*60*60*1000 }
 }));
