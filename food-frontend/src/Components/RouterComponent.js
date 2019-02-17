@@ -19,6 +19,7 @@ import IngredientDetailViewPage from './IngredientDetailViewPage/IngredientDetai
 import SKUDetailViewPage from './SKUDetailViewPage/SKUDetailViewPage'
 import BulkImportPage from './BulkImport/BulkImportPage'
 import common from '../Resources/common';
+import { withCookies } from 'react-cookie';
 
 const styles = {
 
@@ -31,7 +32,7 @@ class RouterComponent extends Component {
 
   render() {
     const {manGoals, ingredient_id, users} = this.props;
-
+    console.log(this.props.cookies);
     return (
       <Router>
         <div>
@@ -60,11 +61,12 @@ class RouterComponent extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
   return {
       manGoals: state.manGoals,
       ingredient_id: state.ingredient_details.id,
       users: state.users,
+      cookies: ownProps.cookies,
   };
 };
 
@@ -73,4 +75,4 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default withStyles(styles)(connect(mapStateToProps,mapDispatchToProps)(RouterComponent));
+export default withStyles(styles)(withCookies(connect(mapStateToProps,mapDispatchToProps)(RouterComponent)));
