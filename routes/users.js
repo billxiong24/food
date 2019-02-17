@@ -3,6 +3,7 @@ const Users = require('../app/users');
 const router = express.Router();
 
 router.get('/logout', function(req, res, next) {
+  console.log(req);
   req.session.destroy();
   next();
 });
