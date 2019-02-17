@@ -5,7 +5,7 @@ const router = express.Router();
 router.get('/logout', function(req, res, next) {
   console.log(req);
   req.session.destroy();
-  next();
+  res.status(200).send("Logged out successfully");
 });
 
 // router.get('/:name', function(req, res, next) {
