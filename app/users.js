@@ -53,6 +53,7 @@ class Users extends CRUD {
           if(res) {
                 return {
                   uname:result.uname,
+                  admin:result.admin,
                   id:result.id
                 };
             }
@@ -72,20 +73,14 @@ class Users extends CRUD {
 
         result = result.rows;
         if (result.length != 1) {
-          return this.create();
+          return this.create(dataObj);
         }
         result = result[0];
-
-        return bcrypt.compare(dataObj.password, result.password).then((res) => {
-          if (res) {
-            return {
-              uname: result.uname,
-              id: result.id
-            };
-          }
-          else
-            return Promise.reject("Incorrect Password");
-        });
+        return {
+          uname:result.uname,
+          admin:result.admin,
+          id:result.id
+        };
       });
     }
 

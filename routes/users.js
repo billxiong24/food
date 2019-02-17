@@ -29,6 +29,8 @@ router.post('/', function(req, res, next) {
 
     users.verify(req.body)
     .then((result) => {
+        req.session.user = result.uname;
+        req.session.admin = result.admin;
         res.status(200).json(result);
     })
     .catch((err) => {
@@ -48,17 +50,18 @@ router.post('/netid', function(req, res, next) {
   req.body.uname = "netid_" + req.body.uname;
 
   const users = new Users();
-  console.log(req);
 
-  // users.verifyNetId(req.body)
-  // .then((result) => {
-  //   res.status(200).json(result);
-  // })
-  // .catch((err) => {
-  //   res.status(400).json({
-  //     error: err
-  //   })
-  // })
+  users.verifyNetId(req.body)
+  .then((result) => {
+    req.session.user = result.uname;
+    req.session.admin = result.admin;
+    res.status(200).json(result);
+  })
+  .catch((err) => {
+    res.status(400).json({
+      error: err
+    })
+  })
 });
 
 router.put('/:name', function(req, res, next) {
