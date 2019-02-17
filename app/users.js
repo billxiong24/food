@@ -77,7 +77,10 @@ class Users extends CRUD {
           .then((response) => {
             console.log(response);
             return response;
-          });
+          })
+          .catch((err) => {
+            return Promise.reject("here?");
+          })
         }
         result = result[0];
         return {
