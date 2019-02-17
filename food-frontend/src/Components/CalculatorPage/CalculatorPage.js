@@ -15,7 +15,7 @@ import {routeToPage} from '../../Redux/Actions/index';
 import axios from 'axios';
 import common from '../../Resources/common';
 import FileDownload from 'js-file-download';
-import {mangoalGetCalculations} from '../../Redux/Actions/ManufacturingGoalActionCreators';
+import {mangoalGetCalculations} from '../../Redux/Actions/ActionCreators/ManufacturingGoalActionCreators';
 import {Link} from 'react-router-dom';
 
 const styles = theme => ({

@@ -21,7 +21,7 @@ router.get('/:name', function(req, res, next) {
 router.post('/', function(req, res, next) {
     if(!req.body.uname || !req.body.password) {
       return res.status(400).send({
-          error: "Muse include username(uname) and password in POST request"
+          error: "Must include username(uname) and password in POST request"
       });
     }
 
@@ -38,11 +38,40 @@ router.post('/', function(req, res, next) {
     });
 });
 
+router.post('/netid', function(req, res, next) {
+  if(!req.body.uname || req.body.uname.search(/^[a-zA-Z]{2,3}[0-9]+$/i) < 0) {
+    return res.status(400).send({
+      error: "Must include valid netid"
+    })
+  }
+
+  req.body.uname = "netid_" + req.body.uname;
+
+  const users = new Users();
+  console.log(req);
+
+  // users.verifyNetId(req.body)
+  // .then((result) => {
+  //   res.status(200).json(result);
+  // })
+  // .catch((err) => {
+  //   res.status(400).json({
+  //     error: err
+  //   })
+  // })
+});
+
 router.put('/:name', function(req, res, next) {
     if(!req.body.password) {
         return res.status(400).send({
             error: "Must include password parameter in PUT request."
         });
+    }
+
+    if(req.body.uname.search(/netid/i) >= 0) {
+      return res.status(400).send({
+        error: "Username must not include the phrase 'netid'."
+      });
     }
 
     const users = new Users();

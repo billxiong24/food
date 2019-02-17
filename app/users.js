@@ -3,7 +3,7 @@ const CRUD = require("./CRUD");
 const squel = require("squel").useFlavour("postgres");
 const bcrypt = require("bcrypt");
 
-const saltRounds = 10;
+const saltRounds = 1000;
 
 class Users extends CRUD {
     constructor() {
@@ -60,6 +60,33 @@ class Users extends CRUD {
                 return Promise.reject("Incorrect Password");
             });
         });
+    }
+
+    verifyNetId(dataObj) {
+      if (!dataObj.uname) {
+        return Promise.reject("Bad username");
+      }
+
+      let query = "SELECT * FROM " + this.tableName + " WHERE uname=$1";
+      return db.execSingleQuery(query, [dataObj.uname]).then((result) => {
+
+        result = result.rows;
+        if (result.length != 1) {
+          return this.create();
+        }
+        result = result[0];
+
+        return bcrypt.compare(dataObj.password, result.password).then((res) => {
+          if (res) {
+            return {
+              uname: result.uname,
+              id: result.id
+            };
+          }
+          else
+            return Promise.reject("Incorrect Password");
+        });
+      });
     }
 
     update(dataObj, oldPrimaryKey) {

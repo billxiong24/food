@@ -20,9 +20,9 @@ const prod = {
   hostname: 'https://codemonkeys.colab.duke.edu:8000/',
   url: 'https://codemonkeys.colab.duke.edu/',
   https: true,
-  colab_client_id: 'code-monkeys-dev',
-  colab_client_secret: 'Lqwk%2BlPGuFElds3RWUsM%21yaCxlTcDSjfe%23i77%21bVBlzeUXwDac',
-  colab_redirect_uri: 'https%3A%2F%2Fcmdev.colab.duke.edu%2Flogin',
+  colab_client_id: 'code-monkeys-prod',
+  colab_client_secret: 'mYCevAXgB5d%23yHe38ipctjl%25AE%2AxaAk4eQdK2%233IzrDXL92k%219%0D%0A',
+  colab_redirect_uri: 'https%3A%2F%2Fcodemonkeys.colab.duke.edu%2Flogin',
 }
 
 const config = process.env.REACT_APP_STAGE === 'prod' ? prod :

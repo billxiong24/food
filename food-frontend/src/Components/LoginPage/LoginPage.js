@@ -10,7 +10,8 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import withStyles from '@material-ui/core/styles/withStyles';
 import { connect } from 'react-redux';
-import { userLoginAttempt, routeToPage } from '../../Redux/Actions';
+import { routeToPage } from '../../Redux/Actions';
+import { userLoginAttempt } from '../../Redux/Actions/ActionCreators/UserActionCreators';
 import { Redirect } from 'react-router-dom';
 import querystring from 'querystring';
 import axios from 'axios';
@@ -61,7 +62,7 @@ class LoginPage extends Component {
   }
 
   componentWillMount() {
-    console.log(common);
+    // console.log(common);
     if (window.location.hash) {
       const hash = querystring.parse(window.location.hash.slice(1));
       axios.get('https://api.colab.duke.edu/identity/v1/', {

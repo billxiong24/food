@@ -40,7 +40,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.set('trust proxy', 1);
 app.use(session({
-  secret: 'aeriu23487gfuyjhblkkjaw53u1134eeu',
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: true,
     //change this later
