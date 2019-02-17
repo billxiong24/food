@@ -7,7 +7,7 @@ const Controller = require('../app/controller/controller');
 const ManufacturingLine = require('../app/manufacturing_line');
 
 router.get('/search', function(req, res, next) {
-    let name = req.query.name;
+    let name = req.query.name || "";
     let orderKey = req.query.orderKey;
     let asc = (!req.query.asc) || req.query.asc == "1"; 
     let limit = parseInt(req.query.limit) || 0;

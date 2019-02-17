@@ -46,10 +46,8 @@ class ManufacturingLine extends CRUD {
             });
         }
 
-        let query = squel.insert()
-        .into("manufacturing_line_sku")
-        .setFieldsRows(arr)
-        .toString();
+        let query = QueryGenerator.genInsConflictQuery(arr, 'manufacturing_line_sku', 'ON CONFLICT DO NOTHING').toString();
+        console.log(query);
         return db.execSingleQuery(query, []);
     }
 
