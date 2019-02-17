@@ -51,17 +51,32 @@ router.post('/netid', function(req, res, next) {
 
   const users = new Users();
 
-  users.verifyNetId(req.body)
+  users.checkExisting(req.body)
   .then((result) => {
-    // req.session.user = result.uname;
-    // req.session.admin = result.admin;
+    req.session.user = result.uname;
+    req.session.admin = result.admin;
     res.status(200).json(result);
   })
   .catch((err) => {
-    res.status(400).json({
-      error: err
+    users.create(req.body)
+      .then((result) => {
+        req.session.user = req.body.uname;
+        req.session.admin = false;
+        res.status(201).json({});
     })
   })
+
+  // users.verifyNetId(req.body)
+  // .then((result) => {
+  //   // req.session.user = result.uname;
+  //   // req.session.admin = result.admin;
+  //   res.status(200).json(result);
+  // })
+  // .catch((err) => {
+  //   res.status(400).json({
+  //     error: err
+  //   })
+  // })
 });
 
 router.put('/:name', function(req, res, next) {

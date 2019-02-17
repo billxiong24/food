@@ -63,31 +63,19 @@ class Users extends CRUD {
         });
     }
 
-    verifyNetId(dataObj) {
+    getUser(dataObj) {
       if (!dataObj.uname) {
         return Promise.reject("Bad username");
       }
 
       let query = "SELECT * FROM " + this.tableName + " WHERE uname=$1";
       return db.execSingleQuery(query, [dataObj.uname]).then((result) => {
-
         result = result.rows;
         if (result.length != 1) {
-          this.create(dataObj)
-          .then((response) => {
-            console.log(response);
-            return response;
-          })
-          .catch((err) => {
-            return Promise.reject("here?");
-          })
+          return Promise.reject("User Doesn't Exist");
         }
         result = result[0];
-        return {
-          uname:result.uname,
-          admin:result.admin,
-          id:result.id
-        };
+        return result;
       });
     }
 
