@@ -51,7 +51,7 @@ router.post('/netid', function(req, res, next) {
 
   const users = new Users();
 
-  users.checkExisting(req.body)
+  users.getUser(req.body)
   .then((result) => {
     req.session.user = result.uname;
     req.session.admin = result.admin;
