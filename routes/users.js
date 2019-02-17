@@ -18,6 +18,7 @@ router.get('/:name', function(req, res, next) {
 });
 
 router.get('/logout', function(req, res, next) {
+  console.log(req.session);
   req.session.destroy();
 })
 
