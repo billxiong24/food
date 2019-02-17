@@ -72,6 +72,7 @@ class Users extends CRUD {
       return db.execSingleQuery(query, [dataObj.uname]).then((result) => {
 
         result = result.rows;
+        console.log(result);
         if (result.length != 1) {
           return this.create(dataObj)
           .then((response) => {
