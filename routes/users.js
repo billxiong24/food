@@ -7,20 +7,20 @@ router.get('/logout', function(req, res, next) {
   next();
 });
 
-router.get('/:name', function(req, res, next) {
-    let name = req.params.name;
-    const users = new Users();
+// router.get('/:name', function(req, res, next) {
+//     let name = req.params.name;
+//     const users = new Users();
 
-    users.checkExisting({uname: name})
-    .then((result)=>{
-          res.status(200).json(result.rows);
-    })
-    .catch((err) => {
-          res.json({
-            error: err
-          });
-    });
-});
+//     users.checkExisting({uname: name})
+//     .then((result)=>{
+//           res.status(200).json(result.rows);
+//     })
+//     .catch((err) => {
+//           res.json({
+//             error: err
+//           });
+//     });
+// });
 
 // Verify User password
 router.post('/', function(req, res, next) {
