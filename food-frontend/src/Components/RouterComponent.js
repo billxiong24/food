@@ -32,7 +32,7 @@ class RouterComponent extends Component {
 
   render() {
     const {manGoals, ingredient_id, users} = this.props;
-    console.log(this.props.cookies);
+    console.log(this.props.cookies.getAll());
     return (
       <Router>
         <div>
