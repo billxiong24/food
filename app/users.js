@@ -73,7 +73,10 @@ class Users extends CRUD {
 
         result = result.rows;
         if (result.length != 1) {
-          return this.create(dataObj);
+          return this.create(dataObj)
+          .then((response) => {
+            return response;
+          });
         }
         result = result[0];
         return {
