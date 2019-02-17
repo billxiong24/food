@@ -58,12 +58,13 @@ router.post('/netid', function(req, res, next) {
     res.status(200).json(result);
   })
   .catch((err) => {
+    console.log("not found");
     users.create(req.body)
       .then((result) => {
         req.session.user = req.body.uname;
         req.session.admin = false;
         res.status(201).json({});
-    })
+      })
   })
 
   // users.verifyNetId(req.body)
