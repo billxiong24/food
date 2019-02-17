@@ -50,6 +50,7 @@ router.post('/netid', function(req, res, next) {
   req.body.uname = "netid_" + req.body.uname;
 
   const users = new Users();
+  console.log(req.body);
 
   users.verifyNetId(req.body)
   .then((result) => {
