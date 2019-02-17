@@ -17,6 +17,10 @@ router.get('/:name', function(req, res, next) {
     });
 });
 
+router.get('/logout', function(req, res, next) {
+  req.session.destroy();
+})
+
 // Verify User password
 router.post('/', function(req, res, next) {
     if(!req.body.uname || !req.body.password) {
