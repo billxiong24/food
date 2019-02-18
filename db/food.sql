@@ -4,10 +4,10 @@
 
 -- Dumped from database version 9.6.10
 -- Dumped by pg_dump version 9.6.10
-
 DROP DATABASE IF EXISTS :tabl;
 CREATE DATABASE :tabl;
 \c :tabl
+
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
@@ -258,7 +258,8 @@ ALTER SEQUENCE public.ingredients_num_seq OWNED BY public.ingredients.num;
 CREATE TABLE public.manufacturing_goal (
     id integer NOT NULL,
     name text,
-    user_id integer NOT NULL
+    user_id integer NOT NULL,
+    deadline bigint
 );
 
 
@@ -777,12 +778,12 @@ SELECT pg_catalog.setval('public.ingredients_num_seq', 36, true);
 -- Data for Name: manufacturing_goal; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.manufacturing_goal (id, name, user_id) FROM stdin;
-2	goal1	6
-5	goal2	7
-7	goal2	6
-8	newgoal	6
-9	sids goals	9
+COPY public.manufacturing_goal (id, name, user_id, deadline) FROM stdin;
+2	goal1	6	1551157200
+5	goal2	7	1551157200
+7	goal2	6	1551157200
+8	newgoal	6	1551157200
+9	sids goals	9	1551157200
 \.
 
 

@@ -19,9 +19,15 @@ class ManufacturingGoals extends CRUD {
     }
 
     create(dataObj) {
-        if(!dataObj.user_id || !dataObj.name) {
+        if(!dataObj.user_id || !dataObj.name || !dataObj.deadline) {
             return Promise.reject("Not all required fields are present");
         }
+
+        let timestamp = Date.parse(dataObj.deadline);
+        if(isNaN(timestamp)) {
+            return Promise.reject("Bad date format.");
+        }
+        dataObj.deadline = timestamp;
         let query = QueryGenerator.genInsQuery(dataObj, this.tableName).returning("*").toString();
         //logger.debug(query);
         return super.insert(query, dataObj, "This goal exists already.");

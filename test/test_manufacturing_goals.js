@@ -71,11 +71,27 @@ describe('Manufacturing goals', function() {
         .post('/manufacturing_goals')
         .send({
             name: "goal4",
-            user_id: 7 
+            user_id: 7,
+            deadline: "2019-05-09"
         })
         .end(function(err, res) {
+            console.log(res.body);
             res.should.have.status(201);
             res.body.should.have.property("id");
+            done();
+        });
+    });
+    it('should fail to add manufacturing goal with bad deadline', function(done) {
+        chai.request(server)
+        .post('/manufacturing_goals')
+        .send({
+            name: "goal4",
+            user_id: 7,
+            deadline: "243-4441-22"
+        })
+        .end(function(err, res) {
+            res.should.have.status(409);
+            res.body.should.have.property("error");
             done();
         });
     });
@@ -85,10 +101,12 @@ describe('Manufacturing goals', function() {
         .post('/manufacturing_goals')
         .send({
             name: "goal4",
-            user_id: 7 
+            user_id: 7,
+            deadline: "2019-02-11"
         })
         .end(function(err, res) {
             res.should.have.status(409);
+            res.body.should.have.property("error");
             done();
         });
     });
