@@ -23,6 +23,19 @@ describe('SKUs', function() {
         });
     });
 
+    it('should search by case_upc for sku', function(done) {
+        chai.request(server)
+        .get('/sku/search')
+        .query({
+            names: ["5727"]
+        })
+        .end(function(err, res) {
+            res.should.have.status(200);
+            res.body.length.should.equal(1);
+            done();
+        });
+    }); 
+
     it('should offset and limit GET /sku/search', function(done) {
         chai.request(server)
         .get('/sku/search')

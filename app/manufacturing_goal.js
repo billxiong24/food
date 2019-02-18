@@ -19,7 +19,7 @@ class ManufacturingGoals extends CRUD {
     }
 
     create(dataObj) {
-        if(!dataObj.user_id || !dataObj.name) {
+        if(!dataObj.user_id || !dataObj.name || dataObj.deadline) {
             return Promise.reject("Not all required fields are present");
         }
         let query = QueryGenerator.genInsQuery(dataObj, this.tableName).returning("*").toString();
