@@ -3,13 +3,16 @@ import PropTypes from 'prop-types';
 import { Provider } from 'react-redux';
 import './Root.css';
 import RouterComponent from './Components/RouterComponent';
+import { CookiesProvider } from 'react-cookie';
 
 const Root = ({ store }) => (
-  <Provider store={store}>
-    <div className="App">
-      <RouterComponent></RouterComponent>
-    </div>
-  </Provider>
+  <CookiesProvider>
+    <Provider store={store}>
+      <div className="App">
+        <RouterComponent></RouterComponent>
+      </div>
+    </Provider>
+  </CookiesProvider>
 )
 
 Root.propTypes = {

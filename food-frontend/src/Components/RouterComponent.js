@@ -13,12 +13,12 @@ import '../Root.css';
 import SKUsPage from './SKUPage/SKUsPage';
 import SignUpPage from './LoginPage/SignUpPage';
 import LogoutPage from './LoginPage/LogoutPage';
-import BulkTransactionPage from './BulkTransactionPage/BulkTransactionPage'
 import CalculatorPage from './CalculatorPage/CalculatorPage';
 import IngredientDetailViewPage from './IngredientDetailViewPage/IngredientDetailViewPage';
 import SKUDetailViewPage from './SKUDetailViewPage/SKUDetailViewPage'
 import BulkImportPage from './BulkImport/BulkImportPage'
-import common from '../Resources/common';
+import { withCookies } from 'react-cookie';
+import PrivacyPage from './PrivacyPage/PrivacyPage';
 
 const styles = {
 
@@ -30,14 +30,14 @@ class RouterComponent extends Component {
   }
 
   render() {
-    const {manGoals, ingredient_id, users} = this.props;
-
+    const {manGoals, ingredient_id, cookies} = this.props;
     return (
       <Router>
         <div>
           <Navbar></Navbar>
           <Switch>
             <Route path="/login" component={LoginPage} />
+            <Route path="/privacy" component={PrivacyPage} />
             <PrivateRoute exact={true} path="/manufacturing_goals" component={ManufacturingGoalsPage} />
             <PrivateRoute exact={true} path="/bulkimportexport" component={ BulkImportPage } />
             <PrivateRoute exact={true} path="/ingredients" component={ IngredientsPage} />
@@ -48,7 +48,7 @@ class RouterComponent extends Component {
             <PrivateRoute exact={true} path="/ingredients/dependency" component={IngredientDependencyPage} />
             <PrivateRoute exact={true} path="/bulk" component={BulkImportPage} />
             <PrivateRoute exact={true} path="/create_user" component={SignUpPage} 
-              block={users.id!==common.admin}/>
+              block={cookies.admin === 'false'} altPath="/manufacturing_goals"/>
             <PrivateRoute exact={true} path="/logout" component={LogoutPage} />
             <PrivateRoute exact={true} path="/manufacturing_goals/calculations" component={CalculatorPage}
               block={!manGoals.activeGoal.id} altPath="/manufacturing_goals" />
@@ -60,11 +60,11 @@ class RouterComponent extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
   return {
       manGoals: state.manGoals,
       ingredient_id: state.ingredient_details.id,
-      users: state.users,
+      cookies: ownProps.cookies.cookies,
   };
 };
 
@@ -73,4 +73,4 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default withStyles(styles)(connect(mapStateToProps,mapDispatchToProps)(RouterComponent));
+export default withStyles(styles)(withCookies(connect(mapStateToProps,mapDispatchToProps)(RouterComponent)));

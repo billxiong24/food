@@ -1,20 +1,18 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
-import TextField from '@material-ui/core/TextField';
 import { Typography, Button } from '@material-ui/core';
 import EditableText from '../GenericComponents/EditableText';
-import labels from '../../Resources/labels';
 import { ingDetUpdateIng, ingDetAddIng, ingDetDeleteError, ingDetAddError, ingDetSetEditing, ingDetSetNew } from '../../Redux/Actions/ActionCreators/IngredientDetailsActionCreators';
-import { routeToPage, ingDeleteIng, ingAddDependency, ingRemoveDependency } from '../../Redux/Actions';
+import { ingDeleteIng, ingAddDependency, ingRemoveDependency } from '../../Redux/Actions';
 import IngredientSKUList from './IngredientSKUList';
-import { withRouter, Link } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
 import EditableNumeric from '../GenericComponents/EditableNumeric';
-import common, { isValidIng, getIngErrors } from '../../Resources/common';
-import {store} from "../../index"
+import {  getIngErrors } from '../../Resources/common';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
+import { withCookies } from 'react-cookie';
 
 
 const styles = {
@@ -275,7 +273,7 @@ class IngredientDetailViewPage extends Component {
                         {this.state.comment}
                     </EditableText>
                     {
-                    (this.props.users.id === common.admin && newValue )?
+                    (this.props.cookies.admin === "true" && newValue )?
                         <Button 
                             className={classes.button} 
                             editing={editing}
@@ -287,7 +285,7 @@ class IngredientDetailViewPage extends Component {
                         <div></div>
                     }
                     {
-                        (this.props.users.id === common.admin && !editing) ?
+                        (this.props.cookies.admin === "true" && !editing) ?
                         <Button 
                             className={classes.button} 
                             editing={editing}
@@ -362,7 +360,7 @@ class IngredientDetailViewPage extends Component {
 }
 
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
     return {
         ingredientName: state.ingredient_details.ingredientName,
         ingredientNum: state.ingredient_details.ingredientNum,
@@ -373,11 +371,11 @@ const mapStateToProps = state => {
         id: state.ingredient_details.id,
         errors: state.ingredient_details.errors,
         skus: state.ingredient_details.skus,
-        users: state.users,
         valid: state.ingredient_details.valid,
         editing: state.ingredient_details.editing,
         newValue: state.ingredient_details.new,
         dependency: state.ingredients.ingDependency,
+        cookies: ownProps.cookies.cookies,
     };
 };
 
@@ -419,4 +417,4 @@ const mapDispatchToProps = (dispatch, ownProps) => {
     };
 };
 
-export default withRouter(withStyles(styles)(connect(mapStateToProps,mapDispatchToProps)(IngredientDetailViewPage)));
+export default withRouter(withStyles(styles)(withCookies(connect(mapStateToProps,mapDispatchToProps)(IngredientDetailViewPage))));

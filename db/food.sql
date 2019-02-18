@@ -4,10 +4,10 @@
 
 -- Dumped from database version 9.6.10
 -- Dumped by pg_dump version 9.6.10
-
 DROP DATABASE IF EXISTS :tabl;
 CREATE DATABASE :tabl;
 \c :tabl
+
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
@@ -440,6 +440,19 @@ ALTER TABLE public.productline_id_seq OWNER TO postgres;
 
 ALTER SEQUENCE public.productline_id_seq OWNED BY public.productline.id;
 
+
+--
+-- Name: session; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.session (
+    sid character varying NOT NULL,
+    sess json NOT NULL,
+    expire timestamp(6) without time zone NOT NULL
+);
+
+
+ALTER TABLE public.session OWNER TO postgres;
 
 --
 -- Name: sku; Type: TABLE; Schema: public; Owner: postgres
@@ -905,6 +918,14 @@ SELECT pg_catalog.setval('public.productline_id_seq', 6, true);
 
 
 --
+-- Data for Name: session; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.session (sid, sess, expire) FROM stdin;
+\.
+
+
+--
 -- Data for Name: sku; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -1137,6 +1158,14 @@ ALTER TABLE ONLY public.productline
 
 ALTER TABLE ONLY public.productline
     ADD CONSTRAINT productline_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: session session_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.session
+    ADD CONSTRAINT session_pkey PRIMARY KEY (sid);
 
 
 --

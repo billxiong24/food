@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import { Route, Redirect } from 'react-router-dom';
+import { withCookies } from 'react-cookie';
 
 const styles = {
 
@@ -14,12 +15,12 @@ class PrivateRoute extends Component {
   }
 
   render() {
-    const { classes, users, block, altPath, component: Component, ...rest } = this.props;
+    const { classes, cookies, block, altPath, component: Component, ...rest } = this.props;
     return (
       <Route
         {...rest}
         render={props =>
-          (users.id !== null && !block) ? (
+          (cookies.user && !block) ? (
             <Component {...props} />
           ) : (
               <Redirect
@@ -34,9 +35,9 @@ class PrivateRoute extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
   return {
-    users: state.users
+    cookies: ownProps.cookies.cookies,
   }
 }
 
@@ -45,4 +46,4 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default withStyles(styles)(connect(mapStateToProps, null, null, {pure:false})(PrivateRoute));
+export default withStyles(styles)(withCookies(connect(mapStateToProps, null, null, {pure:false})(PrivateRoute)));

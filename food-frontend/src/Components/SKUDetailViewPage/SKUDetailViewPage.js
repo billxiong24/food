@@ -1,25 +1,23 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
-import TextField from '@material-ui/core/TextField';
 import { Typography, Button } from '@material-ui/core';
 import EditableText from '../GenericComponents/EditableText';
 import labels from '../../Resources/labels';
-import { ingDetUpdateIng } from '../../Redux/Actions/ActionCreators/IngredientDetailsActionCreators';
-import { routeToPage } from '../../Redux/Actions';
 import { skuDetUpdateSku, skuDetAddIng, skuDetDeleteIng, skuDetDeleteSku, skuDetAddSku, skuDetDeleteError, skuDetAddError, skuDetSetEditing, skuDetSetNew } from '../../Redux/Actions/ActionCreators/SKUDetailsActionCreators';
 import SKUIngredientList from './SKUIngredientList';
 import SKUDetailIngredientAutocomplete from './SKUDetailIngredientAutocomplete';
 import ProductLineDropdown from './ProductLineDropdown';
 import { findDifferences } from '../../Resources/common';
-import { withRouter, Link } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
-import { isValidIng, getSkuErrors } from '../../Resources/common';
+import { getSkuErrors } from '../../Resources/common';
 import EditableNumeric from '../GenericComponents/EditableNumeric';
 import {store} from "../../index"
 import axios from 'axios';
 import FileDownload from 'js-file-download';
 import common from '../../Resources/common';
+import { withCookies } from 'react-cookie';
 
 const styles = {
     ingredient_page_container:{
@@ -281,7 +279,7 @@ class SKUDetailViewPage extends Component {
                     </EditableText>
                     
                     {
-                    (this.props.users.id === common.admin && newValue )?
+                    (this.props.cookies.admin === "true" && newValue )?
                         <Button 
                             className={classes.button} 
                             editing={editing}
@@ -293,7 +291,7 @@ class SKUDetailViewPage extends Component {
                         <div></div>
                     }
                     {
-                        (this.props.users.id === common.admin && !editing) ?
+                        (this.props.cookies.admin === "true" === common.admin && !editing) ?
                         <Button 
                             className={classes.button} 
                             editing={editing}
@@ -367,7 +365,7 @@ class SKUDetailViewPage extends Component {
 }
 
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
     console.log(state)
     return {
         name: state.sku_details.name,
@@ -383,7 +381,7 @@ const mapStateToProps = state => {
         current_ingredients:state.sku_details.current_ingredients,
         errors: state.sku_details.errors,
         newValue: state.sku_details.new,
-        users: state.users,
+        cookies: ownProps.cookies.cookies,
         editing: state.sku_details.editing,
         valid: state.sku_details.valid
     };
@@ -448,4 +446,4 @@ const mapDispatchToProps = (dispatch, ownProps) => {
     };
 };
 
-export default withRouter(withStyles(styles)(connect(mapStateToProps,mapDispatchToProps)(SKUDetailViewPage)));
+export default withRouter(withStyles(styles)(withCookies(connect(mapStateToProps,mapDispatchToProps)(SKUDetailViewPage))));

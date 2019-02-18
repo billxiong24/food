@@ -43,11 +43,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.set('trust proxy', 1);
 app.use(session({
-  secret: 'aeriu23487gfuyjhblkkjaw53u1134eeu',
+  secret: process.env.SESSION_SECRET,
+  store: new (require('connect-pg-simple')(session))(),
   resave: false,
-  saveUninitialized: true,
+  saveUninitialized: false,
     //change this later
-  cookie: { secure: false }
+  cookie: { secure: encrypt, maxAge: 24*60*60*1000 }
 }));
 
 app.use('/', indexRouter);

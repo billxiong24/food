@@ -1,6 +1,6 @@
-import { mangoal_actions } from './ManufacturingGoalActionTypes';
+import { mangoal_actions } from '../ManufacturingGoalActionTypes';
 import axios from 'axios';
-import common from '../../Resources/common';
+import common from '../../../Resources/common';
 
 const hostname = common.hostname;
 
