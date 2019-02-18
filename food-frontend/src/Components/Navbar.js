@@ -78,7 +78,7 @@ class Navbar extends React.Component {
   }
 
   handleChange = (event, value) => {
-    if(this.props.cookies.users) {
+    if(this.props.cookies.user) {
       this.props.routeToPage(value);
     }
   };
