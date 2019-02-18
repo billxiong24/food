@@ -33,7 +33,7 @@ COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
 
 --
--- Name: weights_t; Type: TYPE; Schema: public; Owner: billxiong24
+-- Name: weights_t; Type: TYPE; Schema: public; Owner: postgres
 --
 
 CREATE TYPE public.weights_t AS ENUM (
@@ -52,7 +52,7 @@ CREATE TYPE public.weights_t AS ENUM (
 );
 
 
-ALTER TYPE public.weights_t OWNER TO billxiong24;
+ALTER TYPE public.weights_t OWNER TO postgres;
 
 --
 -- Name: unique_ingred_num_seq(); Type: FUNCTION; Schema: public; Owner: postgres
@@ -97,7 +97,7 @@ $$;
 ALTER FUNCTION public.unique_sku_num_seq(OUT nextfree bigint) OWNER TO postgres;
 
 --
--- Name: unique_users_num_seq(); Type: FUNCTION; Schema: public; Owner: billxiong24
+-- Name: unique_users_num_seq(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
 CREATE FUNCTION public.unique_users_num_seq(OUT nextfree bigint) RETURNS bigint
@@ -114,7 +114,7 @@ END
 $$;
 
 
-ALTER FUNCTION public.unique_users_num_seq(OUT nextfree bigint) OWNER TO billxiong24;
+ALTER FUNCTION public.unique_users_num_seq(OUT nextfree bigint) OWNER TO postgres;
 
 SET default_tablespace = '';
 
@@ -363,7 +363,7 @@ ALTER SEQUENCE public.manufacturing_goal_user_id_seq OWNED BY public.manufacturi
 
 
 --
--- Name: manufacturing_line; Type: TABLE; Schema: public; Owner: billxiong24
+-- Name: manufacturing_line; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.manufacturing_line (
@@ -374,10 +374,10 @@ CREATE TABLE public.manufacturing_line (
 );
 
 
-ALTER TABLE public.manufacturing_line OWNER TO billxiong24;
+ALTER TABLE public.manufacturing_line OWNER TO postgres;
 
 --
--- Name: manufacturing_line_id_seq; Type: SEQUENCE; Schema: public; Owner: billxiong24
+-- Name: manufacturing_line_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
 CREATE SEQUENCE public.manufacturing_line_id_seq
@@ -388,17 +388,17 @@ CREATE SEQUENCE public.manufacturing_line_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.manufacturing_line_id_seq OWNER TO billxiong24;
+ALTER TABLE public.manufacturing_line_id_seq OWNER TO postgres;
 
 --
--- Name: manufacturing_line_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: billxiong24
+-- Name: manufacturing_line_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
 ALTER SEQUENCE public.manufacturing_line_id_seq OWNED BY public.manufacturing_line.id;
 
 
 --
--- Name: manufacturing_line_sku; Type: TABLE; Schema: public; Owner: billxiong24
+-- Name: manufacturing_line_sku; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.manufacturing_line_sku (
@@ -407,7 +407,7 @@ CREATE TABLE public.manufacturing_line_sku (
 );
 
 
-ALTER TABLE public.manufacturing_line_sku OWNER TO billxiong24;
+ALTER TABLE public.manufacturing_line_sku OWNER TO postgres;
 
 --
 -- Name: productline; Type: TABLE; Schema: public; Owner: postgres
@@ -441,6 +441,19 @@ ALTER TABLE public.productline_id_seq OWNER TO postgres;
 
 ALTER SEQUENCE public.productline_id_seq OWNED BY public.productline.id;
 
+
+--
+-- Name: session; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.session (
+    sid character varying NOT NULL,
+    sess json NOT NULL,
+    expire timestamp(6) without time zone NOT NULL
+);
+
+
+ALTER TABLE public.session OWNER TO postgres;
 
 --
 -- Name: sku; Type: TABLE; Schema: public; Owner: postgres
@@ -639,7 +652,7 @@ ALTER TABLE ONLY public.manufacturing_goal_sku ALTER COLUMN sku_id SET DEFAULT n
 
 
 --
--- Name: manufacturing_line id; Type: DEFAULT; Schema: public; Owner: billxiong24
+-- Name: manufacturing_line id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.manufacturing_line ALTER COLUMN id SET DEFAULT nextval('public.manufacturing_line_id_seq'::regclass);
@@ -838,7 +851,7 @@ SELECT pg_catalog.setval('public.manufacturing_goal_user_id_seq', 1, false);
 
 
 --
--- Data for Name: manufacturing_line; Type: TABLE DATA; Schema: public; Owner: billxiong24
+-- Data for Name: manufacturing_line; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.manufacturing_line (id, name, shortname, comment) FROM stdin;
@@ -850,14 +863,14 @@ COPY public.manufacturing_line (id, name, shortname, comment) FROM stdin;
 
 
 --
--- Name: manufacturing_line_id_seq; Type: SEQUENCE SET; Schema: public; Owner: billxiong24
+-- Name: manufacturing_line_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
 SELECT pg_catalog.setval('public.manufacturing_line_id_seq', 5, true);
 
 
 --
--- Data for Name: manufacturing_line_sku; Type: TABLE DATA; Schema: public; Owner: billxiong24
+-- Data for Name: manufacturing_line_sku; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.manufacturing_line_sku (sku_id, manufacturing_line_id) FROM stdin;
@@ -903,6 +916,14 @@ helloprod	6
 --
 
 SELECT pg_catalog.setval('public.productline_id_seq', 6, true);
+
+
+--
+-- Data for Name: session; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.session (sid, sess, expire) FROM stdin;
+\.
 
 
 --
@@ -1101,7 +1122,7 @@ ALTER TABLE ONLY public.manufacturing_goal
 
 
 --
--- Name: manufacturing_line manufacturing_line_pkey; Type: CONSTRAINT; Schema: public; Owner: billxiong24
+-- Name: manufacturing_line manufacturing_line_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.manufacturing_line
@@ -1109,7 +1130,7 @@ ALTER TABLE ONLY public.manufacturing_line
 
 
 --
--- Name: manufacturing_line manufacturing_line_shortname_key; Type: CONSTRAINT; Schema: public; Owner: billxiong24
+-- Name: manufacturing_line manufacturing_line_shortname_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.manufacturing_line
@@ -1117,7 +1138,7 @@ ALTER TABLE ONLY public.manufacturing_line
 
 
 --
--- Name: manufacturing_line_sku manufacturing_line_sku_pkey; Type: CONSTRAINT; Schema: public; Owner: billxiong24
+-- Name: manufacturing_line_sku manufacturing_line_sku_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.manufacturing_line_sku
@@ -1138,6 +1159,14 @@ ALTER TABLE ONLY public.productline
 
 ALTER TABLE ONLY public.productline
     ADD CONSTRAINT productline_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: session session_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.session
+    ADD CONSTRAINT session_pkey PRIMARY KEY (sid);
 
 
 --
@@ -1229,7 +1258,7 @@ ALTER TABLE ONLY public.manufacturing_goal
 
 
 --
--- Name: manufacturing_line_sku manufacturing_line_sku_manufacturing_line_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: billxiong24
+-- Name: manufacturing_line_sku manufacturing_line_sku_manufacturing_line_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.manufacturing_line_sku
@@ -1237,7 +1266,7 @@ ALTER TABLE ONLY public.manufacturing_line_sku
 
 
 --
--- Name: manufacturing_line_sku manufacturing_line_sku_sku_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: billxiong24
+-- Name: manufacturing_line_sku manufacturing_line_sku_sku_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.manufacturing_line_sku

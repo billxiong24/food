@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import DropdownButton from '../GenericComponents/DropdownButton';
-import labels from '../../Resources/labels';
-import { ingSetFilterType, skuSetFilterType } from '../../Redux/Actions';
+import { skuSetFilterType } from '../../Redux/Actions';
 import { skuDetGetProductLine } from '../../Redux/Actions/ActionCreators/SKUDetailsActionCreators';
 
 

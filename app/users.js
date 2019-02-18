@@ -53,6 +53,7 @@ class Users extends CRUD {
           if(res) {
                 return {
                   uname:result.uname,
+                  admin:result.admin,
                   id:result.id
                 };
             }
@@ -60,6 +61,22 @@ class Users extends CRUD {
                 return Promise.reject("Incorrect Password");
             });
         });
+    }
+
+    getUser(dataObj) {
+      if (!dataObj.uname) {
+        return Promise.reject("Bad username");
+      }
+
+      let query = "SELECT * FROM " + this.tableName + " WHERE uname=$1";
+      return db.execSingleQuery(query, [dataObj.uname]).then((result) => {
+        result = result.rows;
+        if (result.length != 1) {
+          return Promise.reject("User Doesn't Exist");
+        }
+        result = result[0];
+        return result;
+      });
     }
 
     update(dataObj, oldPrimaryKey) {

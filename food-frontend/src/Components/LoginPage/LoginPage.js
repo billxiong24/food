@@ -10,8 +10,13 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import withStyles from '@material-ui/core/styles/withStyles';
 import { connect } from 'react-redux';
-import { userLoginAttempt, routeToPage } from '../../Redux/Actions';
+import { routeToPage } from '../../Redux/Actions';
+import { userLoginAttempt, userNetIdLogin } from '../../Redux/Actions/ActionCreators/UserActionCreators';
 import { Redirect } from 'react-router-dom';
+import querystring from 'querystring';
+import axios from 'axios';
+import common from '../../Resources/common';
+import { withCookies } from 'react-cookie';
 
 const styles = theme => ({
   main: {
@@ -57,6 +62,22 @@ class LoginPage extends Component {
     }
   }
 
+  componentWillMount() {
+    // console.log(common);
+    if (window.location.hash) {
+      const hash = querystring.parse(window.location.hash.slice(1));
+      axios.get('https://api.colab.duke.edu/identity/v1/', {
+        headers: {
+          'x-api-key': common.colab_client_id,
+          'Authorization': `Bearer ${hash.access_token}`
+        }
+      })
+      .then((response) => {
+        this.props.userNetIdLogin({uname: response.data.netid, password: response.data.duDukeID});
+      })
+    }
+  }
+
   updateUnameValue(evt) {
     this.setState({
       uname: evt.target.value
@@ -76,8 +97,8 @@ class LoginPage extends Component {
   }
 
   render() {
-    const { classes, users } = this.props;
-    if (users.id) {
+    const { classes, users, cookies } = this.props;
+    if (cookies.user) {
       return <Redirect to='/manufacturing_goals'/>
     }
 
@@ -109,6 +130,17 @@ class LoginPage extends Component {
             >
               Sign in
             </Button>
+            <Button
+              fullWidth
+              variant="contained"
+              className={classes.submit}
+              href={"https://oauth.oit.duke.edu/oauth/authorize.php?client_id=" + common.colab_client_id + 
+                   "&redirect_uri=" + common.colab_redirect_uri + 
+                   "&client_secret=" + common.colab_client_secret + 
+                   "&response_type=token&state=1234&scope=basic"}
+            >
+              NetID Sign In
+            </Button>
             <div className={classes.status}>
               <label>{users.errMsg}</label>
             </div>
@@ -120,10 +152,17 @@ class LoginPage extends Component {
   
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
   return {
-    users: state.users
+    users: state.users,
+    cookies: ownProps.cookies.cookies,
   }
 }
 
-export default withStyles(styles)(connect(mapStateToProps,{userLoginAttempt, routeToPage})(LoginPage));
+const mapDispatchToProps = {
+  userLoginAttempt: userLoginAttempt,
+  routeToPage: routeToPage,
+  userNetIdLogin: userNetIdLogin,
+}
+
+export default withStyles(styles)(withCookies(connect(mapStateToProps,mapDispatchToProps)(LoginPage)));
