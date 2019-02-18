@@ -22,6 +22,7 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Chip from '@material-ui/core/Chip';
+import { withCookies } from 'react-cookie';
 
 const styles = {
   man_goal_page_container: {
@@ -184,7 +185,7 @@ class ManufacturingGoalsPage extends Component {
   componentWillMount() {
     this.props.mangoalGetProductLines();
     this.getSkuSuggestions();
-    this.props.mangoalGetMangoals(this.props.users.id);
+    this.props.mangoalGetMangoals(this.props.cookies.id);
   }
 
   updateFilters(filters) {
@@ -218,7 +219,7 @@ class ManufacturingGoalsPage extends Component {
 
   addManufacturingGoal(manGoal) {
     this.props.mangoalCreateMangoal(Object.assign({}, manGoal, {
-      user_id: this.props.users.id
+      user_id: this.props.cookies.id
     }))
     .then(()=>{
       if (this.props.manGoals.errMsg) {
@@ -329,7 +330,7 @@ class ManufacturingGoalsPage extends Component {
       <div className={classes.man_goal_page_container}>
         <div className={classes.user_man_goals_container}>
           <Typography className={classes.user_man_goals_title}>
-            {this.props.users.uname}'s Manufacturing Goals
+            {this.props.cookies.user}'s Manufacturing Goals
           </Typography>
           <div>
             <ManufacturingGoalsCard
@@ -463,10 +464,10 @@ class ManufacturingGoalsPage extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
   return {
     dummy_ingredients: state.dummy_ingredients,
-    users: state.users,
+    cookies: ownProps.cookies.cookies,
     manGoals: state.manGoals
   };
 };
@@ -486,4 +487,4 @@ const mapDispatchToProps = {
 }
 
 
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(ManufacturingGoalsPage));
+export default withStyles(styles)(withCookies(connect(mapStateToProps, mapDispatchToProps)(ManufacturingGoalsPage)));

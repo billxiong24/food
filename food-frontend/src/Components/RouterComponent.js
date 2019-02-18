@@ -31,8 +31,7 @@ class RouterComponent extends Component {
   }
 
   render() {
-    const {manGoals, ingredient_id, users} = this.props;
-    console.log(this.props.cookies.getAll());
+    const {manGoals, ingredient_id, cookies} = this.props;
     return (
       <Router>
         <div>
@@ -49,7 +48,7 @@ class RouterComponent extends Component {
             <PrivateRoute exact={true} path="/ingredients/dependency" component={IngredientDependencyPage} />
             <PrivateRoute exact={true} path="/bulk" component={BulkImportPage} />
             <PrivateRoute exact={true} path="/create_user" component={SignUpPage} 
-              block={users.id!==common.admin}/>
+              block={cookies.admin === 'false'} altPath="/manufacturing_goals"/>
             <PrivateRoute exact={true} path="/logout" component={LogoutPage} />
             <PrivateRoute exact={true} path="/manufacturing_goals/calculations" component={CalculatorPage}
               block={!manGoals.activeGoal.id} altPath="/manufacturing_goals" />
@@ -65,8 +64,7 @@ const mapStateToProps = (state, ownProps) => {
   return {
       manGoals: state.manGoals,
       ingredient_id: state.ingredient_details.id,
-      users: state.users,
-      cookies: ownProps.cookies,
+      cookies: ownProps.cookies.cookies,
   };
 };
 

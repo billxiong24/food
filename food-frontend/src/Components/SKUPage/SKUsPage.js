@@ -34,6 +34,7 @@ import { skuDeleteError } from '../../Redux/Actions';
 import axios from 'axios';
 import FileDownload from 'js-file-download';
 import common from '../../Resources/common';
+import { withCookies } from 'react-cookie';
 
 const styles = {
   card: {
@@ -192,7 +193,7 @@ class SKUsPage extends Component {
             </div>
             <div className={classes.other_actions}>
             { 
-              this.props.users.id === common.admin ?
+              this.props.cookies.admin === "true" ?
               <Button
                 className={classes.add_ingredient}
                 onClick={this.onAddClick}>
@@ -228,12 +229,12 @@ class SKUsPage extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
   return {
     dummy_SKUs: state.dummy_SKUs,
     errors: state.skus.errors,
     items: state.skus.items,
-    users: state.users
+    cookies: ownProps.cookies.cookies,
   };
 };
 
@@ -268,4 +269,4 @@ const mapDispatchToProps = dispatch => {
 }
 
 
-export default withRouter(withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(SKUsPage)));
+export default withRouter(withStyles(styles)(withCookies(connect(mapStateToProps, mapDispatchToProps)(SKUsPage))));

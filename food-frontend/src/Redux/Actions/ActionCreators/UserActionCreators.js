@@ -1,12 +1,18 @@
 import { user_actions } from '../UserActionTypes';
 import axios from 'axios';
 import common from '../../../Resources/common';
+import Cookies from 'js-cookie';
 
 const hostname = common.hostname;
 
 // User Log Out
 export const userLogout = () => {
   return (dispatch) => {
+    // return axios.get(hostname + 'users/logout')
+    // .then(response=>{})
+    Cookies.remove('user');
+    Cookies.remove('admin');
+    Cookies.remove('id');
     dispatch({
       type: user_actions.USER_LOG_OUT
     })
@@ -59,11 +65,12 @@ export const userLoginAttempt = (dataObj) => {
       password: dataObj.password
     })
       .then(response => {
+        Cookies.set('user', response.data.uname, {expires: 1});
+        Cookies.set('admin', response.data.admin , {expires: 1});
+        Cookies.set('id', response.data.id, {expires: 1});
         dispatch({
           type: user_actions.USER_LOG_IN_ATTEMPT,
           data: {
-            uname: response.data.uname,
-            id: response.data.id,
             errMsg: ''
           }
         });

@@ -16,6 +16,7 @@ import { Redirect } from 'react-router-dom';
 import querystring from 'querystring';
 import axios from 'axios';
 import common from '../../Resources/common';
+import { withCookies } from 'react-cookie';
 
 const styles = theme => ({
   main: {
@@ -96,8 +97,8 @@ class LoginPage extends Component {
   }
 
   render() {
-    const { classes, users } = this.props;
-    if (users.id) {
+    const { classes, users, cookies } = this.props;
+    if (cookies.user) {
       return <Redirect to='/manufacturing_goals'/>
     }
 
@@ -151,10 +152,11 @@ class LoginPage extends Component {
   
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
   return {
-    users: state.users
+    users: state.users,
+    cookies: ownProps.cookies.cookies,
   }
 }
 
-export default withStyles(styles)(connect(mapStateToProps,{userLoginAttempt, routeToPage})(LoginPage));
+export default withStyles(styles)(withCookies(connect(mapStateToProps,{userLoginAttempt, routeToPage})(LoginPage)));

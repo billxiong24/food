@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import {Link} from 'react-router-dom';
 import { withRouter } from 'react-router-dom';
 import common from '../Resources/common';
+import { withCookies } from 'react-cookie';
 
 function TabContainer(props) {
   return (
@@ -52,24 +53,29 @@ class Navbar extends React.Component {
     switch (this.props.location.pathname) {
       case '/ingredients':
         initValue=1;
+        break;
       case '/skus':
         initValue=2;
+        break;
       case '/product_lines':
         initValue=3;
+        break;
       case '/ingredients/dependency':
         initValue=4;
+        break;
       case '/bulk':
         initValue=5;
+        break;
       case '/create_user':
         initValue=6;
+        break;
       case '/logout':
         initValue=7;
+        break;
       default:
         initValue=0;
     }
-    this.setState({
-      route:initValue
-    });
+    this.props.routeToPage(initValue);
   }
 
   handleChange = (event, value) => {
@@ -79,7 +85,7 @@ class Navbar extends React.Component {
   };
 
   render() {
-    const { classes, value } = this.props;
+    const { classes, value, cookies } = this.props;
 
     return (
       <div className={classes.root}>
@@ -98,8 +104,8 @@ class Navbar extends React.Component {
             <Tab value={3} label="Product Line" component={Link} to={'/product_lines'} />
             <Tab value={4} label="Ingredient Dependency" component={Link} to={'/ingredients/dependency'} />
             <Tab value={5} label="Bulk Import/Export" component={Link} to={'/bulk'} />
-            <Tab value={6} className={this.props.users.id===common.admin ? '' : classes.hidden} label="Create Account" component={Link} to={'/create_user'} />
-            <Tab value={7} className={this.props.users.id ? '' : classes.hidden} label="Log Out" component={Link} to={'/logout'} />
+            <Tab value={6} className={cookies.admin === 'true' ? '' : classes.hidden} label="Create Account" component={Link} to={'/create_user'} />
+            <Tab value={7} className={cookies.user ? '' : classes.hidden} label="Log Out" component={Link} to={'/logout'} />
           </Tabs>
         </AppBar>
       </div>
@@ -111,12 +117,12 @@ Navbar.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
   return {
-    users: state.users,
+    cookies: ownProps.cookies.cookies,
     value: state.route,
   }
 }
 
-export default withRouter(connect(mapStateToProps,{routeToPage})(withStyles(styles)(Navbar)));
+export default withRouter(withCookies(connect(mapStateToProps,{routeToPage})(withStyles(styles)(Navbar))));
 // export default withStyles(styles)withRouter(connect(mapStateToProps,{routeToPage})(Navbar));
