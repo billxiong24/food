@@ -57,7 +57,7 @@ router.post('/netid', function(req, res, next) {
           req.session.user = user.uname;
           req.session.admin = user.admin;
           req.session.id = user.id;
-          res.status(201).json(result);
+          res.status(201).json(user);
         })
       })
       .catch((err) => {
