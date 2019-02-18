@@ -75,7 +75,6 @@ describe('Manufacturing goals', function() {
             deadline: "2019-05-09"
         })
         .end(function(err, res) {
-            console.log(res.body);
             res.should.have.status(201);
             res.body.should.have.property("id");
             done();
