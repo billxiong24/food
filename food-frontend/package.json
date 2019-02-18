@@ -7,6 +7,7 @@
     "@material-ui/icons": "^3.0.2",
     "autosuggest-highlight": "^3.1.1",
     "axios": "^0.18.0",
+    "cross-env": "^5.2.0",
     "dotenv": "^6.2.0",
     "emotion": "^10.0.6",
     "js-cookie": "^2.2.0",
@@ -31,9 +32,12 @@
     "typeface-roboto": "0.0.54"
   },
   "scripts": {
-    "deploy": "react-scripts build; node app.js",
-    "start": "react-scripts start",
     "build": "react-scripts build",
+    "buildLocal": "cross-env REACT_APP_STAGE=local npm run build",
+    "buildDev": "REACT_APP_STAGE=dev npm run build",
+    "buildProd": "REACT_APP_STAGE=prod npm run build",
+    "deploy": "node app.js",
+    "start": "cross-env REACT_APP_STAGE=local react-scripts start",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
