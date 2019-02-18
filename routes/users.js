@@ -3,25 +3,9 @@ const Users = require('../app/users');
 const router = express.Router();
 
 router.get('/logout', function(req, res, next) {
-  console.log(req);
   req.session.destroy();
   res.status(200).send("Logged out successfully");
 });
-
-// router.get('/:name', function(req, res, next) {
-//     let name = req.params.name;
-//     const users = new Users();
-
-//     users.checkExisting({uname: name})
-//     .then((result)=>{
-//           res.status(200).json(result.rows);
-//     })
-//     .catch((err) => {
-//           res.json({
-//             error: err
-//           });
-//     });
-// });
 
 // Verify User password
 router.post('/', function(req, res, next) {
@@ -37,6 +21,7 @@ router.post('/', function(req, res, next) {
     .then((result) => {
         req.session.user = result.uname;
         req.session.admin = result.admin;
+        req.session.id = result.id;
         res.status(200).json(result);
     })
     .catch((err) => {
@@ -61,28 +46,27 @@ router.post('/netid', function(req, res, next) {
   .then((result) => {
     req.session.user = result.uname;
     req.session.admin = result.admin;
+    req.session.id = result.id;
     res.status(200).json(result);
   })
   .catch((err) => {
     users.create(req.body)
-      .then((result) => {
-        req.session.user = req.body.uname;
-        req.session.admin = false;
-        res.status(201).json({});
+      .then(() => {
+        users.getUser(req.body)
+        .then((user) => {
+          console.log(user);
+          req.session.user = user.body.uname;
+          req.session.admin = user.body.admin;
+          req.session.id = user.body.id;
+          res.status(201).json(result);
+        })
+      })
+      .catch((err) => {
+        res.status(400).json({
+            error: err
+        });
       })
   })
-
-  // users.verifyNetId(req.body)
-  // .then((result) => {
-  //   // req.session.user = result.uname;
-  //   // req.session.admin = result.admin;
-  //   res.status(200).json(result);
-  // })
-  // .catch((err) => {
-  //   res.status(400).json({
-  //     error: err
-  //   })
-  // })
 });
 
 router.put('/:name', function(req, res, next) {
