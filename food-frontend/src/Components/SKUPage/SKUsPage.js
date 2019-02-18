@@ -1,28 +1,11 @@
 import React, { Component } from 'react';
 import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
-import SimpleList from '../GenericComponents/ItemList';
-import ItemList from '../GenericComponents/ItemList';
-import { purple } from '@material-ui/core/colors';
-import color from '@material-ui/core/colors/cyan';
 import Card from '@material-ui/core/Card';
 import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
 import { connect } from 'react-redux';
-import DropdownButton from '../GenericComponents/DropdownButton';
-import Fab from '@material-ui/core/Fab';
-import AddIcon from '@material-ui/icons/Add';
-import Icon from '@material-ui/core/Icon';
-import DeleteIcon from '@material-ui/icons/Delete';
-import NavigationIcon from '@material-ui/icons/Navigation';
-import IconButton from '@material-ui/core/IconButton';
-import back from '../../Resources/Images/baseline-navigate_before-24px.svg'
-import next from '../../Resources/Images/baseline-navigate_next-24px.svg'
-import SimpleCard from '../GenericComponents/SimpleCard';
-import FilterItem from './FilterItem';
 import FilterList from './FilterList';
 import SKUList from './SKUList';
-import IntegrationAutosuggest from '../GenericComponents/IntegrationAutosuggest';
 import FilterDropdown from './FilterDropdown';
 import SortByDropdown from './SortByDropdown';
 import PageSelector from './PageSelector';

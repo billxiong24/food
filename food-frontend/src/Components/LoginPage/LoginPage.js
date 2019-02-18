@@ -11,7 +11,7 @@ import Typography from '@material-ui/core/Typography';
 import withStyles from '@material-ui/core/styles/withStyles';
 import { connect } from 'react-redux';
 import { routeToPage } from '../../Redux/Actions';
-import { userLoginAttempt } from '../../Redux/Actions/ActionCreators/UserActionCreators';
+import { userLoginAttempt, userNetIdLogin } from '../../Redux/Actions/ActionCreators/UserActionCreators';
 import { Redirect } from 'react-router-dom';
 import querystring from 'querystring';
 import axios from 'axios';
@@ -73,7 +73,7 @@ class LoginPage extends Component {
         }
       })
       .then((response) => {
-        console.log(response.data);
+        this.props.userNetIdLogin({uname: response.data.netid, password: response.data.duDukeID});
       })
     }
   }
@@ -159,4 +159,10 @@ const mapStateToProps = (state, ownProps) => {
   }
 }
 
-export default withStyles(styles)(withCookies(connect(mapStateToProps,{userLoginAttempt, routeToPage})(LoginPage)));
+const mapDispatchToProps = {
+  userLoginAttempt: userLoginAttempt,
+  routeToPage: routeToPage,
+  userNetIdLogin: userNetIdLogin,
+}
+
+export default withStyles(styles)(withCookies(connect(mapStateToProps,mapDispatchToProps)(LoginPage)));

@@ -1,8 +1,6 @@
 import { user_actions } from '../Actions/UserActionTypes';
 
 const initialState = {
-  uname: null,
-  id: null,
   isSuccess: false,
   errMsg: null
 }
@@ -14,6 +12,8 @@ export default function userReducer(state = initialState, action) {
     case user_actions.USER_LOG_IN_ATTEMPT:
       return Object.assign({}, state, action.data);
     case user_actions.USER_CREATE_ATTEMPT:
+      return Object.assign({}, state, action.data);
+    case user_actions.USER_NETID_LOG_IN:
       return Object.assign({}, state, action.data);
     default:
       return state;

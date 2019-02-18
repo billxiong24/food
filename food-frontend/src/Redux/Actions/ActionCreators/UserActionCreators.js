@@ -8,14 +8,24 @@ const hostname = common.hostname;
 // User Log Out
 export const userLogout = () => {
   return (dispatch) => {
-    // return axios.get(hostname + 'users/logout')
-    // .then(response=>{})
-    Cookies.remove('user');
-    Cookies.remove('admin');
-    Cookies.remove('id');
-    dispatch({
-      type: user_actions.USER_LOG_OUT
-    })
+    return axios.get(hostname + 'users/logout')
+      .then(response => {
+        Cookies.remove('user');
+        Cookies.remove('admin');
+        Cookies.remove('id');
+        dispatch({
+          type: user_actions.USER_LOG_OUT
+        })
+      })
+      .catch((err) => {
+        dispatch({
+          type: user_actions.USER_LOG_OUT,
+          data: {
+            errMsg: "Something unexpected went wrong"
+          }
+        });
+        throw (err);
+      })
   }
 }
 
@@ -65,9 +75,9 @@ export const userLoginAttempt = (dataObj) => {
       password: dataObj.password
     })
       .then(response => {
-        Cookies.set('user', response.data.uname, {expires: 1});
-        Cookies.set('admin', response.data.admin , {expires: 1});
-        Cookies.set('id', response.data.id, {expires: 1});
+        Cookies.set('user', response.data.uname, { expires: 1 });
+        Cookies.set('admin', response.data.admin, { expires: 1 });
+        Cookies.set('id', response.data.id, { expires: 1 });
         dispatch({
           type: user_actions.USER_LOG_IN_ATTEMPT,
           data: {
@@ -102,3 +112,26 @@ export const userLoginAttempt = (dataObj) => {
   }
 }
 
+// NetID log in
+export const userNetIdLogin = (user) => {
+  return (dispatch) => {
+    return axios.post(hostname + 'users/netid', user)
+      .then((response) => {
+        Cookies.set('user', response.data.uname, { expires: 1 });
+        Cookies.set('admin', response.data.admin, { expires: 1 });
+        Cookies.set('id', response.data.id, { expires: 1 });
+        dispatch({
+          type: user_actions.USER_NETID_LOG_IN,
+        })
+      })
+      .catch((err)=>{
+        dispatch({
+          type: user_actions.USER_NETID_LOG_IN,
+          data: {
+            errMsg: "Something unexpected went wrong"
+          }
+        });
+        throw (err.response);
+      })
+  }
+}

@@ -1,18 +1,15 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
-import TextField from '@material-ui/core/TextField';
 import { Typography, Button } from '@material-ui/core';
 import EditableText from '../GenericComponents/EditableText';
-import labels from '../../Resources/labels';
 import { ingDetUpdateIng, ingDetAddIng, ingDetDeleteError, ingDetAddError, ingDetSetEditing, ingDetSetNew } from '../../Redux/Actions/ActionCreators/IngredientDetailsActionCreators';
-import { routeToPage, ingDeleteIng, ingAddDependency, ingRemoveDependency } from '../../Redux/Actions';
+import { ingDeleteIng, ingAddDependency, ingRemoveDependency } from '../../Redux/Actions';
 import IngredientSKUList from './IngredientSKUList';
-import { withRouter, Link } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
 import EditableNumeric from '../GenericComponents/EditableNumeric';
-import { isValidIng, getIngErrors } from '../../Resources/common';
-import {store} from "../../index"
+import {  getIngErrors } from '../../Resources/common';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import { withCookies } from 'react-cookie';

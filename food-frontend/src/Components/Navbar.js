@@ -9,7 +9,6 @@ import { routeToPage } from '../Redux/Actions/index';
 import { connect } from 'react-redux';
 import {Link} from 'react-router-dom';
 import { withRouter } from 'react-router-dom';
-import common from '../Resources/common';
 import { withCookies } from 'react-cookie';
 
 function TabContainer(props) {

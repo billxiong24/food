@@ -1,20 +1,17 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
-import TextField from '@material-ui/core/TextField';
 import { Typography, Button } from '@material-ui/core';
 import EditableText from '../GenericComponents/EditableText';
 import labels from '../../Resources/labels';
-import { ingDetUpdateIng } from '../../Redux/Actions/ActionCreators/IngredientDetailsActionCreators';
-import { routeToPage } from '../../Redux/Actions';
 import { skuDetUpdateSku, skuDetAddIng, skuDetDeleteIng, skuDetDeleteSku, skuDetAddSku, skuDetDeleteError, skuDetAddError, skuDetSetEditing, skuDetSetNew } from '../../Redux/Actions/ActionCreators/SKUDetailsActionCreators';
 import SKUIngredientList from './SKUIngredientList';
 import SKUDetailIngredientAutocomplete from './SKUDetailIngredientAutocomplete';
 import ProductLineDropdown from './ProductLineDropdown';
 import { findDifferences } from '../../Resources/common';
-import { withRouter, Link } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
-import { isValidIng, getSkuErrors } from '../../Resources/common';
+import { getSkuErrors } from '../../Resources/common';
 import EditableNumeric from '../GenericComponents/EditableNumeric';
 import {store} from "../../index"
 import axios from 'axios';

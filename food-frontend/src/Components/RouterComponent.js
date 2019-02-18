@@ -13,12 +13,10 @@ import '../Root.css';
 import SKUsPage from './SKUPage/SKUsPage';
 import SignUpPage from './LoginPage/SignUpPage';
 import LogoutPage from './LoginPage/LogoutPage';
-import BulkTransactionPage from './BulkTransactionPage/BulkTransactionPage'
 import CalculatorPage from './CalculatorPage/CalculatorPage';
 import IngredientDetailViewPage from './IngredientDetailViewPage/IngredientDetailViewPage';
 import SKUDetailViewPage from './SKUDetailViewPage/SKUDetailViewPage'
 import BulkImportPage from './BulkImport/BulkImportPage'
-import common from '../Resources/common';
 import { withCookies } from 'react-cookie';
 
 const styles = {
