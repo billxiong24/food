@@ -41,7 +41,7 @@ router.get('/:id/skus', function(req, res, next) {
     });
 });
 
-router.post('/:id/skus', function(req, res, next) {
+router.post('/:id/skus', checkTokenUser, function(req, res, next) {
     let id = req.params.id;
     if(isNaN((id))) {
         return res.status(400).json({
@@ -68,7 +68,7 @@ router.post('/:id/skus', function(req, res, next) {
     });
 });
 
-router.delete('/:id/skus', function(req, res, next) {
+router.delete('/:id/skus', checkTokenUser, function(req, res, next) {
     let id = req.params.id;
     if(isNaN((id))) {
         return res.status(400).json({
@@ -108,7 +108,7 @@ router.get('/:id/calculations', function(req, res, next) {
     });
 });
 
-router.post('/exported_file', function(req, res, next) {
+router.post('/exported_file', checkTokenUser, function(req, res, next) {
     let format = (req.body.format) ? req.body.format : "csv";
     let jsonList = req.body.data;
     if(!Array.isArray(jsonList)) {
@@ -130,7 +130,7 @@ router.post('/exported_file', function(req, res, next) {
     res.status(200).send(csv);
 });
 
-router.post('/', function(req, res, next) {
+router.post('/', checkTokenUser, function(req, res, next) {
     const mg = new ManufacturingGoals();
     mg.create(req.body)
     .then((result) => {
@@ -143,7 +143,7 @@ router.post('/', function(req, res, next) {
     });
 });
 
-router.put('/:id', function(req, res, next) {
+router.put('/:id', checkTokenUser, function(req, res, next) {
     let id = req.params.id;
     if(isNaN((id))) {
         return res.status(400).json({
@@ -164,7 +164,7 @@ router.put('/:id', function(req, res, next) {
     });
 });
 
-router.delete('/:id', function(req, res, next) {
+router.delete('/:id', checkTokenUser, function(req, res, next) {
     let id = req.params.id;
     if(isNaN((id))) {
         return res.status(400).json({
@@ -184,5 +184,18 @@ router.delete('/:id', function(req, res, next) {
         });
     });
 });
+
+const checkTokenUser = (req, res, next) => {
+  let userID = req.params.id;
+  if(!userID) userID = req.body.user_id;
+  if(userID !== req.session.id) {
+    res.status(401).json({
+      error: "You are not authorized to edit this manufacturing goal"
+    });
+  }
+  else {
+    next();
+  }
+}
 
 module.exports = router;

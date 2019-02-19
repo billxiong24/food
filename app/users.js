@@ -2,6 +2,7 @@ const db = require('./db');
 const CRUD = require("./CRUD");
 const squel = require("squel").useFlavour("postgres");
 const bcrypt = require("bcrypt");
+const QueryGenerator = require("./query_generator");
 
 const saltRounds = 10;
 
@@ -62,6 +63,19 @@ class Users extends CRUD {
             });
         });
     }
+    
+    search(names, filter) {
+      names = QueryGenerator.transformQueryArr(names);
+      let query = squel.select()
+      .from(this.tableName)
+      .field("*, COUNT(*) OVER() as row_count");
+
+      const queryGen = new QueryGenerator(query);
+      queryGen.chainAndFilter(names, "name LIKE ?");
+      let queryStr = filter.applyFilter(queryGen.getQuery()).toString();
+      //logger.debug(queryStr);
+      return db.execSingleQuery(queryStr, []);
+  }
 
     getUser(dataObj) {
       if (!dataObj.uname) {

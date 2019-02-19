@@ -1,6 +1,6 @@
-const checkUser = (req, res, next) => {
+const checkUserAll = (req, res, next) => {
   let whitelist = false;
-  if(req.path.search(/^\/users\/*/) >= 0) whitelist = true;
+  if(req.path.search(/^\/users\/*/i) >= 0) whitelist = true;
 
   if(!whitelist && (!req.session.user || !req.sessionID)) {
     res.status(401).json({
@@ -11,15 +11,32 @@ const checkUser = (req, res, next) => {
   }
 }
 
-const checkAdmin = (req, res, next) => {
+const checkAdminAll = (req, res, next) => {
   let whitelist = false;
-  if(req.path.search(/^\/users\/*/) >= 0) whitelist = true;
-  else if(req.path.search(/^\/manufacturing_goals\/*/) >= 0) whitelist = true;
+  if(req.path.search(/^\/users\/*/i) >= 0) whitelist = true;
+  else if(req.path.search(/^\/manufacturing_goals\/*/i) >= 0) whitelist = true;
   
-  console.log(whitelist || (req.session.admin && req.sessionID));
-  console.log(req.session.admin);
-  console.log(req.sessionID);
   if(whitelist || (req.session.admin && req.sessionID)) {
+    next();
+  } else {
+    res.status(401).json({
+      error: "You do not have administrative permissions"
+    })
+  }
+}
+
+const checkUser = (req, res, next) => {
+  if(!req.session.user || !req.sessionID) {
+    res.status(401).json({
+      error: "Please log in first"
+    })
+  } else {
+    next();
+  }
+}
+
+const checkAdmin = (req, res, next) => {
+  if(req.session.admin && req.sessionID) {
     next();
   } else {
     res.status(401).json({
@@ -35,4 +52,4 @@ const checkCookie = (req, res, next) => {
   next();
 }
 
-module.exports = { checkUser, checkCookie, checkAdmin }
+module.exports = { checkUserAll, checkCookie, checkAdminAll, checkUser, checkAdmin }

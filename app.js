@@ -15,7 +15,7 @@ var skuRouter = require('./routes/sku');
 var mgRouter = require('./routes/manufacturing_goals');
 var bulkRouter = require('./routes/bulk');
 
-var { checkUser, checkCookie, checkAdmin } = require('./routes/guard');
+var { checkUserAll, checkCookie, checkAdminAll } = require('./routes/guard');
 
 var http = require('http');
 var https = require('https');
@@ -52,10 +52,10 @@ app.use(session({
 
 // Check for sessions
 app.use(checkCookie);
-app.use(checkUser);
-app.post('*', checkAdmin);
-app.put('*', checkAdmin);
-app.delete('*', checkAdmin);
+app.use(checkUserAll);
+app.post('*', checkAdminAll);
+app.put('*', checkAdminAll);
+app.delete('*', checkAdminAll);
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
