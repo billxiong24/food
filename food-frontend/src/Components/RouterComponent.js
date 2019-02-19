@@ -19,6 +19,7 @@ import IngredientDetailViewPage from './IngredientDetailViewPage/IngredientDetai
 import SKUDetailViewPage from './SKUDetailViewPage/SKUDetailViewPage'
 import BulkImportPage from './BulkImport/BulkImportPage'
 import common from '../Resources/common';
+import Scheduler from './Scheduler/Scheduler';
 
 const styles = {
 
@@ -50,6 +51,7 @@ class RouterComponent extends Component {
             <PrivateRoute exact={true} path="/create_user" component={SignUpPage} 
               block={users.id!==common.admin}/>
             <PrivateRoute exact={true} path="/logout" component={LogoutPage} />
+            <PrivateRoute exact={true} path="/scheduler" component={Scheduler} />
             <PrivateRoute exact={true} path="/manufacturing_goals/calculations" component={CalculatorPage}
               block={!manGoals.activeGoal.id} altPath="/manufacturing_goals" />
             <Redirect from="/*" to="/manufacturing_goals" />

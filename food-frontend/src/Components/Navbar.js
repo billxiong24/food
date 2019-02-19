@@ -100,6 +100,7 @@ class Navbar extends React.Component {
             <Tab value={5} label="Bulk Import/Export" component={Link} to={'/bulk'} />
             <Tab value={6} className={this.props.users.id===common.admin ? '' : classes.hidden} label="Create Account" component={Link} to={'/create_user'} />
             <Tab value={7} className={this.props.users.id ? '' : classes.hidden} label="Log Out" component={Link} to={'/logout'} />
+            <Tab value={8} label="Scheduler" component={Link} to={'/scheduler'} />
           </Tabs>
         </AppBar>
       </div>
