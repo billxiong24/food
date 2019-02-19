@@ -17,7 +17,14 @@ router.get('/man_lines', function(req, res, next) {
     })
 });
 
-let dummySchedulerData = {
+router.get('/count', function(req, res, next) {
+    count = count + 1
+    return res.status(200).json({
+        count: dummySchedulerData.count
+    })
+});
+
+var dummySchedulerData = {
     "goals": [
       {
         "name": "Thanksgiving Bundle",
@@ -318,8 +325,7 @@ let dummySchedulerData = {
         "shrt_name": "DMF2",
         "comment": null
       }
-    ]
+    ],
+    count: 0
   }
-
-
 module.exports = router;
