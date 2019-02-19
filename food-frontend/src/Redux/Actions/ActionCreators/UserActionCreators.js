@@ -77,7 +77,7 @@ export const userLoginAttempt = (dataObj) => {
       .then(response => {
         Cookies.set('user', response.data.uname, { expires: 1 });
         Cookies.set('admin', response.data.admin, { expires: 1 });
-        // Cookies.set('id', response.data.id, { expires: 1 });
+        Cookies.set('id', response.data.id, { expires: 1 });
         dispatch({
           type: user_actions.USER_LOG_IN_ATTEMPT,
           data: {
