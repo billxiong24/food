@@ -40,6 +40,13 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Check for sessions
+app.use(checkCookie);
+app.use(checkUserAll);
+app.post('*', checkAdminAll);
+app.put('*', checkAdminAll);
+app.delete('*', checkAdminAll);
+
 app.set('trust proxy', 1);
 app.use(session({
   secret: process.env.SESSION_SECRET,
@@ -47,15 +54,8 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
     //change this later
-  cookie: { secure: false, maxAge: 24*60*60*1000 }
+  cookie: { secure: encrypt, maxAge: 24*60*60*1000 }
 }));
-
-// Check for sessions
-app.use(checkCookie);
-app.use(checkUserAll);
-app.post('*', checkAdminAll);
-app.put('*', checkAdminAll);
-app.delete('*', checkAdminAll);
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
