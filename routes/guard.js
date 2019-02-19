@@ -1,5 +1,5 @@
 const checkUser = (req, res, next) => {
-  console.log(req.path);
+  console.log(req.path.search(/^\/users\/*/));
   if(req.session.user && req.cookies.user_sid) {
     next();
   } else {
