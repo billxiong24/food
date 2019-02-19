@@ -18,7 +18,7 @@ router.get('/man_lines', function(req, res, next) {
 });
 
 router.get('/count', function(req, res, next) {
-    count = count + 1
+    dummySchedulerData.count = dummySchedulerData.count + 1
     return res.status(200).json({
         count: dummySchedulerData.count
     })
