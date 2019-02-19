@@ -3,6 +3,8 @@ const Users = require('../app/users');
 const router = express.Router();
 
 router.get('/logout', function(req, res, next) {
+  console.log(req.session.user);
+  console.log(req.cookies.user_sid);
   if(req.session.user && req.cookies.user_sid) {
     req.session.destroy();
     res.status(200).send();
