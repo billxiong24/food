@@ -14,6 +14,7 @@ var productlineRouter = require('./routes/productline');
 var skuRouter = require('./routes/sku');
 var mgRouter = require('./routes/manufacturing_goals');
 var bulkRouter = require('./routes/bulk');
+var checkUser = require('./routes/guard');
 
 var http = require('http');
 var https = require('https');
@@ -47,6 +48,9 @@ app.use(session({
     //change this later
   cookie: { secure: encrypt, maxAge: 24*60*60*1000 }
 }));
+
+// Check for tokens
+app.use(checkUser);
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
