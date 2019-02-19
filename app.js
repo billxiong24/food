@@ -47,7 +47,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
     //change this later
-  cookie: { secure: false, maxAge: 24*60*60*1000 }
+  cookie: { secure: encrypt, maxAge: 24*60*60*1000 }
 }));
 
 // Check for sessions
