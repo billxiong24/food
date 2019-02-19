@@ -1,7 +1,7 @@
 const checkUser = (req, res, next) => {
   let whitelist = false;
   if(req.path.search(/^\/users\/*/) >= 0) whitelist = true;
-  
+
   if(!whitelist && (!req.session.user || !req.sessionID)) {
     res.status(401).json({
       error: "Please log in first"
@@ -12,7 +12,7 @@ const checkUser = (req, res, next) => {
 }
 
 const checkAdmin = (req, res, next) => {
-  let whitelist = false,
+  let whitelist = false;
   if(req.path.search(/^\/users\/*/) >= 0) whitelist = true;
   else if(req.path.search(/^\/manufacturing_goals\/*/)) whitelist = true;
 
