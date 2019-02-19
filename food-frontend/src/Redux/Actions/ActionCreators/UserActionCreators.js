@@ -32,7 +32,7 @@ export const userLogout = () => {
 // User Creation
 export const userCreateAttempt = (dataObj) => {
   return (dispatch) => {
-    return axios.put(hostname + 'users/' + dataObj.uname, {
+    return axios.put(hostname + 'users/create', {
       uname: dataObj.uname,
       password: dataObj.password
     })
