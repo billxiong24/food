@@ -94,14 +94,6 @@ class LoginPage extends Component {
   submitFormCheck(e) {
     e.preventDefault();
     this.props.userLoginAttempt(Object.assign({},this.state))
-    .then((response) => {
-      if(this.props.users.errMsg) {
-        this.setState({
-          alert: true,
-          message: this.props.users.errMsg,
-        })
-      }
-    })
   }
   
   closeAlert() {
