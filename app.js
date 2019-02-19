@@ -27,7 +27,7 @@ const domain = process.env.DOMAIN;
 var app = express();
 app.use(cors({
   credentials: true,
-  origin: domain
+  origin: 'http://localhost:3000'
 }));
 
 
