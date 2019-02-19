@@ -14,7 +14,7 @@ var productlineRouter = require('./routes/productline');
 var skuRouter = require('./routes/sku');
 var mgRouter = require('./routes/manufacturing_goals');
 var bulkRouter = require('./routes/bulk');
-import { checkUser } from './routes/guard';
+var { checkUser } = require('./routes/guard');
 
 var http = require('http');
 var https = require('https');
