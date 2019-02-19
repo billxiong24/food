@@ -1,5 +1,4 @@
 let express = require('express');
-const Scheduler = require('../app/scheduler');
 const error_controller = require('../app/controller/error_controller');
 let router = express.Router();
 
