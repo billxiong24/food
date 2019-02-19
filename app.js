@@ -53,9 +53,9 @@ app.use(session({
 // Check for sessions
 app.use(checkCookie);
 app.use(checkUser);
-app.post(checkAdmin);
-app.put(checkAdmin);
-app.delete(checkAdmin);
+app.post('*', checkAdmin);
+app.put('*', checkAdmin);
+app.delete('*', checkAdmin);
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
