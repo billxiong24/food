@@ -21,11 +21,14 @@ var http = require('http');
 var https = require('https');
 const fs = require('fs');
 const PORT = 8000;
-
-var app = express();
-app.use(cors());
 const encrypt = process.env.HTTPS;
 const domain = process.env.DOMAIN;
+
+var app = express();
+app.use(cors({
+  credentials: true,
+  origin: domain
+}));
 
 
 // view engine setup

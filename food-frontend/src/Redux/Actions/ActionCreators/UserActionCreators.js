@@ -4,6 +4,7 @@ import common from '../../../Resources/common';
 import Cookies from 'js-cookie';
 
 const hostname = common.hostname;
+axios.defaults.withCredentials = true;
 
 // User Log Out
 export const userLogout = () => {
@@ -18,15 +19,16 @@ export const userLogout = () => {
         })
       })
       .catch((err) => {
-        console.log(err);
         if (err.response.status == 304) {
+          Cookies.remove('user');
+          Cookies.remove('admin');
+          Cookies.remove('id');
           dispatch({
             type: user_actions.USER_LOG_OUT,
             data: {
               errMsg: "User already logged out"
             }
           });
-          throw (err);
         } else {
           dispatch({
             type: user_actions.USER_LOG_OUT,
