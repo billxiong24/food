@@ -10,7 +10,7 @@ router.get('/logout', function(req, res, next) {
     req.session.destroy();
     res.status(200).send();
   } else {
-    res.status(304).send();
+    res.status(304).json({});
   }
 });
 

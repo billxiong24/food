@@ -18,13 +18,24 @@ export const userLogout = () => {
         })
       })
       .catch((err) => {
-        dispatch({
-          type: user_actions.USER_LOG_OUT,
-          data: {
-            errMsg: "Something unexpected went wrong"
-          }
-        });
-        throw (err);
+        console.log(err);
+        if (err.response.status == 304) {
+          dispatch({
+            type: user_actions.USER_LOG_OUT,
+            data: {
+              errMsg: "User already logged out"
+            }
+          });
+          throw (err);
+        } else {
+          dispatch({
+            type: user_actions.USER_LOG_OUT,
+            data: {
+              errMsg: "Something unexpected went wrong"
+            }
+          });
+          throw (err);
+        }
       })
   }
 }
