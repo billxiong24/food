@@ -4,6 +4,19 @@ const error_controller = require('../app/controller/error_controller');
 let router = express.Router();
 
 
+const checkTokenUser = (req, res, next) => {
+  let userID = req.params.id;
+  if(!userID) userID = req.body.user_id;
+  if(userID !== req.session.id) {
+    res.status(401).json({
+      error: "You are not authorized to edit this manufacturing goal"
+    });
+  }
+  else {
+    next();
+  }
+}
+
 router.get('/', function(req, res, next) {
     if(!req.query.user_id || isNaN(req.query.user_id)) {
         return res.status(400).json({
@@ -184,18 +197,5 @@ router.delete('/:id', checkTokenUser, function(req, res, next) {
         });
     });
 });
-
-const checkTokenUser = (req, res, next) => {
-  let userID = req.params.id;
-  if(!userID) userID = req.body.user_id;
-  if(userID !== req.session.id) {
-    res.status(401).json({
-      error: "You are not authorized to edit this manufacturing goal"
-    });
-  }
-  else {
-    next();
-  }
-}
 
 module.exports = router;
