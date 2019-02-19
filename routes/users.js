@@ -2,6 +2,7 @@ const express = require('express');
 const Users = require('../app/users');
 const router = express.Router();
 var { checkAdmin } = require('./guard');
+const Filter = require('../app/filter');
 
 router.get('/logout', function(req, res, next) {
   if(req.session.user && req.sessionID) {
