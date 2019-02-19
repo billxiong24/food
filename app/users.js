@@ -94,18 +94,22 @@ class Users extends CRUD {
     }
 
     update(dataObj, oldPrimaryKey) {
+      if(!dataObj.password){
         return bcrypt.hash(dataObj.password, saltRounds).then((hash) => {
             const hashedDataObj = Object.assign({},dataObj);
             hashedDataObj.password = hash;
             return super.change(hashedDataObj, oldPrimaryKey, "id");
         });
+      } else {
+        return super.change(dataObj, oldPrimaryKey, "id");
+      }
     }
 
-    remove(uname) {
-        if(!uname) {
-            return Promise.reject("Bad Username.");
+    remove(id) {
+        if(!id) {
+            return Promise.reject("Bad User ID.");
         }
-        return db.execSingleQuery("DELETE FROM " + this.tableName + " WHERE uname = $1", [uname]);
+        return db.execSingleQuery("DELETE FROM " + this.tableName + " WHERE id = $1", [id]);
     }
 }
 
