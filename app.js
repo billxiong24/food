@@ -47,11 +47,11 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
     //change this later
-  cookie: { secure: encrypt, maxAge: 24*60*60*1000 }
+  cookie: { secure: false, maxAge: 24*60*60*1000 }
 }));
 
 // Check for sessions
-// app.use(checkCookie);
+app.use(checkCookie);
 app.use(checkUserAll);
 app.post('*', checkAdminAll);
 app.put('*', checkAdminAll);
