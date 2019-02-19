@@ -51,7 +51,7 @@ app.use(session({
 }));
 
 // Check for sessions
-// app.use(checkCookie);
+app.use(checkCookie);
 app.use(checkUserAll);
 app.post('*', checkAdminAll);
 app.put('*', checkAdminAll);
