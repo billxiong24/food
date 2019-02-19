@@ -27,7 +27,13 @@ const domain = process.env.DOMAIN;
 var app = express();
 app.use(cors({
   credentials: true,
-  origin: 'http://localhost:3000'
+  origin: function(origin, callback) {
+    if (origin === domain || origin === 'http://localhost/3000') {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }
 }));
 
 
