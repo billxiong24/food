@@ -57,7 +57,8 @@ router.post('/', function(req, res, next) {
     .then((result) => {
         req.session.user = result.uname;
         req.session.admin = result.admin;
-        req.session.userid = result.id;
+        req.session.id = result.id;
+        console.log(req.sessionID);
         console.log(req.session);
         console.log(result);
         res.status(200).json(result);
