@@ -51,11 +51,11 @@ app.use(session({
 }));
 
 // Check for sessions
-// app.use(checkCookie);
+app.use(checkCookie);
 app.use(checkUserAll);
-// app.post('*', checkAdminAll);
-// app.put('*', checkAdminAll);
-// app.delete('*', checkAdminAll);
+app.post('*', checkAdminAll);
+app.put('*', checkAdminAll);
+app.delete('*', checkAdminAll);
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
