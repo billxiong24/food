@@ -1,4 +1,4 @@
-export const checkUser = (req, res, next) => {
+const checkUser = (req, res, next) => {
   console.log(req);
   if(req.session.user && req.cookies.user_sid) {
     next();
@@ -8,3 +8,5 @@ export const checkUser = (req, res, next) => {
     })
   }
 }
+
+module.exports = { checkUser, }
