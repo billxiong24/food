@@ -2,8 +2,6 @@ const checkUserAll = (req, res, next) => {
   let whitelist = false;
   if(req.path.search(/^\/users\/*/i) >= 0) whitelist = true;
 
-  console.log(req.session.user);
-  console.log(req.sessionID);
   if(!whitelist && (!req.session.user || !req.sessionID)) {
     res.status(401).json({
       error: "Please log in first"
