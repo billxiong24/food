@@ -1,7 +1,7 @@
 const checkUser = (req, res, next) => {
-  console.log(req.session.user);
-  console.log(req.cookies.user_sid);
-  if(req.path.search(/^\/users\/*/) < 0 && !req.session.user && !req.cookies.user_sid) {
+  console.log(req.session);
+  console.log(req.cookies);
+  if(req.path.search(/^\/users\/*/) < 0 && (!req.session.user || !req.cookies.user_sid)) {
     res.status(401).json({
       error: "Please log in first"
     })
