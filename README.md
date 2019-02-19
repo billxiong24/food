@@ -1,5 +1,5 @@
 # 458 project     
-     
+[![Build Status](https://travis-ci.com/billxiong24/food.svg?branch=master)](https://travis-ci.com/billxiong24/food)
 ## Platform requirements   
 Ubuntu 18.04     
 Node.JS v8.10    
@@ -10,6 +10,7 @@ PostgreSQL v10.6
 ```
 git clone https://github.com/billxiong24/food.git   
 cd food/
+npm install  
 ```    
 
 ### Set up Postgresql    
@@ -34,7 +35,7 @@ From the root of the repository:
 sudo apt-get install -y nodejs   
 sudo apt install npm   
 npm install    
-```   
+```    
 
 ### Set up CA  
 ```

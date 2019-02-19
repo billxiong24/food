@@ -47,9 +47,7 @@ router.post('/', function(req, res, next) {
     ing.create(req.body)
     .then((result) => {
         //HTTP 201 is successful addition
-        res.status(201).json({
-            rowCount: result.rowCount
-        });
+        res.status(201).json(result.rows[0]);
     })
     .catch((err) => {
         //HTTP 409 is conflict status
