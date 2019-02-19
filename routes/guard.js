@@ -17,7 +17,7 @@ const checkAdmin = (req, res, next) => {
   else if(req.path.search(/^\/manufacturing_goals\/*/) >= 0) whitelist = true;
   
   console.log(whitelist || (req.session.admin==="true" && req.sessionID));
-  console.log(req.session.admin==="true");
+  console.log(req.session.admin);
   console.log(req.sessionID);
   if(whitelist || (req.session.admin==="true" && req.sessionID)) {
     next();
