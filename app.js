@@ -15,7 +15,7 @@ var skuRouter = require('./routes/sku');
 var mgRouter = require('./routes/manufacturing_goals');
 var bulkRouter = require('./routes/bulk');
 
-var { checkUser } = require('./routes/guard');
+var { checkUser, checkCookie } = require('./routes/guard');
 
 var http = require('http');
 var https = require('https');
@@ -51,6 +51,7 @@ app.use(session({
 }));
 
 // Check for tokens
+app.use(checkCookie);
 app.use(checkUser);
 
 app.use('/', indexRouter);

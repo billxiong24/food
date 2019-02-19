@@ -3,8 +3,12 @@ const Users = require('../app/users');
 const router = express.Router();
 
 router.get('/logout', function(req, res, next) {
-  req.session.destroy();
-  res.status(200).send("Logged out successfully");
+  if(req.session.user && req.cookies.user_sid) {
+    req.session.destroy();
+    res.status(200).send();
+  } else {
+    res.status(304).send();
+  }
 });
 
 // Verify User password
