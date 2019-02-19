@@ -68,7 +68,7 @@ class Users extends CRUD {
       names = QueryGenerator.transformQueryArr(names);
       let query = squel.select()
       .from(this.tableName)
-      .field("*, COUNT(*) OVER() as row_count");
+      .field("uname, id, admin, COUNT(*) OVER() as row_count");
 
       const queryGen = new QueryGenerator(query);
       queryGen.chainAndFilter(names, "name LIKE ?");
