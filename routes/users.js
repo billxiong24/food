@@ -15,6 +15,7 @@ router.get('/logout', function(req, res, next) {
 });
 
 router.get('/search', checkAdmin, function (req, res, next) {
+  console.log(req.query);
   let names = req.query.names;
   const users = new Users();
   let orderKey = req.query.orderKey;

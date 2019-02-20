@@ -19,6 +19,7 @@ import SKUDetailViewPage from './SKUDetailViewPage/SKUDetailViewPage'
 import BulkImportPage from './BulkImport/BulkImportPage'
 import { withCookies } from 'react-cookie';
 import PrivacyPage from './PrivacyPage/PrivacyPage';
+import UserAdminPage from './UserAdminPage/UserAdminPage';
 
 const styles = {
 
@@ -48,6 +49,8 @@ class RouterComponent extends Component {
             <PrivateRoute exact={true} path="/ingredients/dependency" component={IngredientDependencyPage} />
             <PrivateRoute exact={true} path="/bulk" component={BulkImportPage} />
             <PrivateRoute exact={true} path="/create_user" component={SignUpPage} 
+              block={cookies.admin === 'false'} altPath="/manufacturing_goals"/>
+            <PrivateRoute exact={true} path="/users" component={UserAdminPage} 
               block={cookies.admin === 'false'} altPath="/manufacturing_goals"/>
             <PrivateRoute exact={true} path="/logout" component={LogoutPage} />
             <PrivateRoute exact={true} path="/manufacturing_goals/calculations" component={CalculatorPage}
