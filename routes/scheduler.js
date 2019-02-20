@@ -283,14 +283,16 @@ router.post('/set_enable', function (req, res, next) {
         return res.status(400).json({
             error: "id doest exist",
             count: enableCount,
-            id: id
+            id: id,
+            params: req.params
         })
     }
     if (enableCount > 1) {
         return res.status(500).json({
             error: "multiple goal with the same id",
             count: enableCount,
-            id
+            id,
+            params: req.params
         })
     }
     return res.status(200).json({
