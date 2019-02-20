@@ -346,11 +346,11 @@ router.put('/goal_user_names', function (req, res, next) {
     })
 });
 
-router.post('/schedule', function (req, res, next) {
-    let id = req.params.id;
-    let start_time = req.params.start_time
-    let end_time = req.params.end_time
-    let man_line_num = req.params.man_line_num
+router.put('/schedule', function (req, res, next) {
+    let id = req.body.id;
+    let start_time = req.body.start_time
+    let end_time = req.body.end_time
+    let man_line_num = req.body.man_line_num
     var foundCount = 0;
     for (var i = 0; i < activities.length; i++) {
         if (activities[i].id == id) {
