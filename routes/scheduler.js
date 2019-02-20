@@ -284,7 +284,7 @@ router.post('/set_enable', function (req, res, next) {
             error: "id doest exist",
             count: enableCount,
             id: id,
-            params: req
+            params: req.params.id
         })
     }
     if (enableCount > 1) {
@@ -292,7 +292,7 @@ router.post('/set_enable', function (req, res, next) {
             error: "multiple goal with the same id",
             count: enableCount,
             id,
-            params: req
+            params: req.params.id
         })
     }
     return res.status(200).json({
