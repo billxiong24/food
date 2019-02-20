@@ -269,6 +269,8 @@ var dummySchedulerData = {
 }
 
 router.put('/set_enable', function (req, res, next) {
+    let rid = req.params.id
+    console.log(rid)
     let id = req.body.id;
     console.log(id)
     console.log(req.body)
