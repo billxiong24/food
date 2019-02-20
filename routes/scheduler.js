@@ -271,7 +271,7 @@ var dummySchedulerData = {
 router.post('/set_enable', function (req, res, next) {
     let id = req.params.id;
     let enable_status = req.params.enable_status
-    var enableCount = 0
+    var enableCount = 0;
     for (var i = 0; i < dummySchedulerData.goals.length; i++) {
         if (dummySchedulerData.goals[i].id == id) {
             dummySchedulerData.goals[i].enabled = enable_status
@@ -281,12 +281,14 @@ router.post('/set_enable', function (req, res, next) {
     }
     if (enableCount == 0) {
         return res.status(400).json({
-            error: "id doest exist"
+            error: "id doest exist",
+            count: enableCount
         })
     }
     if (enableCount > 1) {
         return res.status(500).json({
-            error: "multiple goal with the same id"
+            error: "multiple goal with the same id",
+            count: enableCount
         })
     }
     return res.status(200).json({
