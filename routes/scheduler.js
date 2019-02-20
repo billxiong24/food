@@ -268,7 +268,7 @@ var dummySchedulerData = {
     count: 0
 }
 
-router.post('/set_enable', function (req, res, next) {
+router.put('/set_enable', function (req, res, next) {
     let id = parseInt(req.params.id);
     let enable_status = req.params.enable_status
     var enableCount = 0;
