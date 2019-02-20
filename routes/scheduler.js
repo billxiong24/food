@@ -153,7 +153,7 @@ var MonsterBoost = {
     "man_line_num": null
 }
 
-var activites = [
+var activities = [
     HomeStyleTurkeyMeal,
     HeartyApplePie,
     ChocolatePudding,
