@@ -1,5 +1,9 @@
 import { SchedulerData, ViewTypes } from "react-big-scheduler";
+import common from "../../Resources/common";
+import Axios from "axios";
+import { store } from "../..";
 
+const hostname = common.hostname + "scheduler"
 
 export const demoData = {
     "resources":[
@@ -253,10 +257,155 @@ export const demoData = {
     // ]
  }
 
+ export const GOAL_NAME_FILTER = "GOAL_NAME_FILTER"
+ export const USER_NAME_FILTER = "USER_NAME_FILTER"
+ export const goal_filters = [GOAL_NAME_FILTER, USER_NAME_FILTER]
+
  export const initialSchedulerStore = {
-     "manufacturing_lines":[],
-     "skus":[]
+     "goals":[],
+     "filter":null,
+     "filter_types":goal_filters,
+     "filter_type_index":0,
+     "goal_names":[],
+     "goal_user_names":[],
+     "activities":[],
+     "current_duration":null,
+     "man_lines":[],
  }
+export const SCHEDULER_GET_GOALS = "SCHEDULER_GET_GOALS"
+
+export const get_goals = () => {
+   return (dispatch) => {
+     return Axios.get(hostname + '/goals', {
+      
+     })
+     .then(response => {
+       dispatch({
+         type: SCHEDULER_GET_GOALS,
+         data: response.data
+       })
+     })
+     .catch(error => {
+       
+     });
+   }
+ }
+
+ export const reduceGetGoals = (state, action) => {
+   return Object.assign({}, state, {
+         goals:action.data.goals,
+   });
+}
+export const SCHEDULER_SET_FILTER = "SCHEDULER_SET_FILTER"
+
+export const set_filter = (filter) => {
+   return (dispatch) => {
+     return dispatch({
+       type: SCHEDULER_SET_FILTER,
+       data: filter
+     })
+   }
+ }
+
+ export const reduceFilter = (state, action) => {
+   return Object.assign({}, state, {
+         filter:action.data,
+   });
+}
+
+export const SCHEDULER_SET_FILTER_TYPE_INDEX = "SCHEDULER_SET_FILTER_TYPE_INDEX"
+
+export const set_filter_type_index = (filter_type_index) => {
+   return (dispatch) => {
+     return dispatch({
+       type: SCHEDULER_SET_FILTER_TYPE_INDEX,
+       data: filter_type_index
+     })
+   }
+ }
+
+ export const reduceFilterTypeIndex = (state, action) => {
+   return Object.assign({}, state, {
+      filter_type_index:action.data,
+   });
+}
+
+export const SCHEDULER_GET_GOAL_NAMES = "SCHEDULER_GET_GOAL_NAMES"
+
+export const get_goal_names = () => {
+   let filter = store.getState().scheduler.filter 
+   return (dispatch) => {
+     return Axios.put(hostname + '/goal_names', {
+         filter
+     })
+     .then(response => {
+       dispatch({
+         type: SCHEDULER_GET_GOAL_NAMES,
+         data: response.data
+       })
+     })
+     .catch(error => {
+       
+     });
+   }
+ }
+
+ export const reduce_get_goal_names = (state, action) => {
+   return Object.assign({}, state, {
+         goal_names:action.data.goal_names,
+   });
+}
+
+export const SCHEDULER_GET_USER_NAMES = "SCHEDULER_GET_USER_NAMES"
+
+export const get_user_names = () => {
+   let filter = store.getState().scheduler.filter 
+   return (dispatch) => {
+     return Axios.put(hostname + '/goal_user_names', {
+         filter
+     })
+     .then(response => {
+       dispatch({
+         type: SCHEDULER_GET_USER_NAMES,
+         data: response.data
+       })
+     })
+     .catch(error => {
+       
+     });
+   }
+ }
+
+ export const reduce_get_user_names = (state, action) => {
+   return Object.assign({}, state, {
+         goal_user_names:action.data.goal_user_names,
+   });
+}
+
+export const SCHEDULER_GET_MAN_LINES = "SCHEDULER_GET_MAN_LINES"
+
+export const get_man_lines = () => {
+   return (dispatch) => {
+     return Axios.get(hostname + '/man_lines', {
+      
+     })
+     .then(response => {
+       dispatch({
+         type: SCHEDULER_GET_MAN_LINES,
+         data: response.data
+       })
+     })
+     .catch(error => {
+       
+     });
+   }
+ }
+
+ export const reduce_get_man_lines = (state, action) => {
+   return Object.assign({}, state, {
+         man_lines:action.data.man_lines,
+   });
+}
 
  export const mapStateToProps = state => {
     let schedulerData = new SchedulerData('2017-12-18', ViewTypes.Week, false, false, {
@@ -267,13 +416,35 @@ export const demoData = {
     schedulerData.setEvents(demoData.events);
     let viewModel = schedulerData
     return {
-        viewModel
+        viewModel,
+        goals: state.scheduler.goals,
+        filter: state.scheduler.filter,
+        filter_type: state.scheduler.filter_type,
+        goal_names: state.scheduler.goal_names,
+        goal_user_names: state.scheduler.goal_user_names,
+        activities: state.scheduler.activities,
+        current_duration: state.scheduler.current_duration,
+        man_lines: state.scheduler.man_lines
     };
 };
 
 export const mapDispatchToProps = (dispatch, ownProps) => {
     return {
-        
+      get_goals: () => {
+         dispatch(get_goals())
+      },
+      set_filter: (filter) => {
+         dispatch(set_filter(filter))
+      },
+      set_filter_type_index: (index) => {
+         dispatch(set_filter_type_index(index))
+      },
+      get_goal_names: () => {
+         dispatch(get_goal_names())
+      },
+      get_goal_user_names: () => {
+         dispatch(get_user_names())
+      }
     };
 };
 

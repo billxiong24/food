@@ -10,6 +10,7 @@ import ingredientDetailReducer from './IngredientDetailReducer';
 import SKUDetailReducer from './SKUDetailReducer';
 import BulkImportPage from '../../Components/BulkImport/BulkImportPage';
 import BulkImportReducer from './BulkImportReducer';
+import schedulerReducer from '../../Components/Scheduler/SchedulerReducer';
 
 
 
@@ -23,5 +24,6 @@ export default combineReducers({
     manGoals: manufacturingGoalReducer,
     ingredient_details:ingredientDetailReducer,
     sku_details:SKUDetailReducer,
-    bulk_import:BulkImportReducer
+    bulk_import:BulkImportReducer,
+    scheduler: schedulerReducer
 });

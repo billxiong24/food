@@ -404,7 +404,7 @@ router.get('/goals', function (req, res, next) {
 
 router.get('/man_lines', function (req, res, next) {
     return res.status(200).json({
-        goals: dummySchedulerData.man_lines
+        man_lines: dummySchedulerData.man_lines
     })
 });
 

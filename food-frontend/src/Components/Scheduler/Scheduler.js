@@ -12,6 +12,7 @@ import Basic from './Components/Basic';
 import CustomTimeWindow from './Components/CustomTimeWindow';
 import OverlapCheck from './Components/OverlapCheck';
 import { mapStateToProps, mapDispatchToProps } from './DataConverter';
+import { store } from '../..';
 
 const styles = {
     ingredient_page_container:{
@@ -62,7 +63,11 @@ class Scheduler extends Component {
 
 
     componentWillMount() {
-
+        this.props.get_goals()
+        this.props.set_filter("S")
+        this.props.set_filter_type_index(1)
+        this.props.get_goal_names()
+        this.props.get_goal_user_names()    
     }
 
     
@@ -94,6 +99,8 @@ class Scheduler extends Component {
                             }
                         ];
         schedulerData.setResources(resources);
+        
+        console.log(store.getState())
         //set events here or later, 
         //the event array should be sorted in ascending order by event.start property, otherwise there will be some rendering errors
         let events = [
