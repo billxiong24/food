@@ -172,9 +172,9 @@ var dummySchedulerData = {
         {
             "name": "Thanksgiving Bundle",
             "activities": [
-                HomeStyleTurkeyMeal.num,
-                HeartyApplePie.num,
-                ChocolatePudding.num
+                HomeStyleTurkeyMeal,
+                HeartyApplePie,
+                ChocolatePudding
             ],
             "enabled": true,
             "deadline": "2019-02-19",
@@ -184,11 +184,11 @@ var dummySchedulerData = {
         {
             "name": "Sports Pack",
             "activities": [
-                VitaminWater.num,
-                ProteinPowder.num,
-                ProteinBar.num,
-                OrangeBoost.num,
-                RainbowPowder.num
+                VitaminWater,
+                ProteinPowder,
+                ProteinBar,
+                OrangeBoost,
+                RainbowPowder
             ],
             "enabled": true,
             "deadline": "2019-02-19",
@@ -198,10 +198,10 @@ var dummySchedulerData = {
         {
             "name": "Christmas Bag",
             "activities": [
-                HomeStyleTurkeyMeal.num,
-                HeartyApplePie.num,
-                ChocolatePudding.num,
-                VitaminWater.num
+                HomeStyleTurkeyMeal,
+                HeartyApplePie,
+                ChocolatePudding,
+                VitaminWater
             ],
             "enabled": false,
             "deadline": "2019-02-21",
@@ -211,7 +211,7 @@ var dummySchedulerData = {
         {
             "name": "Lunar New Year",
             "activities": [
-                SchezuanChicken.num
+                SchezuanChicken
             ],
             "enabled": false,
             "deadline": "2019-02-21",
@@ -229,8 +229,8 @@ var dummySchedulerData = {
         {
             "name": "Super Pack",
             "activities": [
-                VitaminWater.num,
-                MonsterBoost.num
+                VitaminWater,
+                MonsterBoost
             ],
             "enabled": true,
             "deadline": "2019-02-22",
@@ -359,6 +359,7 @@ router.put('/schedule', function (req, res, next) {
             activities[i].start_time = start_time
             activities[i].end_time = end_time
             activities[i].man_line_num = man_line_num
+            foundCount = foundCount + 1
         }
     }
     if (foundCount == 0) {
