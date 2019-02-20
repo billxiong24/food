@@ -32,6 +32,10 @@ var HeartyApplePie = {
     "end_time": null,
     "man_line_num": null
 }
+// goals and deadlines list
+// completion time
+// start and end time
+
 var ChocolatePudding = {
     "name": "Chocolate Pudding",
     "case_upc": 121245,
@@ -75,7 +79,7 @@ var ProteinPowder = {
     "mfg_rate": 78,
     "start_time": "2019-02-19 15:00:00",
     "end_time": "2019-02-20 12:00:00",
-    "man_line_num": "BMF2"
+    "man_line_num": "BMP2"
 }
 var ProteinBar = {
     "name": "Bananna Protein Bar",
@@ -90,7 +94,7 @@ var ProteinBar = {
     "mfg_rate": 5115,
     "start_time": "2019-02-20 13:00:00",
     "end_time": "2019-02-20 14:00:00",
-    "man_line_num": "BMF2"
+    "man_line_num": "BMP2"
 }
 var OrangeBoost = {
     "name": "Orange Boost",
@@ -105,7 +109,7 @@ var OrangeBoost = {
     "mfg_rate": 5115,
     "start_time": "2019-02-18 13:00:00",
     "end_time": "2019-02-18 15:00:00",
-    "man_line_num": "BMF1"
+    "man_line_num": "BMP1"
 }
 var RainbowPowder = {
     "name": "Rainbow Powder",
@@ -120,7 +124,7 @@ var RainbowPowder = {
     "mfg_rate": 10,
     "start_time": "2019-02-18 8:00:00",
     "end_time": "2019-02-18 18:00:00",
-    "man_line_num": "BMF3"
+    "man_line_num": "BMP3"
 }
 var SchezuanChicken = {
     "name": "Schezuan Chicken",

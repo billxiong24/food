@@ -13,6 +13,7 @@ import CustomTimeWindow from './Components/CustomTimeWindow';
 import OverlapCheck from './Components/OverlapCheck';
 import { mapStateToProps, mapDispatchToProps } from './DataConverter';
 import { store } from '../..';
+import { Button } from '@material-ui/core';
 
 const styles = {
     ingredient_page_container:{
@@ -67,13 +68,17 @@ class Scheduler extends Component {
         this.props.set_filter("S")
         this.props.set_filter_type_index(1)
         this.props.get_goal_names()
-        this.props.get_goal_user_names()    
+        this.props.get_goal_user_names()
+        this.props.get_man_lines()
+        //this.props.goal_set_enable(this.props.goals[0], false)
     }
 
     
 
     render() {
         const { classes , editing, newValue} = this.props
+        console.log(this.props)
+        
         //2. create the view model, put it in the props obj
         let schedulerData = new SchedulerData(new moment().format(DATE_FORMAT), ViewTypes.Week);
         //set locale moment to the schedulerData, if your locale isn't English. By default, Scheduler comes with English(en, United States).
@@ -116,9 +121,21 @@ class Scheduler extends Component {
         schedulerData.setEvents(events);
 
         return (
+            <div>
+            <Button onClick={() => {
+                console.log(this.props.activities)
+                var activity = this.props.activities[6]
+                console.log(activity)
+                activity.start_time = "2019-02-18 8:00:00"
+                activity.end_time = "2019-02-19 8:00:00"
+                activity.man_line_num = "DMF2"
+                this.props.set_activity_schedule(activity)
+            }
+            }>
+                Hello
+            </Button>
             <OverlapCheck></OverlapCheck>
-            
-
+            </div>
         );
     }
 }
