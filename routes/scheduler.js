@@ -352,6 +352,8 @@ router.put('/schedule', function (req, res, next) {
     let end_time = req.body.end_time
     let man_line_num = req.body.man_line_num
     var foundCount = 0;
+    console.log(activities)
+    console.log(id)
     for (var i = 0; i < activities.length; i++) {
         if (activities[i].id == id) {
             activities[i].start_time = start_time
