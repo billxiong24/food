@@ -1,4 +1,4 @@
-import { mangoal_actions } from '../ManufacturingGoalActionTypes';
+import { mangoal_actions } from '../ActionTypes/ManufacturingGoalActionTypes';
 import axios from 'axios';
 import common from '../../../Resources/common';
 

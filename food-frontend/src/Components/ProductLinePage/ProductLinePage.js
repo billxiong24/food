@@ -7,7 +7,9 @@ import { connect } from 'react-redux';
 import TextField from '@material-ui/core/TextField';
 import ProductLineCard from './ProductLineCard';
 import Fab from '@material-ui/core/Fab';
-import { prdlineChangeLimit, prdlineNextPage, prdlinePrevPage, prdlineSearch, prdlineAddPrdline, prdlineUpdatePrdline, prdlineDeletePrdline } from '../../Redux/Actions/index'
+import { prdlineChangeLimit, prdlineNextPage, prdlinePrevPage, 
+  prdlineSearch, prdlineAddPrdline, prdlineUpdatePrdline, 
+  prdlineDeletePrdline } from '../../Redux/Actions/ActionCreators/ProductLineActionCreators'
 import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
 import back from '../../Resources/Images/baseline-navigate_before-24px.svg'
 import next from '../../Resources/Images/baseline-navigate_next-24px.svg'

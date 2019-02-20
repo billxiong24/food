@@ -6,7 +6,23 @@ export const InitialStore = {
     isSuccess: false,
     errMsg: null,
     keyword: "",
-    users: [],
+    users: [
+      {
+        uname: "Gordon",
+        admin: false,
+        id: 0,
+      },
+      {
+        uname: "admin",
+        admin: true,
+        id: 1,
+      },
+      {
+        uname: "Other",
+        admin: true,
+        id: 2,
+      }
+    ],
     current_page_number: 1,
     total_pages: 1,
     limit: 10,
