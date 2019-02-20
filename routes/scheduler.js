@@ -329,7 +329,7 @@ function getGoalNames(filter) {
 
 router.put('/goal_names', function (req, res, next) {
     let filter = req.body.filter;
-    console.log(req.body)
+    // console.log(req.body)
     return res.status(200).json({
         goal_names: dummySchedulerData.goals.filter(goal => goal.name.includes(filter)).map(goal => goal.name)
     })
@@ -339,8 +339,8 @@ function getGoalUserNames(filter) {
     return Array.from(new Set(dummySchedulerData.goals.filter(goal => goal.author.includes(filter)).map(goal => goal.author)));
 }
 
-router.get('/goal_user_names', function (req, res, next) {
-    let filter = req.params.filter;
+router.put('/goal_user_names', function (req, res, next) {
+    let filter = req.body.filter;
     return res.status(200).json({
         goal_user_names: Array.from(new Set(dummySchedulerData.goals.filter(goal => goal.author.includes(filter)).map(goal => goal.author)))
     })
