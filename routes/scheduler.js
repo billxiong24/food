@@ -327,7 +327,7 @@ function getGoalNames(filter) {
     return dummySchedulerData.goals.filter(goal => goal.name.includes(filter)).map(goal => goal.name);
 }
 
-router.get('/goal_names', function (req, res, next) {
+router.put('/goal_names', function (req, res, next) {
     let filter = req.body.filter;
     console.log(req.body)
     return res.status(200).json({
