@@ -15,6 +15,8 @@ export default function userReducer(state = initialState, action) {
       return Object.assign({}, state, action.data);
     case user_actions.USER_NETID_LOG_IN:
       return Object.assign({}, state, action.data);
+    case user_actions.USER_SEARCH:
+      return Object.assign({}, state, action.data);
     default:
       return state;
   }

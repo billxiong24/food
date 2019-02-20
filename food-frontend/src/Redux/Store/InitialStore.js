@@ -4,7 +4,12 @@ export const InitialStore = {
   // For now, only persistent data about users is who is actually logged in if there is someone logged in
   users: {
     isSuccess: false,
-    errMsg: null
+    errMsg: null,
+    keyword: "",
+    users: [],
+    current_page_number: 1,
+    total_pages: 1,
+    limit: 10,
   },
   // Persistent data concerning routing
   route: 0,

@@ -5,9 +5,10 @@ import ItemList from '../GenericComponents/ItemList';
 import Typography from '@material-ui/core/Typography';
 import { connect } from 'react-redux';
 import TextField from '@material-ui/core/TextField';
-import ProductLineCard from './ProductLineCard';
+import ProductLineCard from '../ProductLinePage/ProductLineCard';
 import Fab from '@material-ui/core/Fab';
 import { prdlineChangeLimit, prdlineNextPage, prdlinePrevPage, prdlineSearch, prdlineAddPrdline, prdlineUpdatePrdline, prdlineDeletePrdline } from '../../Redux/Actions/index'
+import { userSearch } from '../../Redux/Actions/ActionCreators/UserActionCreators';
 import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
 import back from '../../Resources/Images/baseline-navigate_before-24px.svg'
 import next from '../../Resources/Images/baseline-navigate_next-24px.svg'
@@ -73,7 +74,7 @@ const styles = {
   }
 };
 
-class ProductLinePage extends Component {
+class UserAdminPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -99,7 +100,7 @@ class ProductLinePage extends Component {
   }
 
   handleQuery(){
-    this.props.prdlineSearch(this.state.query);
+    this.props.userSearch(this.state.query);
   }
 
   addProductLine(prdline){
@@ -176,26 +177,8 @@ class ProductLinePage extends Component {
     this.handleQuery();
   }
 
-  onExportClick = () => {
-    axios.post(common.hostname + 'manufacturing_goals/exported_file', {
-      data: this.props.productLine.productLines.map((e)=>{
-        return {
-          name: e.name,
-        }
-      }),
-      format: "csv",
-    })
-      .then((response) => {
-        FileDownload(response.data, 'product_lines.csv');
-      })
-      .catch(err => {
-        console.log(err);
-      })
-  }
-
-
   render() {
-    const { classes, productLine } = this.props
+    const { classes, users, productLine } = this.props
     return (
       <div>
         <div className={classes.ingredients_list}>
@@ -203,7 +186,7 @@ class ProductLinePage extends Component {
             <div className={classes.search_bar}>
               <TextField
                 id="outlined-search"
-                label="Search Product Line"
+                label="Search Users"
                 type="search"
                 className={classes.textField}
                 margin="normal"
@@ -224,17 +207,6 @@ class ProductLinePage extends Component {
                 Search
               </Fab>
             </div>
-            <div className={classes.query_button}>
-              <Fab
-                variant="extended"
-                aria-label="Delete"
-                className={classes.fab}
-                onClick={this.onExportClick}
-                disabled={productLine.productLines.length === 0}
-              >
-                Export Search
-              </Fab>
-            </div>
           </div>
           <DisplayButton
           classes={classes}
@@ -248,12 +220,12 @@ class ProductLinePage extends Component {
             classes={classes}
           ></NewProductLine>
           <div className={classes.list_container}>
-            <ItemList items={productLine.productLines}>
+            <ItemList items={users.users}>
               <ProductLineCard
-                onEnter={(prdline) => { this.updateProductLine(prdline) }}
+                onEnter={(user) => { this.updateProductLine(user) }}
                 editable={this.props.cookies.admin === "true"}
                 persistent={true}
-                deleteProductLine={(prdline) => { this.removeProductLine(prdline) }}
+                deleteProductLine={(user) => { this.removeProductLine(user) }}
               ></ProductLineCard>
             </ItemList>
           </div>
@@ -322,12 +294,13 @@ function NewProductLine(props) {
 const mapStateToProps = (state, ownProps) => {
   return {
     productLine: state.productLine,
+    users: state.users,
     cookies: ownProps.cookies.cookies,
   };
 };
 
 const mapDispatchToProps = {
-  prdlineSearch,
+  userSearch,
   prdlineAddPrdline,
   prdlineDeletePrdline,
   prdlineUpdatePrdline,
@@ -337,4 +310,4 @@ const mapDispatchToProps = {
 };
 
 
-export default withStyles(styles)(withCookies(connect(mapStateToProps,mapDispatchToProps)(ProductLinePage)));
+export default withStyles(styles)(withCookies(connect(mapStateToProps,mapDispatchToProps)(UserAdminPage)));

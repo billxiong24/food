@@ -17,6 +17,7 @@ import querystring from 'querystring';
 import axios from 'axios';
 import common from '../../Resources/common';
 import { withCookies } from 'react-cookie';
+import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
 
 const styles = theme => ({
   main: {
@@ -47,9 +48,6 @@ const styles = theme => ({
   },
   submit: {
     marginTop: theme.spacing.unit * 3,
-  },
-  status: {
-    marginTop:20,
   }
 });
 
@@ -58,7 +56,9 @@ class LoginPage extends Component {
     super(props);
     this.state = {
       uname:"",
-      password:""
+      password:"",
+      message:"",
+      alert:false,
     }
   }
 
@@ -94,6 +94,21 @@ class LoginPage extends Component {
   submitFormCheck(e) {
     e.preventDefault();
     this.props.userLoginAttempt(Object.assign({},this.state))
+    .then((response) => {
+      if(this.props.users.errMsg) {
+        this.setState({
+          alert: true,
+          message: this.props.users.errMsg,
+        })
+      }
+    })
+  }
+  
+  closeAlert() {
+    this.setState({
+      alert: false,
+      message: ""
+    });
   }
 
   render() {
@@ -141,11 +156,14 @@ class LoginPage extends Component {
             >
               NetID Sign In
             </Button>
-            <div className={classes.status}>
-              <label>{users.errMsg}</label>
-            </div>
           </form>
         </Paper>
+        <SimpleSnackbar
+          open={this.state.alert}
+          handleClose={() => { this.closeAlert() }}
+          message={this.state.message}
+        >
+        </SimpleSnackbar>
       </main>
     );
   }

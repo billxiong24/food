@@ -18,15 +18,22 @@ var formulaRouter = require('./routes/formula');
 var mlRouter = require('./routes/manufacturing_lines');
 
 
+var { checkUserAll, checkCookie, checkAdminAll } = require('./routes/guard');
+
 var http = require('http');
 var https = require('https');
 const fs = require('fs');
 const PORT = 8000;
-
-var app = express();
-app.use(cors());
 const encrypt = process.env.HTTPS;
 const domain = process.env.DOMAIN;
+
+var app = express();
+app.use(cors({
+  credentials: true,
+  origin: function(origin, callback) {
+    callback(null, true);
+  }
+}));
 
 
 // view engine setup
@@ -50,6 +57,13 @@ app.use(session({
     //change this later
   cookie: { secure: encrypt, maxAge: 24*60*60*1000 }
 }));
+
+// Check for sessions
+app.use(checkCookie);
+app.use(checkUserAll);
+app.post('*', checkAdminAll);
+app.put('*', checkAdminAll);
+app.delete('*', checkAdminAll);
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);

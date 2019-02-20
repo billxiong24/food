@@ -2,6 +2,7 @@ const db = require('./db');
 const CRUD = require("./CRUD");
 const squel = require("squel").useFlavour("postgres");
 const bcrypt = require("bcrypt");
+const QueryGenerator = require("./query_generator");
 
 const saltRounds = 10;
 
@@ -62,6 +63,19 @@ class Users extends CRUD {
             });
         });
     }
+    
+    search(names, filter) {
+      names = QueryGenerator.transformQueryArr(names);
+      let query = squel.select()
+      .from(this.tableName)
+      .field("uname, id, admin, COUNT(*) OVER() as row_count");
+
+      const queryGen = new QueryGenerator(query);
+      queryGen.chainAndFilter(names, "name LIKE ?");
+      let queryStr = filter.applyFilter(queryGen.getQuery()).toString();
+      //logger.debug(queryStr);
+      return db.execSingleQuery(queryStr, []);
+  }
 
     getUser(dataObj) {
       if (!dataObj.uname) {
@@ -80,18 +94,22 @@ class Users extends CRUD {
     }
 
     update(dataObj, oldPrimaryKey) {
+      if(!dataObj.password){
         return bcrypt.hash(dataObj.password, saltRounds).then((hash) => {
             const hashedDataObj = Object.assign({},dataObj);
             hashedDataObj.password = hash;
             return super.change(hashedDataObj, oldPrimaryKey, "id");
         });
+      } else {
+        return super.change(dataObj, oldPrimaryKey, "id");
+      }
     }
 
-    remove(uname) {
-        if(!uname) {
-            return Promise.reject("Bad Username.");
+    remove(id) {
+        if(!id) {
+            return Promise.reject("Bad User ID.");
         }
-        return db.execSingleQuery("DELETE FROM " + this.tableName + " WHERE uname = $1", [uname]);
+        return db.execSingleQuery("DELETE FROM " + this.tableName + " WHERE id = $1", [id]);
     }
 }
 
