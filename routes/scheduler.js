@@ -274,7 +274,7 @@ router.put('/set_enable', function (req, res, next) {
     let id = req.body.id;
     console.log(id)
     console.log(req.body)
-    let enable_status = req.params.enable_status
+    let enable_status = req.body.enable_status
     var enableCount = 0;
     for (var i = 0; i < dummySchedulerData.goals.length; i++) {
         if (dummySchedulerData.goals[i].id == id) {
