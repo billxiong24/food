@@ -31,8 +31,9 @@ app.use(cors({
     console.log(origin);
     console.log('http://localhost:3000');
     console.log(origin == 'http://localhost:3000');
-    if (origin == domain || origin == 'http://localhost/3000') {
-      console.log(origin);
+    console.log(origin == domain || origin == 'http://localhost:3000');
+    if (origin == domain || origin == 'http://localhost:3000') {
+      console.log("here");
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
