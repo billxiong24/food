@@ -277,7 +277,6 @@ router.put('/set_enable', function (req, res, next) {
             dummySchedulerData.goals[i].enabled = enable_status
             enableCount = enableCount + 1
         }
-        //Do something
     }
     if (enableCount == 0) {
         return res.status(400).json({
