@@ -270,6 +270,7 @@ var dummySchedulerData = {
 
 router.put('/set_enable', function (req, res, next) {
     let id = parseInt(req.params.id);
+    console.log(id)
     let enable_status = req.params.enable_status
     var enableCount = 0;
     for (var i = 0; i < dummySchedulerData.goals.length; i++) {
