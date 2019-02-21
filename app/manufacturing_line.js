@@ -70,6 +70,64 @@ class ManufacturingLine extends CRUD {
     remove(id) {
         return db.execSingleQuery("DELETE FROM " + this.tableName + " WHERE id = $1", [id]);
     }
+
+    getSKUMapping(skus) {
+        let query = squel.select()
+        .from("manufacturing_line_sku")
+        .field('*')
+        .join(this.tableName, null, "manufacturing_line_id = manufacturing_line.id")
+
+        const queryGen = new QueryGenerator(query);
+        queryGen.chainOrFilter(skus, "sku_id = ?");
+        const queryStr = queryGen.getQuery().toString();
+        let getAllLinesQuery = squel.select().from(this.tableName).field("*").toString();
+
+        let that = this;
+
+        return db.execSingleQuery(getAllLinesQuery, [])
+        .then(function(res) {
+            let obj = {
+                manufacturing_lines: res.rows
+            }
+            return db.execSingleQuery(queryStr, [])
+            .then(function(t) {
+                obj.mapping = t.rows;
+                return that.generateSkuMapping(skus, obj.manufacturing_lines, obj.mapping);
+            });
+        });
+    }
+
+    generateSkuMapping(skus, lines, mappings) {
+        let counts = {};
+
+        for (let i = 0; i < mappings.length; i++) {
+            let man_id = mappings[i].manufacturing_line_id;
+            let sku_id = mappings[i].sku_id;
+            if(!counts[man_id])
+                counts[man_id] = [];
+            counts[man_id].push(sku_id);
+        }
+
+        let skuMapping = {};
+        skuMapping.none = [];
+        skuMapping.all = [];
+        skuMapping.some = [];
+
+        for (let i = 0, len = lines.length; i < len; i++) {
+            let man_id = lines[i].id;
+            if(!counts[man_id]) {
+                skuMapping.none.push(lines[i]);
+                continue;
+            }
+            if(counts[man_id].length !== skus.length) {
+                skuMapping.some.push(lines[i]);
+            }
+            else if(counts[man_id].length === skus.length){
+                skuMapping.all.push(skuMapping.all.push(lines[i]));
+            }
+        }
+        return skuMapping;
+    }
 };
 
 module.exports = ManufacturingLine;

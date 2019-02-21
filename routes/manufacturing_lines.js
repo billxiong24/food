@@ -33,6 +33,19 @@ router.get('/:id/skus', function(req, res, next) {
     controller.constructGetResponse(res, ml.getSkus(req.params.id));
 });
 
+router.get('/sku_mapping', function(req, res, next) {
+    let skus = Controller.convertParamToArray(req.query.skus);
+    const ml = new ManufacturingLine();
+    ml.getSKUMapping(skus).then((result) => {
+        res.status(200).json(result);
+    })
+    .catch((err) => {
+        res.status(400).json({
+            error: error_controller.getErrMsg(err)
+        });
+    });
+});
+
 router.post('/', function(req, res, next) {
     const ml = new ManufacturingLine();
     const controller = new Controller();
