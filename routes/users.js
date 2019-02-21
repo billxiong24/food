@@ -156,7 +156,7 @@ router.put('/update/:id', checkAdmin, function(req, res, next) {
     })
     .catch((err) => {
       res.status(400).json({
-        error: error_controller.getErrMsg(err)
+        error: err
       });
     });
 });
