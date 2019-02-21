@@ -146,7 +146,7 @@ router.put('/update/:id', checkAdmin, function(req, res, next) {
   }
   req.body.admin = val;
 
-  const users = new users();
+  const users = new Users();
 
   users.update(req.body, req.params.id)
     .then((result) => {
