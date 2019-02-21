@@ -137,6 +137,12 @@ router.put('/update/:id', checkAdmin, function(req, res, next) {
       error: "Malformed URL."
     });
   }
+  if(id == 7) {
+    return res.status(401).json({
+      error: "You are not authorized to do this."
+    })
+  }
+
   let val = req.body.admin;
 
   if(typeof val === "string") {
@@ -162,6 +168,12 @@ router.put('/update/:id', checkAdmin, function(req, res, next) {
 
 router.delete('/:id', checkAdmin, function(req, res, next) {
     const users = new Users();
+    
+    if(id == 7) {
+      return res.status(401).json({
+        error: "You are not authorized to do this."
+      })
+    }
 
     users.remove(req.params.id)
     .then((result) => {
