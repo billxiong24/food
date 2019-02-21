@@ -5,6 +5,7 @@ let router = express.Router();
 
 
 const checkTokenUser = (req, res, next) => {
+  console.log(req.body);
   let userID = parseInt(req.body.user_id);
   if(userID !== req.session.user_id) {
     res.status(401).json({
@@ -55,7 +56,6 @@ router.get('/:id/skus', function(req, res, next) {
 
 router.post('/:id/skus', checkTokenUser, function(req, res, next) {
     let id = req.params.id;
-    console.log(req);
     if(isNaN((id))) {
         return res.status(400).json({
             error: "Malformed URL."
