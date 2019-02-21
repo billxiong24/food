@@ -111,6 +111,7 @@ export const mangaolDeleteMangoal = (manGoal) => {
 
 export const mangaolUpdateMangoalSkus = (manGoal, skus) => {
   return (dispatch) => {
+    console.log(manGoal.user_id);
     return axios.post(hostname + 'manufacturing_goals/' + manGoal.id + '/skus', {
       data: {
         skus: skus,

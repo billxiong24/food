@@ -56,6 +56,7 @@ router.get('/:id/skus', function(req, res, next) {
 
 router.post('/:id/skus', checkTokenUser, function(req, res, next) {
     let id = req.params.id;
+    console.log(req.body);
     if(isNaN((id))) {
         return res.status(400).json({
             error: "Malformed URL."
