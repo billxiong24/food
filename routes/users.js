@@ -57,7 +57,7 @@ router.post('/', function(req, res, next) {
     .then((result) => {
         req.session.user = result.uname;
         req.session.admin = result.admin;
-        req.session.id = result.id;
+        req.session.user_id = result.id;
         res.status(200).json(result);
     })
     .catch((err) => {
@@ -82,7 +82,7 @@ router.post('/netid', function(req, res, next) {
   .then((result) => {
     req.session.user = result.uname;
     req.session.admin = result.admin;
-    req.session.id = result.id;
+    req.session.user_id = result.id;
     res.status(200).json(result);
   })
   .catch((err) => {
@@ -92,7 +92,7 @@ router.post('/netid', function(req, res, next) {
         .then((user) => {
           req.session.user = user.uname;
           req.session.admin = user.admin;
-          req.session.id = user.id;
+          req.session.user_id = user.id;
           res.status(201).json(user);
         })
       })
