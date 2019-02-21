@@ -43,6 +43,7 @@ export const mangoalDeleteMangoalSkus = (manGoal, skus) => {
       {
         data: {
           skus: skus,
+          user_id: manGoal.user_id,
         }
       })
       .then((response) => {
@@ -76,7 +77,11 @@ export const mangoalDeleteMangoalSkus = (manGoal, skus) => {
 
 export const mangaolDeleteMangoal = (manGoal) => {
   return (dispatch) => {
-    return axios.delete(hostname + 'manufacturing_goals/' + manGoal.id)
+    return axios.delete(hostname + 'manufacturing_goals/' + manGoal.id, {
+      data: {
+        user_id: manGoal.user_id,
+      }
+    })
       .then((response) => {
         dispatch({
           type: mangoal_actions.MANGOAL_DELETE_MANGOAL,
@@ -106,7 +111,12 @@ export const mangaolDeleteMangoal = (manGoal) => {
 
 export const mangaolUpdateMangoalSkus = (manGoal, skus) => {
   return (dispatch) => {
-    return axios.post(hostname + 'manufacturing_goals/' + manGoal.id + '/skus', { skus: skus })
+    return axios.post(hostname + 'manufacturing_goals/' + manGoal.id + '/skus', {
+      data: {
+        skus: skus,
+        user_id: manGoal.user_id,
+      }
+    })
       .then((response) => {
         axios.get(hostname + 'manufacturing_goals/' + manGoal.id + '/skus')
           .then((response) => {
