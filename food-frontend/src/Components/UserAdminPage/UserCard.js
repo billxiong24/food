@@ -104,7 +104,7 @@ class UserCard extends Component {
                   control={
                     <Switch
                       checked={this.props.item.admin}
-                      onChange={(e) => { this.props.handleToggle(e) }}
+                      onChange={() => { this.props.handleToggle(this.props.item) }}
                       color="primary"
                       disabled={item.uname === "admin"}
                     />

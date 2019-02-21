@@ -160,6 +160,7 @@ export const userSearch = (user) => {
         names: user,
         offset: offset,
         limit: limit,
+        orderKey: 'uname',
       }
     })
     .then((response) => {
@@ -187,6 +188,7 @@ export const userSearch = (user) => {
 
 export const userUpdate = (user) => {
   return (dispatch) => {
+    console.log(user);
     return axios.put(hostname + 'users/update/' + user.id, user)
     .then((response) => {
       dispatch({

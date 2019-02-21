@@ -141,6 +141,7 @@ class UserAdminPage extends Component {
   }
 
   handleToggle(user) {
+    delete user.row_count
     this.updateUser(Object.assign({}, user, {admin:!user.admin}));
   }
 

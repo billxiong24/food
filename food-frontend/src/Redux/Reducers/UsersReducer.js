@@ -18,14 +18,14 @@ export default function userReducer(state = initialState, action) {
     case user_actions.USER_SEARCH:
       return Object.assign({}, state, action.data);
     case user_actions.USER_UPDATE:
-      if (action.data.UserToUpdate) {
+      if (action.data.userToUpdate) {
         return Object.assign({}, state, {
           errMsg: action.data.errMsg,
           users: state.users.map((el) => {
             if (el.id === action.data.userToUpdate.id) {
               return {
                 ...el,
-                ...action.data.UserToUpdate
+                ...action.data.userToUpdate
               }
             }
             return el;

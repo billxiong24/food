@@ -33,6 +33,7 @@ router.get('/search', checkAdmin, function (req, res, next) {
   const filter = new Filter();
   filter.setOrderKey(orderKey).setAsc(asc).setOffset(offset).setLimit(limit);
 
+  console.log(names);
   users.search(names, filter)
     .then((result) => {
       res.status(200).json(result.rows);
@@ -156,7 +157,7 @@ router.put('/update/:id', checkAdmin, function(req, res, next) {
     })
     .catch((err) => {
       res.status(400).json({
-        error: err
+        error: error_controller.getErrMsg(err)
       });
     });
 });
