@@ -6,9 +6,7 @@ let router = express.Router();
 
 const checkTokenUser = (req, res, next) => {
   let userID = req.body.user_id;
-  console.log(userID);
-  console.log(req.session);
-  if(userID !== req.session.id) {
+  if(userID !== req.session.user_id) {
     res.status(401).json({
       error: "You are not authorized to edit this manufacturing goal"
     });
