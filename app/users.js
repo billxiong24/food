@@ -94,7 +94,7 @@ class Users extends CRUD {
     }
 
     update(dataObj, oldPrimaryKey) {
-      if(!dataObj.password){
+      if(dataObj.password){
         return bcrypt.hash(dataObj.password, saltRounds).then((hash) => {
             const hashedDataObj = Object.assign({},dataObj);
             hashedDataObj.password = hash;
