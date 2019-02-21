@@ -6,7 +6,6 @@ let router = express.Router();
 
 const checkTokenUser = (req, res, next) => {
   let userID = parseInt(req.body.user_id);
-  console.log(userID);
   if(userID !== req.session.user_id) {
     res.status(401).json({
       error: "You are not authorized to edit this manufacturing goal"
@@ -56,7 +55,7 @@ router.get('/:id/skus', function(req, res, next) {
 
 router.post('/:id/skus', checkTokenUser, function(req, res, next) {
     let id = req.params.id;
-    console.log(req.body);
+    console.log(req);
     if(isNaN((id))) {
         return res.status(400).json({
             error: "Malformed URL."
