@@ -106,13 +106,13 @@ class UserCard extends Component {
                       checked={this.props.item.admin}
                       onChange={() => { this.props.handleToggle(this.props.item) }}
                       color="primary"
-                      disabled={item.uname === "admin"}
+                      disabled={item.uname === "admin" || item.uname === this.props.currentUser}
                     />
                   }
                   label="Admin"
                 />
               </div>
-              <IconButton
+              {/* <IconButton
                 key="close"
                 aria-label="Close"
                 color="inherit"
@@ -121,7 +121,7 @@ class UserCard extends Component {
                 disabled={item.uname === "admin"}
               >
                 <CloseIcon />
-              </IconButton>
+              </IconButton> */}
             </CardContent>
           </Card>
         );

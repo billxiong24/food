@@ -11,9 +11,6 @@ import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
 import back from '../../Resources/Images/baseline-navigate_before-24px.svg'
 import next from '../../Resources/Images/baseline-navigate_next-24px.svg'
 import { IconButton } from '@material-ui/core';
-import common from '../../Resources/common';
-import axios from 'axios';
-import FileDownload from 'js-file-download';
 import { withCookies } from 'react-cookie';
 import { Link } from 'react-router-dom';
 import UserCard from './UserCard';
@@ -168,7 +165,7 @@ class UserAdminPage extends Component {
   }
 
   render() {
-    const { classes, users } = this.props
+    const { classes, users, cookies } = this.props
     return (
       <div>
         <div className={classes.ingredients_list}>
@@ -220,6 +217,7 @@ class UserAdminPage extends Component {
               <UserCard
                 delete={(user) => { this.deleteUser(user) }}
                 handleToggle={(user) => {this.handleToggle(user) }}
+                currentUser={cookies.user}
               ></UserCard>
             </ItemList>
           </div>
