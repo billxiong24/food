@@ -28,7 +28,11 @@ var app = express();
 app.use(cors({
   credentials: true,
   origin: function(origin, callback) {
-    callback(null, true);
+    if (origin == domain || origin == 'http://localhost:3000') {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
   }
 }));
 
