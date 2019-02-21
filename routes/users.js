@@ -131,7 +131,7 @@ router.put('/create', checkAdmin, function(req, res, next) {
     });
 });
 
-router.put('/update', checkAdmin, function(req, res, next) {
+router.put('/update/:id', checkAdmin, function(req, res, next) {
   let id = req.params.id;
   if (isNaN((id))) {
     return res.status(400).json({
