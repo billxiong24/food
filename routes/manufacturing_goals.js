@@ -6,7 +6,8 @@ let router = express.Router();
 
 const checkTokenUser = (req, res, next) => {
   let userID = req.body.user_id;
-  console.log(userID);
+  console.log(typeof userID);
+  console.log(parseInt(userID));
   console.log(req.session.user_id);
   console.log(userID != req.session.user_id)
   if(userID !== req.session.user_id) {
