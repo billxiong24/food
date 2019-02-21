@@ -63,14 +63,14 @@ class LoginPage extends Component {
   }
 
   componentWillMount() {
-    // console.log(common);
     if (window.location.hash) {
       const hash = querystring.parse(window.location.hash.slice(1));
       axios.get('https://api.colab.duke.edu/identity/v1/', {
         headers: {
           'x-api-key': common.colab_client_id,
           'Authorization': `Bearer ${hash.access_token}`
-        }
+        },
+        withCredentials: false,
       })
       .then((response) => {
         this.props.userNetIdLogin({uname: response.data.netid, password: response.data.duDukeID});
