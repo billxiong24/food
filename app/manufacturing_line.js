@@ -123,7 +123,7 @@ class ManufacturingLine extends CRUD {
                 skuMapping.some.push(lines[i]);
             }
             else if(counts[man_id].length === skus.length){
-                skuMapping.all.push(skuMapping.all.push(lines[i]));
+                skuMapping.all.push(lines[i]);
             }
         }
         return skuMapping;
@@ -184,8 +184,6 @@ class ManufacturingLine extends CRUD {
 
         return dataObj;
     }
-
-
 };
 
 module.exports = ManufacturingLine;

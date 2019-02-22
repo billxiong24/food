@@ -846,6 +846,10 @@ COPY public.manufacturing_line (id, name, shortname, comment) FROM stdin;
 2	hi	manli	\N
 3	hi	mandi	\N
 5	naa	maxi	\N
+6	man2	man22	\N
+7	man24	man23	\N
+8	man25	man69	\N
+9	aeiruet	man6d	\N
 \.
 
 
@@ -853,7 +857,7 @@ COPY public.manufacturing_line (id, name, shortname, comment) FROM stdin;
 -- Name: manufacturing_line_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.manufacturing_line_id_seq', 5, true);
+SELECT pg_catalog.setval('public.manufacturing_line_id_seq', 9, true);
 
 
 --
