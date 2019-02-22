@@ -33,7 +33,7 @@ function getCRUD(type) {
 
 }
 
-const checkTokenUser = (req, res, next) => {
+function checkUser(req, res, next) {
   let userID = req.params.id;
   if(!userID) userID = req.body.user_id;
   if(userID !== req.session.id) {
@@ -45,6 +45,8 @@ const checkTokenUser = (req, res, next) => {
     next();
   }
 }
+
+const checkTokenUser = process.env.NODE_ENV === 'test' ? (req, res, next) => { next(); } : checkUser;
 
 router.get('/', function(req, res, next) {
     if(!req.query.user_id || isNaN(req.query.user_id)) {
