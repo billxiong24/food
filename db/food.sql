@@ -1035,16 +1035,16 @@ SELECT pg_catalog.setval('public.sku_num_seq', 28, true);
 --
 
 COPY public.users (uname, id, password, admin) FROM stdin;
-fff     8       $2b$10$nraqxUvDeUlU7pWdzXb5z.AOcXb9Z2ipB1uci6NowxFTyhA4GnYaq    f
-siddarth        9       $2b$10$Pwp3lW15hTFzklMarcAqTuxpe3yHvlXRRKf.xSeuyxzXXTXBU5jlG    f
-111     11      $2b$10$Q9gVDGojNiyrgw63qxpOlOUuaX3mVTSBURhFhMt/l8VxVrfN3X9om    f
-faa     10      $2b$10$6OEuptPXlXXHNCGK22Y2huBOaWixkxXaZgLlKfdEz0K2bUcwoCXGu    f
-admin   7       $2b$10$6OEuptPXlXXHNCGK22Y2huBOaWixkxXaZgLlKfdEz0K2bUcwoCXGu    t
-gordon  18      $2b$10$tH6f0/.Xyua9VUrfEpVrSuxzf/6S4EW84byCuNilGv7DG2LoIsm2G    f
-user1   19      $2b$10$6N4S24FvrkYMuV5uOr9Ip.I0voths0ukjYN6/JOfg.1xasolLNUJq    f
-gordon5 6       $2b$10$nXnMFKFaqLj00/a1Vs7fJ.EWLVdthJqxGa70b9.Y4lKzFeO5FwHo2    t
-test    20      $2b$10$5f.J.wTCm.GmYMu4srL79eWVzlcrAR.jEj3R0wMJjA2utltl5fAxG    t
-netid_ghh6      17      $2b$10$cAvdQ0XxPoI3a/wxu3p4j.6vpWYpsAa1rST.Wm/wNydAmZoKSmz2.    t
+fff 8 $2b$10$nraqxUvDeUlU7pWdzXb5z.AOcXb9Z2ipB1uci6NowxFTyhA4GnYaq  f
+siddarth  9 $2b$10$Pwp3lW15hTFzklMarcAqTuxpe3yHvlXRRKf.xSeuyxzXXTXBU5jlG  f
+111 11  $2b$10$Q9gVDGojNiyrgw63qxpOlOUuaX3mVTSBURhFhMt/l8VxVrfN3X9om  f
+faa 10  $2b$10$6OEuptPXlXXHNCGK22Y2huBOaWixkxXaZgLlKfdEz0K2bUcwoCXGu  f
+admin 7 $2b$10$6OEuptPXlXXHNCGK22Y2huBOaWixkxXaZgLlKfdEz0K2bUcwoCXGu  t
+gordon  18  $2b$10$tH6f0/.Xyua9VUrfEpVrSuxzf/6S4EW84byCuNilGv7DG2LoIsm2G  f
+user1 19  $2b$10$6N4S24FvrkYMuV5uOr9Ip.I0voths0ukjYN6/JOfg.1xasolLNUJq  f
+gordon5 6 $2b$10$nXnMFKFaqLj00/a1Vs7fJ.EWLVdthJqxGa70b9.Y4lKzFeO5FwHo2  t
+test  20  $2b$10$5f.J.wTCm.GmYMu4srL79eWVzlcrAR.jEj3R0wMJjA2utltl5fAxG  t
+netid_ghh6  17  $2b$10$cAvdQ0XxPoI3a/wxu3p4j.6vpWYpsAa1rST.Wm/wNydAmZoKSmz2.  t
 \.
 
 
