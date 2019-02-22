@@ -8,8 +8,8 @@ import productLineReducer from './ProductLineReducer';
 import manufacturingGoalReducer from './ManufacturingGoalReducer';
 import ingredientDetailReducer from './IngredientDetailReducer';
 import SKUDetailReducer from './SKUDetailReducer';
-import BulkImportPage from '../../Components/BulkImport/BulkImportPage';
 import BulkImportReducer from './BulkImportReducer';
+import manufacturingLineReducer from './ManufacturingLineReducer';
 
 
 
@@ -23,5 +23,6 @@ export default combineReducers({
     manGoals: manufacturingGoalReducer,
     ingredient_details:ingredientDetailReducer,
     sku_details:SKUDetailReducer,
-    bulk_import:BulkImportReducer
+    bulk_import:BulkImportReducer,
+    manLine:manufacturingLineReducer,
 });

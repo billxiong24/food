@@ -7,7 +7,7 @@ import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import { routeToPage } from '../Redux/Actions/index';
 import { connect } from 'react-redux';
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { withRouter } from 'react-router-dom';
 import { withCookies } from 'react-cookie';
 
@@ -30,12 +30,12 @@ const styles = theme => ({
     backgroundColor: theme.palette.background.paper,
   },
   hidden: {
-    display:'none',
+    display: 'none',
   },
-  tabLink : {
-    display:"flex",
-    alignItems:"center",
-    justifyContent:"center"
+  tabLink: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center"
   }
 });
 
@@ -43,7 +43,7 @@ class Navbar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      route:0,
+      route: 0,
     }
   }
 
@@ -51,34 +51,37 @@ class Navbar extends React.Component {
     let initValue = 0;
     switch (this.props.location.pathname) {
       case '/ingredients':
-        initValue=1;
+        initValue = 1;
         break;
       case '/skus':
-        initValue=2;
+        initValue = 2;
         break;
       case '/product_lines':
-        initValue=3;
+        initValue = 3;
         break;
       case '/ingredients/dependency':
-        initValue=4;
+        initValue = 4;
         break;
       case '/bulk':
-        initValue=5;
+        initValue = 5;
         break;
       case '/users':
-        initValue=6;
+        initValue = 6;
+        break;
+      case '/manufacturing_lines':
+        initValue = 7;
         break;
       case '/logout':
-        initValue=7;
+        initValue = 8;
         break;
       default:
-        initValue=0;
+        initValue = 0;
     }
     this.props.routeToPage(initValue);
   }
 
   handleChange = (event, value) => {
-    if(this.props.cookies.user) {
+    if (this.props.cookies.user) {
       this.props.routeToPage(value);
     }
   };
@@ -89,8 +92,8 @@ class Navbar extends React.Component {
     return (
       <div className={classes.root}>
         <AppBar position="static" color="default">
-          <Tabs 
-            onChange={this.handleChange} 
+          <Tabs
+            onChange={this.handleChange}
             value={value}
             indicatorColor="primary"
             textColor="primary"
@@ -104,7 +107,8 @@ class Navbar extends React.Component {
             <Tab value={4} label="Ingredient Dependency" component={Link} to={'/ingredients/dependency'} />
             <Tab value={5} label="Bulk Import/Export" component={Link} to={'/bulk'} />
             <Tab value={6} className={cookies.admin === 'true' ? '' : classes.hidden} label="Manage Users" component={Link} to={'/users'} />
-            <Tab value={7} className={cookies.user ? '' : classes.hidden} label="Log Out" component={Link} to={'/logout'} />
+            <Tab value={7} className={cookies.admin === 'true' ? '' : classes.hidden} label="Manufacturing Lines" component={Link} to={'/manufacturing_lines'} />
+            <Tab value={8} className={cookies.user ? '' : classes.hidden} label="Log Out" component={Link} to={'/logout'} />
           </Tabs>
         </AppBar>
       </div>
@@ -123,5 +127,5 @@ const mapStateToProps = (state, ownProps) => {
   }
 }
 
-export default withRouter(withCookies(connect(mapStateToProps,{routeToPage})(withStyles(styles)(Navbar))));
+export default withRouter(withCookies(connect(mapStateToProps, { routeToPage })(withStyles(styles)(Navbar))));
 // export default withStyles(styles)withRouter(connect(mapStateToProps,{routeToPage})(Navbar));

@@ -25,7 +25,8 @@ const styles = {
   ingredients_list_divider:{
     width:'100%',
     backgroundColor:'gray',
-    height:'2px'
+    height:'2px',
+    marginTop:10,
   },
   page_number_text:{
     color:'gray',
@@ -85,6 +86,7 @@ class UserAdminPage extends Component {
   }
 
   componentWillMount(){
+    this.handleQuery();
   }
 
   handleQueryChange(e){
@@ -213,6 +215,7 @@ class UserAdminPage extends Component {
           >
           </DisplayButton>
           <div className={classes.list_container}>
+            <div variant="inset" className={classes.ingredients_list_divider} />
             <ItemList items={users.users}>
               <UserCard
                 delete={(user) => { this.deleteUser(user) }}

@@ -20,7 +20,7 @@ export const prdlinePrevPage = () => {
   return (dispatch) => {
     const curPage = store.getState().productLine.current_page_number;
     return dispatch({
-      type: prdline_actions.PRDLINE_NEXT_PAGE,
+      type: prdline_actions.PRDLINE_PREV_PAGE,
       data: {
         current_page_number: curPage === 1 ? curPage : curPage - 1,
       }
@@ -32,7 +32,7 @@ export const prdlineNextPage = () => {
   return (dispatch) => {
     const curPage = store.getState().productLine.current_page_number;
     return dispatch({
-      type: prdline_actions.PRDLINE_PREV_PAGE,
+      type: prdline_actions.PRDLINE_NEXT_PAGE,
       data: {
         current_page_number: curPage === store.getState().productLine.total_pages ? curPage : curPage + 1,
       }
