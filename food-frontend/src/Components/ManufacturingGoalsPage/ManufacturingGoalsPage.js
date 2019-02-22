@@ -248,7 +248,12 @@ class ManufacturingGoalsPage extends Component {
       sku_id: this.state.sku.value.id,
       quantity: this.state.quantity,
     }
-    this.props.mangaolUpdateMangoalSkus(this.props.manGoals.activeGoal, [sku])
+    this.props.mangaolUpdateMangoalSkus(
+      Object.assign({}, this.props.manGoals.activeGoal, {
+        user_id: this.props.cookies.id
+      }),
+      [sku]
+    )
     .then((response) => {
       this.setState({
         sku: null,
@@ -258,7 +263,12 @@ class ManufacturingGoalsPage extends Component {
   }
 
   removeSku(sku) {
-    this.props.mangoalDeleteMangoalSkus(this.props.manGoals.activeGoal, [sku.id]);
+    this.props.mangoalDeleteMangoalSkus(
+      Object.assign({}, this.props.manGoals.activeGoal, {
+        user_id: this.props.cookies.id
+      }),
+      [sku.id]
+    );
   }
 
   getSkuSuggestions() {
@@ -296,15 +306,17 @@ class ManufacturingGoalsPage extends Component {
   }
 
   removeManufacturingGoal(manGoal){
-    this.props.mangaolDeleteMangoal(manGoal)
-    .then(()=>{
-      if(this.props.manGoals.errMsg) {
-        this.setState({
-          alert:true,
-          message: 'Product Line NOT Deleted: ' + this.props.manGoals.errMsg
-        });
-      }
-    });
+    this.props.mangaolDeleteMangoal(Object.assign({}, manGoal, {
+      user_id: this.props.cookies.id
+    }))
+      .then(() => {
+        if (this.props.manGoals.errMsg) {
+          this.setState({
+            alert: true,
+            message: 'Product Line NOT Deleted: ' + this.props.manGoals.errMsg
+          });
+        }
+      });
   }
 
   exportManGoal() {

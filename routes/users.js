@@ -15,7 +15,6 @@ router.get('/logout', function(req, res, next) {
 });
 
 router.get('/search', checkAdmin, function (req, res, next) {
-  console.log(req.query);
   let names = req.query.names;
   const users = new Users();
   let orderKey = req.query.orderKey;
@@ -58,7 +57,7 @@ router.post('/', function(req, res, next) {
     .then((result) => {
         req.session.user = result.uname;
         req.session.admin = result.admin;
-        req.session.id = result.id;
+        req.session.user_id = result.id;
         res.status(200).json(result);
     })
     .catch((err) => {
@@ -83,7 +82,7 @@ router.post('/netid', function(req, res, next) {
   .then((result) => {
     req.session.user = result.uname;
     req.session.admin = result.admin;
-    req.session.id = result.id;
+    req.session.user_id = result.id;
     res.status(200).json(result);
   })
   .catch((err) => {
@@ -93,7 +92,7 @@ router.post('/netid', function(req, res, next) {
         .then((user) => {
           req.session.user = user.uname;
           req.session.admin = user.admin;
-          req.session.id = user.id;
+          req.session.user_id = user.id;
           res.status(201).json(user);
         })
       })
@@ -131,13 +130,19 @@ router.put('/create', checkAdmin, function(req, res, next) {
     });
 });
 
-router.put('/update', checkAdmin, function(req, res, next) {
+router.put('/update/:id', checkAdmin, function(req, res, next) {
   let id = req.params.id;
   if (isNaN((id))) {
     return res.status(400).json({
       error: "Malformed URL."
     });
   }
+  if(id == 7) {
+    return res.status(401).json({
+      error: "You are not authorized to do this."
+    })
+  }
+
   let val = req.body.admin;
 
   if(typeof val === "string") {
@@ -146,7 +151,7 @@ router.put('/update', checkAdmin, function(req, res, next) {
   }
   req.body.admin = val;
 
-  const users = new users();
+  const users = new Users();
 
   users.update(req.body, req.params.id)
     .then((result) => {
@@ -163,6 +168,12 @@ router.put('/update', checkAdmin, function(req, res, next) {
 
 router.delete('/:id', checkAdmin, function(req, res, next) {
     const users = new Users();
+    
+    if(id == 7) {
+      return res.status(401).json({
+        error: "You are not authorized to do this."
+      })
+    }
 
     users.remove(req.params.id)
     .then((result) => {

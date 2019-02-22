@@ -68,10 +68,10 @@ class Users extends CRUD {
       names = QueryGenerator.transformQueryArr(names);
       let query = squel.select()
       .from(this.tableName)
-      .field("uname, id, admin, COUNT(*) OVER() as row_count");
+      .field("*, COUNT(*) OVER() as row_count");
 
       const queryGen = new QueryGenerator(query);
-      queryGen.chainAndFilter(names, "name LIKE ?");
+      queryGen.chainAndFilter(names, "uname LIKE ?");
       let queryStr = filter.applyFilter(queryGen.getQuery()).toString();
       //logger.debug(queryStr);
       return db.execSingleQuery(queryStr, []);
@@ -94,7 +94,7 @@ class Users extends CRUD {
     }
 
     update(dataObj, oldPrimaryKey) {
-      if(!dataObj.password){
+      if(dataObj.password){
         return bcrypt.hash(dataObj.password, saltRounds).then((hash) => {
             const hashedDataObj = Object.assign({},dataObj);
             hashedDataObj.password = hash;

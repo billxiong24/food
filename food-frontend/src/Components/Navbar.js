@@ -65,7 +65,7 @@ class Navbar extends React.Component {
       case '/bulk':
         initValue=5;
         break;
-      case '/create_user':
+      case '/users':
         initValue=6;
         break;
       case '/logout':

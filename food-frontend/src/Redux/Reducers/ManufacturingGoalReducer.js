@@ -1,4 +1,4 @@
-import { mangoal_actions } from '../Actions/ManufacturingGoalActionTypes';
+import { mangoal_actions } from '../Actions/ActionTypes/ManufacturingGoalActionTypes';
 
 const initialState = {
   goals: [],

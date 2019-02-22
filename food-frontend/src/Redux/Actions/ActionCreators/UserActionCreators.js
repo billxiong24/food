@@ -1,4 +1,4 @@
-import { user_actions } from '../UserActionTypes';
+import { user_actions } from '../ActionTypes/UserActionTypes';
 import axios from 'axios';
 import common from '../../../Resources/common';
 import Cookies from 'js-cookie';
@@ -160,6 +160,7 @@ export const userSearch = (user) => {
         names: user,
         offset: offset,
         limit: limit,
+        orderKey: 'uname',
       }
     })
     .then((response) => {
@@ -181,6 +182,109 @@ export const userSearch = (user) => {
         }
       });
       throw (err.response);
+    })
+  }
+}
+
+export const userUpdate = (user) => {
+  return (dispatch) => {
+    console.log(user);
+    return axios.put(hostname + 'users/update/' + user.id, user)
+    .then((response) => {
+      dispatch({
+        type: user_actions.USER_UPDATE,
+        data: {
+          userToUpdate: user,
+          errMsg: ''
+        }
+      })
+    })
+    .catch((err) => {
+      console.log(err);
+      if (err.response.status === 400) {
+        dispatch({
+          type: user_actions.USER_UPDATE,
+          data: {
+            errMsg: err.response.data.error
+          }
+        })
+      } else {
+        dispatch({
+          type: user_actions.USER_UPDATE,
+          data: {
+            errMsg: 'Something unexpected went wrong'
+          }
+        })
+        throw (err.response);
+      }
+    })
+  }
+}
+
+export const userDelete = (user) => {
+  return (dispatch) => {
+    return axios.delete(hostname + 'user/' + user.id)
+    .then((response) => {
+      dispatch({
+        type: user_actions.USER_DELETE,
+        data: {
+          userToDelete: user,
+          errMsg: '',
+        }
+      })
+    }) 
+    .catch((err) => {
+      if (err.response.status === 409) {
+        dispatch({
+          type: user_actions.USER_DELETE,
+          data: {
+            errMsg: err.response.data.error
+          }
+        })
+      } else {
+        dispatch({
+          type: user_actions.USER_DELETE,
+          data: {
+            errMsg: 'Something unexpected went wrong'
+          }
+        });
+        throw (err.response);
+      }
+    })
+  }
+}
+
+export const userChangeLimit = (val) => {
+  return (dispatch) => {
+    return dispatch({
+      type: user_actions.USER_CHANGE_LIMITS,
+      data: {
+        limit: val
+      }
+    })
+  }
+}
+
+export const userPrevPage = () => {
+  return (dispatch) => {
+    const curPage = store.getState().users.current_page_number;
+    return dispatch({
+      type: user_actions.USER_PREV_PAGE,
+      data: {
+        current_page_number: curPage === 1 ? curPage : curPage - 1,
+      }
+    })
+  }
+}
+
+export const userNextPage = () => {
+  return (dispatch) => {
+    const curPage = store.getState().users.current_page_number;
+    return dispatch({
+      type: user_actions.USER_NEXT_PAGE,
+      data: {
+        current_page_number: curPage === store.getState().users.total_pages ? curPage : curPage + 1,
+      }
     })
   }
 }

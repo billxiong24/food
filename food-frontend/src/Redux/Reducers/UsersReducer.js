@@ -1,4 +1,4 @@
-import { user_actions } from '../Actions/UserActionTypes';
+import { user_actions } from '../Actions/ActionTypes/UserActionTypes';
 
 const initialState = {
   isSuccess: false,
@@ -16,6 +16,40 @@ export default function userReducer(state = initialState, action) {
     case user_actions.USER_NETID_LOG_IN:
       return Object.assign({}, state, action.data);
     case user_actions.USER_SEARCH:
+      return Object.assign({}, state, action.data);
+    case user_actions.USER_UPDATE:
+      if (action.data.userToUpdate) {
+        return Object.assign({}, state, {
+          errMsg: action.data.errMsg,
+          users: state.users.map((el) => {
+            if (el.id === action.data.userToUpdate.id) {
+              return {
+                ...el,
+                ...action.data.userToUpdate
+              }
+            }
+            return el;
+          })
+        });
+      } else {
+        return Object.assign({}, state, action.data);
+      }
+    case user_actions.USER_DELETE:
+      if (action.data.userToDelete) {
+        return Object.assign({}, state, {
+          errMsg: action.data.errMsg,
+          productLines: state.users.filter((el) => {
+            return el.id !== action.data.userToDelete.id;
+          })
+        });
+      } else {
+        return Object.assign({}, state, action.data);
+      }
+    case user_actions.USER_CHANGE_LIMITS:
+      return Object.assign({}, state, action.data);
+    case user_actions.USER_PREV_PAGE:
+      return Object.assign({}, state, action.data);
+    case user_actions.USER_NEXT_PAGE:
       return Object.assign({}, state, action.data);
     default:
       return state;

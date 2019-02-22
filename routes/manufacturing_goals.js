@@ -33,10 +33,9 @@ function getCRUD(type) {
 
 }
 
-function checkUser(req, res, next) {
-  let userID = req.params.id;
-  if(!userID) userID = req.body.user_id;
-  if(userID !== req.session.id) {
+const checkUser = (req, res, next) => {
+  let userID = parseInt(req.body.user_id);
+  if(userID !== req.session.user_id) {
     res.status(401).json({
       error: "You are not authorized to edit this manufacturing goal"
     });

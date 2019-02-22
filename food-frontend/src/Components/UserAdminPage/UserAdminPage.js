@@ -5,18 +5,15 @@ import ItemList from '../GenericComponents/ItemList';
 import Typography from '@material-ui/core/Typography';
 import { connect } from 'react-redux';
 import TextField from '@material-ui/core/TextField';
-import ProductLineCard from '../ProductLinePage/ProductLineCard';
 import Fab from '@material-ui/core/Fab';
-import { prdlineChangeLimit, prdlineNextPage, prdlinePrevPage, prdlineSearch, prdlineAddPrdline, prdlineUpdatePrdline, prdlineDeletePrdline } from '../../Redux/Actions/index'
-import { userSearch } from '../../Redux/Actions/ActionCreators/UserActionCreators';
+import { userSearch, userUpdate, userDelete, userNextPage, userPrevPage, userChangeLimit, } from '../../Redux/Actions/ActionCreators/UserActionCreators';
 import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
 import back from '../../Resources/Images/baseline-navigate_before-24px.svg'
 import next from '../../Resources/Images/baseline-navigate_next-24px.svg'
 import { IconButton } from '@material-ui/core';
-import common from '../../Resources/common';
-import axios from 'axios';
-import FileDownload from 'js-file-download';
 import { withCookies } from 'react-cookie';
+import { Link } from 'react-router-dom';
+import UserCard from './UserCard';
 
 const styles = {
   ingredients_list:{
@@ -49,6 +46,9 @@ const styles = {
     width: '6%',
     'padding-left':'2%',
     marginTop:15,
+  },
+  create_button:{
+    textAlign:'center',
   },
   list_container:{
     overflow:'auto',
@@ -103,56 +103,43 @@ class UserAdminPage extends Component {
     this.props.userSearch(this.state.query);
   }
 
-  addProductLine(prdline){
-    this.props.prdlineAddPrdline(prdline)
+  updateUser(user){
+    this.props.userUpdate(user)
     .then(()=>{
-      if(!this.props.productLine.errMsg) {
+      if(!this.props.users.errMsg) {
         this.setState({
           alert: true,
-          message: 'Product Line Successfully Added!'
+          message: 'User Successfully Changed!'
         })
       } else {
         this.setState({
           alert: true,
-          message: 'Product Line NOT Added: ' + this.props.productLine.errMsg
+          message: 'User NOT Changed: ' + this.props.users.errMsg
         })
       }
     })
   }
 
-  updateProductLine(prdline){
-    this.props.prdlineUpdatePrdline(prdline)
+  deleteUser(user) {
+    this.props.userDelete(user)
     .then(()=>{
-      if(!this.props.productLine.errMsg) {
+      if(!this.props.users.errMsg) {
         this.setState({
           alert: true,
-          message: 'Product Line Successfully Changed!'
-        })
-      } else {
-        this.setState({
-          alert: true,
-          message: 'Product Line NOT Changed: ' + this.props.productLine.errMsg
-        })
-      }
-    })
-  }
-
-  removeProductLine(prdline){
-    this.props.prdlineDeletePrdline(prdline)
-    .then(()=>{
-      if(!this.props.productLine.errMsg) {
-        this.setState({
-          alert: true,
-          message: 'Product Line Successfully Removed!'
+          message: 'User Successfully Removed!'
         });
-        // this.handleQuery();
       } else {
         this.setState({
           alert:true,
-          message: 'Product Line NOT Deleted: ' + this.props.productLine.errMsg
+          message: 'User NOT Deleted: ' + this.props.users.errMsg
         });
       }
     });
+  }
+
+  handleToggle(user) {
+    delete user.row_count
+    this.updateUser(Object.assign({}, user, {admin:!user.admin}));
   }
 
   closeAlert() {
@@ -163,22 +150,22 @@ class UserAdminPage extends Component {
   }
 
   incrementPage() {
-    this.props.prdlineNextPage();
+    this.props.userNextPage();
     this.handleQuery();
   }
 
   decrementPage() {
-    this.props.prdlinePrevPage();
+    this.props.userPrevPage();
     this.handleQuery();
   }
 
   changeLimit(val) {
-    this.props.prdlineChangeLimit(val);
+    this.props.userChangeLimit(val);
     this.handleQuery();
   }
 
   render() {
-    const { classes, users, productLine } = this.props
+    const { classes, users, cookies } = this.props
     return (
       <div>
         <div className={classes.ingredients_list}>
@@ -207,37 +194,42 @@ class UserAdminPage extends Component {
                 Search
               </Fab>
             </div>
+            <div className={classes.query_button}>
+              <Fab
+                variant="extended"
+                aria-label="Delete"
+                className={classes.create_button}
+                component={Link}
+                to={"/create_user"}
+              >
+                Create User
+              </Fab>
+            </div>
           </div>
           <DisplayButton
           classes={classes}
-          limit={productLine.limit}
+          limit={users.limit}
           changeLimit={(val)=>this.changeLimit(val)}
           >
           </DisplayButton>
-          <NewProductLine
-            addProductLine={(prdline) => { this.addProductLine(prdline) }}
-            admin={this.props.cookies.admin}
-            classes={classes}
-          ></NewProductLine>
           <div className={classes.list_container}>
             <ItemList items={users.users}>
-              <ProductLineCard
-                onEnter={(user) => { this.updateProductLine(user) }}
-                editable={this.props.cookies.admin === "true"}
-                persistent={true}
-                deleteProductLine={(user) => { this.removeProductLine(user) }}
-              ></ProductLineCard>
+              <UserCard
+                delete={(user) => { this.deleteUser(user) }}
+                handleToggle={(user) => {this.handleToggle(user) }}
+                currentUser={cookies.user}
+              ></UserCard>
             </ItemList>
           </div>
 
-          <div className={(productLine.productLines.length === 0 || !productLine.limit) ? classes.hide : ''}>
+          <div className={(users.users.length === 0 || !users.limit) ? classes.hide : ''}>
             <div variant="inset" className={classes.ingredients_list_divider} />
             <div className={classes.page_selection_container}>
               <IconButton color="primary" className={classes.button} onClick={()=>{this.decrementPage()}}>
                 <img src={back} />
               </IconButton>
               <Typography className={classes.page_number_text}>
-                Page {productLine.current_page_number} of {productLine.total_pages}
+                Page {users.current_page_number} of {users.total_pages}
               </Typography>
               <IconButton color="primary" className={classes.button} onClick={()=>{this.incrementPage()}}>
                 <img src={next} />
@@ -273,27 +265,8 @@ function DisplayButton(props) {
   }
 }
 
-function NewProductLine(props) {
-  if(props.admin==="true") {
-    return (
-      <div>
-        <ProductLineCard
-          onEnter={props.addProductLine}
-          editable={true}
-          item={{ name: 'Add New Product Line' }}
-          persistent={false}
-        ></ProductLineCard>
-        <div variant="inset" className={props.classes.ingredients_list_divider} />
-      </div>
-    );
-  }
-  return null;
-}
-
-
 const mapStateToProps = (state, ownProps) => {
   return {
-    productLine: state.productLine,
     users: state.users,
     cookies: ownProps.cookies.cookies,
   };
@@ -301,12 +274,11 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = {
   userSearch,
-  prdlineAddPrdline,
-  prdlineDeletePrdline,
-  prdlineUpdatePrdline,
-  prdlineNextPage,
-  prdlinePrevPage,
-  prdlineChangeLimit,
+  userUpdate,
+  userDelete,
+  userNextPage,
+  userPrevPage,
+  userChangeLimit,
 };
 
 

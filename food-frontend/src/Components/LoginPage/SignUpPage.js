@@ -12,6 +12,7 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import { connect } from 'react-redux';
 import { userCreateAttempt } from '../../Redux/Actions/ActionCreators/UserActionCreators';
 import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
+import { Link } from 'react-router-dom';
 
 const styles = theme => ({
   main: {
@@ -178,6 +179,15 @@ class SignUpPage extends Component {
               className={classes.submit}
             >
               Create User
+            </Button>
+            <Button
+              fullWidth
+              variant="contained"
+              className={classes.submit}
+              component={Link}
+              to={"/users"}
+            >
+              Done
             </Button>
           </form>
         </Paper>
