@@ -50,28 +50,14 @@ class Ingredient extends CRUD {
         .left_join("sku", null, "formula_ingredients.formula_id = sku.formula_id");
         const queryGen = new QueryGenerator(q);
         names = QueryGenerator.transformQueryArr(names);
-        queryGen.chainAndFilter(names, "ingredients.name LIKE ?")
+        queryGen.chainAndFilter(names, "ingredients::TEXT LIKE ?")
         .chainOrFilter(skus, "sku.id = ?")
         .makeDistinct();
         let queryStr = filter.applyFilter(queryGen.getQuery()).toString();
-        //logger.debug(queryStr);
-        //console.log(queryStr);
+        console.log(queryStr);
         return db.execSingleQuery(queryStr, []);
     }
 
-
-    /**
-     * Object should be in the form of
-     * {
-     *  name: ...
-     *  num: ...
-     *  vend_info: ...
-     *  pkg_size: ...
-     *  pkg_cost: ...
-     *  comments: ...
-     * }
-     *
-     */
     create(dataObj) {
         if(!dataObj.name || !dataObj.pkg_size || !dataObj.pkg_cost || !dataObj.unit)
             return Promise.reject("Not all required fields are present.");

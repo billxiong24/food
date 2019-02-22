@@ -57,13 +57,12 @@ class SKU extends CRUD {
 
         const queryGen = new QueryGenerator(q);
         names = QueryGenerator.transformQueryArr(names);
-        queryGen.chainAndFilter(names, "sku.name LIKE ?")
+        queryGen.chainAndFilter(names, "sku::TEXT LIKE ?")
         .chainOrFilter(ingredients, "formula_ingredients.ingredients_id=?")
         .chainOrFilter(productlines, "sku.prd_line=?")
         .makeDistinct();
         let queryStr = filter.applyFilter(queryGen.getQuery()).toString();
         console.log(queryStr);
-        //logger.debug(queryStr);
         return db.execSingleQuery(queryStr, []);
     }
 
@@ -173,50 +172,4 @@ class SKU extends CRUD {
     }
 }
 
-//const sku = new SKU();
-//sku.create(
-    //{
-        //"name": "remove",
-        //"num": 42,
-        //"case_upc": "25389999",
-        //"unit_upc": "253208",
-        //"unit_size": "12 lbs",
-        //"count_per_case": 1,
-        //"prd_line": "prod4",
-        //"comments": "commentingg",
-        //"id": 50,
-        //"formula_id": 3,
-        //"formula_scale": "1.0",
-        //"man_rate": "4.5",
-        //"man_lines": [1, 2]
-    //}
-//)
-//.then(function(res) {
-    //console.log(res.rows[0]);
-//})
-//.catch(function(err) {
-    //console.log(err);
-//})
-//console.log(sku.convertHeaderToDB([
-    //{
-        //"SKU#": "num",
-        //"Name": "name",
-        //"Case UPC": "case_upc",
-        //"Unit UPC": "unit_upc",
-        //"Unit size": "unit_size",
-        //"Count per case": "count_per_case",
-        //"PL Name": "prd_line",
-        //"Comment": "comments"
-    //},
-    //{
-        //"SKU#": "num",
-        //"Name": "name",
-        //"Case UPC": "case_upc",
-        //"Unit UPC": "unit_upc",
-        //"Unit size": "unit_size",
-        //"Count per case": "count_per_case",
-        //"PL Name": "prd_line",
-        //"Comment": "comments"
-    //}
-//]));
 module.exports = SKU;
