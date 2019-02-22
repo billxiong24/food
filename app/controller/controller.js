@@ -54,11 +54,19 @@ class Controller {
         });
     }
 
-    constructUpdateResponse(res, promise) {
+    constructUpdateResponse(res, promise, rows=true) {
         promise.then((result) => {
-            res.status(200).json({
-                rowCount: result.rowCount
-            });
+            let retObj = {};
+            if(rows) {
+                retObj = {
+                    rowCount: result.rowCount
+                }
+            }
+            else {
+                retObj = result;
+            }
+
+            res.status(200).json(retObj);
         })
         .catch((err) => {
             res.status(409).json({

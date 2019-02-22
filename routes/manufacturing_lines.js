@@ -46,6 +46,13 @@ router.get('/sku_mapping', function(req, res, next) {
     });
 });
 
+router.put('/sku_mapping', function(req, res, next) {
+    let skus = Controller.convertParamToArray(req.body.skus);
+    const ml = new ManufacturingLine();
+    const controller = new Controller();
+    controller.constructUpdateResponse(res, ml.remapSkus(skus, req.body.all, req.body.none), false);
+});
+
 router.post('/', function(req, res, next) {
     const ml = new ManufacturingLine();
     const controller = new Controller();

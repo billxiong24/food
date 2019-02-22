@@ -128,6 +128,64 @@ class ManufacturingLine extends CRUD {
         }
         return skuMapping;
     }
+
+    remapSkus(skus, all, none) {
+        if(!none)
+            none = [];
+        if(!all)
+            all = [];
+        let allIns = this.genMapSkuDataObj(skus, all);
+        let insQuery = QueryGenerator.genInsConflictQuery(allIns, "manufacturing_line_sku", "ON CONFLICT DO NOTHING").toString();
+
+        let delQuery = squel.delete()
+        .from('manufacturing_line_sku');
+        let expr = squel.expr();
+        for(let i = 0; i < skus.length; i++) {
+            for(let j = 0; j < none.length; j++) {
+                expr = expr.or("sku_id = ? AND manufacturing_line_id = ?", skus[i], none[j]);
+            }
+        }
+        delQuery = delQuery.where(expr);
+        delQuery = delQuery.toString();
+        return (async () => {
+            const client = await db.getSingleClient();
+
+            try {
+                await client.query('BEGIN');
+                const insRows = await client.query(insQuery, []);
+                const delRows = await client.query(delQuery, [])
+                await client.query('COMMIT')
+                return {
+                    insertedRows: insRows.rowCount,
+                    deletedRows: delRows.rowCount
+                }
+            } catch (e) {
+                await client.query('ROLLBACK')
+                throw e
+            } finally {
+                client.release()
+            }
+        })()
+        .then(function(obj) {
+            return obj;
+        });
+    }
+
+    genMapSkuDataObj(skus, arr) {
+        let dataObj = [];
+        for(let j = 0; j < arr.length; j++) {
+            for (let i = 0; i < skus.length; i++) {
+                dataObj.push({
+                    sku_id: skus[i],
+                    manufacturing_line_id: arr[j]
+                });
+            }
+        }
+
+        return dataObj;
+    }
+
+
 };
 
 module.exports = ManufacturingLine;
