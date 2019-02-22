@@ -26,6 +26,12 @@ router.get('/search', function(req, res, next) {
 
 });
 
+router.get('/:id', function(req, res, next) {
+    const formula = new Formula();
+    const controller = new Controller();
+    controller.constructGetResponse(res, formula.read(req.params.id));
+});
+
 router.get('/:id/ingredients', function(req, res, next) {
     let id = req.params.id;
     if(isNaN((id))) {

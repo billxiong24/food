@@ -40,6 +40,14 @@ class Formula extends CRUD {
         return db.execSingleQuery("DELETE FROM " + this.tableName + " WHERE id = $1", [id]);
     }
 
+    read(id) {
+        let q = squel.select()
+        .from(this.tableName)
+        .field("*")
+        .where("id = ?", id).toString();
+        return db.execSingleQuery(q, []);
+    }
+
     search(names, ingredients, filter) {
         let q = squel.select()
         .from(this.tableName)
