@@ -15,7 +15,7 @@ describe('manufacturing lines', function() {
         })
         .end(function(err, res) {
             res.should.have.status(200);
-            res.body.length.should.equal(2);
+            res.body.length.should.equal(6);
             done();
         });
     });
@@ -28,12 +28,68 @@ describe('manufacturing lines', function() {
         })
         .end(function(err, res) {
             res.should.have.status(200);
-            res.body[0].name.should.equal("hi");
+            res.body[0].name.should.equal("aeiruet");
             res.body.length.should.equal(1);
             done();
         });
-
     });
+    it('get mapping of skus to manufacturing lines', function(done) {
+        chai.request(server)
+        .get('/manufacturing_line/sku_mapping')
+        .query({
+            skus: [1, 21, 26]
+        })
+        .end(function(err, res) {
+            res.should.have.status(200);
+            res.body.should.have.property('none');
+            res.body.should.have.property('all');
+            res.body.should.have.property('some');
+
+            res.body.none.length.should.equal(5);
+            res.body.all.length.should.equal(2);
+            res.body.some.length.should.equal(1);
+            done();
+        });
+    });
+
+    it('get mapping of skus to manufacturing lines', function(done) {
+        chai.request(server)
+        .get('/manufacturing_line/sku_mapping')
+        .query({
+            skus: [1, 21, 26]
+        })
+        .end(function(err, res) {
+            res.should.have.status(200);
+            res.body.should.have.property('none');
+            res.body.should.have.property('all');
+            res.body.should.have.property('some');
+
+            res.body.none.length.should.equal(5);
+            res.body.all.length.should.equal(2);
+            res.body.some.length.should.equal(1);
+            done();
+        });
+    });
+
+    it('get mapping of skus to manufacturing lines', function(done) {
+        chai.request(server)
+        .get('/manufacturing_line/sku_mapping')
+        .query({
+            skus: [1, 21, 26]
+        })
+        .end(function(err, res) {
+            res.should.have.status(200);
+            res.body.should.have.property('none');
+            res.body.should.have.property('all');
+            res.body.should.have.property('some');
+
+            res.body.none.length.should.equal(5);
+            res.body.all.length.should.equal(2);
+            res.body.some.length.should.equal(1);
+            done();
+        });
+    });
+
     it('get skus of a manufacturing lines', function(done) {
         chai.request(server)
         .get('/manufacturing_line/3/skus')
@@ -65,6 +121,24 @@ describe('manufacturing lines', function() {
         .end(function(err, res) {
             res.should.have.status(201);
             res.body.rowCount.should.equal(2);
+            done();
+        });
+    });
+    it('should bulk edit add many skus to manufacturing lines', function(done) {
+        chai.request(server)
+        .put('/manufacturing_line/sku_mapping')
+        .send({
+            all: [5, 6, 7],
+            none: [1],
+            skus: [1, 21, 26]
+        })
+        .end(function(err, res) {
+            res.should.have.status(200);
+            res.body.should.have.property('insertedRows');
+            res.body.should.have.property('deletedRows');
+
+            res.body.insertedRows.should.equal(9);
+            res.body.deletedRows.should.equal(3);
             done();
         });
     });

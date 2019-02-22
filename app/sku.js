@@ -44,14 +44,6 @@ class SKU extends CRUD {
         return Promise.reject("No valid name or num provided.");
     }
 
-    getSKUNumIfExists(id) {
-        return db.execSingleQuery("SELECT num FROM sku WHERE id=$1", [id]).then(function(res) {
-            if(res.rows.length == 0)
-                return Promise.reject("This SKU does not exist.");
-            return res.rows[0].num;
-        });
-    }
-
     getIngredients(id) {
         const ing = new Ingredient();
         return ing.search([], [id], new Filter());
