@@ -86,6 +86,7 @@ class ProductLinePage extends Component {
   }
 
   componentWillMount(){
+    this.handleQuery();
   }
 
   handleQueryChange(e){

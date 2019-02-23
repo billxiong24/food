@@ -8,7 +8,7 @@ import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
 import DeleteIcon from '@material-ui/icons/Delete';
 import ManufacturingGoalsCard from './ManufacturingGoalsCard';
-import { mangoalAddFilter, mangoalRemoveFilter, mangoalDeleteMangoalSkus, mangaolDeleteMangoal, mangaolUpdateMangoalSkus, mangoalUpdateFilters, mangoalGetProductLines, mangoalSetActiveMangoal, mangoalGetMangoals, mangoalCreateMangoal, mangoalSearchSkus } from '../../Redux/Actions/ActionCreators/ManufacturingGoalActionCreators';
+import { mangoalAddFilter, mangoalRemoveFilter, mangoalDeleteMangoalSkus, mangaolDeleteMangoal, mangaolUpdateMangoalSkus, mangoalSearchProductLines, mangoalSetActiveMangoal, mangoalGetMangoals, mangoalCreateMangoal, mangoalSearchSkus } from '../../Redux/Actions/ActionCreators/ManufacturingGoalActionCreators';
 import ManufacturingGoalsSkuSearch from './ManufacturingGoalsSkuSearch';
 import TextField from '@material-ui/core/TextField';
 import SkuCard from './SkuCard';
@@ -23,6 +23,8 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Chip from '@material-ui/core/Chip';
 import { withCookies } from 'react-cookie';
+import SkuAutocomplete from './SkuAutocomplete';
+import Autocomplete from './Autocomplete';
 
 const styles = {
   man_goal_page_container: {
@@ -179,28 +181,25 @@ class ManufacturingGoalsPage extends Component {
       suggestions:[],
       quantity: '',
       sku: null,
+      search: '',
+      searchProdLine: '',
     }
   }
 
   componentWillMount() {
-    this.props.mangoalGetProductLines();
-    this.getSkuSuggestions();
+    this.props.mangoalSearchSkus({name:''}, this.props.manGoals.filters);
+    this.props.mangoalSearchProductLines('');
     this.props.mangoalGetMangoals(this.props.cookies.id);
   }
 
-  updateFilters(filters) {
-    new Promise((resolve, reject) => {
-      resolve(this.props.mangoalUpdateFilters(filters));
-    })
-    .then((value) => {
-      this.getSkuSuggestions();
-    });
-  }
-
-  addFilter(prdline) {
-    if (prdline) {
+  addFilter = (id) => {
+    if (id) {
       new Promise((resolve, reject) => {
-        resolve(this.props.mangoalAddFilter(prdline));
+        resolve(this.props.mangoalAddFilter(
+          this.props.manGoals.productLines.filter((prodline) => {
+            return prodline.id === id;
+          })[0]
+        ));
       })
       .then((value) => {
         this.getSkuSuggestions();
@@ -237,15 +236,30 @@ class ManufacturingGoalsPage extends Component {
     });
   };
 
-  handleQueryChange = name => event => {
+  onChange = e => {
     this.setState({
-      [name]: event,
+      search: e.currentTarget.value,
+      sku: null,
     });
+    return this.props.mangoalSearchSkus({name:e.currentTarget.value}, this.props.manGoals.filters);
+  };
+
+  selectSku = skuNum => {
+    this.setState({
+      sku: skuNum,
+    })
+  }
+
+  onChangeProdline = e => {
+    this.setState({
+      searchProdLine: e.currentTarget.value,
+    });
+    return this.props.mangoalSearchProductLines(e.currentTarget.value);
   }
 
   addSku() {
     let sku = {
-      sku_id: this.state.sku.value.id,
+      sku_id: this.state.sku,
       quantity: this.state.quantity,
     }
     this.props.mangaolUpdateMangoalSkus(
@@ -272,19 +286,7 @@ class ManufacturingGoalsPage extends Component {
   }
 
   getSkuSuggestions() {
-    this.props.mangoalSearchSkus({name:''}, this.props.manGoals.filters)
-    .then(()=>{
-      let newSuggestions = this.props.manGoals.skus
-      .map(sku => ({
-        value: sku,
-        label: sku.name + ': ' +
-          sku.unit_size + ' * ' +
-          sku.count_per_case
-      }));
-      this.setState({
-        suggestions: newSuggestions // TODO update this when the query changes so we don't get all skus for autocomplete
-      });
-    })
+    this.props.mangoalSearchSkus({name:this.state.search}, this.props.manGoals.filters);
   }
 
   updateManufacturingGoal(manGoal){
@@ -381,12 +383,14 @@ class ManufacturingGoalsPage extends Component {
             <div className={classes.sku_search_container}>
               <div className={classes.man_goal_content_add}>
                 <div className={classes.sku_search_bar}>
-                  <ManufacturingGoalsSkuSearch
-                    suggestions={this.state.suggestions}
-                    value={this.state.sku}
-                    onChange={this.handleQueryChange('sku')}
-                    placeholder={"Search for SKUs to Add"}
-                  ></ManufacturingGoalsSkuSearch>
+                  <SkuAutocomplete
+                    suggestions={manGoals.skus}
+                    value={this.state.search}
+                    onChange={this.onChange}
+                    selectId={this.selectSku}
+                    placeholder={"Please Search and Select a SKU"}
+                  >
+                  </SkuAutocomplete>
                 </div>
                 <TextField
                   id="standard-number"
@@ -410,8 +414,16 @@ class ManufacturingGoalsPage extends Component {
               </div>
               <div className={classes.filter_container}>
                 <FormControl className={classes.drop_down}>
-                  <InputLabel htmlFor="age-simple">Product Line</InputLabel>
-                  <Select
+                  <Autocomplete
+                    suggestions={manGoals.productLines}
+                    value={this.state.searchProdLine}
+                    onChange={this.onChangeProdline}
+                    selectId={this.addFilter}
+                    placeholder={"Product Line"}
+                    id={"prod"}
+                  >
+                  </Autocomplete>
+                  {/* <Select
                     value=""
                     onChange={(e)=>{this.addFilter(e.target.value)}}
                   >
@@ -421,7 +433,7 @@ class ManufacturingGoalsPage extends Component {
                     {manGoals.productLines.map((prdline)=>(
                       <MenuItem key={prdline.id} value={prdline} data={prdline}>{prdline.name}</MenuItem>
                     ))}
-                  </Select>
+                  </Select> */}
                   <FormHelperText>Select Product Lines to Filter By</FormHelperText>
                 </FormControl>
                 <div className={classes.active_filter_container}>
@@ -489,8 +501,7 @@ const mapDispatchToProps = {
   mangoalGetMangoals,
   mangoalCreateMangoal,
   mangoalSearchSkus,
-  mangoalGetProductLines,
-  mangoalUpdateFilters,
+  mangoalSearchProductLines,
   mangaolUpdateMangoalSkus,
   mangaolDeleteMangoal,
   mangoalDeleteMangoalSkus,

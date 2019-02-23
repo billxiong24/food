@@ -22,6 +22,7 @@ import BulkImportPage from './BulkImport/BulkImportPage'
 import { withCookies } from 'react-cookie';
 import PrivacyPage from './PrivacyPage/PrivacyPage';
 import UserAdminPage from './UserAdminPage/UserAdminPage';
+import ManufacturingLinesPage from './ManufacturingLinesPage/ManufacturingLinesPage';
 
 const styles = {
 
@@ -34,6 +35,8 @@ class RouterComponent extends Component {
 
   render() {
     const {manGoals, ingredient_id, cookies} = this.props;
+    const landingPage = "/manufacturing_goals";
+
     return (
       <Router>
         <div>
@@ -53,13 +56,15 @@ class RouterComponent extends Component {
             <PrivateRoute exact={true} path="/ingredients/dependency" component={IngredientDependencyPage} />
             <PrivateRoute exact={true} path="/bulk" component={BulkImportPage} />
             <PrivateRoute exact={true} path="/create_user" component={SignUpPage} 
-              block={cookies.admin === 'false'} altPath="/manufacturing_goals"/>
+              block={cookies.admin === 'false'} altPath={landingPage}/>
             <PrivateRoute exact={true} path="/users" component={UserAdminPage} 
-              block={cookies.admin === 'false'} altPath="/manufacturing_goals"/>
+              block={cookies.admin === 'false'} altPath={landingPage}/>
             <PrivateRoute exact={true} path="/logout" component={LogoutPage} />
             <PrivateRoute exact={true} path="/manufacturing_goals/calculations" component={CalculatorPage}
-              block={!manGoals.activeGoal.id} altPath="/manufacturing_goals" />
-            <Redirect from="/*" to="/manufacturing_goals" />
+              block={!manGoals.activeGoal.id} altPath={landingPage} />
+            <PrivateRoute exact={true} path="/manufacturing_lines" component={ManufacturingLinesPage}
+              block={cookies.admin === 'false'} altPath={landingPage}/>
+            <Redirect from="/*" to={landingPage} />
           </Switch>
         </div>
       </Router>

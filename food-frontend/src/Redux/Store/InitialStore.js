@@ -139,5 +139,9 @@ export const InitialStore = {
   },
   bulk_import:{
     errors:[]
+  },
+  manLine: {
+    manLines: [],
+    errMsg: null,
   }
 }

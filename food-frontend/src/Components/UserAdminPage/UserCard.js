@@ -17,10 +17,12 @@ const styles = {
     width: '100 %',
     marginBottom:10,
     marginTop:10,
+    padding:10,
   },
   content: {
     display:'flex',
     flexDirection:'row',
+    padding:'0px !important',
   },
   user_name: {
     fontSize: 14,
@@ -94,7 +96,7 @@ class UserCard extends Component {
         const item = this.props.item
         // console.log(this.props)
         return (
-          <Card className={classes.card} onClick={() => { this.edit() }}>
+          <Card className={classes.card}>
             <CardContent className={classes.content}>
               <Typography className={classes.user_name} color="textSecondary" gutterBottom>
                 {item.uname}
