@@ -11,6 +11,24 @@ export const InitialStore = {
   // Persistent data concerning routing
   route: 0,
   // Persistent data concnerning ingredients view
+  formulas: {
+    filters: [],
+    items: [],
+    ingredient_names: [],
+    formula_names: [],
+    sortby: labels.formulas.sort_by.FORMULA_NAME,
+    filter_type: labels.formulas.filter_type.INGREDIENTS,
+    current_page_number: 1,
+    total_pages: 12,
+    offset:0,
+    limit:10,
+    full:false,
+    row_count:0,
+    end:false,
+    skus: [],
+    errMsg: null,
+    errors:[]
+  },
   ingredients: {
     filters: [],
     items: [],
@@ -70,6 +88,18 @@ export const InitialStore = {
     productLines: [],
     filters: [],
     errMsg: null
+  },
+
+  formula_details: {
+      formulaName: null,
+      formulaComment: null,
+      formulaNum: null,
+      new: false,
+      valid: false,
+      editing: false,
+      id: null,
+      ingredients:[],
+      errors:[]
   },
   ingredient_details:{
     ingredientName:null,

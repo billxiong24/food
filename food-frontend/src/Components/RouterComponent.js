@@ -8,6 +8,7 @@ import LoginPage from './LoginPage/LoginPage';
 import PrivateRoute from './PrivateRoute';
 import ManufacturingGoalsPage from './ManufacturingGoalsPage/ManufacturingGoalsPage';
 import IngredientsPage from './IngredientsPage/IngredientsPage';
+import FormulaPage from './FormulaPage/FormulaPage';
 import IngredientDependencyPage from './IngredientDependencyPage/IngredientDependencyPage';
 import '../Root.css';
 import SKUsPage from './SKUPage/SKUsPage';
@@ -16,6 +17,7 @@ import LogoutPage from './LoginPage/LogoutPage';
 import BulkTransactionPage from './BulkTransactionPage/BulkTransactionPage'
 import CalculatorPage from './CalculatorPage/CalculatorPage';
 import IngredientDetailViewPage from './IngredientDetailViewPage/IngredientDetailViewPage';
+import FormulaDetailViewPage from './FormulaDetailViewPage/FormulaDetailViewPage';
 import SKUDetailViewPage from './SKUDetailViewPage/SKUDetailViewPage'
 import BulkImportPage from './BulkImport/BulkImportPage'
 import common from '../Resources/common';
@@ -41,6 +43,8 @@ class RouterComponent extends Component {
             <PrivateRoute exact={true} path="/manufacturing_goals" component={ManufacturingGoalsPage} />
             <PrivateRoute exact={true} path="/bulkimportexport" component={ BulkImportPage } />
             <PrivateRoute exact={true} path="/ingredients" component={ IngredientsPage} />
+            <PrivateRoute exact={true} path="/formula" component={ FormulaPage } />
+            <PrivateRoute exact={true} path="/formula/details" component={ FormulaDetailViewPage } />
             <PrivateRoute exact={true} path="/ingredients/details" component={ IngredientDetailViewPage}/>
             <PrivateRoute exact={true} path="/skus" component={SKUsPage} />
             <PrivateRoute exact={true} path="/skus/details" component={SKUDetailViewPage} />

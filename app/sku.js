@@ -54,11 +54,12 @@ class SKU extends CRUD {
         .from(this.tableName)
         .field("sku.*, COUNT(*) OVER() as row_count")
         .left_join("formula_ingredients", null, "sku.formula_id = formula_ingredients.formula_id")
+        .left_join("ingredients", null, "ingredients.id=formula_ingredients.ingredients_id");
 
         const queryGen = new QueryGenerator(q);
         names = QueryGenerator.transformQueryArr(names);
         queryGen.chainAndFilter(names, "sku::TEXT LIKE ?")
-        .chainOrFilter(ingredients, "formula_ingredients.ingredients_id=?")
+        .chainOrFilter(ingredients, "ingredients.name = ?")
         .chainOrFilter(productlines, "sku.prd_line=?")
         .makeDistinct();
         let queryStr = filter.applyFilter(queryGen.getQuery()).toString();

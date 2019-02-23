@@ -1,5 +1,27 @@
 export default {
     // For now, only persistent data about users is who is actually logged in if there is someone logged in
+    formulas:{
+        sort_by:{
+            FORMULA_NUM: "No.",
+            COMMENTS: "Comments",
+            FORMULA_NAME: "Name"
+        },
+        sort_by_map:{
+            "No.":"num",
+            "Comments":"comment",
+            "Name":"name"
+        },
+        reverse_sort_by_map:{
+            "pkg_size":"Package Size",
+            "num":"Formula Number",
+            "comment":"Comments",
+            "name": "Name"
+        },
+        filter_type:{
+            INGREDIENTS: "Ingredients",
+            FORMULA_NAME: "Formula"
+        }
+    },
     ingredients:{
         sort_by:{
             PACKAGE_SIZE: "Package Size",
