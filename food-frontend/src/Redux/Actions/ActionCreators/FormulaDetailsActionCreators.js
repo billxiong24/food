@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { ING_DET_UPDATE_ING, ING_DET_SET_INGREDIENT, ING_DET_SET_EDITING, ING_DET_GET_SKUS, ING_DET_ADD_ING, ING_DET_ADD_ERROR, ING_DET_DELETE_ERROR, ING_DET_SET_VALID, ING_DET_SET_NEW } from '../IngredientDetailsActionTypes';
 import common, { createError } from '../../../Resources/common';
 import {
     FORMULA_DET_GET_INGREDIENTS,
@@ -16,6 +15,16 @@ import {
 } from '../FormulaDetailActionTypes';
 
 const hostname = common.hostname;
+let hashCode = function(str) {
+  var hash = 0, i, chr;
+  if (str.length === 0) return hash;
+  for (i = 0; i < str.length; i++) {
+    chr   = str.charCodeAt(i);
+    hash  = ((hash << 5) - hash) + chr;
+    hash |= 0; // Convert to 32bit integer
+  }
+  return hash;
+};
 
 export const formulaDetUpdateFormula = (formula) => {
     let params = {
@@ -58,10 +67,52 @@ export const formulaDetUpdateFormula = (formula) => {
       })
     }
   }
+  export const formulaDetAddIngredient= (formula_id, ing) => {
+      console.log("ADDING INGREDIENTS");
+      console.log(formula_id);
+      console.log(ing);
+    return (dispatch) => {
+      return axios.get(hostname + 'ingredients/search', {
+          params: {
+            names: [ing.name]
+          }
+      })
+      .then(response => {
+        //dispatch({
+          //type: FORMULA_DET_DELETE_FORMULA,
+          //data: response.data
+        //})
+          if(response.data.length === 0) {
+              console.log("ingredient doesnt exist");
+              dispatch(formulaDetAddError({
+                  errMsg: "Ingredient doesn't exist.",
+                  id: hashCode("Ingredient doesn't exist")
+              }));
+              return;
+          }
+          return axios.post(hostname + 'formula/' + formula_id + '/ingredients', {
+              ingredients: [
+                  {
+                      ingredients_id: response.data[0].id,
+                      quantity: ing.quantity,
+                      unit: ing.unit
+                  }
+              ]
+          }
+          )
+          .then(response => {
+              console.log(response);
+          });
+      })
+      
+      .catch(error => {
+        throw(error);
+      });
+    }
+
+  }
 
   export const formulaDetDeleteFormula = (form_id) => {
-      console.log("DLEETETING A FORMULA");
-      console.log(form_id);
     return (dispatch) => {
       return axios.delete(hostname + 'formula/'+form_id, {
         
@@ -120,10 +171,10 @@ export const formulaDetUpdateFormula = (formula) => {
         if(error.error !== undefined){
           message = error.error
         }else{
-          message = "Ingredient Conflicts"
+          message = "Formula Conflicts"
         }
         dispatch({
-          type: ING_DET_ADD_ERROR,
+          type: FORMULA_DET_ADD_ERROR,
           data: createError(message)
         })
       });

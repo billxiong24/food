@@ -99,6 +99,7 @@ export const InitialStore = {
       editing: false,
       id: null,
       ingredients:[],
+      new_ingredients: [],
       errors:[]
   },
   ingredient_details:{

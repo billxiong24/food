@@ -5,7 +5,7 @@ import TextField from '@material-ui/core/TextField';
 import { Typography, Button } from '@material-ui/core';
 import EditableText from '../GenericComponents/EditableText';
 import labels from '../../Resources/labels';
-import { formulaDetAddFormula, formulaDetAddError, formulaDetDeleteError, formulaDetSetNew, formulaDetUpdateFormula, formulaDetSetEditing, formulaDetDeleteFormula } from '../../Redux/Actions/ActionCreators/FormulaDetailsActionCreators';
+import { formulaDetAddIngredient, formulaDetAddFormula, formulaDetAddError, formulaDetDeleteError, formulaDetSetNew, formulaDetUpdateFormula, formulaDetSetEditing, formulaDetDeleteFormula } from '../../Redux/Actions/ActionCreators/FormulaDetailsActionCreators';
 import { routeToPage, ingDeleteIng, ingAddDependency, ingRemoveDependency } from '../../Redux/Actions';
 import IngredientSKUList from './IngredientSKUList';
 import { withRouter, Link } from 'react-router-dom';
@@ -37,6 +37,9 @@ const styles = {
         borderRadius: 12,
         color:'white'
     },
+    add_ing: {
+        backgroundColor: 'blue'
+    }, 
     textField:{
         width: '500px',
         color:'white'
@@ -64,9 +67,9 @@ class FormulaDetailViewPage extends Component {
             formulaNum:this.props.formulaNum,
             formulaComment:this.props.formulaComment,
             new:false,
-            //checked:this.props.dependency.filter((ing) => {
-              //return ing.id === this.props.id;
-            //}).length === 1,
+            new_ingredient_name: null,
+            new_ingredient_quantity: null,
+            new_ingredient_unit: null 
         }
         console.log("FORMULA DETAIL VIEW")
         console.log(this.props.id)
@@ -143,6 +146,14 @@ class FormulaDetailViewPage extends Component {
         console.log("am deleting a formulaaa");
         this.props.del(formula)
         
+    }
+
+    addIngredient = () => {
+        this.props.addIng(this.props.id, {
+            name: this.state.new_ingredient_name,
+            quantity: this.state.new_ingredient_quantity,
+            unit: this.state.new_ingredient_unit
+        });
     }
 
     render() {
@@ -242,6 +253,38 @@ class FormulaDetailViewPage extends Component {
                         Ingredients List
                     </Typography>
                     <IngredientSKUList></IngredientSKUList>
+                    <div className = {classes.add_ing}>
+                    <EditableText 
+                        label={"Ingredient name"} 
+                        editing={editing}
+                        key={"new_ingredient_name"}
+                        field={"new_ingredient_name"}
+                        onChange={this.onChange}
+                        multiline={false}>
+                        { this.state.new_ingredient_name}
+                    </EditableText>
+                    <EditableNumeric
+                        label={"Ingredient Quantity"} 
+                        editing={editing}
+                        key={"new_ingredient_quantity"}
+                        field={"new_ingredient_quantity"}
+                        onChange={this.onChange}
+                        multiline={false}>
+                        { this.state.new_ingredient_quantity}
+                    </EditableNumeric>
+                    <EditableText 
+                        label={"Add Ingredient"} 
+                        editing={editing}
+                        key={"new_ingredient_unit"}
+                        field={"new_ingredient_unit"}
+                        onChange={this.onChange}
+                        multiline={false}>
+                        { this.state.new_ingredient_unit }
+                    </EditableText>
+                    </div>
+                    <Button editing={editing} onClick={this.addIngredient}>
+                       Add 
+                    </Button>
                 </div>
                 {
           this.props.errors.map((error, index) => (
@@ -294,6 +337,9 @@ const mapDispatchToProps = (dispatch, ownProps) => {
         add: (formula) =>{
             dispatch(formulaDetAddFormula(formula))
         },
+        addIng: (formula_id, ing) => {
+            dispatch(formulaDetAddIngredient(formula_id, ing));
+        }, 
         deleteError: (error) => {
             dispatch(formulaDetDeleteError(error))
         },
