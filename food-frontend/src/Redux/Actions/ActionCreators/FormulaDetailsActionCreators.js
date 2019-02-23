@@ -6,6 +6,7 @@ import {
     FORMULA_DET_UPDATE_FORMULA,
     FORMULA_DET_ADD_FORMULA,
     FORMULA_DET_ADD_ERROR,
+    FORMULA_DET_ADD_INGREDIENTS,
     FORMULA_DET_DELETE_ERROR,
     FORMULA_DET_DELETE_INGREDIENTS,
     FORMULA_DET_DELETE_FORMULA,
@@ -25,6 +26,37 @@ let hashCode = function(str) {
   }
   return hash;
 };
+
+export const formulaDeleteIngredient = (formula_id, ing_id) => {
+    return (dispatch) => {
+      return axios.delete(hostname + 'formula/' + formula_id + "/ingredients", {
+          data: {
+            ingredients: [ing_id]
+          }
+      })
+      .then((response) => {
+            dispatch({
+              type: FORMULA_DET_DELETE_INGREDIENTS, 
+              data: {
+                  id: ing_id
+              }
+            })
+      })
+      .catch((error) => {
+        let message;
+        console.log(error)
+        if(error.error !== undefined){
+          message = error.error
+        }else{
+          message = "Bad input for formula"
+        }
+        dispatch({
+          type: FORMULA_DET_ADD_ERROR,
+          data: createError(message)
+        })
+      });
+    }
+}
 
 export const formulaDetUpdateFormula = (formula) => {
     let params = {
@@ -68,9 +100,9 @@ export const formulaDetUpdateFormula = (formula) => {
     }
   }
   export const formulaDetAddIngredient= (formula_id, ing) => {
-      console.log("ADDING INGREDIENTS");
       console.log(formula_id);
       console.log(ing);
+          let ingObj = null;
     return (dispatch) => {
       return axios.get(hostname + 'ingredients/search', {
           params: {
@@ -90,6 +122,12 @@ export const formulaDetUpdateFormula = (formula) => {
               }));
               return;
           }
+          ingObj = response.data[0];
+          ingObj.quantity = ing.quantity;
+          ingObj.formula_unit = ing.unit;
+          console.log("HELLO WORLD");
+          console.log(ingObj.unit);
+
           return axios.post(hostname + 'formula/' + formula_id + '/ingredients', {
               ingredients: [
                   {
@@ -102,11 +140,21 @@ export const formulaDetUpdateFormula = (formula) => {
           )
           .then(response => {
               console.log(response);
+              if(response.status === 201) {
+                  return dispatch({
+                      type: FORMULA_DET_ADD_INGREDIENTS,
+                      data: ingObj
+                  });
+              }
           });
       })
       
       .catch(error => {
-        throw(error);
+          dispatch(formulaDetAddError({
+              errMsg: "Bad input - check units and/or quantity",
+              id: hashCode("Bad input - check units and/or quantity")
+          }));
+        //throw(error);
       });
     }
 
@@ -130,6 +178,15 @@ export const formulaDetUpdateFormula = (formula) => {
     }
 
   }
+
+export const formulaDetSetIngredients = (ings) => {
+    return (dispatch) => {
+        dispatch({
+            type: FORMULA_DET_GET_INGREDIENTS,
+            data: ings
+        });
+    }
+}
 
   export const formulaDetGetIngredients = (form_id) => {
     return (dispatch) => {

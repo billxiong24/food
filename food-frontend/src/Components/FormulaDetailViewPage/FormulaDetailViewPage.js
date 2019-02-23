@@ -273,7 +273,7 @@ class FormulaDetailViewPage extends Component {
                         { this.state.new_ingredient_quantity}
                     </EditableNumeric>
                     <EditableText 
-                        label={"Add Ingredient"} 
+                        label={"Unit"} 
                         editing={editing}
                         key={"new_ingredient_unit"}
                         field={"new_ingredient_unit"}

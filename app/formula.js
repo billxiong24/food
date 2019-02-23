@@ -86,6 +86,7 @@ class Formula extends CRUD {
         const queryGen = new QueryGenerator(query);
         queryGen.chainOrFilter(ingreds, "ingredients_id = ?");
         let queryStr = queryGen.getQuery().toString();
+        console.log(queryStr);
         //logger.debug(queryStr);
         return db.execSingleQuery(queryStr, []);
     }

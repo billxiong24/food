@@ -28,7 +28,7 @@ import FilterDropdown from './FilterDropdown';
 import SortByDropdown from './SortByDropdown';
 import PageSelector from './PageSelector';
 import IngredientsPageSearchBar from './IngredientsPageSearchBar';
-import { formulaDetSetFormula, formulaDetSetEditing, formulaDetSetNew } from '../../Redux/Actions/ActionCreators/FormulaDetailsActionCreators';
+import { formulaDetSetIngredients, formulaDetSetFormula, formulaDetSetEditing, formulaDetSetNew } from '../../Redux/Actions/ActionCreators/FormulaDetailsActionCreators';
 import { withRouter } from 'react-router-dom'
 import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
 import axios from 'axios';
@@ -247,6 +247,7 @@ const mapDispatchToProps = dispatch => {
     }))
     dispatch(formulaDetSetNew(true))
     dispatch(formulaDetSetEditing(true))
+    dispatch(formulaDetSetIngredients([]))
       history.push('/formula/details')
     },
     deleteError: (error) => {

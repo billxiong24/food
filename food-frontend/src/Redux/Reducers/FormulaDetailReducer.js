@@ -3,9 +3,11 @@ import {
     FORMULA_DET_SET_FORMULA, 
     FORMULA_DET_UPDATE_FORMULA,
     FORMULA_DET_ADD_FORMULA,
+    FORMULA_DET_ADD_INGREDIENTS,
     FORMULA_DET_ADD_ERROR,
     FORMULA_DET_DELETE_ERROR,
     FORMULA_DET_SET_VALID,
+    FORMULA_DET_DELETE_INGREDIENTS,
     FORMULA_DET_SET_EDITING,
     FORMULA_DET_DELETE_FORMULA,
     FORMULA_DET_SET_NEW
@@ -15,6 +17,19 @@ import { addToList, removeFromList } from '../../Resources/common';
 const initState = {};
   export default function FormulaDetailReducer(state=initState, action) {
     switch (action.type) {
+        case FORMULA_DET_DELETE_INGREDIENTS: 
+            console.log(state.ingredients);
+            console.log(action.data);
+            return Object.assign({}, state, {
+                ingredients: removeFromList(action.data, state.ingredients)
+            });
+        case FORMULA_DET_ADD_INGREDIENTS:
+            console.log("add ingredients formla");
+            console.log(state.ingredients);
+            console.log(action.data);
+            return Object.assign({}, state, {
+                ingredients: addToList(action.data, state.ingredients)
+            });
         case FORMULA_DET_UPDATE_FORMULA:
             return Object.assign({}, state, {
                 formulaName: action.data.formula.name,
@@ -37,6 +52,7 @@ const initState = {};
                 formulaComment: action.data.comments,
                 id:action.data.id
             });
+
         case FORMULA_DET_GET_INGREDIENTS:
             return Object.assign({}, state, {
                 ingredients: action.data
