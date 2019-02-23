@@ -52,13 +52,15 @@ class Formula extends CRUD {
         let q = squel.select()
         .from(this.tableName)
         .field("formula.*")
-        .left_join("formula_ingredients", null, "formula.id=formula_ingredients.formula_id");
+        .left_join("formula_ingredients", null, "formula.id=formula_ingredients.formula_id")
+        //have to search by ingerdients name because stupid ass front end autocomplete
+        .left_join("ingredients", null, "ingredients.id=formula_ingredients.ingredients_id");
 
         //TODO search by number
         const queryGen = new QueryGenerator(q);
         names = QueryGenerator.transformQueryArr(names);
         queryGen.chainAndFilter(names, "formula.name LIKE ?")
-        .chainOrFilter(ingredients, "ingredients_id=?")
+        .chainOrFilter(ingredients, "ingredients.name = ?")
         .makeDistinct();
         let queryStr = filter.applyFilter(queryGen.getQuery()).toString();
         return db.execSingleQuery(queryStr, []);
@@ -84,6 +86,7 @@ class Formula extends CRUD {
         const queryGen = new QueryGenerator(query);
         queryGen.chainOrFilter(ingreds, "ingredients_id = ?");
         let queryStr = queryGen.getQuery().toString();
+        console.log(queryStr);
         //logger.debug(queryStr);
         return db.execSingleQuery(queryStr, []);
     }

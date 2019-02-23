@@ -146,15 +146,33 @@ export function isUPCNumber(string){
   return String(string).match(/^(?=.*0)[0-9]{12}$/) != null;
 }
 
-// const ing = {
-//   name:this.state.ingredientName,
-//   num:this.state.ingredientNum,
-//   vend_info:this.state.vend_info,
-//   pkg_size:this.state.packageSize,
-//   pkg_cost:this.state.costPerPackage,
-//   comments:this.state.comment,
-//   id:this.props.id
-// }
+export function getFormInsertErrors(formula) {
+    let errs = [];
+    if(!formula.name || formula.name === "") {
+        errs.push({
+            errMsg:"Must have a name",
+            id: hashcode("Must have a name")
+        });
+    }
+    return errs;
+}
+
+export function getFormUpdateErrors(formula) {
+    let errs = [];
+    if(!formula.name || formula.name === "") {
+        errs.push({
+            errMsg:"Must have a name",
+            id: hashcode("Must have a name")
+        });
+    }
+    if(formula.num === "" || !formula.num || isNaN(formula.num)) {
+        errs.push({
+            errMsg:"Must be valid num",
+            id: hashcode("Must be valid num")
+        });
+    }
+    return errs;
+}
 
 export function getIngErrors(ing){
   let errors = []

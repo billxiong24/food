@@ -107,6 +107,7 @@ router.delete('/:id/ingredients', function(req, res, next) {
         });
     }
 
+    console.log(req.body);
     let ingredients = req.body.ingredients;
     if(!ingredients || ingredients.length === 0) {
         return res.status(200).json({

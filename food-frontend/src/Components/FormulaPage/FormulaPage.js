@@ -1,23 +1,39 @@
 import React, { Component } from 'react';
 import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
+import SimpleList from '../GenericComponents/ItemList';
+import ItemList from '../GenericComponents/ItemList';
+import { purple } from '@material-ui/core/colors';
+import color from '@material-ui/core/colors/cyan';
 import Card from '@material-ui/core/Card';
 import Typography from '@material-ui/core/Typography';
+import Divider from '@material-ui/core/Divider';
 import { connect } from 'react-redux';
-import { ingDeleteError, ingSearch } from '../../Redux/Actions';
+import { formulaDeleteError, formulaSearch } from '../../Redux/Actions';
+import DropdownButton from '../GenericComponents/DropdownButton';
+import Fab from '@material-ui/core/Fab';
+import AddIcon from '@material-ui/icons/Add';
+import Icon from '@material-ui/core/Icon';
+import DeleteIcon from '@material-ui/icons/Delete';
+import NavigationIcon from '@material-ui/icons/Navigation';
+import IconButton from '@material-ui/core/IconButton';
+import back from '../../Resources/Images/baseline-navigate_before-24px.svg'
+import next from '../../Resources/Images/baseline-navigate_next-24px.svg'
+import SimpleCard from '../GenericComponents/SimpleCard';
+import FilterItem from './FilterItem';
 import FilterList from './FilterList';
 import IngredientList from './IngredientList';
+import IntegrationAutosuggest from '../GenericComponents/IntegrationAutosuggest';
 import FilterDropdown from './FilterDropdown';
 import SortByDropdown from './SortByDropdown';
 import PageSelector from './PageSelector';
 import IngredientsPageSearchBar from './IngredientsPageSearchBar';
-import { ingDetSetIng, ingDetSetEditing, ingDetSetNew } from '../../Redux/Actions/ActionCreators/IngredientDetailsActionCreators';
+import { formulaDetSetIngredients, formulaDetSetFormula, formulaDetSetEditing, formulaDetSetNew } from '../../Redux/Actions/ActionCreators/FormulaDetailsActionCreators';
 import { withRouter } from 'react-router-dom'
 import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
 import axios from 'axios';
 import FileDownload from 'js-file-download';
 import common from '../../Resources/common';
-import { withCookies } from 'react-cookie';
 
 const styles = {
   card: {
@@ -117,14 +133,14 @@ const styles = {
   }
 };
 
-class IngredientsPage extends Component {
+class FormulaPage extends Component {
 
   componentWillMount() {
     this.props.search()
   }
 
   onAddClick = () =>{
-    this.props.setIngredient(this.props.history)
+    this.props.setFormula(this.props.history)
   }
 
   onExportClick = () => {
@@ -151,7 +167,7 @@ class IngredientsPage extends Component {
   render() {
     console.log(this.props)
     console.log(this.props.errors)
-    const { classes, dummy_ingredients } = this.props
+    const { classes } = this.props
     return (
       <div className={classes.ingredients_page_container}>
         <Card className={classes.active_filters_container}>
@@ -174,12 +190,12 @@ class IngredientsPage extends Component {
             <div className={classes.ingredients_search_bar}>
           </div>
           <div className={classes.other_actions}>
-            { this.props.cookies.admin === "true" ?
+            { this.props.users.id === common.admin ?
                 <Button
                 className={classes.add_ingredient}
                 onClick={this.onAddClick}
               >
-                Add Ingredient
+                Add Formula 
               </Button>
             :
             <div></div>
@@ -212,41 +228,36 @@ class IngredientsPage extends Component {
   }
 }
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = state => {
   return {
-    dummy_ingredients: state.dummy_ingredients,
-    errors: state.ingredients.errors,
-    items: state.ingredients.items,
-    cookies: ownProps.cookies.cookies
+    errors: state.formulas.errors,
+    items: state.formulas.items,
+    users: state.users
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return{
-    setIngredient: (history) => {
-      dispatch(ingDetSetIng({
+    setFormula: (history) => {
+      dispatch(formulaDetSetFormula({
         name: "",
         num: null,
-        vend_info: "",
-        pkg_size: "",
-        pkg_cost: "",
         comments: "",
         id: null
     }))
-    dispatch(ingDetSetNew(true))
-    dispatch(ingDetSetEditing(true))
-    console.log("History")
-      history.push('/ingredients/details')
+    dispatch(formulaDetSetNew(true))
+    dispatch(formulaDetSetEditing(true))
+    dispatch(formulaDetSetIngredients([]))
+      history.push('/formula/details')
     },
     deleteError: (error) => {
-      dispatch(ingDeleteError(error))
+      dispatch(formulaDeleteError(error))
     },
     search: () => {
-      dispatch(ingSearch())
+      dispatch(formulaSearch())
     }
   }
 }
 
 
-export default withRouter(withStyles(styles)(withCookies(connect(mapStateToProps, mapDispatchToProps)(IngredientsPage))));
-//export default withRouter(withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(IngredientsPage)));
+export default withRouter(withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(FormulaPage)));

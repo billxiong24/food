@@ -20,6 +20,7 @@ class Controller {
             res.status(200).json(result.rows);
         })
         .catch((err) => {
+            console.log(err);
             res.status(400).json({
                 error: error_controller.getErrMsg(err)
             });
