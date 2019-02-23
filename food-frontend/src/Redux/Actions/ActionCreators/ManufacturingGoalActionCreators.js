@@ -37,7 +37,6 @@ export const mangoalGetCalculations = (manGoal) => {
 }
 
 export const mangoalDeleteMangoalSkus = (manGoal, skus) => {
-  console.log({skus:skus});
   return (dispatch) => {
     return axios.delete(hostname + 'manufacturing_goals/' + manGoal.id + '/skus',
       {
@@ -146,17 +145,6 @@ export const mangaolUpdateMangoalSkus = (manGoal, skus) => {
   }
 }
 
-export const mangoalUpdateFilters = (filters) => {
-  return (dispatch) => {
-    return dispatch({
-      type: mangoal_actions.MANGOAL_UPDATE_FILTERS,
-      data: {
-        filters: filters
-      }
-    });
-  }
-}
-
 export const mangoalAddFilter = (prdline) => {
   return (dispatch) => {
     return dispatch({
@@ -179,12 +167,13 @@ export const mangoalRemoveFilter = (prdline) => {
   }
 }
 
-export const mangoalGetProductLines = () => {
+export const mangoalSearchProductLines = (name) => {
   return (dispatch) => {
     return axios.get(hostname + 'productline/search', {
       params: {
-        name: '',
-        orderKey: 'name'
+        name: name,
+        orderKey: 'name',
+        limit: 10,
       }
     })
       .then((response) => {
@@ -209,6 +198,8 @@ export const mangoalSearchSkus = (name, prdlines) => {
         prodlines: prdlines.map((el) => {
           return el.name
         }),
+        orderKey: 'name',
+        limit: 10,
       }
     })
       .then((response) => {

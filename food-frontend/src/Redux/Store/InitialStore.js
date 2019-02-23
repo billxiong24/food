@@ -110,26 +110,7 @@ export const InitialStore = {
     errors:[]
   },
   manLine: {
-    manLines: [
-      {
-        id: 1,
-        name: "Durham Soup",
-        shortname: "DS1",
-        comment: "Here's a comment about this"
-      },
-      {
-        id: 2,
-        name: "Other Durham Soup",
-        shortname: "DS2",
-        comment: ""
-      },
-      {
-        id: 3,
-        name: "Lorem ipsum dolor sit amet amet.",
-        shortname: "NY1",
-        comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean sagittis aliquet ultricies. Nullam pretium dapibus sapien vitae pretium. Praesent a scelerisque massa. Ut iaculis erat eu metus laoreet aliquet. Proin quis mollis ipsum, sit amet ultricies lorem. Proin accumsan semper tellus, vel commodo dui scelerisque id. Cras non hendrerit enim. Cras id facilisis est, eu tempus libero. Maecenas bibendum nunc luctus, convallis orci sed, vestibulum lacus. Interdum et malesuada fames ac ante ipsum primis in faucibus. Aliquam erat volutpat. Interdum et malesuada fames ac ante ipsum primis in faucibus. Aliquam sed suscipit mauris, nec varius sem. Vestibulum ultrices justo fringilla."
-      }
-    ],
+    manLines: [],
     current_page_number: 1,
     total_pages: 1,
     limit: 10,

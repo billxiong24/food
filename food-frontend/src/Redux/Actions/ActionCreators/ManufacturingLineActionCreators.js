@@ -10,7 +10,7 @@ export const manlineSearch = (name) => {
     const curPage = store.getState().manLine.current_page_number;
     const limit = store.getState().manLine.limit;
     let offset = limit ? (curPage - 1) * limit : 0;
-    return axios.get(hostname + '/manufacturing_line/search', {
+    return axios.get(hostname + 'manufacturing_line/search', {
       params: {
         name: name,
         offset: offset,

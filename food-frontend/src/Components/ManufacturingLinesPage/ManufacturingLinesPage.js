@@ -130,7 +130,7 @@ class ManufacturingLinesPage extends Component {
   }
 
   componentWillMount() {
-
+    this.handleQuery();
   }
 
   handleChange = name => event => {
