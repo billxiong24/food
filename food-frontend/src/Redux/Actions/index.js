@@ -512,6 +512,26 @@ export const formulaSearch = (offset) => {
   }
 }
 
+export const formulaDelete = (form_id) => {
+      console.log(form_id);
+    return (dispatch) => {
+      return axios.delete(hostname + 'formula/'+form_id, {
+        
+      })
+      .then(response => {
+          console.log(response);
+        dispatch({
+          type: FORMULA_DELETE_FORMULA,
+          data: response.data
+        })
+      })
+      .catch(error => {
+        throw(error);
+      });
+    }
+
+}
+
 export const formulaSortBy = (category) => {
   return (dispatch) => {
     return dispatch({

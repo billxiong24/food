@@ -28,7 +28,7 @@ import FilterDropdown from './FilterDropdown';
 import SortByDropdown from './SortByDropdown';
 import PageSelector from './PageSelector';
 import IngredientsPageSearchBar from './IngredientsPageSearchBar';
-//import { ingDetSetIng, ingDetSetEditing, ingDetSetNew } from '../../Redux/Actions/ActionCreators/IngredientDetailsActionCreators';
+import { formulaDetSetFormula, formulaDetSetEditing, formulaDetSetNew } from '../../Redux/Actions/ActionCreators/FormulaDetailsActionCreators';
 import { withRouter } from 'react-router-dom'
 import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
 import axios from 'axios';
@@ -140,7 +140,7 @@ class FormulaPage extends Component {
   }
 
   onAddClick = () =>{
-    this.props.setIngredient(this.props.history)
+    this.props.setFormula(this.props.history)
   }
 
   onExportClick = () => {
@@ -238,24 +238,20 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return{
-    //setIngredient: (history) => {
-      //dispatch(ingDetSetIng({
-        //name: "",
-        //num: null,
-        //vend_info: "",
-        //pkg_size: "",
-        //pkg_cost: "",
-        //comments: "",
-        //id: null
-    //}))
-    //dispatch(ingDetSetNew(true))
-    //dispatch(ingDetSetEditing(true))
-    //console.log("History")
-      //history.push('/ingredients/details')
-    //},
-    //deleteError: (error) => {
-      //dispatch(ingDeleteError(error))
-    //},
+    setFormula: (history) => {
+      dispatch(formulaDetSetFormula({
+        name: "",
+        num: null,
+        comments: "",
+        id: null
+    }))
+    dispatch(formulaDetSetNew(true))
+    dispatch(formulaDetSetEditing(true))
+      history.push('/formula/details')
+    },
+    deleteError: (error) => {
+      dispatch(formulaDeleteError(error))
+    },
     search: () => {
       dispatch(formulaSearch())
     }

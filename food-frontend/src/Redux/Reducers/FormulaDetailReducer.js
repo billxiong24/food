@@ -7,6 +7,7 @@ import {
     FORMULA_DET_DELETE_ERROR,
     FORMULA_DET_SET_VALID,
     FORMULA_DET_SET_EDITING,
+    FORMULA_DET_DELETE_FORMULA,
     FORMULA_DET_SET_NEW
 } from '../Actions/FormulaDetailActionTypes'
 import { addToList, removeFromList } from '../../Resources/common';
@@ -19,6 +20,13 @@ const initState = {};
                 formulaName: action.data.formula.name,
                 formulaNum: action.data.formula.num,
                 formulaComment: action.data.formula.comments,
+                editing: false
+            });
+        case FORMULA_DET_DELETE_FORMULA:
+            return Object.assign({}, state, {
+                formulaName: null, 
+                formulaNum: null,
+                formulaComment: null, 
                 editing: false
             });
         case FORMULA_DET_SET_FORMULA:
@@ -44,7 +52,7 @@ const initState = {};
               errors: addToList(action.data, state.errors)
             });
         case FORMULA_DET_DELETE_ERROR:
-            console.log("ING_DET_DELETE_ERROR REDUCER")
+            console.log("formula_DET_DELETE_ERROR REDUCER")
             console.log(action.data)
             return Object.assign({}, state, {
               errors: removeFromList(action.data, state.errors)

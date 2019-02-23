@@ -5,16 +5,17 @@ import TextField from '@material-ui/core/TextField';
 import { Typography, Button } from '@material-ui/core';
 import EditableText from '../GenericComponents/EditableText';
 import labels from '../../Resources/labels';
-import { ingDetUpdateIng, ingDetAddIng, ingDetDeleteError, ingDetAddError, ingDetSetEditing, ingDetSetNew } from '../../Redux/Actions/ActionCreators/IngredientDetailsActionCreators';
+import { formulaDetAddFormula, formulaDetAddError, formulaDetDeleteError, formulaDetSetNew, formulaDetUpdateFormula, formulaDetSetEditing, formulaDetDeleteFormula } from '../../Redux/Actions/ActionCreators/FormulaDetailsActionCreators';
 import { routeToPage, ingDeleteIng, ingAddDependency, ingRemoveDependency } from '../../Redux/Actions';
 import IngredientSKUList from './IngredientSKUList';
 import { withRouter, Link } from 'react-router-dom';
 import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
 import EditableNumeric from '../GenericComponents/EditableNumeric';
-import common, { isValidIng, getIngErrors } from '../../Resources/common';
+import common, { getFormInsertErrors, getFormUpdateErrors } from '../../Resources/common';
 import {store} from "../../index"
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
+
 
 const styles = {
     ingredient_page_container:{
@@ -52,25 +53,22 @@ const styles = {
 
 };
 
-class IngredientDetailViewPage extends Component {
+class FormulaDetailViewPage extends Component {
 
     constructor(props){
         super(props);
         this.state = {
             buttonText:"Edit",
             editing:false,
-            ingredientName:this.props.ingredientName,
-            ingredientNum:this.props.ingredientNum,
-            vend_info:this.props.vend_info,
-            packageSize:this.props.packageSize,
-            costPerPackage:this.props.costPerPackage,
-            comment:this.props.comment,
+            formulaName:this.props.formulaName,
+            formulaNum:this.props.formulaNum,
+            formulaComment:this.props.formulaComment,
             new:false,
-            checked:this.props.dependency.filter((ing) => {
-              return ing.id === this.props.id;
-            }).length === 1,
+            //checked:this.props.dependency.filter((ing) => {
+              //return ing.id === this.props.id;
+            //}).length === 1,
         }
-        console.log("INGREDIENT DETAIL VIEW")
+        console.log("FORMULA DETAIL VIEW")
         console.log(this.props.id)
         if(this.props.id == null){
             this.state.editing = true
@@ -97,52 +95,40 @@ class IngredientDetailViewPage extends Component {
     onEditClick = () => {
         this.props.edit()
     }
-    
-
-    
-
     onSaveClick = () => {
-        const ing = {
-            name:this.state.ingredientName,
-            num:this.state.ingredientNum,
-            vend_info:this.state.vend_info,
-            pkg_size:this.state.packageSize,
-            pkg_cost:this.state.costPerPackage,
-            comments:this.state.comment,
-            id:this.props.id
+        const formula = {
+            name: this.state.formulaName,
+            num: this.state.formulaNum,
+            comment: this.state.formulaComment,
+            id: this.props.id
         }
-        
-        let errors = getIngErrors(ing);
-        if(errors.length == 0){
-            console.log("SKUDETAILVIEW")
-            this.props.update(ing) // dispatch
-        }else{
-            for (var i = 0; i < errors.length; i++) {
-                this.props.pushError(errors[i])
+
+        let errs = getFormUpdateErrors(formula);
+        console.log(errs);
+        if(errs.length === 0){
+            this.props.update(formula) // dispatch
+        }
+        else {
+            for(let i = 0; i < errs.length; i++) {
+                this.props.pushError(errs[i]);
             }
         }
-        
     }
 
     onAddClick = () => {
-        const ing = {
-            name:this.state.ingredientName,
-            num:this.state.ingredientNum,
-            vend_info:this.state.vend_info,
-            pkg_size:this.state.packageSize,
-            pkg_cost:this.state.costPerPackage,
-            comments:this.state.comment,
+        const formula = {
+            name: this.state.formulaName,
+            num: this.state.formulaNum,
+            comment: this.state.formulaComment
         }
-        let errors = getIngErrors(ing);
+        let errors = getFormInsertErrors(formula);
         if(errors.length == 0){
             this.setState({
                 buttonText: "Edit",
                 editing:false,
                 new: false
             });
-            console.log("INGREDIENTDETAILVIEW")
-            console.log(ing)
-            this.props.add(ing)
+            this.props.add(formula)
         }else{
             for (var i = 0; i < errors.length; i++) {
                 this.props.pushError(errors[i])
@@ -151,59 +137,12 @@ class IngredientDetailViewPage extends Component {
     }
 
     onDelete = () => {
-        const ing = {
-            name:this.state.ingredientName,
-            num:this.state.ingredientNum,
-            vend_info:this.state.vend_info,
-            pkg_size:this.state.packageSize,
-            pkg_cost:this.state.costPerPackage,
-            comments:this.state.comment,
+        const formula= {
             id:this.props.id
         }
-        console.log("INGREDIENTDETAILVIEW")
-        console.log(ing)
-        this.props.delete(ing)
+        console.log("am deleting a formulaaa");
+        this.props.del(formula)
         
-    }
-
-    dependencyChange = () =>{
-      const ing = {
-        name:this.state.ingredientName,
-        num:this.state.ingredientNum,
-        vend_info:this.state.vend_info,
-        pkg_size:this.state.packageSize,
-        pkg_cost:this.state.costPerPackage,
-        comments:this.state.comment,
-        id:this.props.id,
-        skus:this.props.skus
-    }
-    console.log(this.state.checked);
-      if(this.state.checked) {
-        this.props.removeIngFromReport(ing)
-        this.setState({
-          checked: false,
-        })
-      } else {
-        this.props.addIngToReport(ing)
-        this.setState({
-          checked: true,
-        });
-      }
-    }
-
-    addToReport = () => {
-        const ing = {
-            name:this.state.ingredientName,
-            num:this.state.ingredientNum,
-            vend_info:this.state.vend_info,
-            pkg_size:this.state.packageSize,
-            pkg_cost:this.state.costPerPackage,
-            comments:this.state.comment,
-            id:this.props.id,
-            skus:this.props.skus
-        }
-        console.log(this.props.skus)
-        this.props.addIngToReport(ing)
     }
 
     render() {
@@ -218,60 +157,31 @@ class IngredientDetailViewPage extends Component {
                         Ingredient Details
                     </Typography>
                     <EditableText 
-                        label={"Ingredient Name"} 
+                        label={"Formula Name"} 
                         editing={editing}
-                        key={"ingredientName"}
-                        field={"ingredientName"}
+                        key={"formulaName"}
+                        field={"formulaName"}
                         onChange={this.onChange}>
-                        {this.state.ingredientName}
+                        {this.state.formulaName}
                     </EditableText>
 
 
                     <EditableNumeric
-                        label={"Ingredient No."}
+                        label={"Formula No."}
                         editing={editing}
-                        key={"ingredientNum"}
-                        field={"ingredientNum"}
+                        key={"formulaNum"}
+                        field={"formulaNum"}
                         onChange={this.onChange}>
-                        {this.state.ingredientNum}
+                        {this.state.formulaNum}
                     </EditableNumeric>
-
-                    <EditableText 
-                        label={"Vendor Info"}
-                        editing={editing}
-                        key={"vend_info"}
-                        field={"vend_info"}
-                        onChange={this.onChange}>
-                        {this.state.vend_info}
-                    </EditableText>
-
-                    <EditableText 
-                        label={"Package Size"} 
-                        editing={editing}
-                        key={"packageSize"}
-                        field={"packageSize"}
-                        onChange={this.onChange}>
-                        {this.state.packageSize}
-                    </EditableText>
-
-
-                    <EditableNumeric
-                        label={"Cost per Package"} 
-                        editing={editing}
-                        key={"costPerPackage"}
-                        field={"costPerPackage"}
-                        onChange={this.onChange}>
-                        {this.state.costPerPackage}
-                    </EditableNumeric>
-
                     <EditableText 
                         label={"Comment"} 
                         editing={editing}
-                        key={"comment"}
-                        field={"comment"}
+                        key={"formulaComment"}
+                        field={"formulaComment"}
                         onChange={this.onChange}
                         multiline={true}>
-                        {this.state.comment}
+                        {this.state.formulaComment}
                     </EditableText>
                     {
                     (this.props.users.id === common.admin && newValue )?
@@ -322,18 +232,6 @@ class IngredientDetailViewPage extends Component {
                         <div></div>
                     }
                     {
-                        (!newValue && !editing)?
-                        <FormControlLabel
-                            control={
-                                <Checkbox
-                                    checked={this.state.checked}
-                                    onChange={this.dependencyChange}
-                                    color="primary"
-                                />
-                            }
-                            label="Add to Dependency"
-                        />
-                        :
                         <div></div>
                     }
 
@@ -341,7 +239,7 @@ class IngredientDetailViewPage extends Component {
                 </div>
                 <div className={classes.left}>
                     <Typography>
-                        SKU List
+                        Ingredients List
                     </Typography>
                     <IngredientSKUList></IngredientSKUList>
                 </div>
@@ -363,59 +261,50 @@ class IngredientDetailViewPage extends Component {
 
 const mapStateToProps = state => {
     return {
-        ingredientName: state.ingredient_details.ingredientName,
-        ingredientNum: state.ingredient_details.ingredientNum,
-        vend_info: state.ingredient_details.vend_info,
-        packageSize: state.ingredient_details.packageSize,
-        costPerPackage: state.ingredient_details.costPerPackage,
-        comment: state.ingredient_details.comment,
-        id: state.ingredient_details.id,
-        errors: state.ingredient_details.errors,
-        skus: state.ingredient_details.skus,
+        formulaName: state.formula_details.formulaName, 
+        formulaNum: state.formula_details.formulaNum,
+        formulaComment: state.formula_details.formulaComment,
+        id: state.formula_details.id,
+        errors: state.formula_details.errors,
+        skus: state.formula_details.skus,
         users: state.users,
-        valid: state.ingredient_details.valid,
-        editing: state.ingredient_details.editing,
-        newValue: state.ingredient_details.new,
-        dependency: state.ingredients.ingDependency,
+        valid: state.formula_details.valid,
+        editing: state.formula_details.editing,
+        newValue: state.formula_details.new
     };
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => {
     return {
-        update : (ing) =>
+        update : (formula) =>
         {
-            dispatch(ingDetUpdateIng(ing))
+            dispatch(formulaDetUpdateFormula(formula))
         },
         back: () => {
-            dispatch(ingDetSetEditing(false))
-            dispatch(ingDetSetNew(false))
-            ownProps.history.push('/ingredients')
+            dispatch(formulaDetSetEditing(false))
+            dispatch(formulaDetSetNew(false))
+            ownProps.history.push('/formula')
         },
-        delete: (ing) => {
-            dispatch(ingDeleteIng(ing))
-            dispatch(ingDetSetEditing(false))
-            ownProps.history.push('/ingredients')
+        del: (formula) => {
+            dispatch(formulaDetSetEditing(formula))
+            dispatch(formulaDetSetEditing(false))
+            dispatch(formulaDetDeleteFormula(formula.id))
+            ownProps.history.push('/formula')
         },
-        add: (ing) =>{
-            dispatch(ingDetAddIng(ing))
+        add: (formula) =>{
+            dispatch(formulaDetAddFormula(formula))
         },
         deleteError: (error) => {
-            dispatch(ingDetDeleteError(error))
+            dispatch(formulaDetDeleteError(error))
         },
         pushError: err => {
-            dispatch(ingDetAddError(err))
-            setTimeout(function(){dispatch(ingDetDeleteError(err))}, 2000);
-        },
-        addIngToReport: ing => {
-            dispatch(ingAddDependency(ing))
+            dispatch(formulaDetAddError(err))
+            setTimeout(function(){dispatch(formulaDetDeleteError(err))}, 2000);
         },
         edit: () => {
-            dispatch(ingDetSetEditing(true))
-        },
-        removeIngFromReport: ing => {
-            dispatch(ingRemoveDependency(ing))
+            dispatch(formulaDetSetEditing(true))
         }
     };
 };
 
-export default withRouter(withStyles(styles)(connect(mapStateToProps,mapDispatchToProps)(IngredientDetailViewPage)));
+export default withRouter(withStyles(styles)(connect(mapStateToProps,mapDispatchToProps)(FormulaDetailViewPage)));

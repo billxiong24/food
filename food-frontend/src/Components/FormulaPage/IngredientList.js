@@ -11,7 +11,10 @@ import Typography from '@material-ui/core/Typography';
 import { CardActionArea } from '@material-ui/core';
 import { routeToPage } from '../../Redux/Actions';
 import { withRouter } from 'react-router-dom'
-import { ingDetSetIng, ingDetGetSkus } from '../../Redux/Actions/ActionCreators/IngredientDetailsActionCreators';
+import { formulaDetGetIngredients, formulaDetSetFormula } from '../../Redux/Actions/ActionCreators/FormulaDetailsActionCreators';
+
+ 
+ 
 import labels from '../../Resources/labels';
 
 const styles = {
@@ -61,7 +64,7 @@ class IngredientList extends Component {
 
     onClick = (item) =>{
          console.log(item)
-         this.props.setIngredient(item, this.props.history)
+         this.props.setFormula(item, this.props.history)
     }
 
     render() {
@@ -101,9 +104,9 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        setIngredient: (ing, history) => {
-            //dispatch(ingDetSetIng(ing))
-            //dispatch(ingDetGetSkus(ing.id))
+        setFormula: (formula, history) => {
+            dispatch(formulaDetSetFormula(formula))
+            dispatch(formulaDetGetIngredients(formula.id))
             history.push('/formula/details')
         }
     };

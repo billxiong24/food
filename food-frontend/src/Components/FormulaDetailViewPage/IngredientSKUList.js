@@ -62,19 +62,18 @@ class IngredientSKUList extends Component {
     }
 
     render() {
-        const { classes, skus } = this.props
-        console.log(skus)
+        const { classes, ingredients} = this.props
         return (
             <div>
                 {
-                skus.map((item, index) => (
+                ingredients.map((item, index) => (
                     <Card className={classes.card} key={index} onClick = {() => {this.onClick(item)}}>
                         <CardActionArea
                         className = {classes.cardAction}
                         >
                         <CardContent onClick={console.log("")}>
                             <Typography className={classes.ingredrient_name} color="textSecondary" gutterBottom>
-                                {item.name + ":" + item.unit_size + "*" + item.count_per_case }
+                                {item.name + ":" + item.num+ "*" + item.pkg_size }
                             </Typography>
                         </CardContent>
                         </CardActionArea>
@@ -89,7 +88,7 @@ class IngredientSKUList extends Component {
 
 const mapStateToProps = state => {
     return {
-        skus: state.ingredient_details.skus
+        ingredients: state.formula_details.ingredients
     };
 };
 
