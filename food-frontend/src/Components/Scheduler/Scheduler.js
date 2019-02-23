@@ -14,6 +14,8 @@ import OverlapCheck from './Components/OverlapCheck';
 import { mapStateToProps, mapDispatchToProps } from './DataConverter';
 import { store } from '../..';
 import { Button } from '@material-ui/core';
+import GoalAutocomplete from './GoalAutocomplete';
+import GoalFilterDropdown from './GoalFilterDropdown';
 
 const styles = {
     ingredient_page_container:{
@@ -55,6 +57,44 @@ const styles = {
         hyphens: 'auto',
         fontFamily: 'Open Sans',
         fontWeight: 400
+    },
+    calendar_view:{
+        display:'flex',
+        flexDirection: 'column',
+    },
+    lists_view:{
+        display:'flex',
+        flexDirection: 'column'
+    },
+    goals_list_view:{
+
+    },
+    unscheduled_activities_list_view:{
+
+    },
+    warnings_list_view:{
+
+    },
+    page_view:{
+        display:'flex',
+        flexDirection: 'row',
+    },
+    scheduler_view:{
+
+    },
+    goals_search_view:{
+        display:'flex',
+        flexDirection: 'row'
+    },
+    goals_search_bar:{
+        width: '300px',
+        paddingLeft: '20px',
+        paddingRight: '20px',
+        paddingTop: '20px',
+        paddingBottom: '20px',
+    },
+    goals_search_filter_dropdown:{
+
     }
 
 };
@@ -119,23 +159,51 @@ class Scheduler extends Component {
                         }
                     ];
         schedulerData.setEvents(events);
+        // calendar_view:{
+
+        // },
+        // lists_view:{
+    
+        // },
+        // goals_list_view:{
+    
+        // },
+        // unscheduled_activities_list_view:{
+    
+        // },
+        // warnings_list_view:{
+    
+        // }
 
         return (
-            <div>
-            <Button onClick={() => {
-                console.log(this.props.activities)
-                var activity = this.props.activities[6]
-                console.log(activity)
-                activity.start_time = "2019-02-18 8:00:00"
-                activity.end_time = "2019-02-19 8:00:00"
-                activity.man_line_num = "DMF2"
-                this.props.set_activity_schedule(activity)
-            }
-            }>
-                Hello
-            </Button>
-            <OverlapCheck></OverlapCheck>
+            
+            <div className={classes.page_view}>
+                <div className={classes.lists_view}>
+                    <div className={classes.goals_list_view}>
+                        <div className={classes.goals_search_view}>
+                            <div className={classes.goals_search_bar}>
+                                <GoalAutocomplete></GoalAutocomplete>
+                            </div>
+                            <div className={classes.goals_search_filter_dropdown}>
+                                <GoalFilterDropdown></GoalFilterDropdown>
+                            </div>
+                        </div>
+                    </div>
+                    <div className={classes.unscheduled_activities_list_view}>
+
+                    </div>
+                </div>
+                <div className={classes.calendar_view}>
+                    <div className={classes.scheduler_view}>
+                        <OverlapCheck></OverlapCheck>
+                    </div>
+                    <div className={classes.warnings_list_view}>
+
+                    </div>
+
+                </div>
             </div>
+
         );
     }
 }

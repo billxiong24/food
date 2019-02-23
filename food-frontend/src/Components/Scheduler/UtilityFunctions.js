@@ -23,3 +23,11 @@ export function getActivities(goals){
     }
     return activities
   }
+
+  export function filterScheduledActivities(activities){
+    return activities.filter(activity => activity.start_time != null && activity.end_time != null && activity.man_line_num != null)
+  }
+
+  export function event_to_activitiy(event){
+    
+  }

@@ -1,10 +1,13 @@
 import { SchedulerData, ViewTypes } from "react-big-scheduler";
+import { DemoData as defaultData} from 'react-big-scheduler'
 import common from "../../Resources/common";
 import Axios from "axios";
 import { store } from "../..";
-import { getActivities } from "./UtilityFunctions";
+import { getActivities, filterScheduledActivities } from "./UtilityFunctions";
+import moment from 'moment'
 
 const hostname = common.hostname + "scheduler"
+console.log(JSON.stringify(demoData))
 
 export const demoData = {
     "resources":[
@@ -171,6 +174,22 @@ export const demoData = {
      "activities":[],
      "current_duration":null,
      "man_lines":[],
+     scheduler_data: create_scheduler_data([],[]),
+     activities: [],
+     scheduled_activities: [],
+     resources: [],
+     events: [],
+     filtered_goals:[]
+ }
+
+export function create_scheduler_data(resources, events){
+   let scheduler_data = new SchedulerData('2019-02-18', ViewTypes.Week, false, false, {
+      checkConflict: true,
+   });
+   scheduler_data.localeMoment.locale('en');
+   scheduler_data.setResources(resources);
+   scheduler_data.setEvents(events);
+   return scheduler_data
  }
 export const SCHEDULER_GET_GOALS = "SCHEDULER_GET_GOALS"
 
@@ -193,9 +212,50 @@ export const get_goals = () => {
  }
 
  export const reduceGetGoals = (state, action) => {
+    console.log("REDUCE GET GOALS")
+    console.log(action.data)
+    //console.log("REDUCE SCHEDULER_GET_GOALS")
+   let activities = getActivities(action.data.goals)
+   //console.log("REDUCE SCHEDULER_GET_GOALS - 1")
+   let scheduled_activities = filterScheduledActivities(activities)
+   //console.log("REDUCE SCHEDULER_GET_GOALS - 2")
+   scheduled_activities.sort(function(activity_a,activity_b){ 
+      var a = moment(activity_a.start_time, "MM-DD-YYYY HH:mm:ss")
+      var b = moment(activity_a.start_time, "MM-DD-YYYY HH:mm:ss")
+      return a.toDate() - b.toDate();
+   });
+   //console.log("REDUCE SCHEDULER_GET_GOALS - 3")
+   //console.log(state)
+   // let resources = state.man_lines.map(function(man_line){
+   //    return {
+   //       id:man_line.shrt_name,
+   //       name:man_line.shrt_name
+   //       }
+   //    })
+   //    console.log("REDUCE SCHEDULER_GET_GOALS - 4")
+   let scheduler_data = Object.assign({}, state.scheduler_data);
+   let events = scheduled_activities.map(function(activity, index){
+      return {
+         id:activity.num,
+         start:activity.start_time,
+         end:activity.end_time,
+         resourceId:activity.man_line_num,
+         title:activity.name,
+         activity
+      }
+   })
+   //console.log("REDUCE SCHEDULER_GET_GOALS- Middle")
+   //console.log(events)
+   
+   //scheduler_data.setEvents(events);
+   //console.log(action.data.goals)
+   //console.log("REDUCE SCHEDULER_GET_GOALS- End")
    return Object.assign({}, state, {
          goals:action.data.goals,
-         activities:getActivities(action.data.goals)
+         activities,
+         scheduled_activities,
+         events,
+         scheduler_data: create_scheduler_data(state.resources, events)
    });
 }
 export const SCHEDULER_SET_FILTER = "SCHEDULER_SET_FILTER"
@@ -304,8 +364,18 @@ export const get_man_lines = () => {
  }
 
  export const reduce_get_man_lines = (state, action) => {
+   
+   let resources = action.data.man_lines.map(function(man_line){
+      return {
+         id:man_line.shrt_name,
+         name:man_line.shrt_name
+         }
+      })
+   let scheduler_data = create_scheduler_data(resources,state.events)
    return Object.assign({}, state, {
          man_lines:action.data.man_lines,
+         resources: resources,
+         scheduler_data: scheduler_data
    });
 }
 
@@ -332,7 +402,7 @@ export const goal_set_enable = (goal, enable_status) => {
 
  export const reduce_goal_set_enable = (state, action) => {
    return Object.assign({}, state, {
-         
+      
    });
 }
 
@@ -364,58 +434,84 @@ export const set_activity_schedule = (activity) => {
    });
 }
 
+export const SCHEDULER_PREV_CLICK = "SCHEDULER_PREV_CLICK"
+
+export const prev_click = () => {
+   return (dispatch) => {
+      return dispatch({
+        type: SCHEDULER_PREV_CLICK,
+        data: null
+      })
+    }
+ }
+
+ export const reduce_prev_click = (state, action) => {
+   let scheduler_data = create_scheduler_data(state.resources,state.events)
+   scheduler_data.prev()
+   console.log("REDICER END")
+   return Object.assign({}, state, {
+      scheduler_data
+   });
+}
+
+export const SCHEDULER_GET_FILTERED_GOALS = "SCHEDULER_GET_FILTERED_GOALS"
+
+export const get_filtered_goals = (filter, filter_type_index) => {
+   return (dispatch) => {
+     return Axios.put(hostname + '/filtered_goals', {
+         filter,
+         filter_type_index
+     })
+     .then(response => {
+       dispatch({
+         type: SCHEDULER_GET_FILTERED_GOALS,
+         data: response.data
+       })
+     })
+     .catch(error => {
+       
+     });
+   }
+ }
+
+ export const reduce_get_filtered_goals = (state, action) => {
+    console.log(action.data.filtered_goals)
+   return Object.assign({}, state, {
+         filtered_goals: action.data.filtered_goals,
+   });
+}
+
+
+
 
  export const mapStateToProps = state => {
-    let schedulerData = new SchedulerData('2019-02-18', ViewTypes.Week, false, false, {
-        checkConflict: true,
-    });
-    schedulerData.localeMoment.locale('en');
-    schedulerData.setResources(state.scheduler.man_lines.map(function(man_line){
-       return {
-          id:man_line.shrt_name,
-          name:man_line.shrt_name
-       }
-    }));
-    for(var i = 0; i < state.scheduler.activities.length; i ++){
-       var activity = state.scheduler.activities[i]
-       console.log({
-         id:i + 1,
-         start:activity.start_time,
-         end:activity.end_time,
-         resourceId:activity.man_line_num,
-         title:activity.name,
-       })
-    }
-   //  schedulerData.setResources(demoData.resources);
-   //  schedulerData.setEvents(state.scheduler.activities.map(function(activity, index){
-   //    // return {
-   //    //    id:index + 1,
-   //    //    start:activity.start_time,
-   //    //    end:activity.end_time,
-   //    //    resourceId:activity.man_line_num,
-   //    //    title:activity.name,
-   //    // }
-   //    return {
-   //        "id":4,
-   //        "start":"2017-12-19 14:30:00",
-   //        "end":"2017-12-20 23:30:00",
-   //        "resourceId":"r4",
-   //        "title":"I am not start-resizable",
-   //        "startResizable":false
-   //     }
-   // }));
-   schedulerData.setEvents(demoData.events)
-    let viewModel = schedulerData
+    
+   //  for(var i = 0; i < state.scheduler.activities.length; i ++){
+   //     var activity = state.scheduler.activities[i]
+   //     console.log({
+   //       id:i + 1,
+   //       start:activity.start_time,
+   //       end:activity.end_time,
+   //       resourceId:activity.man_line_num,
+   //       title:activity.name,
+   //     })
+   //  }
+    console.log("MAP STATE TO PROPS")
+    console.log(state)
     return {
-        viewModel,
+        scheduler_data: state.scheduler.scheduler_data,
         goals: state.scheduler.goals,
         filter: state.scheduler.filter,
-        filter_type: state.scheduler.filter_type,
+        filter_type_index: state.scheduler.filter_type_index,
+        filter_types: state.scheduler.filter_types,
         goal_names: state.scheduler.goal_names,
         goal_user_names: state.scheduler.goal_user_names,
         activities: state.scheduler.activities,
         current_duration: state.scheduler.current_duration,
-        man_lines: state.scheduler.man_lines
+        man_lines: state.scheduler.man_lines,
+        resources: state.scheduler.resources,
+        events: state.scheduler.events,
+        scheduled_activities: state.scheduler.scheduledActivities
     };
 };
 
@@ -424,8 +520,13 @@ export const mapDispatchToProps = (dispatch, ownProps) => {
       get_goals: () => {
          dispatch(get_goals())
       },
-      set_filter: (filter) => {
+      set_filter: (filter, filter_type_index) => {
          dispatch(set_filter(filter))
+         if(filter_type_index == 0){
+            dispatch(get_goal_names())
+         }else{
+            dispatch(get_user_names())
+         }
       },
       set_filter_type_index: (index) => {
          dispatch(set_filter_type_index(index))
@@ -450,6 +551,13 @@ export const mapDispatchToProps = (dispatch, ownProps) => {
          setTimeout(() => {
             dispatch(get_goals())
          }, 200);
+      },
+      prev_click: () => {dispatch(prev_click())},
+      get_filtered_goals: (filter, filter_type_index) => {
+         // Promise.resolve(dispatch(set_filter(filter)))
+         // .then(dispatch(get_filtered_goals(filter, filter_type_index)))
+         dispatch(set_filter(filter))
+         dispatch(get_filtered_goals(filter, filter_type_index))
       }
     };
 };

@@ -7,7 +7,7 @@
     "test": "cd test/ && mocha --exit"
   },
   "dependencies": {
-    "bcrypt": "^3.0.3",
+    "bcrypt": "^3.0.0",
     "chai": "^4.2.0",
     "chai-http": "^4.2.1",
     "child_process": "^1.0.2",

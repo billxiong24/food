@@ -350,6 +350,20 @@ router.put('/goal_user_names', function (req, res, next) {
     })
 });
 
+router.put('/filtered_goals', function (req, res, next) {
+    let filter = req.body.filter;
+    let filter_type_index = req.body.filter_type_index
+    let filtered_goals = []
+    if(filter_type_index == 0){
+        filtered_goals = dummySchedulerData.goals.filter(goal => goal.name.includes(filter))
+    }else{
+        filtered_goals = dummySchedulerData.goals.filter(goal => goal.author.includes(filter))
+    }
+    return res.status(200).json({
+       filtered_goals
+    })
+});
+
 router.put('/schedule', function (req, res, next) {
     let id = req.body.id;
     let start_time = req.body.start_time
@@ -405,6 +419,8 @@ router.get('/goals', function (req, res, next) {
         goals: dummySchedulerData.goals
     })
 });
+
+
 
 router.get('/man_lines', function (req, res, next) {
     return res.status(200).json({
