@@ -5,7 +5,7 @@ import Cookies from 'js-cookie';
 import {store} from "../../../index";
 
 const hostname = common.hostname;
-// axios.defaults.withCredentials = true;
+axios.defaults.withCredentials = true;
 
 // User Log Out
 export const userLogout = () => {

@@ -94,7 +94,7 @@ class ManufacturingLinesCard extends Component {
             aria-label="Close"
             color="inherit"
             className={classes.button + ' ' + classes.close_button}
-            onClick={() => { this.props.delete(this.props.item) }}
+            onClick={(e) => { this.delete(e) }}
           >
             <CloseIcon />
           </IconButton>

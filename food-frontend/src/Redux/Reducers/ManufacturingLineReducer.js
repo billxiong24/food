@@ -2,9 +2,6 @@ import { manline_actions } from '../Actions/ActionTypes/ManufacturingLineActionT
 
 const initialState = {
   manLines: [],
-  current_page_number: 1,
-  total_pages: 1,
-  limit: 10,
   errMsg: null,
 }
 
@@ -27,12 +24,6 @@ export default function manufacturingLineReducer(state = initialState, action) {
           return el;
         })
       });
-    case manline_actions.MANLINE_CHANGE_LIMITS:
-      return Object.assign({}, state, action.data);
-    case manline_actions.MANLINE_NEXT_PAGE:
-      return Object.assign({}, state, action.data);
-    case manline_actions.MANLINE_PREV_PAGE:
-      return Object.assign({}, state, action.data);
     case manline_actions.MANLINE_DELETE:
       if(action.data.manlineToDelete) {
         return Object.assign({}, state, {

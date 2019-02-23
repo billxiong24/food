@@ -110,6 +110,7 @@ class CalculatorPage extends Component {
                 <TableRow>
                   <TableCell>Name</TableCell>
                   <TableCell align="right">Vendor</TableCell>
+                  <TableCell align="right">Total Amount</TableCell>
                   <TableCell align="right">Number of Packages</TableCell>
                   <TableCell align="right">Cost Per Package</TableCell>
                   <TableCell align="right">Total Cost</TableCell>
@@ -122,6 +123,7 @@ class CalculatorPage extends Component {
                       {ingredient.name}
                     </TableCell>
                     <TableCell align="right">{ingredient.vend_info}</TableCell>
+                    <TableCell align="right">{ingredient.calc_res * ingredient.pkg_size + ' ' + ingredient.unit}</TableCell>
                     <TableCell align="right">{ingredient.calc_res}</TableCell>
                     <TableCell align="right">{ingredient.pkg_cost}</TableCell>
                     <TableCell align="right">{ingredient.calc_res * ingredient.pkg_cost}</TableCell>

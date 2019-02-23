@@ -7,14 +7,9 @@ const hostname = common.hostname;
 
 export const manlineSearch = (name) => {
   return (dispatch) => {
-    const curPage = store.getState().manLine.current_page_number;
-    const limit = store.getState().manLine.limit;
-    let offset = limit ? (curPage - 1) * limit : 0;
     return axios.get(hostname + 'manufacturing_line/search', {
       params: {
         name: name,
-        offset: offset,
-        limit: limit,
         orderKey: ''
       }
     })
@@ -24,7 +19,6 @@ export const manlineSearch = (name) => {
           type: manline_actions.MANLINE_SEARCH,
           data: {
             manLines: response.data,
-            total_pages: Math.ceil(totalRows / limit),
             errMsg: '',
           }
         })
@@ -81,7 +75,7 @@ export const manlineUpdate = (manline) => {
       })
     })
     .catch((err) => {
-      if (err.response.status === 400) {
+      if (err.response.status === 409) {
         dispatch({
           type: manline_actions.MANLINE_UPDATE,
           data: {
@@ -96,41 +90,6 @@ export const manlineUpdate = (manline) => {
           }
         })
         throw (err.response);
-      }
-    })
-  }
-}
-
-export const manlineChangeLimit = (val) => {
-  return (dispatch) => {
-    return dispatch({
-      type: manline_actions.MANLINE_CHANGE_LIMITS,
-      data: {
-        limit: val
-      }
-    })
-  }
-}
-
-export const manlinePrevPage = () => {
-  return (dispatch) => {
-    const curPage = store.getState().manLine.current_page_number;
-    return dispatch({
-      type: manline_actions.MANLINE_PREV_PAGE,
-      data: {
-        current_page_number: curPage === 1 ? curPage : curPage - 1,
-      }
-    })
-  }
-}
-
-export const manlineNextPage = () => {
-  return (dispatch) => {
-    const curPage = store.getState().manLine.current_page_number;
-    return dispatch({
-      type: manline_actions.MANLINE_NEXT_PAGE,
-      data: {
-        current_page_number: curPage === store.getState().manLine.total_pages ? curPage : curPage + 1,
       }
     })
   }

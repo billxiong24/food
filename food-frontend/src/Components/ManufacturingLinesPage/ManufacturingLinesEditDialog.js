@@ -83,7 +83,7 @@ class ManufacturingLinesEditDialog extends Component {
                   color="primary"
                   type="submit"
                 >
-                  Create
+                  Update
                     </Button>
               </DialogActions>
             </form>

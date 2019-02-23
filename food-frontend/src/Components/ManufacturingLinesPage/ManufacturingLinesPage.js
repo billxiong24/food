@@ -11,8 +11,8 @@ import back from '../../Resources/Images/baseline-navigate_before-24px.svg'
 import next from '../../Resources/Images/baseline-navigate_next-24px.svg'
 import Typography from '@material-ui/core/Typography';
 import { IconButton } from '@material-ui/core';
-import { manlineSearch, manlineCreate, manlineUpdate, manlineChangeLimit,
-          manlineNextPage, manlinePrevPage, manlineDelete } from '../../Redux/Actions/ActionCreators/ManufacturingLineActionCreators';
+import { manlineSearch, manlineCreate, manlineUpdate, 
+          manlineDelete } from '../../Redux/Actions/ActionCreators/ManufacturingLineActionCreators';
 import ManufacturingLinesNewDialog from './ManufacturingLinesNewDialog';
 import ManufacturingLinesEditDialog from './ManufacturingLinesEditDialog';
 
@@ -162,7 +162,7 @@ class ManufacturingLinesPage extends Component {
       editDialog: true,
       editName: manline.name,
       editShortName: manline.shortname,
-      editComment: manline.comment,
+      editComment: manline.comment ? manline.comment : '',
       editId: manline.id,
     });
   };
@@ -214,13 +214,14 @@ class ManufacturingLinesPage extends Component {
     e.preventDefault();
     if(this.checkInputs('edit')) {
       this.props.manlineUpdate(Object.assign({}, {
-        name: this.state.newName,
-        shortname: this.state.newShortName,
-        comment: this.state.newComment,
+        name: this.state.editName,
+        shortname: this.state.editShortName,
+        comment: this.state.editComment,
         id: this.state.editId,
       }))
       .then(()=> {
         this.handleResult("Manufacturing Line Successfully Updated!");
+        this.handleEditClose();
       })
     }
   }
@@ -234,7 +235,10 @@ class ManufacturingLinesPage extends Component {
         comment: this.state.newComment,
       }))
       .then(()=> {
-        this.handleResult("Manufacturing Line Successfully Created!");
+        this.handleQuery().then(()=>{
+          this.handleResult("Manufacturing Line Successfully Created!");
+          this.handleNewClose();
+        });
       })
     }
   }
@@ -261,21 +265,6 @@ class ManufacturingLinesPage extends Component {
       alert: false,
       message: ""
     });
-  }
-
-  incrementPage() {
-    this.props.manlineNextPage();
-    this.handleQuery();
-  }
-
-  decrementPage() {
-    this.props.manlinePrevPage();
-    this.handleQuery();
-  }
-
-  changeLimit(val) {
-    this.props.manlineChangeLimit(val);
-    this.handleQuery();
   }
 
   render() {
@@ -326,12 +315,6 @@ class ManufacturingLinesPage extends Component {
               comment={this.state.newComment}
             />
           </div>
-          <DisplayButton
-            classes={classes}
-            limit={manLine.limit}
-            changeLimit={(val) => this.changeLimit(val)}
-          >
-          </DisplayButton>
           <div className={classes.list_container}>
             <div className={classes.label_container}>
               <span className={classes.name_label}>Name</span>
@@ -349,27 +332,12 @@ class ManufacturingLinesPage extends Component {
           <ManufacturingLinesEditDialog
             open={this.state.editDialog}
             close={this.handleEditClose}
-            submit={(e) => this.submitFormCheck(e)}
+            submit={(e) => this.submitEditForm(e)}
             handleChange={this.handleChange}
             name={this.state.editName}
             shortname={this.state.editShortName}
             comment={this.state.editComment}
           />
-          
-          <div className={(manLine.manLines.length === 0 || !manLine.limit) ? classes.hide : ''}>
-            <div variant="inset" className={classes.divider} />
-            <div className={classes.page_selection_container}>
-              <IconButton color="primary" className={classes.button} onClick={()=>{this.decrementPage()}}>
-                <img src={back} />
-              </IconButton>
-              <Typography className={classes.page_number_text}>
-                Page {manLine.current_page_number} of {manLine.total_pages}
-              </Typography>
-              <IconButton color="primary" className={classes.button} onClick={()=>{this.incrementPage()}}>
-                <img src={next} />
-              </IconButton>
-            </div>
-          </div>
         </div>
         <SimpleSnackbar
           open={this.state.alert}
@@ -384,23 +352,6 @@ class ManufacturingLinesPage extends Component {
   }
 }
 
-function DisplayButton(props) {
-  const { classes } = props
-  if(props.limit) {
-    return (
-      <Button variant="contained" className={classes.button} onClick={()=>props.changeLimit(null)}>
-        Show All Entries
-      </Button>
-    )
-  } else {
-    return (
-      <Button variant="contained" className={classes.button} onClick={()=>props.changeLimit(10)}>
-        Show 10 Entries Per Page
-      </Button>
-    )
-  }
-}
-
 const mapStateToProps = state => {
   return {
     manLine: state.manLine,
@@ -411,9 +362,6 @@ const mapDispatchToProps = {
   manlineSearch,
   manlineCreate,
   manlineUpdate,
-  manlineChangeLimit,
-  manlineNextPage,
-  manlinePrevPage,
   manlineDelete,
 }
 

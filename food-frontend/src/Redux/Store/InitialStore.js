@@ -111,9 +111,6 @@ export const InitialStore = {
   },
   manLine: {
     manLines: [],
-    current_page_number: 1,
-    total_pages: 1,
-    limit: 10,
     errMsg: null,
   }
 }
