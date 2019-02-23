@@ -80,11 +80,9 @@ class SKUIngredientList extends Component {
     }
 
     render() {
-        const { classes, current_ingredients, editing } = this.props
-        
-        console.log("SKUINGREDIENTLIST COMPONENT LIST")
-        console.log(current_ingredients)
-
+        const { classes, current_ingredients, current_formula, editing } = this.props
+        console.log('UPDATING CURRENT FORMULA');
+        console.log(current_formula);
         return (
             editing ?
             <div>
@@ -95,13 +93,13 @@ class SKUIngredientList extends Component {
                         
                         <CardContent >
                             <Typography className={classes.ingredrient_name} color="textSecondary" gutterBottom>
-                                {item.name + " " + item.num}
+                                <div>
+                                    Name: {item.name}
+                                </div>
+                                <div>
+                                    Num: {item.num}
+                                </div>
                             </Typography>
-                            <IconButton className={classes.icon} onClick={() => this.onClick(item)}>
-                                <img src={delete_icon} />
-                            </IconButton>
-                            
-                            
                         </CardContent>
                         
                     </Card>
@@ -117,8 +115,9 @@ class SKUIngredientList extends Component {
                     <Card className={classes.card} key={index}>
                         
                         <CardContent >
+            <div>Name: {item.name} </div>
+            <div>Num: {item.num} </div>
                             <Typography className={classes.ingredrient_name} color="textSecondary" gutterBottom>
-                                {item.name + item.num}
                             </Typography>
                             
                             
@@ -127,6 +126,18 @@ class SKUIngredientList extends Component {
                     </Card>
                 ))
                 )}
+            <Card className={classes.card}>
+            <div>FORMULA</div>
+            <div>Name: {current_formula.name} </div>
+            <div>Num: {current_formula.num} </div>
+                
+                <CardContent >
+                    <Typography>
+                       
+                    </Typography>
+                </CardContent>
+                
+            </Card>
             </div>
 
         );
@@ -136,6 +147,7 @@ class SKUIngredientList extends Component {
 const mapStateToProps = state => {
     return {
         current_ingredients: state.sku_details.current_ingredients,
+        current_formula: state.sku_details.current_formula
     };
 };
 

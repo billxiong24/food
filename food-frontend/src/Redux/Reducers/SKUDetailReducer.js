@@ -1,4 +1,6 @@
-import {  SKU_DET_GET_ING,SKU_DET_ADD_ING,SKU_DET_UPDATE_SKU,SKU_DET_DELETE_SKU,SKU_DET_DELETE_ING,SKU_DET_SET_SKU, SKU_DET_INGREDIENT_AUTOCOMPLETE, SKU_DET_PRODUCT_LINE_LIST, SKU_DET_ADD_ING_LOCAL, SKU_DET_DELETE_ING_LOCAL, SKU_DET_ADD_SKU, SKU_DET_ADD_ERROR, SKU_DET_DELETE_ERROR, SKU_DET_SET_NEW, SKU_DET_SET_VALID, SKU_DET_SET_EDITING } from "../Actions/SKUDetailActionTypes";
+import {SKU_DET_SET_FORMULA_LOCAL, SKU_DET_FORMULA_AUTOCOMPLETE, SKU_DET_GET_FORMULA, SKU_DET_GET_ING,SKU_DET_ADD_ING,SKU_DET_UPDATE_SKU,SKU_DET_DELETE_SKU,SKU_DET_DELETE_ING,SKU_DET_SET_SKU, SKU_DET_INGREDIENT_AUTOCOMPLETE, SKU_DET_PRODUCT_LINE_LIST, SKU_DET_ADD_ING_LOCAL, SKU_DET_DELETE_ING_LOCAL, SKU_DET_ADD_SKU, SKU_DET_ADD_ERROR, SKU_DET_DELETE_ERROR, SKU_DET_SET_NEW, SKU_DET_SET_VALID, SKU_DET_SET_EDITING } from "../Actions/SKUDetailActionTypes";
+
+
 import { addToList, removeFromList } from "../../Resources/common";
 
 const initialState = {
@@ -79,7 +81,7 @@ export default function SKUDetailReducer(state = initialState, action) {
         case SKU_DET_SET_SKU:
             console.log("SKU_DET_SET_SKU REDUCER")
             console.log(action.data)
-            return Object.assign({}, state, {
+            let obj = {
                 name: action.data.name,
                 case_upc:action.data.case_upc,
                 unit_upc:action.data.unit_upc,
@@ -88,7 +90,18 @@ export default function SKUDetailReducer(state = initialState, action) {
                 count_per_case:action.data.count_per_case,
                 prd_line:action.data.prd_line,
                 comments:action.data.comments,
-                id:action.data.id
+                id:action.data.id,
+                formula_id :action.data.formula_id,
+                man_rate: action.data.man_rate,
+                formula_scale: action.data.formula_scale
+            }
+            if(action.data.id === null)
+                obj.current_ingredients = [];
+
+            return Object.assign({}, state, obj);
+        case SKU_DET_FORMULA_AUTOCOMPLETE:
+            return Object.assign({}, state, {
+                formula_suggestions: action.data
             });
         case SKU_DET_INGREDIENT_AUTOCOMPLETE:
             console.log("SKU_DET_INGREDIENT_AUTOCOMPLETE REDUCER")
@@ -102,11 +115,17 @@ export default function SKUDetailReducer(state = initialState, action) {
             return Object.assign({}, state, {
                 product_lines: action.data
             });
+        case SKU_DET_GET_FORMULA:
+            console.log("AMMMM IN DET GET FORMULA");
+            console.log(action.data);
+            return Object.assign({}, state, {
+                current_formula: action.data
+            });
+        case SKU_DET_SET_FORMULA_LOCAL:
+            return Object.assign({}, state, {
+                current_formula: action.data
+            });
         case SKU_DET_ADD_ING_LOCAL:
-            console.log("SKU_DET_ADD_ING_LOCAL REDUCER")
-            console.log(action.data)
-            console.log(state)
-            console.log(addToList(action.data,state.current_ingredients))
             return Object.assign({}, state, {
                 current_ingredients:addToList(action.data,state.current_ingredients),
             });

@@ -1,5 +1,5 @@
 const local = {
-  hostname: 'https://cmdev.colab.duke.edu:8000/',
+  hostname: 'http://localhost:8000/',
   url: 'http://localhost:3000/',
   https: false,
   colab_client_id: 'code-monkeys-local',
@@ -217,7 +217,15 @@ export function getIngErrors(ing){
 //   prd_line: "prod4",    
 //   comments: "commentingg"    
 // }
+export function skuCheckFormula(formula) {
+    let errors = [];
+    if(!formula) {
+        let message = "Formula is Empty"
+        errors.push({errMsg:message,id:hashcode(message)})
+    }
 
+    return errors;
+}
 export function getSkuErrors(sku){
   let errors = []
   let message;

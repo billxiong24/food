@@ -54,6 +54,8 @@ router.get('/:id/manufacturing_lines', function(req, res, next) {
 
 //TODO 23503, 22P02, 
 router.post('/', function(req, res, next) {
+    req.body.man_lines = Controller.convertParamToArray(req.body.man_lines);
+    console.log(req.body);
     const sku = new Sku();
     const controller = new Controller();
     controller.constructPostResponse(res, sku.create(req.body));

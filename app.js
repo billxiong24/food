@@ -44,20 +44,18 @@ app.use(cors({
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
-if(process.env.NODE_ENV !== 'test')
+//if(process.env.NODE_ENV !== 'test')
     app.use(logger('dev'));
 
 app.use(express.json());
+app.set('trust proxy', 1);
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.set('trust proxy', 1);
 app.use(session({
   secret: process.env.SESSION_SECRET,
   store: new (require('connect-pg-simple')(session))(),
-  resave: false,
-  saveUninitialized: false,
     //change this later
   cookie: { secure: encrypt, maxAge: 24*60*60*1000 }
 }));

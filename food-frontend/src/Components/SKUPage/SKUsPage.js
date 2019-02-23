@@ -241,7 +241,6 @@ const mapDispatchToProps = dispatch => {
           }))
           dispatch(skuDetSetNew(true))
           dispatch(skuDetSetEditing(true))
-          console.log("History")
             history.push('/skus/details')
 
           return response;

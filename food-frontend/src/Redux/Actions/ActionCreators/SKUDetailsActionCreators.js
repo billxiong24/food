@@ -1,9 +1,65 @@
 import axios from 'axios';
 import common, { createError } from '../../../Resources/common';
-import { SKU_DET_ADD_SKU,SKU_DET_GET_ING,SKU_DET_ADD_ING ,SKU_DET_UPDATE_SKU ,SKU_DET_DELETE_SKU ,SKU_DET_DELETE_ING ,SKU_DET_SET_SKU, SKU_DET_PRODUCT_LINE_LIST, SKU_DET_INGREDIENT_AUTOCOMPLETE, SKU_DET_SET_VALID,  SKU_DET_ADD_ING_LOCAL, SKU_DET_DELETE_ING_LOCAL, SKU_DET_ADD_ERROR, SKU_DET_DELETE_ERROR, SKU_DET_SET_NEW, SKU_DET_SET_EDITING
+import {SKU_DET_SET_FORMULA_LOCAL, SKU_DET_FORMULA_AUTOCOMPLETE, SKU_DET_GET_FORMULA, SKU_DET_ADD_SKU,SKU_DET_GET_ING,SKU_DET_ADD_ING ,SKU_DET_UPDATE_SKU ,SKU_DET_DELETE_SKU ,SKU_DET_DELETE_ING ,SKU_DET_SET_SKU, SKU_DET_PRODUCT_LINE_LIST, SKU_DET_INGREDIENT_AUTOCOMPLETE, SKU_DET_SET_VALID,  SKU_DET_ADD_ING_LOCAL, SKU_DET_DELETE_ING_LOCAL, SKU_DET_ADD_ERROR, SKU_DET_DELETE_ERROR, SKU_DET_SET_NEW, SKU_DET_SET_EDITING
 } from '../SKUDetailActionTypes';
 
 const hostname = common.hostname;
+
+export const skuDetSetFormula = (formula) => {
+    return (dispatch) => {
+        return dispatch({
+            type: SKU_DET_SET_FORMULA_LOCAL,
+            data: formula
+        });
+    }
+}
+export const skuDetGetFormulaNames = (name) => {
+    let params = {
+        names:[name]
+      }
+      return (dispatch) => {
+        return axios.get(hostname + 'formula/search', {
+          params
+        })
+      .then(response => {
+        dispatch({
+          type: SKU_DET_FORMULA_AUTOCOMPLETE,
+          data: response.data
+        })
+      })
+      .catch(error => {
+        console.log("error")
+        throw(error);
+      });
+    }
+}
+
+export const skuDetGetFormula = (formula_id) => {
+    return (dispatch) => {
+      return axios.get(hostname + 'formula/'+formula_id)
+      .then(response => {
+          console.log("GOT RESPONSE FROM SKU DET GET FORMULA");
+          if(response.data.length === 0) {
+              dispatch({
+                  type: SKU_DET_ADD_ERROR,
+                  data: createError("Formula doesnt exist")
+              })
+              return;
+          }
+            dispatch({
+              type: SKU_DET_GET_FORMULA,
+              data: response.data[0] 
+            })
+      })
+      .catch(error => {
+              dispatch({
+                  type: SKU_DET_ADD_ERROR,
+                  data: createError("Something was wrong. Check your input.")
+              })
+        //throw(error);
+      });
+    }
+  }
 
 // GET /sku/:id/ingredients
 export const skuDetGetIng = (sku_id) => {
@@ -14,6 +70,7 @@ export const skuDetGetIng = (sku_id) => {
         
       })
       .then(response => {
+          console.log("RESPONSEEE FROM GET INGREDIENTS");
         console.log(response)
         dispatch({
           type: SKU_DET_GET_ING,
@@ -55,7 +112,7 @@ export const skuDetAddIng = (sku,ingredients) => {
   }
 //  PUT /sku/:id
 export const skuDetUpdateSku = (sku) => {
-    console.log("SKU_DET_UPDATE_SKU ACTION CREATOR")
+    console.log("UPDATING A SKUUUUUUUUUUUUUUUUUUUUUUUU");
     console.log(sku)
     console.log(sku.id)
     // [{ingred_num: 1, quantity: 1}, {ingred_num: 2, quantity: 2}]

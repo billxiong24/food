@@ -106,19 +106,21 @@ class SKU extends CRUD {
                 const { rows } = await client.query(query, []);
 
                 //construct man_line id and sku id list to insert
-                let arr = [];
-                for(let i = 0; i < man_lines.length; i++) {
-                    arr.push({
-                        sku_id: rows[0].id,
-                        manufacturing_line_id: man_lines[i]
-                    });
+                if(man_lines.length > 0) {
+                    let arr = [];
+                    for(let i = 0; i < man_lines.length; i++) {
+                        arr.push({
+                            sku_id: rows[0].id,
+                            manufacturing_line_id: man_lines[i]
+                        });
+                    }
+
+                    let q = squel.insert()
+                    .into("manufacturing_line_sku")
+                    .setFieldsRows(arr).toString();
+
+                    await client.query(q, [])
                 }
-
-                let q = squel.insert()
-                .into("manufacturing_line_sku")
-                .setFieldsRows(arr).toString();
-
-                await client.query(q, [])
                 await client.query('COMMIT')
                 return rows;
             } catch (e) {

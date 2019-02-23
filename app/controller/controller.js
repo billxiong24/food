@@ -35,6 +35,7 @@ class Controller {
             });
         })
         .catch((err) => {
+            console.log(err);
             //HTTP 409 is conflict status
             res.status(409).json({
                 error: error_controller.getErrMsg(err)
