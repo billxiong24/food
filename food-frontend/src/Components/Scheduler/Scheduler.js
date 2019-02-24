@@ -20,6 +20,7 @@ import GoalList from './GoalList';
 import AddActivityPopUpWrapped from './AddActivityPopUp';
 import UnscheduledActivitiesListWrapped from './UnscheduledActivitiesList';
 import SimpleModalWrapped from './SimpleModalWrapped';
+import CustomPopoverStyle from './Components/CustomPopoverStyle';
 
 const styles = {
     ingredient_page_container:{

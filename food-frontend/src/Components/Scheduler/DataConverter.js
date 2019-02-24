@@ -3,7 +3,7 @@ import { DemoData as defaultData} from 'react-big-scheduler'
 import common from "../../Resources/common";
 import Axios from "axios";
 import { store } from "../..";
-import { getActivities, filterScheduledActivities, filterUnscheduledActivities } from "./UtilityFunctions";
+import { getActivities, filterScheduledActivities, filterUnscheduledActivities, sort_scheduled_activities, activity_to_event, man_line_to_resource } from "./UtilityFunctions";
 import moment from 'moment'
 
 const hostname = common.hostname + "scheduler"
@@ -214,19 +214,15 @@ export const get_goals = () => {
  }
 
  export const reduceGetGoals = (state, action) => {
-    // console.log.log("REDUCE GET GOALS")
-    // console.log.log(action.data)
-    //// console.log.log("REDUCE SCHEDULER_GET_GOALS")
+    console.log("REDUCE GET GOALS")
+    console.log(action.data)
+    // console.log.log("REDUCE SCHEDULER_GET_GOALS")
    let activities = getActivities(action.data.goals)
    //// console.log.log("REDUCE SCHEDULER_GET_GOALS - 1")
    let scheduled_activities = filterScheduledActivities(activities)
    let unscheduled_activities = filterUnscheduledActivities(activities)
    //// console.log.log("REDUCE SCHEDULER_GET_GOALS - 2")
-   scheduled_activities.sort(function(activity_a,activity_b){ 
-      var a = moment(activity_a.start_time, "MM-DD-YYYY HH:mm:ss")
-      var b = moment(activity_a.start_time, "MM-DD-YYYY HH:mm:ss")
-      return a.toDate() - b.toDate();
-   });
+   scheduled_activities = sort_scheduled_activities(scheduled_activities)
    //// console.log.log("REDUCE SCHEDULER_GET_GOALS - 3")
    //// console.log.log(state)
    // let resources = state.man_lines.map(function(man_line){
@@ -237,16 +233,7 @@ export const get_goals = () => {
    //    })
    //    // console.log.log("REDUCE SCHEDULER_GET_GOALS - 4")
    let scheduler_data = Object.assign({}, state.scheduler_data);
-   let events = scheduled_activities.map(function(activity, index){
-      return {
-         id:activity.num,
-         start:activity.start_time,
-         end:activity.end_time,
-         resourceId:activity.man_line_num,
-         title:activity.name,
-         activity
-      }
-   })
+   let events = scheduled_activities.map(activity => activity_to_event(activity))
    //// console.log.log("REDUCE SCHEDULER_GET_GOALS- Middle")
    //// console.log.log(events)
    
@@ -387,12 +374,7 @@ export const get_man_lines = () => {
 
  export const reduce_get_man_lines = (state, action) => {
    
-   let resources = action.data.man_lines.map(function(man_line){
-      return {
-         id:man_line.shrt_name,
-         name:man_line.shrt_name
-         }
-      })
+   let resources = action.data.man_lines.map(man_line => man_line_to_resource(man_line))
    let scheduler_data = create_scheduler_data(resources,state.events)
    return Object.assign({}, state, {
          man_lines:action.data.man_lines,
@@ -574,14 +556,14 @@ export const mapDispatchToProps = (dispatch, ownProps) => {
          setTimeout(() => {
             dispatch(get_goals())
             dispatch(get_filtered_goals(store.getState().scheduler.filter, store.getState().scheduler.filter_type_index))
-         }, 100);
+         }, 500);
       },
       set_activity_schedule: (activity) => {
          dispatch(set_activity_schedule(activity))
          setTimeout(() => {
             dispatch(get_goals())
             dispatch(get_filtered_goals(store.getState().scheduler.filter, store.getState().scheduler.filter_type_index))
-         }, 100);
+         }, 500);
       },
       prev_click: () => {dispatch(prev_click())},
       get_filtered_goals: (filter, filter_type_index) => {

@@ -1,26 +1,25 @@
 import React, {Component} from 'react'
 import {PropTypes} from 'prop-types' 
-//import moment from 'moment'
-//import 'moment/locale/zh-cn';
-import Col from 'antd/lib/col'
-import Row from 'antd/lib/row'
-import Button from 'antd/lib/button'
-import 'antd/lib/style/index.less';     //Add this code for locally example
-import Scheduler, {SchedulerData, ViewTypes, DATE_FORMAT, DemoData} from 'react-big-scheduler'
+import Scheduler, {SchedulerData, ViewTypes, DemoData} from '../src/index'
 import Nav from './Nav'
-import Tips from './Tips'
 import ViewSrcCode from './ViewSrcCode'
 import withDragDropContext from './withDnDContext'
 
-class CustomPopoverStyle extends Component{
+class CustomEventStyle extends Component{
     constructor(props){
         super(props);
 
-        //let schedulerData = new SchedulerData(new moment("2017-12-18").format(DATE_FORMAT), ViewTypes.Week);
-        let schedulerData = new SchedulerData('2017-12-18', ViewTypes.Week);
+        let schedulerData = new SchedulerData('2017-12-18', ViewTypes.Week, false, false, {
+            views: [
+                {viewName: 'Day(Agenda)', viewType: ViewTypes.Day, showAgenda: true, isEventPerspective: false},
+                {viewName: 'Week', viewType: ViewTypes.Week, showAgenda: false, isEventPerspective: false},
+                {viewName: 'Month(TaskView)', viewType: ViewTypes.Month, showAgenda: false, isEventPerspective: true},
+                {viewName: 'Year', viewType: ViewTypes.Year, showAgenda: false, isEventPerspective: false},
+            ]
+        });
         schedulerData.localeMoment.locale('en');
         schedulerData.setResources(DemoData.resources);
-        schedulerData.setEvents(DemoData.events);
+        schedulerData.setEvents(DemoData.eventsForCustomEventStyle);
         this.state = {
             viewModel: schedulerData
         }
@@ -32,7 +31,7 @@ class CustomPopoverStyle extends Component{
             <div>
                 <Nav />
                 <div>
-                    <h3 style={{textAlign: 'center'}}>Custom popover style example<ViewSrcCode srcCodeUrl="https://github.com/StephenChou1017/react-big-scheduler/blob/master/example/CustomPopoverStyle.js" /></h3>
+                    <h3 style={{textAlign: 'center'}}>Custom event style<ViewSrcCode srcCodeUrl="https://github.com/StephenChou1017/react-big-scheduler/blob/master/example/CustomEventStyle.js" /></h3>
                     <Scheduler schedulerData={viewModel}
                                prevClick={this.prevClick}
                                nextClick={this.nextClick}
@@ -47,17 +46,16 @@ class CustomPopoverStyle extends Component{
                                updateEventEnd={this.updateEventEnd}
                                moveEvent={this.moveEvent}
                                newEvent={this.newEvent}
-                               eventItemPopoverTemplateResolver={this.eventItemPopoverTemplateResolver}
+                               eventItemTemplateResolver={this.eventItemTemplateResolver}
                     />
                 </div>
-                <Tips />
             </div>
         )
     }
 
     prevClick = (schedulerData)=> {
         schedulerData.prev();
-        schedulerData.setEvents(DemoData.events);
+        schedulerData.setEvents(DemoData.eventsForCustomEventStyle);
         this.setState({
             viewModel: schedulerData
         })
@@ -65,7 +63,7 @@ class CustomPopoverStyle extends Component{
 
     nextClick = (schedulerData)=> {
         schedulerData.next();
-        schedulerData.setEvents(DemoData.events);
+        schedulerData.setEvents(DemoData.eventsForCustomEventStyle);
         this.setState({
             viewModel: schedulerData
         })
@@ -73,7 +71,7 @@ class CustomPopoverStyle extends Component{
 
     onViewChange = (schedulerData, view) => {
         schedulerData.setViewType(view.viewType, view.showAgenda, view.isEventPerspective);
-        schedulerData.setEvents(DemoData.events);
+        schedulerData.setEvents(DemoData.eventsForCustomEventStyle);
         this.setState({
             viewModel: schedulerData
         })
@@ -81,7 +79,7 @@ class CustomPopoverStyle extends Component{
 
     onSelectDate = (schedulerData, date) => {
         schedulerData.setDate(date);
-        schedulerData.setEvents(DemoData.events);
+        schedulerData.setEvents(DemoData.eventsForCustomEventStyle);
         this.setState({
             viewModel: schedulerData
         })
@@ -100,10 +98,10 @@ class CustomPopoverStyle extends Component{
     };
 
     newEvent = (schedulerData, slotId, slotName, start, end, type, item) => {
-        if(window.confirm(`Do you want to create a new event? {slotId: ${slotId}, slotName: ${slotName}, start: ${start}, end: ${end}, type: ${type}, item: ${item}}`)){
+        if(confirm(`Do you want to create a new event? {slotId: ${slotId}, slotName: ${slotName}, start: ${start}, end: ${end}, type: ${type}, item: ${item}}`)){
 
             let newFreshId = 0;
-            schedulerData.events.forEach((item) => {
+            schedulerData.eventsForCustomEventStyle.forEach((item) => {
                 if(item.id >= newFreshId)
                     newFreshId = item.id + 1;
             });
@@ -124,7 +122,7 @@ class CustomPopoverStyle extends Component{
     }
 
     updateEventStart = (schedulerData, event, newStart) => {
-        if(window.confirm(`Do you want to adjust the start of the event? {eventId: ${event.id}, eventTitle: ${event.title}, newStart: ${newStart}}`)) {
+        if(confirm(`Do you want to adjust the start of the event? {eventId: ${event.id}, eventTitle: ${event.title}, newStart: ${newStart}}`)) {
             schedulerData.updateEventStart(event, newStart);
         }
         this.setState({
@@ -133,7 +131,7 @@ class CustomPopoverStyle extends Component{
     }
 
     updateEventEnd = (schedulerData, event, newEnd) => {
-        if(window.confirm(`Do you want to adjust the end of the event? {eventId: ${event.id}, eventTitle: ${event.title}, newEnd: ${newEnd}}`)) {
+        if(confirm(`Do you want to adjust the end of the event? {eventId: ${event.id}, eventTitle: ${event.title}, newEnd: ${newEnd}}`)) {
             schedulerData.updateEventEnd(event, newEnd);
         }
         this.setState({
@@ -142,7 +140,7 @@ class CustomPopoverStyle extends Component{
     }
 
     moveEvent = (schedulerData, event, slotId, slotName, start, end) => {
-        if(window.confirm(`Do you want to move the event? {eventId: ${event.id}, eventTitle: ${event.title}, newSlotId: ${slotId}, newSlotName: ${slotName}, newStart: ${start}, newEnd: ${end}`)) {
+        if(confirm(`Do you want to move the event? {eventId: ${event.id}, eventTitle: ${event.title}, newSlotId: ${slotId}, newSlotName: ${slotName}, newStart: ${start}, newEnd: ${end}`)) {
             schedulerData.moveEvent(event, slotId, slotName, start, end);
             this.setState({
                 viewModel: schedulerData
@@ -150,45 +148,22 @@ class CustomPopoverStyle extends Component{
         }
     }
 
-    eventItemPopoverTemplateResolver = (schedulerData, eventItem, title, start, end, statusColor) => {
-        return (
-            // <React.Fragment>
-            //     <h3>{title}</h3>
-            //     <h5>{start.format("HH:mm")} - {end.format("HH:mm")}</h5>
-            //     <img src="./icons8-ticket-96.png" />
-            // </React.Fragment>
-            <div style={{width: '300px'}}>
-                <Row type="flex" align="middle">
-                    <Col span={2}>
-                        <div className="status-dot" style={{backgroundColor: statusColor}} />
-                    </Col>
-                    <Col span={22} className="overflow-text">
-                        <span className="header2-text" title={title}>{title}</span>
-                    </Col>
-                </Row>
-                <Row type="flex" align="middle">
-                    <Col span={2}>
-                        <div />
-                    </Col>
-                    <Col span={22}>
-                        <span className="header1-text">{start.format("HH:mm")} - {end.format("HH:mm")}</span>
-                    </Col>
-                </Row>
-                <Row type="flex" align="middle">
-                    <Col span={2}>
-                        <div />
-                    </Col>
-                    <Col span={22}>
-                        <Button onClick={()=>{this.demoButtonClicked(eventItem);}}>Demo</Button>
-                    </Col>
-                </Row>
-            </div>
-        );
-    }
+    eventItemTemplateResolver = (schedulerData, event, bgColor, isStart, isEnd, mustAddCssClass, mustBeHeight, agendaMaxEventWidth) => {
+        let borderWidth = isStart ? '4' : '0';
+        let borderColor =  'rgba(0,139,236,1)', backgroundColor = '#80C5F6';
+        let titleText = schedulerData.behaviors.getEventTextFunc(schedulerData, event);
+        if(!!event.type){
+            borderColor = event.type == 1 ? 'rgba(0,139,236,1)' : (event.type == 3 ? 'rgba(245,60,43,1)' : '#999');
+            backgroundColor = event.type == 1 ? '#80C5F6' : (event.type == 3 ? '#FA9E95' : '#D9D9D9');
+        }
+        let divStyle = {borderLeft: borderWidth + 'px solid ' + borderColor, backgroundColor: backgroundColor, height: mustBeHeight };
+        if(!!agendaMaxEventWidth)
+            divStyle = {...divStyle, maxWidth: agendaMaxEventWidth};
 
-    demoButtonClicked = (eventItem) => {
-        alert(`You just clicked demo button. event title: ${eventItem.title}`);
+        return <div key={event.id} className={mustAddCssClass} style={divStyle}>
+            <span style={{marginLeft: '4px', lineHeight: `${mustBeHeight}px` }}>{titleText}</span>
+        </div>;
     }
 }
 
-export default withDragDropContext(CustomPopoverStyle)
+export default withDragDropContext(CustomEventStyle)

@@ -16,7 +16,7 @@
     "moment": "^2.24.0",
     "react": "^16.7.0",
     "react-autosuggest": "^9.4.3",
-    "react-big-scheduler": "^0.2.5",
+    "react-big-scheduler": "^0.2.6",
     "react-dom": "^16.7.0",
     "react-fontawesome": "^1.6.1",
     "react-gantt-timeline": "https://github.com/guiqui/react-timeline-gantt/tarball/master",

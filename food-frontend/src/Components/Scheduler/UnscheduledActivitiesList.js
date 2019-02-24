@@ -18,7 +18,9 @@ import swal from '@sweetalert/with-react'
 import '../../Resources/Styles/dropdown.css'
 import GoalList from './GoalList';
 import MenuItem from '@material-ui/core/MenuItem';
-import { empty_activity, multipleGoalActivity, hasEnabledGoals, getEnabledGoals, valid_man_line_shrt_name, valid_time } from './UtilityFunctions';
+import { empty_activity, multipleGoalActivity, hasEnabledGoals, getEnabledGoals, valid_man_line_shrt_name, valid_time, get_current_start_time, calculate_end_time, push_without_duplication, delete_without_duplication, ADD_A_MAN_LINE_ERROR, INVALID_START_TIME_ERROR, INVALID_END_TIME_ERROR, valid_start_end_pair, START_TIME_GREATER_THAN_END_TIME_ERROR, get_unscheduled_activity_warnings, get_time_conflict_errors, push_conflict_errors_without_duplication, delete_conflict_errors_without_duplication } from './UtilityFunctions';
+import moment from 'moment'
+
 
 function rand() {
     return Math.round(Math.random() * 20) - 10;
@@ -121,14 +123,32 @@ const styles = theme => ({
     goal_name_deadline_title_container: {
         marginTop: 12,
     },
+    info_box:{
+        backgroundColor:"#DCDCDC",
+        color:"#696969",
+        paddingRight: "10px",
+        paddingTop:"5px",
+        paddingBottom:"5px",
+        marginBottom:"2px",
+        marginTop:"2px"
+    },
     warning_box:{
         backgroundColor:"#FFFF99",
         color:"#696969",
         paddingRight: "10px",
         paddingTop:"5px",
         paddingBottom:"5px",
-        marginBottom:"10px",
-        marginTop:"10px"
+        marginBottom:"2px",
+        marginTop:"2px"
+    },
+    error_box:{
+        backgroundColor:"#F08080",
+        color:"#696969",
+        paddingRight: "10px",
+        paddingTop:"5px",
+        paddingBottom:"5px",
+        marginBottom:"2px",
+        marginTop:"2px"
     },
     left_button:{
         float: 'left'
@@ -138,6 +158,12 @@ const styles = theme => ({
     },
     button_view:{
         marginTop: 24
+    },
+    textField:{
+        marginTop: 12
+    },
+    error_list:{
+        marginTop: "12px"
     }
 
 });
@@ -150,8 +176,11 @@ class UnscheduledActivitiesList extends Component {
         this.state = {
             open: false,
             activity: empty_activity,
-            time:"2017-05-24T10:30",
-            man_line:""
+            start_time: get_current_start_time(),
+            end_time: calculate_end_time(get_current_start_time(), 0),
+            man_line:"",
+            errors:[],
+            warnings: []
         }
     }
 
@@ -161,18 +190,30 @@ class UnscheduledActivitiesList extends Component {
     }
 
     handleOpen = (activity) => {
+        let errors = []
+        errors = push_without_duplication(ADD_A_MAN_LINE_ERROR, errors)
+        let start_time = get_current_start_time()
+        let end_time = calculate_end_time(get_current_start_time(), parseInt(activity.completion_time))
+        errors = push_conflict_errors_without_duplication(start_time, end_time, this.state.man_line, this.props.scheduled_activities, errors)
         this.setState({
              open: true,
              activity: activity,
+             start_time: start_time,
+             end_time: end_time,
+             errors: errors,
+             warnings: get_unscheduled_activity_warnings(activity, get_current_start_time(), calculate_end_time(get_current_start_time(), parseInt(activity.completion_time)))
         });
       };
     
     handleClose = () => {
         this.setState({
-             open: false,
-             activity: empty_activity,
-             time:"2017-05-24T10:30",
-             man_line:""
+            open: false,
+            activity: empty_activity,
+            start_time: get_current_start_time(),
+            end_time: calculate_end_time(get_current_start_time(), 0),
+            man_line:"",
+            errors:[],
+            warnings: []
         });
     };
 
@@ -185,36 +226,85 @@ class UnscheduledActivitiesList extends Component {
         });
     }
    
-    onChange1 = (e) => {
+    onStartTimeChange = (e) => {
         //console.log(e.target.value)
-        let newtime = e.target.value.split(":")[0] + ":00";
+        let start_time = e.target.value.split(":")[0] + ":00";
+        let end_time = calculate_end_time(start_time, this.state.activity.completion_time)
         this.setState({
-          time: newtime,
+          start_time: start_time,
+          end_time: end_time
+        });
+        let errors = []
+        if(!valid_time(start_time.replace("T", " "))){
+            errors = push_without_duplication(INVALID_START_TIME_ERROR, this.state.errors)
+            this.setState({
+                warnings: get_unscheduled_activity_warnings(this.state.activity, start_time, end_time)
+            });
+        }else{
+            errors = delete_without_duplication(INVALID_START_TIME_ERROR, this.state.errors)
+            this.setState({
+                warnings: get_unscheduled_activity_warnings(this.state.activity, start_time, end_time),
+            });
+        }
+        errors = delete_conflict_errors_without_duplication(errors)
+        errors = push_conflict_errors_without_duplication(start_time, end_time, this.state.man_line, this.props.scheduled_activities, errors)
+        this.setState({
+            errors: errors
         });
       };
+
+    onEndTimeChange = (e) => {
+        //console.log(e.target.value)
+        let start_time = this.state.start_time
+        let end_time = e.target.value.split(":")[0] + ":00";
+        this.setState({
+          end_time: end_time,
+        });
+        let errors = this.state.errors
+        if(!valid_time(end_time.replace("T", " "))){
+            errors = push_without_duplication(INVALID_END_TIME_ERROR, errors)
+        }else{
+            errors = delete_without_duplication(INVALID_END_TIME_ERROR, errors)           
+        }
+        if(!valid_start_end_pair(start_time, end_time.replace("T", " "))){
+            errors =  push_without_duplication(START_TIME_GREATER_THAN_END_TIME_ERROR, errors)
+        }else{
+            // console.log("delete error")
+            errors = delete_without_duplication(START_TIME_GREATER_THAN_END_TIME_ERROR, errors)
+            
+        }
+        errors = delete_conflict_errors_without_duplication(errors)
+        errors = push_conflict_errors_without_duplication(start_time, end_time, this.state.man_line, this.props.scheduled_activities, errors)
+        this.setState({
+            errors: errors,
+            warnings: get_unscheduled_activity_warnings(this.state.activity, start_time, end_time)
+        })
+    };
     
       handleManLineChange = (e) => {
         //console.log(e.target.value)
+        let man_line = e.target.value
+        let start_time = this.state.start_time
+        let end_time = this.state.end_time
+        let errors = delete_without_duplication(ADD_A_MAN_LINE_ERROR, this.state.errors)
+        errors = delete_conflict_errors_without_duplication(errors)
+        errors = push_conflict_errors_without_duplication(start_time, end_time, man_line, this.props.scheduled_activities, errors)
         this.setState({
-          man_line: e.target.value,
+          man_line: man_line,
+          errors: errors
         });
       }
     
     scheduleActivity = () => {
         let activity = this.state.activity
-        let time = this.state.time.replace("T", " ");
-        let man_line = this.state.man_line
-        console.log(activity)
-        console.log(time)
-        console.log(this.state.man_line)
-        var errors = []
-        if(!valid_man_line_shrt_name(man_line, this.props.man_lines)){
-            errors.push("Invalid Manufacturing Line")
+        if(this.state.errors.length == 0){
+             activity.start_time = this.state.start_time.replace("T"," ")
+             activity.end_time = this.state.end_time.replace("T"," ")
+             activity.man_line_num = this.state.man_line
+             this.props.set_activity_schedule(activity)
+             this.handleClose()
         }
-        if(!valid_man_line_shrt_name(man_line, this.props.man_lines)){
-            errors.push("Invalid Manufacturing Line")
-        }
-        valid_time(time)
+        
     }
     
 
@@ -292,7 +382,7 @@ class UnscheduledActivitiesList extends Component {
                             <CardActionArea
                                 className={classes.cardAction}
                             >
-                                <CardContent onClick={console.log("")}>
+                                <CardContent>
                                     <Typography className={classes.ingredrient_name} color="textSecondary" >
                                         {item.name}
                                     </Typography>
@@ -351,21 +441,51 @@ class UnscheduledActivitiesList extends Component {
                                 {this.state.activity.completion_time + " hours"}
                             </Typography>
                         </div>
-                        <div className={classes.warning_box}>
-                            Activities can only be added on hour granularity
+                        <div className={classes.error_list}>
+                            {
+                                [
+                                    "note: operating hours are from 8 AM to 6PM",
+                                    "note: activities can only be added on hour granularity",
+                                    "note: changing start time will set end time to accomadate completion time",
+                                    "note: errors will prohibit event from being scheduled"
+                                ].map(alert => (
+                                    <div className={classes.info_box}>
+                                        {alert}
+                                    </div>
+                                ))
+                            }
                         </div>
+                        {/* <div className={classes.warning_box}>
+                            activities can only be added on hour granularity
+                        </div>
+                        <div className={classes.warning_box}>
+                            changing start time will set end time to accomadate completion time
+                        </div> */}
                         <TextField
                                 id="datetime-local"
                                 label="Start Time"
                                 type="datetime-local"
-                                key="time"
-                                value={this.state.time}
+                                key="start_time"
+                                value={this.state.start_time}
                                 className={classes.textField}
-                                onChange={this.onChange1}
+                                onChange={this.onStartTimeChange}
                                 InputLabelProps={{
                                 shrink: true,
                                 }}
                         />
+                        <TextField
+                                id="datetime-local"
+                                label="End Time"
+                                type="datetime-local"
+                                key="end_time"
+                                value={this.state.end_time}
+                                className={classes.textField}
+                                onChange={this.onEndTimeChange}
+                                InputLabelProps={{
+                                shrink: true,
+                                }}
+                        />
+                        
                         <TextField
                             id="standard-select-currency"
                             select
@@ -386,6 +506,24 @@ class UnscheduledActivitiesList extends Component {
                                 </MenuItem>
                             ))}
                         </TextField>
+                        <div className={classes.error_list}>
+                            {
+                                this.state.warnings.map(alert => (
+                                    <div className={classes.warning_box}>
+                                        {alert}
+                                    </div>
+                                ))
+                            }
+                        </div>
+                        <div className={classes.error_list}>
+                            {
+                                this.state.errors.map(alert => (
+                                    <div className={classes.error_box}>
+                                        {alert}
+                                    </div>
+                                ))
+                            }
+                        </div>
                         <div className={classes.button_view}>
                             <Button 
                                 variant="outlined" 

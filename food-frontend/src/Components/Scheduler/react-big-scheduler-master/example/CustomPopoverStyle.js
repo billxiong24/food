@@ -5,10 +5,9 @@ import {PropTypes} from 'prop-types'
 import Col from 'antd/lib/col'
 import Row from 'antd/lib/row'
 import Button from 'antd/lib/button'
-import 'antd/lib/style/index.less';     //Add this code for locally example
-import Scheduler, {SchedulerData, ViewTypes, DATE_FORMAT, DemoData} from 'react-big-scheduler'
+// import 'antd/lib/style/index.less';     //Add this code for locally example
+import Scheduler, {SchedulerData, ViewTypes, DATE_FORMAT, DemoData} from '../src/index'
 import Nav from './Nav'
-import Tips from './Tips'
 import ViewSrcCode from './ViewSrcCode'
 import withDragDropContext from './withDnDContext'
 
@@ -50,7 +49,6 @@ class CustomPopoverStyle extends Component{
                                eventItemPopoverTemplateResolver={this.eventItemPopoverTemplateResolver}
                     />
                 </div>
-                <Tips />
             </div>
         )
     }
@@ -100,7 +98,7 @@ class CustomPopoverStyle extends Component{
     };
 
     newEvent = (schedulerData, slotId, slotName, start, end, type, item) => {
-        if(window.confirm(`Do you want to create a new event? {slotId: ${slotId}, slotName: ${slotName}, start: ${start}, end: ${end}, type: ${type}, item: ${item}}`)){
+        if(confirm(`Do you want to create a new event? {slotId: ${slotId}, slotName: ${slotName}, start: ${start}, end: ${end}, type: ${type}, item: ${item}}`)){
 
             let newFreshId = 0;
             schedulerData.events.forEach((item) => {
@@ -124,7 +122,7 @@ class CustomPopoverStyle extends Component{
     }
 
     updateEventStart = (schedulerData, event, newStart) => {
-        if(window.confirm(`Do you want to adjust the start of the event? {eventId: ${event.id}, eventTitle: ${event.title}, newStart: ${newStart}}`)) {
+        if(confirm(`Do you want to adjust the start of the event? {eventId: ${event.id}, eventTitle: ${event.title}, newStart: ${newStart}}`)) {
             schedulerData.updateEventStart(event, newStart);
         }
         this.setState({
@@ -133,7 +131,7 @@ class CustomPopoverStyle extends Component{
     }
 
     updateEventEnd = (schedulerData, event, newEnd) => {
-        if(window.confirm(`Do you want to adjust the end of the event? {eventId: ${event.id}, eventTitle: ${event.title}, newEnd: ${newEnd}}`)) {
+        if(confirm(`Do you want to adjust the end of the event? {eventId: ${event.id}, eventTitle: ${event.title}, newEnd: ${newEnd}}`)) {
             schedulerData.updateEventEnd(event, newEnd);
         }
         this.setState({
@@ -142,7 +140,7 @@ class CustomPopoverStyle extends Component{
     }
 
     moveEvent = (schedulerData, event, slotId, slotName, start, end) => {
-        if(window.confirm(`Do you want to move the event? {eventId: ${event.id}, eventTitle: ${event.title}, newSlotId: ${slotId}, newSlotName: ${slotName}, newStart: ${start}, newEnd: ${end}`)) {
+        if(confirm(`Do you want to move the event? {eventId: ${event.id}, eventTitle: ${event.title}, newSlotId: ${slotId}, newSlotName: ${slotName}, newStart: ${start}, newEnd: ${end}`)) {
             schedulerData.moveEvent(event, slotId, slotName, start, end);
             this.setState({
                 viewModel: schedulerData
