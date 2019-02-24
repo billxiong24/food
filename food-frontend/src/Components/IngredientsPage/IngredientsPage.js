@@ -133,7 +133,7 @@ class IngredientsPage extends Component {
         num:ing.num,
         name:ing.name,
         vend_info:ing.vend_info,
-        pkg_size:ing.pkg_size,
+        pkg_size:ing.pkg_size + " " + ing.unit,
         pkg_cost:ing.pkg_cost,
         comments:ing.comments
       })),

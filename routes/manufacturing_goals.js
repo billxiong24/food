@@ -11,7 +11,6 @@ const ProdLine = require("../app/productline");
 
 function getCRUD(type) {
     let crud = null;
-    console.log(type + " this my type");
     if(type === "sku") {
         console.log("creating a SKU");
         crud = new SKU();
@@ -21,9 +20,11 @@ function getCRUD(type) {
         crud = new Ingredient();
     }
     else if(type === 'formula') {
+        console.log("creating a formula");
         crud = new SKUIngred();
     }
     else if(type === 'productline') {
+        console.log("creating an productline");
         crud = new ProdLine();
     }
     else {
@@ -142,6 +143,7 @@ router.post('/exported_file', checkTokenUser, function(req, res, next) {
         return;
     }
     let csv = crud.exportFile(jsonList, format);
+    res.status(200).send(csv);
 });
 
 router.post('/', checkTokenUser, function(req, res, next) {

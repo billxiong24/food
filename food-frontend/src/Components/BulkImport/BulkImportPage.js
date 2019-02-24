@@ -210,7 +210,7 @@ class BulkImportPage extends Component {
         console.log(this.state.skuUpdates)
         axios.post(common.hostname + 'bulk/accept_bulk_import', {
             rows: this.state.productLineUpdates,
-            type: "sku",
+            type: "productline",
           })
             .then((response) => {
                 this.setState({

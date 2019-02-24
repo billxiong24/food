@@ -270,7 +270,6 @@ class CRUD {
             }
             jsonList[i] = updatedObj;
         }
-        console.log("changed db");
         return jsonList;
 
     }

@@ -8,6 +8,7 @@ class Formatter {
     }
 
     generateFormat(jsonList) {
+        console.log("formattinggg");
         if(this.format === 'csv') {
             return this.generateCSV(jsonList);
         }
@@ -19,10 +20,12 @@ class Formatter {
     }
 
     generateCSV(jsonList) {
+        console.log("generating csv");
         if(jsonList.length === 0)
             return "";
         let fields = {};
         for(let i = 0; i < jsonList.length; i++) {
+        console.log("working");
             let obj = jsonList[i];
             for(let key in obj) {
                 fields.key = true;
@@ -30,6 +33,7 @@ class Formatter {
         }
         let header = [];
         for(let k in fields) {
+            console.log("doing headers");
             header.push(fields[k]);
         }
 
@@ -37,8 +41,10 @@ class Formatter {
         let csv = null;
 
         try {
+            console.log("trying");
           const parser = new Json2csvParser(opts);
           csv = parser.parse(jsonList);
+            console.log("we done");
         } 
         catch (err) {
             throw err;
