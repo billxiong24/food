@@ -138,6 +138,7 @@ class IngredientsPage extends Component {
         comments:ing.comments
       })),
       format: "csv",
+      type: "ingredient"
     })
       .then((response) => {
         FileDownload(response.data, 'ingredients.csv');

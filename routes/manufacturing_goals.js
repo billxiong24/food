@@ -11,6 +11,7 @@ const ProdLine = require("../app/productline");
 
 function getCRUD(type) {
     let crud = null;
+    console.log(type + " this my type");
     if(type === "sku") {
         console.log("creating a SKU");
         crud = new SKU();
@@ -116,6 +117,7 @@ router.get('/:id/calculations', function(req, res, next) {
 router.post('/exported_file', checkTokenUser, function(req, res, next) {
     let format = (req.body.format) ? req.body.format : "csv";
     let jsonList = req.body.data;
+
     if(!Array.isArray(jsonList)) {
         return res.status(400).json({
             error: "Parameter must be a list."

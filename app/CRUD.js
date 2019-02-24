@@ -275,7 +275,6 @@ class CRUD {
     }
 
     exportFile(jsonList, format) {
-        console.log(jsonList);
         const formatter = new Formatter(format);
         jsonList = this.convertDBToHeader(jsonList);
         return formatter.generateFormat(jsonList);

@@ -5,6 +5,8 @@ const squel = require("squel").useFlavour('postgres');
 const QueryGenerator = require("./query_generator");
 const Filter = require('./filter');
 const Ingredient = require('./ingredient');
+const csv=require('csvtojson');
+const Formatter = require('./formatter');
 
 class SKU extends CRUD {
 
@@ -20,7 +22,8 @@ class SKU extends CRUD {
             "Count per case": "count_per_case",
             "PL Name": "prd_line",
             "Comment": "comments",
-            "Formula#": "formula_id", //TODO FIX THIS
+            "Formula#": "formula_num", //TODO FIX THIS
+            "ML shortname": "shortname", 
             "Formula factor": "formula_scale",
             "Rate": "man_rate"
         };
@@ -172,6 +175,130 @@ class SKU extends CRUD {
             return Promise.reject("Bad num.");
         }
         return db.execSingleQuery("DELETE FROM " + this.tableName + " WHERE id = $1", [id]);
+    }
+    bulkImport(csv_str, cb) {
+        let table = this.tableName;
+        let that = this;
+        csv().fromString(csv_str)
+        .then(function(rows) {
+            that.bulkCleanData(rows);
+            return rows;
+        })
+        .then(function(rows) {
+            if(that.duplicateObjs(rows)) {
+                return cb({ errors: [ 
+                            { 
+                                detail: "Duplicate rows in file."
+                            }
+                        ]
+                    });
+            }
+
+            return db.getSingleClient()
+            .then(function(client) {
+                let abort = false;
+                let error = false;
+                let errMsgs = [];
+                let prom = client.query("BEGIN");
+                let line_sku = [];
+                for(let i = 0; i < rows.length; i++) {
+                    prom = prom.then(function(r) {
+                        return that.checkExisting(rows[i])
+                        .then(function(row_nums) {
+                            let count = parseInt(row_nums.rows[0].count);
+                            if(count > 1) {
+                                rows[i].ambiguous = true;
+                                errMsgs.push({
+                                    code: "23505",
+                                    detail: "Ambiguous record in row " + i
+                                });
+                                error = true;
+                                abort = true;
+                                return false;
+                            }
+                            return true;
+                        })
+                        .then(function(quer) {
+
+                            if(!quer)
+                                return false;
+                            return client.query("SELECT id FROM formula WHERE formula.num = $1 ", [rows[i].formula_num])
+                            .then(function(res) {
+                                if(res.rows.length === 0) {
+                                    rows[i].formula_id = null;
+                                    error = true;
+                                    abort = true;
+                                    errMsgs.push({
+                                        code: "23503",
+                                        detail: "formula number " + rows[i].formula_num + " doesnt exist"
+                                    });
+                                    return false;
+                                }
+                                rows[i].formula_id = res.rows[0].id;
+                                return true;
+                            })
+                            .then(function(res) {
+                                console.log(rows[i]);
+                                return client.query("SELECT id FROM manufacturing_line WHERE shortname = $1", [rows[i].shortname])
+                                .then(function(res) {
+                                    if(res.rows.length === 0) {
+                                        error = true;
+                                        abort = true;
+                                        errMsgs.push({
+                                            code: "23503",
+                                            detail: "manufacturing shortname " + rows[i].shortname + " doesnt exist"
+                                        });
+                                        return false;
+                                    }
+                                    return res.rows[0].id;
+                                })
+                            })
+                            .then(function(id) {
+                    delete rows[i].formula_num;
+                    delete rows[i].shortname;
+                    let query = QueryGenerator.genInsQuery(rows[i], table).returning("*").toString();
+                    console.log(query);
+                                return client.query("SAVEPOINT point" + i).then(function(res) {
+                                    return client.query(query).then(function(res) {
+                                        line_sku.push({
+                                            sku_id: res.rows[0].id,
+                                            manufacturing_line_id: id
+                                        })
+
+                                    }).catch(function(err) {
+                                        error = true;
+                                        errMsgs.push(err);
+                                        rows[i].update = true;
+                                        client.query("ROLLBACK TO SAVEPOINT point" + i);
+                                    });
+                                });
+                            })
+
+                        });
+                    })
+                }
+                prom.then(function(res) {
+                    let errObj = null;
+                    if(error) {
+                        errObj = that.generateErrorResult(errMsgs)
+                        if(abort)
+                            errObj.abort = true;
+                        errObj.rows = errObj.abort ? [] : rows;
+                        //logger.debug("There was an error, rolling back");
+                        client.query("ROLLBACK");
+                        client.query("ABORT");
+                    }
+                    else {
+                        console.log(line_sku);
+                        //logger.debug("No errors, committing transaction");
+                        client.query("ABORT");
+                        //client.query("COMMIT");
+                    }
+
+                    cb(errObj);
+                });
+            });
+        });
     }
 }
 
