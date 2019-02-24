@@ -71,7 +71,41 @@ export default {
       ADMIN:'admin'
     },
     colors:{
-        primaryColor:'#6F3AD3'
+        primaryColor:'#6F3AD3',
+        warningColor:'#FFFF99',
+        infoColor:'#DCDCDC',
+        errorColor:'#F08080',
+        grayText:'#696969',
+        yellow:"#CCCC00"
+    },
+    common_styles:{
+      info_box:{
+        backgroundColor:"#DCDCDC",
+        color:"#696969",
+        paddingRight: "10px",
+        paddingTop:"5px",
+        paddingBottom:"5px",
+        marginBottom:"2px",
+        marginTop:"2px"
+      },
+      warning_box:{
+          backgroundColor:"#FFFF99",
+          color:"#696969",
+          paddingRight: "10px",
+          paddingTop:"5px",
+          paddingBottom:"5px",
+          marginBottom:"2px",
+          marginTop:"2px"
+      },
+      error_box:{
+          backgroundColor:"#F08080",
+          color:"#696969",
+          paddingRight: "10px",
+          paddingTop:"5px",
+          paddingBottom:"5px",
+          marginBottom:"2px",
+          marginTop:"2px"
+      }
     }
   }
 

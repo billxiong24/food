@@ -16,6 +16,7 @@ import moment from 'moment'
 import { ENETDOWN } from 'constants';
 import { getEnabledGoals, calculate_scheduled_time, get_scheduled_activity_warnings } from '../UtilityFunctions';
 import { Typography } from '@material-ui/core';
+import labels from '../../../Resources/labels';
 
 const styles = theme => ({
     card: {
@@ -188,6 +189,7 @@ class OverlapCheck extends Component{
                                newEvent={this.newEvent}
                                conflictOccurred={this.conflictOccurred}
                                eventItemPopoverTemplateResolver={this.eventItemPopoverTemplateResolver}
+                               eventItemTemplateResolver={this.eventItemTemplateResolver}
                     />
                 </div>
             </div>
@@ -302,6 +304,10 @@ class OverlapCheck extends Component{
         console.log(eventItem)
         let activity = eventItem.activity
         const { classes , editing, newValue} = this.props
+        let dot_color = statusColor
+        if(eventItem.warning){
+            dot_color = labels.colors.warningColor
+        }
         return (
             // <React.Fragment>
             //     <h3>{title}</h3>
@@ -311,7 +317,7 @@ class OverlapCheck extends Component{
             <div style={{width: '300px'}}>
                 <Row type="flex" align="middle">
                     <Col span={2}>
-                        <div className="status-dot" style={{backgroundColor: statusColor}} />
+                        <div className="status-dot" style={{backgroundColor: dot_color}} />
                     </Col>
                     <Col span={22} className="overflow-text">
                         <span className="header2-text" title={title}>{title}</span>
@@ -379,11 +385,42 @@ class OverlapCheck extends Component{
                         </div>
                     
                     <Col span={22}>
-                        <Button onClick={()=>{this.demoButtonClicked(eventItem);}}>Demo</Button>
+                        <Button onClick={()=>{this.unschedule_activity(eventItem);}}>Unschedule</Button>
                     </Col>
                 </Row>
             </div>
         );
+    }
+
+    unschedule_activity = (item) => {
+        let activity = item
+        activity.start_time = null
+        activity.end_time = null
+        activity.man_line_num = null
+        this.props.set_activity_schedule(activity)
+    }
+
+    eventItemTemplateResolver = (schedulerData, event, bgColor, isStart, isEnd, mustAddCssClass, mustBeHeight, agendaMaxEventWidth) => {
+        let borderWidth = isStart ? '4' : '0';
+        let borderColor =  'rgba(0,139,236,1)', backgroundColor = '#80C5F6';
+        let titleText = schedulerData.behaviors.getEventTextFunc(schedulerData, event);
+        if(!!event.type){
+            borderColor = event.type == 1 ? 'rgba(0,139,236,1)' : (event.type == 3 ? 'rgba(245,60,43,1)' : '#999');
+            backgroundColor = event.type == 1 ? '#80C5F6' : (event.type == 3 ? '#FA9E95' : '#D9D9D9');
+        }
+        let color = "white"
+        if(event.warning){
+            backgroundColor = "#FFFF99"
+            color = labels.colors.grayText
+            borderColor = labels.colors.yellow
+        }
+        let divStyle = {borderLeft: borderWidth + 'px solid ' + borderColor, backgroundColor: backgroundColor, height: mustBeHeight, color:color };
+        if(!!agendaMaxEventWidth)
+            divStyle = {...divStyle, maxWidth: agendaMaxEventWidth};
+
+        return <div key={event.id} className={mustAddCssClass} style={divStyle}>
+            <span style={{marginLeft: '4px', lineHeight: `${mustBeHeight}px` }}>{titleText}</span>
+        </div>;
     }
 
 

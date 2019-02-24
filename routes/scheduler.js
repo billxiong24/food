@@ -403,6 +403,7 @@ function scheduleActivity(id, start_time, end_time, man_line_num) {
             activities[i].start_time = start_time
             activities[i].end_time = end_time
             activities[i].man_line_num = man_line_num
+            foundCount += 1
         }
     }
     if (foundCount == 0) {
