@@ -413,6 +413,8 @@ export const goal_set_enable = (goal, enable_status) => {
 export const SCHEDULER_SET_ACTIVITY_SCHEDULE = "SCHEDULER_SET_ACTIVITY_SCHEDULE"
 
 export const set_activity_schedule = (activity) => {
+   console.log("set activity")
+   console.log(activity)
    return (dispatch) => {
      return Axios.put(hostname + '/schedule', {
          id:activity.num,
