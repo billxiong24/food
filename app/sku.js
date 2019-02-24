@@ -160,7 +160,7 @@ class SKU extends CRUD {
             expr = expr.or("num = ?", dataObj.num);
         }
         q = q.where(expr);
-        q = q.toString();
+        q = q.returning("*").toString();
         return q;
     }
 
@@ -175,6 +175,76 @@ class SKU extends CRUD {
             return Promise.reject("Bad num.");
         }
         return db.execSingleQuery("DELETE FROM " + this.tableName + " WHERE id = $1", [id]);
+    }
+
+    bulkAcceptInsert(rows, cb) {
+        let table = this.tableName;
+        let that = this;
+        db.getSingleClient()
+        .then(function(client) {
+            let error = false;
+            let errMsgs = [];
+            let prom = client.query("BEGIN");
+            let updates = 0;
+            let inserts = 0;
+            let line_sku = [];
+            for(let i = 0; i < rows.length; i++) {
+                let update = rows[i].update;
+                delete rows[i].update;
+                let id = rows[i].manufacturing_line_id;
+                delete rows[i].manufacturing_line_id;
+                let query = "";
+                if(update) {
+                    updates++;
+                    query = that.conflictUpdate(rows[i]);
+                }
+                else {
+                    inserts++;
+                    query = QueryGenerator.genInsQuery(rows[i], table).returning("*").toString();
+                }
+                //logger.debug("QUERY: " + query);
+                prom = prom.then(function(r) {
+                    return client.query(query).
+                        then(function(res) {
+                            line_sku.push({
+                                sku_id: res.rows[0].id,
+                                manufacturing_line_id: id
+                            });
+                        }).catch(function(err) {
+                        error = true;
+                        errMsgs.push(err);
+                        //logger.debug("found error.");
+                        client.query("ROLLBACK");
+                    });
+                });
+            }
+
+            prom.then(function(r) {
+                if(error) {
+                    //logger.debug("there's an error, rolling back");
+                    client.query("ROLLBACK");
+                    client.query("ABORT");
+                    cb(that.generateErrorResult(errMsgs));
+                }
+                else {
+                    console.log(line_sku);
+                    //logger.debug("No errors, committing transaction");
+                    let query = QueryGenerator.genInsConflictQuery(line_sku, 'manufacturing_line_sku', 'ON CONFLICT DO NOTHING').toString();
+                    client.query(query)
+                    .then(function(res) {
+                        client.query("COMMIT")
+                        .then(function(res) {
+                            client.release();
+                            cb({
+                                updates: updates,
+                                inserts: inserts
+                            });
+                        });
+                    })
+
+                }
+            });
+        });
     }
     bulkImport(csv_str, cb) {
         let table = this.tableName;
@@ -201,7 +271,10 @@ class SKU extends CRUD {
                 let errMsgs = [];
                 let prom = client.query("BEGIN");
                 let line_sku = [];
+                let rowsCopy = JSON.parse(JSON.stringify(rows));
                 for(let i = 0; i < rows.length; i++) {
+                    delete rowsCopy[i].formula_num;
+                    delete rowsCopy[i].shortname;
                     prom = prom.then(function(r) {
                         return that.checkExisting(rows[i])
                         .then(function(row_nums) {
@@ -235,6 +308,7 @@ class SKU extends CRUD {
                                     return false;
                                 }
                                 rows[i].formula_id = res.rows[0].id;
+                                rowsCopy[i].formula_id = res.rows[0].id;
                                 return true;
                             })
                             .then(function(res) {
@@ -250,6 +324,7 @@ class SKU extends CRUD {
                                         });
                                         return false;
                                     }
+                                    rowsCopy[i].manufacturing_line_id = res.rows[0].id;
                                     return res.rows[0].id;
                                 })
                             })
@@ -268,7 +343,7 @@ class SKU extends CRUD {
                                     }).catch(function(err) {
                                         error = true;
                                         errMsgs.push(err);
-                                        rows[i].update = true;
+                                        rowsCopy[i].update = true;
                                         client.query("ROLLBACK TO SAVEPOINT point" + i);
                                     });
                                 });
@@ -283,16 +358,23 @@ class SKU extends CRUD {
                         errObj = that.generateErrorResult(errMsgs)
                         if(abort)
                             errObj.abort = true;
-                        errObj.rows = errObj.abort ? [] : rows;
+                        errObj.rows = errObj.abort ? [] : rowsCopy;
                         //logger.debug("There was an error, rolling back");
                         client.query("ROLLBACK");
                         client.query("ABORT");
                     }
                     else {
-                        console.log(line_sku);
-                        //logger.debug("No errors, committing transaction");
-                        client.query("ABORT");
-                        //client.query("COMMIT");
+                        let query = QueryGenerator.genInsConflictQuery(line_sku, 'manufacturing_line_sku', 'ON CONFLICT DO NOTHING').toString();
+                        client.query(query)
+                        .then(function(res) {
+                            client.query("COMMIT")
+                            .then(function(res) {
+                                client.release();
+                            });
+                        })
+                        .catch(function(r) {
+                            client.release();
+                        });
                     }
 
                     cb(errObj);
