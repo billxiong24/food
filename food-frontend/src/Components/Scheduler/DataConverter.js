@@ -3,11 +3,11 @@ import { DemoData as defaultData} from 'react-big-scheduler'
 import common from "../../Resources/common";
 import Axios from "axios";
 import { store } from "../..";
-import { getActivities, filterScheduledActivities } from "./UtilityFunctions";
+import { getActivities, filterScheduledActivities, filterUnscheduledActivities } from "./UtilityFunctions";
 import moment from 'moment'
 
 const hostname = common.hostname + "scheduler"
-console.log(JSON.stringify(demoData))
+// // console.log.log(JSON.stringify(demoData))
 
 export const demoData = {
     "resources":[
@@ -179,7 +179,9 @@ export const demoData = {
      scheduled_activities: [],
      resources: [],
      events: [],
-     filtered_goals:[]
+     filtered_goals:[],
+     unscheduled_activities:[],
+     open: false
  }
 
 export function create_scheduler_data(resources, events){
@@ -199,7 +201,7 @@ export const get_goals = () => {
       
      })
      .then(response => {
-      console.log("finished SCHEDULER_GET_GOALS")
+      // console.log.log("finished SCHEDULER_GET_GOALS")
        dispatch({
          type: SCHEDULER_GET_GOALS,
          data: response.data
@@ -212,27 +214,28 @@ export const get_goals = () => {
  }
 
  export const reduceGetGoals = (state, action) => {
-    console.log("REDUCE GET GOALS")
-    console.log(action.data)
-    //console.log("REDUCE SCHEDULER_GET_GOALS")
+    // console.log.log("REDUCE GET GOALS")
+    // console.log.log(action.data)
+    //// console.log.log("REDUCE SCHEDULER_GET_GOALS")
    let activities = getActivities(action.data.goals)
-   //console.log("REDUCE SCHEDULER_GET_GOALS - 1")
+   //// console.log.log("REDUCE SCHEDULER_GET_GOALS - 1")
    let scheduled_activities = filterScheduledActivities(activities)
-   //console.log("REDUCE SCHEDULER_GET_GOALS - 2")
+   let unscheduled_activities = filterUnscheduledActivities(activities)
+   //// console.log.log("REDUCE SCHEDULER_GET_GOALS - 2")
    scheduled_activities.sort(function(activity_a,activity_b){ 
       var a = moment(activity_a.start_time, "MM-DD-YYYY HH:mm:ss")
       var b = moment(activity_a.start_time, "MM-DD-YYYY HH:mm:ss")
       return a.toDate() - b.toDate();
    });
-   //console.log("REDUCE SCHEDULER_GET_GOALS - 3")
-   //console.log(state)
+   //// console.log.log("REDUCE SCHEDULER_GET_GOALS - 3")
+   //// console.log.log(state)
    // let resources = state.man_lines.map(function(man_line){
    //    return {
    //       id:man_line.shrt_name,
    //       name:man_line.shrt_name
    //       }
    //    })
-   //    console.log("REDUCE SCHEDULER_GET_GOALS - 4")
+   //    // console.log.log("REDUCE SCHEDULER_GET_GOALS - 4")
    let scheduler_data = Object.assign({}, state.scheduler_data);
    let events = scheduled_activities.map(function(activity, index){
       return {
@@ -244,17 +247,19 @@ export const get_goals = () => {
          activity
       }
    })
-   //console.log("REDUCE SCHEDULER_GET_GOALS- Middle")
-   //console.log(events)
+   //// console.log.log("REDUCE SCHEDULER_GET_GOALS- Middle")
+   //// console.log.log(events)
    
    //scheduler_data.setEvents(events);
-   //console.log(action.data.goals)
-   //console.log("REDUCE SCHEDULER_GET_GOALS- End")
+   //// console.log.log(action.data.goals)
+   //// console.log.log("REDUCE SCHEDULER_GET_GOALS- End")
+   //console.log(unscheduled_activities)
    return Object.assign({}, state, {
          goals:action.data.goals,
          activities,
          scheduled_activities,
          events,
+         unscheduled_activities,
          scheduler_data: create_scheduler_data(state.resources, events)
    });
 }
@@ -272,6 +277,23 @@ export const set_filter = (filter) => {
  export const reduceFilter = (state, action) => {
    return Object.assign({}, state, {
          filter:action.data,
+   });
+}
+
+export const SCHEDULER_SET_OPEN = "SCHEDULER_SET_OPEN"
+
+export const set_open = (open_state) => {
+   return (dispatch) => {
+     return dispatch({
+       type: SCHEDULER_SET_OPEN,
+       data: open_state
+     })
+   }
+ }
+
+ export const reduce_set_open = (state, action) => {
+   return Object.assign({}, state, {
+         open:action.data,
    });
 }
 
@@ -388,7 +410,7 @@ export const goal_set_enable = (goal, enable_status) => {
          enable_status:enable_status
      })
      .then(response => {
-      console.log("finished SCHEDULER_GOAL_SET_ENABLE")
+      // console.log.log("finished SCHEDULER_GOAL_SET_ENABLE")
        dispatch({
          type: SCHEDULER_GOAL_SET_ENABLE,
          data: response.data
@@ -448,7 +470,7 @@ export const prev_click = () => {
  export const reduce_prev_click = (state, action) => {
    let scheduler_data = create_scheduler_data(state.resources,state.events)
    scheduler_data.prev()
-   console.log("REDICER END")
+   // console.log.log("REDICER END")
    return Object.assign({}, state, {
       scheduler_data
    });
@@ -457,6 +479,7 @@ export const prev_click = () => {
 export const SCHEDULER_GET_FILTERED_GOALS = "SCHEDULER_GET_FILTERED_GOALS"
 
 export const get_filtered_goals = (filter, filter_type_index) => {
+   // console.log(SCHEDULER_GET_FILTERED_GOALS + "Action")
    return (dispatch) => {
      return Axios.put(hostname + '/filtered_goals', {
          filter,
@@ -475,7 +498,8 @@ export const get_filtered_goals = (filter, filter_type_index) => {
  }
 
  export const reduce_get_filtered_goals = (state, action) => {
-    console.log(action.data.filtered_goals)
+   // console.log(SCHEDULER_GET_FILTERED_GOALS + "Reducer")
+   // console.log(action.data)
    return Object.assign({}, state, {
          filtered_goals: action.data.filtered_goals,
    });
@@ -488,7 +512,7 @@ export const get_filtered_goals = (filter, filter_type_index) => {
     
    //  for(var i = 0; i < state.scheduler.activities.length; i ++){
    //     var activity = state.scheduler.activities[i]
-   //     console.log({
+   //     // console.log.log({
    //       id:i + 1,
    //       start:activity.start_time,
    //       end:activity.end_time,
@@ -496,8 +520,9 @@ export const get_filtered_goals = (filter, filter_type_index) => {
    //       title:activity.name,
    //     })
    //  }
-    console.log("MAP STATE TO PROPS")
-    console.log(state)
+    // console.log.log("MAP STATE TO PROPS")
+    // console.log.log(state)
+    //console.log(state.scheduler.unscheduled_activities)
     return {
         scheduler_data: state.scheduler.scheduler_data,
         goals: state.scheduler.goals,
@@ -511,11 +536,15 @@ export const get_filtered_goals = (filter, filter_type_index) => {
         man_lines: state.scheduler.man_lines,
         resources: state.scheduler.resources,
         events: state.scheduler.events,
-        scheduled_activities: state.scheduler.scheduledActivities
+        scheduled_activities: state.scheduler.scheduled_activities,
+        filtered_goals: state.scheduler.filtered_goals,
+        unscheduled_activities: state.scheduler.unscheduled_activities,
+        open: state.scheduler.open
     };
 };
 
 export const mapDispatchToProps = (dispatch, ownProps) => {
+
     return {
       get_goals: () => {
          dispatch(get_goals())
@@ -544,13 +573,15 @@ export const mapDispatchToProps = (dispatch, ownProps) => {
          dispatch(goal_set_enable(goal, enable_status))
          setTimeout(() => {
             dispatch(get_goals())
-         }, 200);
+            dispatch(get_filtered_goals(store.getState().scheduler.filter, store.getState().scheduler.filter_type_index))
+         }, 100);
       },
       set_activity_schedule: (activity) => {
          dispatch(set_activity_schedule(activity))
          setTimeout(() => {
             dispatch(get_goals())
-         }, 200);
+            dispatch(get_filtered_goals(store.getState().scheduler.filter, store.getState().scheduler.filter_type_index))
+         }, 100);
       },
       prev_click: () => {dispatch(prev_click())},
       get_filtered_goals: (filter, filter_type_index) => {
@@ -558,6 +589,12 @@ export const mapDispatchToProps = (dispatch, ownProps) => {
          // .then(dispatch(get_filtered_goals(filter, filter_type_index)))
          dispatch(set_filter(filter))
          dispatch(get_filtered_goals(filter, filter_type_index))
+      },
+      close_popup: () =>{
+         dispatch(set_open(false))
+      },
+      open_popup: () =>{
+         dispatch(set_open(true))
       }
     };
 };

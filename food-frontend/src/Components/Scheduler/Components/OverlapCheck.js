@@ -27,15 +27,15 @@ class OverlapCheck extends Component{
     }
 
     componentWillReceiveProps(newProps) {
-        console.log("COMPONENTWILLRECEIVEPROPS")
-        console.log(newProps)
+        // console.log.log("COMPONENTWILLRECEIVEPROPS")
+        // console.log.log(newProps)
         this.state.scheduler_data.setEvents(newProps.events)
         this.state.scheduler_data.setResources(newProps.resources)
     }
 
     render(){
-        console.log("RENDER")
-        console.log(this.state.scheduler_data)
+        // console.log.log("RENDER")
+        // console.log.log(this.state.scheduler_data)
         return (
             <div>
                 <div>
@@ -61,7 +61,7 @@ class OverlapCheck extends Component{
     }
 
     prevClick = (scheduler_data)=> {
-        console.log("previous clicked")
+        // console.log.log("previous clicked")
         scheduler_data.prev()
         scheduler_data.setEvents(this.props.events)
         this.setState({
@@ -70,7 +70,7 @@ class OverlapCheck extends Component{
     }
 
     nextClick = (scheduler_data)=> {
-        console.log("next clicked")
+        // console.log.log("next clicked")
         scheduler_data.next()
         scheduler_data.setEvents(this.props.events)
         this.setState({
@@ -79,7 +79,7 @@ class OverlapCheck extends Component{
     }
 
     onViewChange = (scheduler_data, view) => {
-        console.log("view change clicked")
+        // console.log.log("view change clicked")
         scheduler_data.setViewType(view.viewType, view.showAgenda, view.isEventPerspective);;
         scheduler_data.setEvents(this.props.events)
         this.setState({
@@ -88,7 +88,7 @@ class OverlapCheck extends Component{
     }
 
     onSelectDate = (scheduler_data, date) => {
-        console.log("date selected")
+        // console.log.log("date selected")
         scheduler_data.setDate(date);
         scheduler_data.setEvents(this.props.events)
         this.setState({
@@ -137,8 +137,8 @@ class OverlapCheck extends Component{
             schedulerData.updateEventStart(event, newStart);
             let activity = event.activity
             activity.start_time = newStart
-            console.log("NEW ACTIVITY")
-            console.log(activity)
+            // console.log.log("NEW ACTIVITY")
+            // console.log.log(activity)
             this.props.set_activity_schedule(activity)
         }
         this.setState({
@@ -151,8 +151,8 @@ class OverlapCheck extends Component{
             schedulerData.updateEventEnd(event, newEnd);
             let activity = event.activity
             activity.end_time = newEnd
-            console.log("NEW ACTIVITY")
-            console.log(activity)
+            // console.log.log("NEW ACTIVITY")
+            // console.log.log(activity)
             this.props.set_activity_schedule(activity)
         }
         this.setState({
@@ -167,8 +167,8 @@ class OverlapCheck extends Component{
             activity.start_time = start
             activity.end_time = end
             activity.man_line_num = slotName
-            console.log("NEW ACTIVITY")
-            console.log(activity)
+            // console.log.log("NEW ACTIVITY")
+            // console.log.log(activity)
             this.props.set_activity_schedule(activity)
             //schedulerData.moveEvent(event, slotId, slotName, start, end);
             // this.setState({

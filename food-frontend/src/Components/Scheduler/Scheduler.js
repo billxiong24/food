@@ -13,9 +13,13 @@ import CustomTimeWindow from './Components/CustomTimeWindow';
 import OverlapCheck from './Components/OverlapCheck';
 import { mapStateToProps, mapDispatchToProps } from './DataConverter';
 import { store } from '../..';
-import { Button } from '@material-ui/core';
+import { Button, Typography } from '@material-ui/core';
 import GoalAutocomplete from './GoalAutocomplete';
 import GoalFilterDropdown from './GoalFilterDropdown';
+import GoalList from './GoalList';
+import AddActivityPopUpWrapped from './AddActivityPopUp';
+import UnscheduledActivitiesListWrapped from './UnscheduledActivitiesList';
+import SimpleModalWrapped from './SimpleModalWrapped';
 
 const styles = {
     ingredient_page_container:{
@@ -64,12 +68,31 @@ const styles = {
     },
     lists_view:{
         display:'flex',
-        flexDirection: 'column'
+        flexDirection: 'row'
     },
     goals_list_view:{
-
+        height: '10vh',
+    },
+    goals_list_container:{
+        height: '30vh',
+        width: '100%',
+        margin: 5,
+        padding: 5,
+        overflow: 'auto'
+    },
+    unscheduled_activities_list_container:{
+        height: '30vh',
+        width: '100%',
+        margin: 5,
+        padding: 5,
+        overflow: 'auto'
     },
     unscheduled_activities_list_view:{
+        height: '30vh',
+        width: '100%',
+        margin: 5,
+        padding: 5,
+        overflow: 'auto'
 
     },
     warnings_list_view:{
@@ -77,7 +100,7 @@ const styles = {
     },
     page_view:{
         display:'flex',
-        flexDirection: 'row',
+        flexDirection: 'column',
     },
     scheduler_view:{
 
@@ -117,7 +140,7 @@ class Scheduler extends Component {
 
     render() {
         const { classes , editing, newValue} = this.props
-        console.log(this.props)
+        // console.log.log(this.props)
         
         //2. create the view model, put it in the props obj
         let schedulerData = new SchedulerData(new moment().format(DATE_FORMAT), ViewTypes.Week);
@@ -145,7 +168,7 @@ class Scheduler extends Component {
                         ];
         schedulerData.setResources(resources);
         
-        console.log(store.getState())
+        // console.log.log(store.getState())
         //set events here or later, 
         //the event array should be sorted in ascending order by event.start property, otherwise there will be some rendering errors
         let events = [
@@ -188,9 +211,17 @@ class Scheduler extends Component {
                                 <GoalFilterDropdown></GoalFilterDropdown>
                             </div>
                         </div>
+                        <div className={classes.goals_list_container}>
+                            <GoalList></GoalList>
+                        </div>
                     </div>
                     <div className={classes.unscheduled_activities_list_view}>
-
+                        <Typography>
+                            Unscheduled Activities
+                        </Typography>
+                        <div className={classes.unscheduled_activities_list_container}>
+                            <UnscheduledActivitiesListWrapped></UnscheduledActivitiesListWrapped>
+                        </div>
                     </div>
                 </div>
                 <div className={classes.calendar_view}>
@@ -198,7 +229,7 @@ class Scheduler extends Component {
                         <OverlapCheck></OverlapCheck>
                     </div>
                     <div className={classes.warnings_list_view}>
-
+                        <SimpleModalWrapped></SimpleModalWrapped>
                     </div>
 
                 </div>

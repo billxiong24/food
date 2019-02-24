@@ -54,10 +54,10 @@ class DropdownButton extends Component {
     }
 
     resetThenSet = (id, key) => {
-        console.log(key)
-        console.log(this.state)
+        // console.log.log(key)
+        // console.log.log(this.state)
         let temp = this.state[key];
-        console.log(temp)
+        // console.log.log(temp)
         for (var i = 0; i < temp.length; i++) {
             temp[i].selected = false;
        }
@@ -74,7 +74,7 @@ class DropdownButton extends Component {
     render() {
         const { classes, items, selected_index, type } = this.props;
         if(type == "white"){
-            console.log("white")
+            // console.log.log("white")
             return (
                 <WhiteDropdown
                     title={this.state.list[selected_index].title}

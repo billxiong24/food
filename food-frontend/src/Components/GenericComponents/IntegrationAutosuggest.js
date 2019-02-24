@@ -235,7 +235,7 @@ class IntegrationAutosuggest extends React.Component {
     })
   }
   handleChange = name => (event, { newValue, method }) => {
-    console.log(this.props)
+    // console.log.log(this.props)
     this.setState({
       single : newValue
     });
