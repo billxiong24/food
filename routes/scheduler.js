@@ -13,8 +13,8 @@ var HomeStyleTurkeyMeal = {
     "comments": "keep at 45 deg. storage temperature",
     "cases_needed": 545,
     "mfg_rate": 782.1,
-    "start_time": "2019-02-19 09:00:00",
-    "end_time": "2019-02-19 10:00:00",
+    "start_time": "2019-02-19 09:00",
+    "end_time": "2019-02-19 10:00",
     "man_line_num": "BMP1"
 }
 var HeartyApplePie = {
@@ -77,8 +77,8 @@ var ProteinPowder = {
     "comments": "keep dry- this one is partially past the line",
     "cases_needed": 515,
     "mfg_rate": 78,
-    "start_time": "2019-02-19 15:00:00",
-    "end_time": "2019-02-20 12:00:00",
+    "start_time": "2019-02-19 15:00",
+    "end_time": "2019-02-20 12:00",
     "man_line_num": "BMP2"
 }
 var ProteinBar = {
@@ -92,8 +92,8 @@ var ProteinBar = {
     "comments": "never expires",
     "cases_needed": 5115,
     "mfg_rate": 5115,
-    "start_time": "2019-02-20 13:00:00",
-    "end_time": "2019-02-20 14:00:00",
+    "start_time": "2019-02-20 13:00",
+    "end_time": "2019-02-20 14:00",
     "man_line_num": "BMP2"
 }
 var OrangeBoost = {
@@ -107,8 +107,8 @@ var OrangeBoost = {
     "comments": "never expires",
     "cases_needed": 5115,
     "mfg_rate": 5115,
-    "start_time": "2019-02-18 13:00:00",
-    "end_time": "2019-02-18 15:00:00",
+    "start_time": "2019-02-18 13:00",
+    "end_time": "2019-02-18 15:00",
     "man_line_num": "BMP1"
 }
 var RainbowPowder = {
@@ -122,8 +122,8 @@ var RainbowPowder = {
     "comments": "never expires",
     "cases_needed": 100,
     "mfg_rate": 10,
-    "start_time": "2019-02-18 8:00:00",
-    "end_time": "2019-02-18 18:00:00",
+    "start_time": "2019-02-18 08:00",
+    "end_time": "2019-02-19 08:00",
     "man_line_num": "BMP3"
 }
 var SchezuanChicken = {
@@ -137,8 +137,8 @@ var SchezuanChicken = {
     "comments": "keep at 45 deg. storage temperature",
     "cases_needed": 200,
     "mfg_rate": 100,
-    "start_time": "2019-03-04 8:00:00",
-    "end_time": "2019-03-04 10:00:00",
+    "start_time": "2019-03-04 8:00",
+    "end_time": "2019-03-04 10:00",
     "man_line_num": "DMF1"
 }
 var MonsterBoost = {
@@ -415,6 +415,7 @@ function scheduleActivity(id, start_time, end_time, man_line_num) {
 
 
 router.get('/goals', function (req, res, next) {
+    console.log(goals)
     return res.status(200).json({
         goals: dummySchedulerData.goals
     })
