@@ -398,12 +398,14 @@ router.put('/schedule', function (req, res, next) {
 
 function scheduleActivity(id, start_time, end_time, man_line_num) {
     var foundCount = 0;
+    console.log(id)
     for (var i = 0; i < activities.length; i++) {
         if (activities[i].id == id) {
             activities[i].start_time = start_time
             activities[i].end_time = end_time
             activities[i].man_line_num = man_line_num
             foundCount += 1
+            console.log(activities[i])
         }
     }
     if (foundCount == 0) {
