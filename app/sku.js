@@ -228,6 +228,7 @@ class SKU extends CRUD {
                     //logger.debug("there's an error, rolling back");
                     client.query("ROLLBACK");
                     client.query("ABORT");
+                    client.release();
                     cb(that.generateErrorResult(errMsgs));
                 }
                 else {
@@ -318,7 +319,7 @@ class SKU extends CRUD {
                             })
                             .then(function(res) {
                                 console.log(rows[i]);
-                                let shortnames = rows[i].shortname.split(/[ ,]+/);
+                                let shortnames = (rows[i].shortname) ? rows[i].shortname.split(/[ ,]+/) : [];
                                 let shortPromises = Promise.resolve(null);
                                 for(let j = 0; j < shortnames.length; j++) {
                                     shortPromises = shortPromises.then(function(res) {
@@ -376,6 +377,7 @@ class SKU extends CRUD {
                         //logger.debug("There was an error, rolling back");
                         client.query("ROLLBACK");
                         client.query("ABORT");
+                        client.release();
                     }
                     else {
                         let query = QueryGenerator.genInsConflictQuery(line_sku, 'manufacturing_line_sku', 'ON CONFLICT DO NOTHING').toString();

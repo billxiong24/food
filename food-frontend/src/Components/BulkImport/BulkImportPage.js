@@ -132,7 +132,9 @@ class BulkImportPage extends Component {
             }
         })
             .then((response) => {
+                console.log("RESPONDED FROM BULK IMPORT");
                 if(!response.data.abort){
+                    console.log("NOT ABORTING");
                     this.setState({
                         skuErrors:response.data.errors,
                     })
@@ -141,6 +143,12 @@ class BulkImportPage extends Component {
                             skuUpdates:response.data.rows,
                         })
                     }
+                }
+                else {
+                    this.setState({
+                        skuErrors:response.data.errors,
+                    })
+
                 }
             })
             .catch(err => {

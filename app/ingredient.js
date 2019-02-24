@@ -13,7 +13,6 @@ class Ingredient extends CRUD {
             "Name": "name",
             "Vendor Info": "vend_info",
             "Size": "pkg_size",
-            "Unit": "unit", 
             "Cost": "pkg_cost",
             "Comment": "comments"
         };
@@ -81,6 +80,23 @@ class Ingredient extends CRUD {
         q = q.where(expr);
         q = q.toString();
         return q;
+    }
+
+    bulkCleanData(jsonList) {
+        jsonList = this.convertHeaderToDB(jsonList);
+        for(let i = 0; i < jsonList.length; i++) {
+            let obj = jsonList[i];
+            for(let key in obj) {
+                if(obj[key].length === 0) {
+                    delete obj[key];
+                }
+            }
+            let pkg_size = obj.pkg_size;
+            let arr = pkg_size.split(/\s+/);
+            obj.pkg_size = arr[0];
+            obj.unit = arr[1];
+            console.log(obj);
+        }
     }
 
     duplicateObjs(jsonList) {
