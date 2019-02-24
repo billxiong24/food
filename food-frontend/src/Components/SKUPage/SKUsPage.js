@@ -130,6 +130,7 @@ class SKUsPage extends Component {
     console.log("EXPORTING FROM SKUSSSSSS");
     axios.post(common.hostname + 'manufacturing_goals/exported_file', {
       data: this.props.items.map((sku) => ({
+        id: sku.id,
         num:sku.num,
         name:sku.name,
         case_upc:sku.case_upc,

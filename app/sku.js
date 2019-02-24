@@ -24,9 +24,10 @@ class SKU extends CRUD {
             "Comment": "comments",
             "Formula#": "formula_num", //TODO FIX THIS
             "FormulaID": "formula_id",
-            "ML shortname": "shortname", 
+            "ML Shortnames": "shortname", 
             "Formula factor": "formula_scale",
-            "Rate": "man_rate"
+            "Rate": "man_rate",
+            "SkuID": "id"
         };
         this.dbToHeader = this.reverseKeys(this.headerToDB);
     }
@@ -178,6 +179,41 @@ class SKU extends CRUD {
         return db.execSingleQuery("DELETE FROM " + this.tableName + " WHERE id = $1", [id]);
     }
 
+    //override
+    exportFile(jsonList, format, cb=null) {
+        const formatter = new Formatter(format);
+        jsonList = super.convertDBToHeader(jsonList);
+
+        let promise = Promise.resolve(null);
+        for(let i = 0; i < jsonList.length; i++) {
+            promise = promise.then(function(res) {
+                return db.execSingleQuery("SELECT num FROM formula WHERE id = $1", [jsonList[i]['FormulaID']])
+                .then(function(result) {
+                    jsonList[i]["Formula#"] = result.rows[0].num;
+                    delete jsonList[i]['FormulaID'];
+                });
+            })
+            .then(function(res) {
+                return db.execSingleQuery("select shortname from manufacturing_line_sku inner join manufacturing_line on id = manufacturing_line_id where sku_id = $1", [jsonList[i].SkuID])
+                .then(function(res) {
+                    let shortnames = "";
+                    for(let j = 0; j < res.rows.length; j++) {
+                        shortnames += res.rows[j].shortname;
+                        if(j !== res.rows.length - 1)
+                            shortnames +=  ",";
+                    }
+                    jsonList[i]["ML Shortnames"] = shortnames;
+                    delete jsonList[i].SkuID;
+                });
+            });
+        }
+
+        //console.log(jsonList);
+        return promise.then(function(res) {
+            cb(formatter.generateFormat(jsonList));
+        });
+    }
+
     bulkAcceptInsert(rows, cb) {
         let table = this.tableName;
         let that = this;
@@ -232,7 +268,17 @@ class SKU extends CRUD {
                     cb(that.generateErrorResult(errMsgs));
                 }
                 else {
-                    console.log(line_sku);
+                    if(line_sku.length === 0) {
+                        client.query("COMMIT")
+                        .then(function(res) {
+                            client.release();
+                            cb({
+                                updates: updates,
+                                inserts: inserts
+                            });
+                        });
+                       return; 
+                    }
                     //logger.debug("No errors, committing transaction");
                     let query = QueryGenerator.genInsConflictQuery(line_sku, 'manufacturing_line_sku', 'ON CONFLICT DO NOTHING').toString();
                     client.query(query)
@@ -318,8 +364,12 @@ class SKU extends CRUD {
                                 return true;
                             })
                             .then(function(res) {
+                                console.log("HELLO WORLD");
                                 console.log(rows[i]);
                                 let shortnames = (rows[i].shortname) ? rows[i].shortname.split(/[ ,]+/) : [];
+                                console.log(shortnames);
+                                if(shortnames.length === 1 && shortnames[0].length === 0)
+                                    shortnames = [];
                                 let shortPromises = Promise.resolve(null);
                                 for(let j = 0; j < shortnames.length; j++) {
                                     shortPromises = shortPromises.then(function(res) {
@@ -380,6 +430,13 @@ class SKU extends CRUD {
                         client.release();
                     }
                     else {
+                        if(line_sku.length === 0) {
+                            client.query("COMMIT")
+                            .then(function(res) {
+                                client.release();
+                            });
+                           return; 
+                        }
                         let query = QueryGenerator.genInsConflictQuery(line_sku, 'manufacturing_line_sku', 'ON CONFLICT DO NOTHING').toString();
                         client.query(query)
                         .then(function(res) {

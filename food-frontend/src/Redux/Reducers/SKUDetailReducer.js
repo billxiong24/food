@@ -48,16 +48,25 @@ export default function SKUDetailReducer(state = initialState, action) {
             });
         case SKU_DET_DELETE_SKU:
             return Object.assign({}, state, {
+                ingredients:[],
+                comments:null, 
+                completion:null, 
+                product_lines:[],
+                current_ingredients:[], 
+                current_formula: null, 
                 name: null,
-                case_upc:null,
-                unit_upc:null,
-                num:null,
-                unit_size:null,
-                count_per_case:null,
-                prd_line:null,
-                ingredients:null,
-                comments:null,
-                id:null
+                case_upc: null,
+                unit_upc: null,
+                num: null,
+                unit_size: null,
+                count_per_case: null,
+                prd_line: null,
+                comments: null,
+                id: null,
+                formula_id : null,
+                manufacturing_lines: [],
+                man_rate: null,
+                formula_scale: null
             });
         case SKU_DET_DELETE_ING:
             if(action.data.errMsg === ""){
@@ -126,7 +135,7 @@ export default function SKUDetailReducer(state = initialState, action) {
             }
               return Object.assign({}, state, {
                 manufacturing_lines: [
-                  ...manufacturing_lines,
+                  ...state.manufacturing_lines,
                   action.data
                 ]
               });

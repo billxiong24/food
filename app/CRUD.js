@@ -68,6 +68,9 @@ class CRUD {
     
       inputArray.map(function(item) {
           var itemPropertyName = item[propertyName];    
+          if(!itemPropertyName) {
+              return;
+          }
           if (itemPropertyName in testObject) {
                 testObject[itemPropertyName].duplicate = true;
                 item.duplicate = true;
@@ -267,6 +270,7 @@ class CRUD {
             }
             jsonList[i] = updatedObj;
         }
+        console.log("changed db");
         return jsonList;
 
     }
@@ -274,7 +278,7 @@ class CRUD {
         return this.changeKeys(jsonList, this.dbToHeader);
     }
 
-    exportFile(jsonList, format) {
+    exportFile(jsonList, format, cb=null) {
         const formatter = new Formatter(format);
         jsonList = this.convertDBToHeader(jsonList);
         return formatter.generateFormat(jsonList);

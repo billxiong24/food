@@ -30,6 +30,8 @@ class SortByDropdown extends Component {
             labels.skus.sort_by.COUNT_PER_CASE,
             labels.skus.sort_by.PRODUCT_LINE,
             labels.skus.sort_by.COMMENTS,
+            labels.skus.sort_by.FORMULA_SCALE,
+            labels.skus.sort_by.MANUFACTURING_RATE
         ]
         this.state={
             items

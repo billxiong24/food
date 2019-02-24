@@ -61,7 +61,9 @@ export default {
             UNIT_SIZE: "Unit Size",
             COUNT_PER_CASE: "Count Per Case",
             PRODUCT_LINE: "Product Line",
-            COMMENTS:"Comments"
+            COMMENTS:"Comments", 
+            FORMULA_SCALE: "Formula scale",
+            MANUFACTURING_RATE: "Manufacturing rate"
         },
         sort_by_map:{
             "Name":"name",
@@ -71,7 +73,10 @@ export default {
             "Unit Size":"unit_size",
             "Count Per Case":"count_per_case",
             "Product Line":"prd_line",
-            "Comments":"comments"
+            "Comments":"comments",
+            "Formula scale": "formula_scale",
+            "Manufacturing rate": "man_rate"
+
         },
         reverse_sort_by_map:{
             "name":"Name",
@@ -81,7 +86,9 @@ export default {
             "unit_size":"Unit Size",
             "count_per_case":"Count Per Case",
             "prd_line":"Product Line",
-            "comments":"Comments"
+            "comments":"Comments", 
+            "formula_scale": "FOrmula scale",
+            "man_rate": "Manufacturing rate"
         },
         filter_type:{
             SKU_NAME: "SKU",

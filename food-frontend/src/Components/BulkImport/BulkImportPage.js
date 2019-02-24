@@ -118,7 +118,6 @@ class BulkImportPage extends Component {
         if (file === undefined ){
             return
         }
-        console.log(file)
         if(!isSKUCSV(file.name)){
             this.props.pushError(createError("Import SKU File Name Format: \'sku*.csv\'"))
             return
@@ -243,6 +242,15 @@ class BulkImportPage extends Component {
             }
         })
             .then((response) => {
+                console.log("I GOT A RESPONSE FROM ingredient");
+                if(response.data === null) {
+                    this.setState({
+                        ingredientErrors:[{
+                            detail: "Successfully imported."
+                        }]
+                    })  
+                    return;
+                }
                 if(!response.data.abort){
                 this.setState({
                     ingredientErrors:response.data.errors,
@@ -293,16 +301,30 @@ class BulkImportPage extends Component {
             }
         })
         .then((response) => {
-            if(!response.data.abort){
-            this.setState({
-                formulaErrors:response.data.errors,
-            })
-            if(response.data.rows !== undefined){
+            console.log("I GOT A RESPONSE FROM FORMULA");
+            if(response.data === null) {
                 this.setState({
-                    formulaUpdates:response.data.rows,
+                    formulaErrors:[{
+                        detail: "Successfully imported."
+                    }]
                 })  
+                return;
             }
-        }
+            if(!response.data.abort){
+                this.setState({
+                    formulaErrors:response.data.errors,
+                })
+                if(response.data.rows !== undefined){
+                    this.setState({
+                        formulaUpdates:response.data.rows,
+                    })  
+                }
+            }
+            else {
+                this.setState({
+                    formulaErrors: response.data.errors
+                })
+            }
         })
         .catch(err => {
           console.log(err);

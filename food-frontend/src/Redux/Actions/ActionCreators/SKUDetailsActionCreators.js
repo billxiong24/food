@@ -206,8 +206,6 @@ export const skuDetUpdateSku = (sku) => {
 
   // DELETE /sku/:id/
 export const skuDetDeleteSku = (sku, ingredients) => {
-    console.log("SKU_DET_DELETE_SKU ACTION CREATOR")
-    console.log(sku.id)
     // [{ingred_num: 1, quantity: 1}, {ingred_  num: 2, quantity: 2}]
     
     return (dispatch) => {

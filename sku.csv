@@ -1,5 +1,4 @@
-Name,SKU#,Case UPC,Unit UPC,Unit size,Count per case,PL Name,Comment,Formula#,Formula factor,Rate
-nametrea,,237722222,2423511,85lbs,2,prod69,commemntnt,5,1,1
-skutran,53444,25333,65653,12 lbs,998,prod444,,8,1,1
-sku1,142424,2333333,112553,10 lbs,4,prod8989,a comment,4,1,1
-skuamb,78,102,877733,229834,6,prod4,ambiguouss,5,1,1
+Name,SKU#,Case UPC,Unit UPC,Unit size,Count per case,PL Name,Comment,ML shortnames,Formula#,Formula factor,Rate
+f1,55353333,2654333,25625345,59 lb14dds,22,prod4,sgs,,4,2.4,1
+f2,64654644,65434511,7634546,59 lb14dds,22,prod69,sgs,"manli, man6d, maxi",4,2.4,1
+f3,82646,111266,57578487,ytikjy656,46,prod4,sgs,"hi33, man69, man22",33,2.7,1
