@@ -7,53 +7,139 @@ const QueryGenerator = require("./query_generator");
 class SKUIngred extends CRUD {
     constructor() {
         super();
-        this.tableName = "sku_ingred";
+        this.tableName = "formula_ingredients";
+        this.headerToDB = {
+            "Formula#": "num",
+            "Name": "name", 
+            "Ingr#": "ingredient_num", 
+            "Quantity": "quantity", 
+            "Comment": "comment"
+        };
+        this.dbToHeader = this.reverseKeys(this.headerToDB);
+
+    }
+    bulkCleanData(jsonList) {
+        jsonList = this.convertHeaderToDB(jsonList);
+        for(let i = 0; i < jsonList.length; i++) {
+            let obj = jsonList[i];
+            for(let key in obj) {
+                if(obj[key].length === 0) {
+                    delete obj[key];
+                }
+            }
+            let quantity = obj.quantity;
+            let arr = quantity.split(/\s+/);
+            obj.quantity = arr[0];
+            obj.unit = arr[1];
+            console.log(obj);
+        }
     }
 
     bulkImport(csv_str, cb) {
         let table = this.tableName;
         let that = this;
-        let errMsg = null; 
         csv().fromString(csv_str)
         .then(function(rows) {
             that.bulkCleanData(rows);
             return rows;
         })
         .then(function(rows) {
-            db.getSingleClient().then(function(client) {
+            return db.getSingleClient()
+            .then(function(client) {
+                let abort = false;
+                let error = false;
+                let errMsgs = [];
                 let prom = client.query("BEGIN");
-                let i;
+                let line_sku = [];
+                let rowsCopy = JSON.parse(JSON.stringify(rows));
+                let form_ingred = [];
                 for(let i = 0; i < rows.length; i++) {
-                    let query = QueryGenerator.genInsConflictQuery([rows[i]], table,  'ON CONFLICT (sku_num, ingred_num) DO UPDATE SET quantity = EXCLUDED.quantity').toString();
+                    delete rowsCopy[i].ingredient_num;
+
                     prom = prom.then(function(r) {
-                        return client.query(query);
+                        return client.query("SELECT id FROM ingredients WHERE ingredients.num = $1 ", [rows[i].ingredient_num])
+                            .then(function(res) {
+                                if(res.rows.length === 0) {
+                                    rowsCopy[i].ingredients_id = null;
+                                    rowsCopy[i].insert = false;
+                                    error = true;
+                                    abort = true;
+                                    errMsgs.push({
+                                        code: "23503",
+                                        detail: "Ingredient number " + rows[i].ingredient_num + " doesnt exist"
+                                    });
+                                    return false;
+                                }
+                                rowsCopy.insert = true;
+                                rowsCopy[i].ingredients_id = res.rows[0].id;
+                                return true;
+                            })
+                            .then(function(res) {
+                                delete rows[i].ingredient_num;
+                                delete rows[i].quantity;
+                                delete rows[i].unit;
+                                if(!rowsCopy.insert)
+                                    return Promise.resolve(false);
+                                let query = QueryGenerator.genInsConflictQuery([rows[i]], 'formula',  'ON CONFLICT (num) DO UPDATE SET name = EXCLUDED.name').toString();
+                                query += " RETURNING id";
+                                console.log(query);
+                                return client.query("SAVEPOINT point" + i).then(function(res) {
+                                    return client.query(query).then(function(res) {
+                                        let formula_id = res.rows[0].id;
+                                        form_ingred.push({
+                                            formula_id: formula_id,
+                                            ingredients_id: rowsCopy[i].ingredients_id, 
+                                            quantity: rowsCopy[i].quantity, 
+                                            unit: rowsCopy[i].unit
+                                        })
+
+                                    }).catch(function(err) {
+                                        console.log(err);
+                                        error = true;
+                                        errMsgs.push(err);
+                                        rowsCopy[i].update = true;
+                                        client.query("ROLLBACK TO SAVEPOINT point" + i);
+                                    });
+                                });
+                            });
+
                     });
                 }
-                
-                prom = prom.then(function(res) {
-                    //logger.debug("no errors in formulas, commiting");
-                    client.query("COMMIT");
-                    cb({
-                        inserts: rows.length,
-                        updates: 0
-                    });
-                })
-                .catch(function(err) {
-                    errMsg = {
-                        errors: [ 
-                            { 
-                                code: err.code,
-                                detail: err.detail ? err.detail : "Bad input in csv file - double check that you are inputting sku_num,ingred_num,quantity"
-                            }
-                        ]
-                    };
-                    //logger.debug("Error, aborting formulas");
-                    client.query("ABORT");
-                    cb(errMsg);
+                prom.then(function(res) {
+                    let errObj = null;
+                    if(error) {
+                        errObj = that.generateErrorResult(errMsgs)
+                        if(abort)
+                            errObj.abort = true;
+                        errObj.rows = errObj.abort ? [] : rowsCopy;
+                        //logger.debug("There was an error, rolling back");
+                        client.query("ROLLBACK");
+                        client.query("ABORT");
+                        client.release();
+                    }
+                    else {
+                        console.log(form_ingred);
+                        let query = QueryGenerator.genInsConflictQuery(form_ingred, 'formula_ingredients', 'ON CONFLICT (formula_id, ingredients_id) DO UPDATE SET quantity = EXCLUDED.quantity, unit = EXCLUDED.unit').toString();
+                        console.log(query);
+                        client.query(query)
+                        .then(function(res) {
+                            client.query("COMMIT")
+                            .then(function(res) {
+                                client.release();
+                            });
+                        })
+                        .catch(function(r) {
+                            client.release();
+                        });
+                    }
+
+                    cb(errObj);
                 });
             });
         });
     }
+
+
 }
 
 module.exports = SKUIngred;
