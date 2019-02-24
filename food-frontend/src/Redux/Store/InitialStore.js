@@ -135,6 +135,8 @@ export const InitialStore = {
       completion:"All Good",
       id:null,
       product_lines:[],
+      manufacturing_lines: [], 
+      manline_suggestions: [],
       formula_suggestions: [],
       ingredient_suggestions:[],
       current_ingredients:[],

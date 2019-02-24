@@ -5,7 +5,7 @@ import IntegrationAutosuggest2 from '../GenericComponents/IntegrationAutosuggest
 import labels from '../../Resources/labels';
 import { ingAddFilter, ingSearch, ingGetSkus } from '../../Redux/Actions';
 import { skuFormatter } from '../../Scripts/Formatters';
-import { skuDetGetFormulaNames,  skuDetGetIng, skuDetIngAutocomplete, skuDetAddIngLocal , skuDetSetFormula } from '../../Redux/Actions/ActionCreators/SKUDetailsActionCreators';
+import { skuDetGetManLinesAuto, skuDetSetLines, skuDetGetFormulaNames,  skuDetGetIng, skuDetIngAutocomplete, skuDetAddIngLocal , skuDetSetFormula } from '../../Redux/Actions/ActionCreators/SKUDetailsActionCreators';
 import TextField from '@material-ui/core/TextField';
 import SimpleCard from '../GenericComponents/SimpleCard';
 import Card from '@material-ui/core/Card';
@@ -59,21 +59,24 @@ class SKUDetailIngredientAutocomplete extends Component {
     
     onIngredientFilterSuggest = (input, num) => {
         num.quantity = this.state.quantity
-        console.log("FILTERING BABY");
-        console.log(num);
         this.props.addForm(num)
         this.setState({
             quantity: 1
         })
     }
+    onLineFilterSuggest = (input, num) => {
+        this.props.addLine(num)
+    }
 
     onChange = (input) => {
-        console.log(input)
         this.props.getFormulaNames(input)
+    }
+    onLineChange = (input) => {
+        this.props.getLines(input)
     }
 
     render() {
-        const { classes, current_formula, formula_names, filter_type, editing } = this.props
+        const { classes, current_formula, formula_names, manufacturing_lines, manline_suggestions, filter_type, editing } = this.props
         return (
             editing ?
             <div className={classes.container}>
@@ -94,7 +97,36 @@ class SKUDetailIngredientAutocomplete extends Component {
                 </CardContent>
                 
             </Card>
-            </div>:
+                <IntegrationAutosuggest2
+                    className={classes.autosuggest}
+                    suggestions={manline_suggestions.map(ml => ({label:ml.name, id:ml.id, item: ml}))}
+                    placeholder={"Add Manufacturing Line"}
+                    onEnter = {this.onIngredientFilterEnter}
+                    onSuggest = {this.onLineFilterSuggest}
+                    onChange = {this.onLineChange}
+                ></IntegrationAutosuggest2>
+            <br/>
+            <div>
+            {
+                manufacturing_lines.map((item, index) => (
+                    <Card className={classes.card} key={index}>
+                        <CardContent >
+                                <div>
+                                    {item.name}
+                                </div>
+                                <div>
+                                    {item.shortname}
+                                </div>
+                        </CardContent>
+                    </Card>
+
+                ))
+            }
+            
+            </div>
+            </div>
+            
+            :
             <div></div>
         );
     }
@@ -104,6 +136,8 @@ const mapStateToProps = state => {
     return {
         ingredient_names: state.sku_details.ingredient_suggestions,
         formula_names: state.sku_details.formula_suggestions,
+        manufacturing_lines: state.sku_details.manufacturing_lines,
+        manline_suggestions: state.sku_details.manline_suggestions,
         current_formula: state.sku_details.current_formula,
     };
 };
@@ -112,7 +146,9 @@ const mapDispatchToProps = dispatch => {
     return {
         getIngredientNames: name => dispatch(skuDetIngAutocomplete(name)),
         getFormulaNames: name => dispatch(skuDetGetFormulaNames(name)),
-        addForm: form=> dispatch(skuDetSetFormula(form))
+        addForm: form => dispatch(skuDetSetFormula(form)),
+        addLine: form => dispatch(skuDetSetLines(form)),
+        getLines: name => dispatch(skuDetGetManLinesAuto(name))
     };
 };
 

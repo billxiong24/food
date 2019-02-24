@@ -230,6 +230,8 @@ const mapDispatchToProps = dispatch => {
       Promise.resolve(dispatch(skuDetGetProductLine())) // dispatch
           .then(function (response) {
             dispatch(skuDetSetSku({      
+              manufacturing_lines: [],
+              formula_id: null,
               name: "",     
               case_upc: null,     
               unit_upc: null,     

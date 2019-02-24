@@ -1,6 +1,6 @@
 import axios from 'axios';
 import common, { createError } from '../../../Resources/common';
-import {SKU_DET_SET_FORMULA_LOCAL, SKU_DET_FORMULA_AUTOCOMPLETE, SKU_DET_GET_FORMULA, SKU_DET_ADD_SKU,SKU_DET_GET_ING,SKU_DET_ADD_ING ,SKU_DET_UPDATE_SKU ,SKU_DET_DELETE_SKU ,SKU_DET_DELETE_ING ,SKU_DET_SET_SKU, SKU_DET_PRODUCT_LINE_LIST, SKU_DET_INGREDIENT_AUTOCOMPLETE, SKU_DET_SET_VALID,  SKU_DET_ADD_ING_LOCAL, SKU_DET_DELETE_ING_LOCAL, SKU_DET_ADD_ERROR, SKU_DET_DELETE_ERROR, SKU_DET_SET_NEW, SKU_DET_SET_EDITING
+import {SKU_DET_MANLINE_AUTOCOMPLETE,SKU_DET_GET_MAN_LINES, SKU_DET_SET_FORMULA_LOCAL, SKU_DET_FORMULA_AUTOCOMPLETE, SKU_DET_GET_FORMULA, SKU_DET_ADD_SKU,SKU_DET_GET_ING,SKU_DET_ADD_ING ,SKU_DET_UPDATE_SKU ,SKU_DET_DELETE_SKU ,SKU_DET_DELETE_ING ,SKU_DET_SET_SKU, SKU_DET_PRODUCT_LINE_LIST, SKU_DET_INGREDIENT_AUTOCOMPLETE, SKU_DET_SET_VALID,  SKU_DET_ADD_ING_LOCAL, SKU_DET_DELETE_ING_LOCAL, SKU_DET_ADD_ERROR, SKU_DET_DELETE_ERROR, SKU_DET_SET_NEW, SKU_DET_SET_EDITING
 } from '../SKUDetailActionTypes';
 
 const hostname = common.hostname;
@@ -60,6 +60,66 @@ export const skuDetGetFormula = (formula_id) => {
       });
     }
   }
+
+export const skuDetSetLines = (lines) => {
+    console.log("setting line");
+    console.log(lines);
+    return (dispatch) => {
+            dispatch({
+              type: SKU_DET_GET_MAN_LINES,
+              data: lines
+            })
+    }
+}
+export const skuDetGetManLines = (sku_id) => {
+    console.log("SKU DET GET MANLINES");
+    console.log(sku_id);
+    return (dispatch) => {
+      return axios.get(hostname + 'sku/' + sku_id + '/manufacturing_lines', {
+      })
+      .then(response => {
+          console.log("GOT RESPONSE FROM man line");
+          console.log(response);
+            dispatch({
+              type: SKU_DET_GET_MAN_LINES, 
+              data: response.data
+            })
+      })
+      .catch(error => {
+              dispatch({
+                  type: SKU_DET_ADD_ERROR,
+                  data: createError("Something was wrong. Check your input.")
+              })
+        //throw(error);
+      });
+    }
+}
+export const skuDetGetManLinesAuto = (name) => {
+    return (dispatch) => {
+        let params = {
+            name: name
+        }
+      return axios.get(hostname + 'manufacturing_line/search', {
+          params
+      })
+      .then(response => {
+          console.log("GOT RESPONSE FROM man line");
+          console.log(response);
+            dispatch({
+              type: SKU_DET_MANLINE_AUTOCOMPLETE,
+              data: response.data
+            })
+      })
+      .catch(error => {
+              dispatch({
+                  type: SKU_DET_ADD_ERROR,
+                  data: createError("Something was wrong. Check your input.")
+              })
+        //throw(error);
+      });
+    }
+    
+}
 
 // GET /sku/:id/ingredients
 export const skuDetGetIng = (sku_id) => {
@@ -195,6 +255,10 @@ export const skuDetDeleteIng = (sku, ingredients) => {
 
 
   export const skuDetSetSku = (sku) => {
+      console.log('CHECK IS UNDFEIND');
+      if(!sku.manufacturing_lines) {
+          sku.manufacturing_lines = [];
+      }
     return (dispatch) => {
       return dispatch({
         type: SKU_DET_SET_SKU,
@@ -275,6 +339,10 @@ export const skuDetGetProductLine = ()  => {
     console.log("SKU_DET_ADD_SKU ACTION CREATOR")
     console.log(sku)
     // [{ingred_num: 1, quantity: 1}, {ingred_num: 2, quantity: 2}]
+    for(let i = 0; i < sku.man_lines.length; i++) {
+        sku.man_lines[i] = sku.man_lines[i].id;
+    }
+      console.log(sku.man_lines)
     return (dispatch) => {
       return axios.post(hostname + 'sku/', {
         ...sku

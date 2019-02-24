@@ -75,14 +75,11 @@ class SKUIngredientList extends Component {
     }
 
     onClick = (item) =>{
-        console.log("deleted")
         this.props.delete(item)
     }
 
     render() {
-        const { classes, current_ingredients, current_formula, editing } = this.props
-        console.log('UPDATING CURRENT FORMULA');
-        console.log(current_formula);
+        const { classes, manufacturing_lines, current_ingredients, current_formula, editing } = this.props
         return (
             editing ?
             <div>
@@ -94,10 +91,10 @@ class SKUIngredientList extends Component {
                         <CardContent >
                             <Typography className={classes.ingredrient_name} color="textSecondary" gutterBottom>
                                 <div>
-                                    Name: {item.name}
+                                    {item.name}
                                 </div>
                                 <div>
-                                    Num: {item.num}
+                                    {item.num}
                                 </div>
                             </Typography>
                         </CardContent>
@@ -138,6 +135,24 @@ class SKUIngredientList extends Component {
                 </CardContent>
                 
             </Card>
+            <div>
+            {
+                manufacturing_lines.map((item, index) => (
+                    <Card className={classes.card} key={index}>
+                        <CardContent >
+                                <div>
+                                    {item.name}
+                                </div>
+                                <div>
+                                    {item.shortname}
+                                </div>
+                        </CardContent>
+                    </Card>
+
+                ))
+            }
+            
+            </div>
             </div>
 
         );
@@ -147,7 +162,8 @@ class SKUIngredientList extends Component {
 const mapStateToProps = state => {
     return {
         current_ingredients: state.sku_details.current_ingredients,
-        current_formula: state.sku_details.current_formula
+        current_formula: state.sku_details.current_formula, 
+        manufacturing_lines: state.sku_details.manufacturing_lines
     };
 };
 

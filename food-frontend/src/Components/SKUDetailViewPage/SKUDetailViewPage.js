@@ -82,6 +82,7 @@ class SKUDetailViewPage extends Component {
             ingredients:this.props.ingredients,
             comments:this.props.comments,
             man_rate:this.props.man_rate,
+            manufacturing_lines: this.props.manufacturing_lines, 
             formula_scale:this.props.formula_scale,
             current_formula: this.props.current_formula, 
             new:false
@@ -187,6 +188,8 @@ class SKUDetailViewPage extends Component {
             }
             return;
         }
+        console.log("LINES");
+        console.log(this.props.manufacturing_lines);
         const sku = {
             name:this.state.name,
             case_upc:this.state.case_upc,
@@ -195,6 +198,7 @@ class SKUDetailViewPage extends Component {
             unit_size:this.state.unit_size,
             count_per_case:this.state.count_per_case,
             prd_line:this.state.prd_line,
+            man_lines: this.props.manufacturing_lines, 
             comments:this.state.comments,
             formula_id: this.props.current_formula.id,
             man_rate: this.state.man_rate,
@@ -420,6 +424,7 @@ const mapStateToProps = (state, ownProps) => {
         prd_line:state.sku_details.prd_line,
         ingredients:state.sku_details.ingredients,
         man_rate:state.sku_details.man_rate,
+        manufacturing_lines: state.sku_details.manufacturing_lines,
         formula_scale: state.sku_details.formula_scale,
         ingredients:state.sku_details.ingredients,
         id:state.sku_details.id,

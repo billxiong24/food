@@ -64,6 +64,7 @@ router.post('/', function(req, res, next) {
 
 //TODO 23505, 22P02, 42703 
 router.put('/:id', function(req, res, next) {
+    console.log(req.body);
     if(isNaN((req.params.id))) {
         return res.status(400).json({
             error: "Malformed URL."

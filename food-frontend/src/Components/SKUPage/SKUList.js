@@ -11,7 +11,7 @@ import Typography from '@material-ui/core/Typography';
 import { CardActionArea } from '@material-ui/core';
 import { routeToPage } from '../../Redux/Actions';
 import { withRouter } from 'react-router-dom'
-import { skuDetGetFormula, skuDetSetSku, skuDetGetIng, skuDetGetProductLine } from '../../Redux/Actions/ActionCreators/SKUDetailsActionCreators';
+import { skuDetGetManLines, skuDetGetFormula, skuDetSetSku, skuDetGetIng, skuDetGetProductLine } from '../../Redux/Actions/ActionCreators/SKUDetailsActionCreators';
 import labels from '../../Resources/labels';
 
 const styles = {
@@ -111,6 +111,9 @@ const mapDispatchToProps = (dispatch,ownProps) => {
             })
             .then(function(r) {
                     return Promise.resolve(dispatch(skuDetGetIng(sku.id)));
+            })
+            .then(function(r) {
+                    return Promise.resolve(dispatch(skuDetGetManLines(sku.id)));
             })
             .then(function(r) {
                     ownProps.history.push('/skus/details')
