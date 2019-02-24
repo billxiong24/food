@@ -23,6 +23,7 @@ class SKU extends CRUD {
             "PL Name": "prd_line",
             "Comment": "comments",
             "Formula#": "formula_num", //TODO FIX THIS
+            "FormulaID": "formula_id",
             "ML shortname": "shortname", 
             "Formula factor": "formula_scale",
             "Rate": "man_rate"
@@ -191,7 +192,7 @@ class SKU extends CRUD {
             for(let i = 0; i < rows.length; i++) {
                 let update = rows[i].update;
                 delete rows[i].update;
-                let id = rows[i].manufacturing_line_id;
+                let ids = rows[i].manufacturing_line_id;
                 delete rows[i].manufacturing_line_id;
                 let query = "";
                 if(update) {
@@ -206,10 +207,13 @@ class SKU extends CRUD {
                 prom = prom.then(function(r) {
                     return client.query(query).
                         then(function(res) {
-                            line_sku.push({
-                                sku_id: res.rows[0].id,
-                                manufacturing_line_id: id
-                            });
+                            for(let j = 0; j < ids.length; j++) {
+                                console.log("hoiii");
+                                line_sku.push({
+                                    sku_id: res.rows[0].id,
+                                    manufacturing_line_id: ids[j]
+                                });
+                            }
                         }).catch(function(err) {
                         error = true;
                         errMsgs.push(err);
@@ -275,6 +279,7 @@ class SKU extends CRUD {
                 for(let i = 0; i < rows.length; i++) {
                     delete rowsCopy[i].formula_num;
                     delete rowsCopy[i].shortname;
+                    rowsCopy[i].manufacturing_line_id = [];
                     prom = prom.then(function(r) {
                         return that.checkExisting(rows[i])
                         .then(function(row_nums) {
@@ -313,44 +318,53 @@ class SKU extends CRUD {
                             })
                             .then(function(res) {
                                 console.log(rows[i]);
-                                return client.query("SELECT id FROM manufacturing_line WHERE shortname = $1", [rows[i].shortname])
-                                .then(function(res) {
-                                    if(res.rows.length === 0) {
-                                        error = true;
-                                        abort = true;
-                                        errMsgs.push({
-                                            code: "23503",
-                                            detail: "manufacturing shortname " + rows[i].shortname + " doesnt exist"
-                                        });
-                                        return false;
-                                    }
-                                    rowsCopy[i].manufacturing_line_id = res.rows[0].id;
-                                    return res.rows[0].id;
-                                })
-                            })
-                            .then(function(id) {
-                    delete rows[i].formula_num;
-                    delete rows[i].shortname;
-                    let query = QueryGenerator.genInsQuery(rows[i], table).returning("*").toString();
-                    console.log(query);
-                                return client.query("SAVEPOINT point" + i).then(function(res) {
-                                    return client.query(query).then(function(res) {
-                                        line_sku.push({
-                                            sku_id: res.rows[0].id,
-                                            manufacturing_line_id: id
+                                let shortnames = rows[i].shortname.split(/[ ,]+/);
+                                let shortPromises = Promise.resolve(null);
+                                for(let j = 0; j < shortnames.length; j++) {
+                                    shortPromises = shortPromises.then(function(res) {
+                                        return client.query("SELECT id FROM manufacturing_line WHERE shortname = $1", [shortnames[j]])
+                                        .then(function(res) {
+                                            if(res.rows.length === 0) {
+                                                error = true;
+                                                abort = true;
+                                                errMsgs.push({
+                                                    code: "23503",
+                                                    detail: "manufacturing shortname " + shortnames[j] + " doesnt exist"
+                                                });
+                                                return false;
+                                            }
+                                            rowsCopy[i].manufacturing_line_id.push(res.rows[0].id);
+                                            return res.rows[0].id;
                                         })
-
-                                    }).catch(function(err) {
-                                        error = true;
-                                        errMsgs.push(err);
-                                        rowsCopy[i].update = true;
-                                        client.query("ROLLBACK TO SAVEPOINT point" + i);
                                     });
-                                });
-                            })
+                                }
+                                return shortPromises.then(function(id) {
+                                delete rows[i].formula_num;
+                                delete rows[i].shortname;
+                                let query = QueryGenerator.genInsQuery(rows[i], table).returning("*").toString();
+                                console.log(query);
+                                            return client.query("SAVEPOINT point" + i).then(function(res) {
+                                                return client.query(query).then(function(res) {
+                                                    let sku_id = res.rows[0].id;
+                                                    for(let x = 0; x < rowsCopy[i].manufacturing_line_id.length; x++) {
+                                                        line_sku.push({
+                                                            sku_id: sku_id,
+                                                            manufacturing_line_id: rowsCopy[i].manufacturing_line_id[x]
+                                                        });
+                                                    }
+
+                                                }).catch(function(err) {
+                                                    error = true;
+                                                    errMsgs.push(err);
+                                                    rowsCopy[i].update = true;
+                                                    client.query("ROLLBACK TO SAVEPOINT point" + i);
+                                                });
+                                            });
+                                        })
+                            });
 
                         });
-                    })
+                    });
                 }
                 prom.then(function(res) {
                     let errObj = null;
