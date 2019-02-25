@@ -75,7 +75,7 @@ class IngredientSKUList extends Component {
     }
 
     render() {
-        const { classes, ingredients} = this.props
+        const { classes, ingredients, skus } = this.props
         return (
             <div>
                 {
@@ -96,6 +96,25 @@ class IngredientSKUList extends Component {
                     </Card>
                 ))
                 }
+            <div> ======= SKUS ======== </div>
+            {
+                skus.map((item, index) => (
+                    <Card className={classes.card} key={index} onClick = {() => {this.onClick(item)}}>
+                        <CardActionArea
+                        className = {classes.cardAction}
+                        >
+                        <CardContent onClick={console.log("")}>
+                            <Typography className={classes.ingredrient_name} color="textSecondary" gutterBottom>
+                                {item.name + ":" + item.num }
+                                <div>
+                                    {item.unit_size + "*" + item.count_per_case}
+                                </div>
+                            </Typography>
+                        </CardContent>
+                        </CardActionArea>
+                    </Card>
+                ))
+            }
             </div>
 
         );
@@ -105,7 +124,8 @@ class IngredientSKUList extends Component {
 const mapStateToProps = state => {
     return {
         ingredients: state.formula_details.ingredients,
-        id: state.formula_details.id
+        id: state.formula_details.id, 
+        skus: state.formula_details.skus
     };
 };
 

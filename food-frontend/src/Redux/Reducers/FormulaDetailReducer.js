@@ -1,4 +1,5 @@
 import {
+    FORMULA_DET_GET_SKUS,
     FORMULA_DET_GET_INGREDIENTS,
     FORMULA_DET_SET_FORMULA, 
     FORMULA_DET_UPDATE_FORMULA,
@@ -17,6 +18,10 @@ import { addToList, removeFromList } from '../../Resources/common';
 const initState = {};
   export default function FormulaDetailReducer(state=initState, action) {
     switch (action.type) {
+        case FORMULA_DET_GET_SKUS: 
+            return Object.assign({}, state, {
+                skus: action.data
+            });
         case FORMULA_DET_DELETE_INGREDIENTS: 
             console.log(state.ingredients);
             console.log(action.data);
@@ -45,8 +50,6 @@ const initState = {};
                 editing: false
             });
         case FORMULA_DET_SET_FORMULA:
-            console.log("SETING FORMULA");
-            console.log(action.data)
             return Object.assign({}, state, {
                 made_formula: action.data.made_formula,
                 formulaName: action.data.name,

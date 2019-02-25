@@ -103,6 +103,7 @@ export const InitialStore = {
       editing: false,
       id: null,
       ingredients:[],
+      skus: [],
       new_ingredients: [],
       errors:[]
   },

@@ -1,6 +1,7 @@
 import axios from 'axios';
 import common, { createError } from '../../../Resources/common';
 import {
+    FORMULA_DET_GET_SKUS,
     FORMULA_DET_GET_INGREDIENTS,
     FORMULA_DET_SET_FORMULA,
     FORMULA_DET_UPDATE_FORMULA,
@@ -189,6 +190,24 @@ export const formulaDetSetIngredients = (ings) => {
         });
     }
 }
+  export const formulaDetGetSkus = (form_id) => {
+    return (dispatch) => {
+      return axios.get(hostname + 'formula/'+form_id +'/skus', {
+        
+      })
+      .then(response => {
+        console.log(response)
+        dispatch({
+          type: FORMULA_DET_GET_SKUS,
+          data: response.data
+        })
+      })
+      .catch(error => {
+        console.log("error")
+        throw(error);
+      });
+    }
+  }
 
   export const formulaDetGetIngredients = (form_id) => {
     return (dispatch) => {

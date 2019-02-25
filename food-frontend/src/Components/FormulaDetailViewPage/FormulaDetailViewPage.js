@@ -316,8 +316,6 @@ class FormulaDetailViewPage extends Component {
 
 
 const mapStateToProps = state => {
-    console.log("MAPPING STATE TO PROPS DETAIL");
-    console.log(state.formula_details.id);
     return {
         made_formula: state.formula_details.made_formula,
         formulaName: state.formula_details.formulaName, 
