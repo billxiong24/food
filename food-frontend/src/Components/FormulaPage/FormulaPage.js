@@ -144,13 +144,12 @@ class FormulaPage extends Component {
   }
 
   onExportClick = () => {
-      console.log(this.props.items);
     axios.post(common.hostname + 'manufacturing_goals/exported_file', {
       data: this.props.items.map((formula) => ({
         id: formula.id,
         num:formula.num,
         name:formula.name,
-        comment: formula.comments
+        comment: formula.comment
       })),
       format: "csv",
       type: "formula"

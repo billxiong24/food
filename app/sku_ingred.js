@@ -54,7 +54,7 @@ class SKUIngred extends CRUD {
                         "Formula#": jsonList[i]["Formula#"],
                         "Name": jsonList[i]["Name"],
                         "Ingr#": res.rows[j].num,
-                        "Quantity": res.rows[j].quantity,
+                        "Quantity": res.rows[j].quantity + " " + res.rows[j].unit,
                         "Comment": jsonList[i]["Comment"]
                     });
                 }

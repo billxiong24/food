@@ -244,7 +244,6 @@ class SKU extends CRUD {
                     return client.query(query).
                         then(function(res) {
                             for(let j = 0; j < ids.length; j++) {
-                                console.log("hoiii");
                                 line_sku.push({
                                     sku_id: res.rows[0].id,
                                     manufacturing_line_id: ids[j]
@@ -323,6 +322,7 @@ class SKU extends CRUD {
                 let prom = client.query("BEGIN");
                 let line_sku = [];
                 let rowsCopy = JSON.parse(JSON.stringify(rows));
+                console.log(rows);
                 for(let i = 0; i < rows.length; i++) {
                     delete rowsCopy[i].formula_num;
                     delete rowsCopy[i].shortname;
@@ -364,10 +364,8 @@ class SKU extends CRUD {
                                 return true;
                             })
                             .then(function(res) {
-                                console.log("HELLO WORLD");
                                 console.log(rows[i]);
                                 let shortnames = (rows[i].shortname) ? rows[i].shortname.split(/[ ,]+/) : [];
-                                console.log(shortnames);
                                 if(shortnames.length === 1 && shortnames[0].length === 0)
                                     shortnames = [];
                                 let shortPromises = Promise.resolve(null);
