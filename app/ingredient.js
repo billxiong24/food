@@ -8,6 +8,15 @@ class Ingredient extends CRUD {
     constructor() {
         super();
         this.tableName = "ingredients";
+        this.headerToDB = {
+            "Ingr#": "num",
+            "Name": "name",
+            "Vendor Info": "vend_info",
+            "Size": "pkg_size",
+            "Cost": "pkg_cost",
+            "Comment": "comments"
+        };
+        this.dbToHeader = this.reverseKeys(this.headerToDB);
     }
 
     //override
@@ -28,7 +37,7 @@ class Ingredient extends CRUD {
     }
 
     getSkus(id) {
-        let query =  "SELECT DISTINCT sku.* FROM sku INNER JOIN sku_ingred ON sku.num = sku_ingred.sku_num INNER JOIN ingredients ON sku_ingred.ingred_num=ingredients.num WHERE ingredients.id=$1";
+        let query = "SELECT DISTINCT sku.* FROM sku INNER JOIN formula_ingredients ON sku.formula_id = formula_ingredients.formula_id where formula_ingredients.ingredients_id = $1";
         return db.execSingleQuery(query, [id]);
     }
 
@@ -36,33 +45,20 @@ class Ingredient extends CRUD {
         let q = squel.select()
         .from(this.tableName)
         .field("ingredients.*, COUNT(*) OVER() as row_count")
-        .left_join("sku_ingred", null, "ingredients.num=sku_ingred.ingred_num")
-        .left_join("sku", null, "sku_ingred.sku_num=sku.num");
+        .left_join("formula_ingredients", null, "formula_ingredients.ingredients_id = ingredients.id")
+        .left_join("sku", null, "formula_ingredients.formula_id = sku.formula_id");
         const queryGen = new QueryGenerator(q);
         names = QueryGenerator.transformQueryArr(names);
-        queryGen.chainAndFilter(names, "ingredients.name LIKE ?")
+        queryGen.chainAndFilter(names, "ingredients::TEXT LIKE ?")
         .chainOrFilter(skus, "sku.id = ?")
         .makeDistinct();
         let queryStr = filter.applyFilter(queryGen.getQuery()).toString();
-        //logger.debug(queryStr);
+        console.log(queryStr);
         return db.execSingleQuery(queryStr, []);
     }
 
-
-    /**
-     * Object should be in the form of
-     * {
-     *  name: ...
-     *  num: ...
-     *  vend_info: ...
-     *  pkg_size: ...
-     *  pkg_cost: ...
-     *  comments: ...
-     * }
-     *
-     */
     create(dataObj) {
-        if(!dataObj.name || !dataObj.pkg_size || !dataObj.pkg_cost)
+        if(!dataObj.name || !dataObj.pkg_size || !dataObj.pkg_cost || !dataObj.unit)
             return Promise.reject("Not all required fields are present.");
         if(dataObj.num === null || dataObj.num === undefined)
             delete dataObj.num;
@@ -84,6 +80,23 @@ class Ingredient extends CRUD {
         q = q.where(expr);
         q = q.toString();
         return q;
+    }
+
+    bulkCleanData(jsonList) {
+        jsonList = this.convertHeaderToDB(jsonList);
+        for(let i = 0; i < jsonList.length; i++) {
+            let obj = jsonList[i];
+            for(let key in obj) {
+                if(obj[key].length === 0) {
+                    delete obj[key];
+                }
+            }
+            let pkg_size = obj.pkg_size;
+            let arr = pkg_size.split(/\s+/);
+            obj.pkg_size = arr[0];
+            obj.unit = arr[1];
+            console.log(obj);
+        }
     }
 
     duplicateObjs(jsonList) {

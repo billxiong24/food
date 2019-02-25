@@ -21,6 +21,7 @@ import AddActivityPopUpWrapped from './AddActivityPopUp';
 import UnscheduledActivitiesListWrapped from './UnscheduledActivitiesList';
 import SimpleModalWrapped from './SimpleModalWrapped';
 import CustomPopoverStyle from './Components/CustomPopoverStyle';
+import { get_all_warnings } from './UtilityFunctions';
 
 const styles = {
     ingredient_page_container:{
@@ -119,7 +120,8 @@ const styles = {
     },
     goals_search_filter_dropdown:{
 
-    }
+    },
+    warning_box:labels.common_styles.warning_box
 
 };
 
@@ -230,7 +232,13 @@ class Scheduler extends Component {
                         <OverlapCheck></OverlapCheck>
                     </div>
                     <div className={classes.warnings_list_view}>
-                        <SimpleModalWrapped></SimpleModalWrapped>
+                        {
+                            get_all_warnings(this.props.scheduled_activities, this.props.unscheduled_activities).map(warning => (
+                                <div className={classes.warning_box}>
+                                    {warning}
+                                </div>
+                            ))
+                        }
                     </div>
 
                 </div>

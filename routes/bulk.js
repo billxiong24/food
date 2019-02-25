@@ -47,9 +47,9 @@ router.post('/bulk_import', function(req, res, next) {
         }
         let crud = getCRUD(req.body.type);
         if(!crud) {
-            return res.status(400).send(json({
+            return res.status(400).json({
                 error: "Bad format type."
-            }));
+            });
         }
         const buf = req.file.buffer.toString();
         crud.bulkImport(buf, function(errObj) {

@@ -393,7 +393,7 @@ class OverlapCheck extends Component{
     }
 
     unschedule_activity = (item) => {
-        let activity = item
+        let activity = JSON.parse(JSON.stringify(item.activity))
         activity.start_time = null
         activity.end_time = null
         activity.man_line_num = null

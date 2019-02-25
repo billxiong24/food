@@ -180,6 +180,20 @@ export function getActivities(goals){
     return warnings 
   }
 
+  export function get_all_warnings(scheduled_activities, unscheduled_activities){
+    let warnings = []
+    console.log("get all warnings")
+    console.log(scheduled_activities)
+    console.log(unscheduled_activities)
+    if(unscheduled_activities.length > 0){
+      warnings.push("There are unscheduled activities")
+    }
+    for(var i = 0; i < scheduled_activities.length; i++){
+      warnings.push(...get_scheduled_activity_warnings(scheduled_activities[i]))
+    }
+    return warnings
+  }
+
   export function sort_scheduled_activities(scheduled_activities){
     scheduled_activities.sort(function(activity_a,activity_b){ 
       var a = moment(activity_a.start_time, "YYYY-MM-DD HH:mm")

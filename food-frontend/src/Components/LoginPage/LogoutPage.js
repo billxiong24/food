@@ -7,7 +7,8 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import withStyles from '@material-ui/core/styles/withStyles';
 import { connect } from 'react-redux';
-import { userLogout, routeToPage } from '../../Redux/Actions';
+import { routeToPage } from '../../Redux/Actions';
+import { userLogout } from '../../Redux/Actions/ActionCreators/UserActionCreators';
 
 const styles = theme => ({
   main: {

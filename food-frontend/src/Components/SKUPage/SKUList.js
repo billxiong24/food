@@ -11,7 +11,7 @@ import Typography from '@material-ui/core/Typography';
 import { CardActionArea } from '@material-ui/core';
 import { routeToPage } from '../../Redux/Actions';
 import { withRouter } from 'react-router-dom'
-import { skuDetSetSku, skuDetGetIng, skuDetGetProductLine } from '../../Redux/Actions/ActionCreators/SKUDetailsActionCreators';
+import { skuDetGetManLines, skuDetGetFormula, skuDetSetSku, skuDetGetIng, skuDetGetProductLine } from '../../Redux/Actions/ActionCreators/SKUDetailsActionCreators';
 import labels from '../../Resources/labels';
 
 const styles = {
@@ -102,13 +102,22 @@ const mapDispatchToProps = (dispatch,ownProps) => {
         setSku: sku => {
             Promise.resolve(dispatch(skuDetGetProductLine())) // dispatch
                 .then(function (response) {
-                    dispatch(skuDetSetSku(sku))
-                    dispatch(skuDetGetIng(sku.id))
-                    ownProps.history.push('/skus/details')
-
-                return response;
+                    return Promise.resolve(dispatch(skuDetSetSku(sku)));
+                //return response;
                 })
-                .then(function(response){console.log("@RESPONSE",response)})
+            .then(function(r) {
+                    return Promise.resolve(dispatch(skuDetGetFormula(sku.formula_id)));
+
+            })
+            .then(function(r) {
+                    return Promise.resolve(dispatch(skuDetGetIng(sku.id)));
+            })
+            .then(function(r) {
+                    return Promise.resolve(dispatch(skuDetGetManLines(sku.id)));
+            })
+            .then(function(r) {
+                    ownProps.history.push('/skus/details')
+            })
         }
     };
 };

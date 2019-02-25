@@ -1,19 +1,55 @@
-import { USER_LOG_OUT, USER_LOG_IN_ATTEMPT, USER_CREATE_ATTEMPT } from '../Actions/UserActionTypes';
+import { user_actions } from '../Actions/ActionTypes/UserActionTypes';
 
 const initialState = {
-  uname: null,
-  id: null,
   isSuccess: false,
   errMsg: null
 }
 
 export default function userReducer(state = initialState, action) {
   switch (action.type) {
-    case USER_LOG_OUT:
+    case user_actions.USER_LOG_OUT:
       return Object.assign({}, initialState);
-    case USER_LOG_IN_ATTEMPT:
+    case user_actions.USER_LOG_IN_ATTEMPT:
       return Object.assign({}, state, action.data);
-    case USER_CREATE_ATTEMPT:
+    case user_actions.USER_CREATE_ATTEMPT:
+      return Object.assign({}, state, action.data);
+    case user_actions.USER_NETID_LOG_IN:
+      return Object.assign({}, state, action.data);
+    case user_actions.USER_SEARCH:
+      return Object.assign({}, state, action.data);
+    case user_actions.USER_UPDATE:
+      if (action.data.userToUpdate) {
+        return Object.assign({}, state, {
+          errMsg: action.data.errMsg,
+          users: state.users.map((el) => {
+            if (el.id === action.data.userToUpdate.id) {
+              return {
+                ...el,
+                ...action.data.userToUpdate
+              }
+            }
+            return el;
+          })
+        });
+      } else {
+        return Object.assign({}, state, action.data);
+      }
+    case user_actions.USER_DELETE:
+      if (action.data.userToDelete) {
+        return Object.assign({}, state, {
+          errMsg: action.data.errMsg,
+          productLines: state.users.filter((el) => {
+            return el.id !== action.data.userToDelete.id;
+          })
+        });
+      } else {
+        return Object.assign({}, state, action.data);
+      }
+    case user_actions.USER_CHANGE_LIMITS:
+      return Object.assign({}, state, action.data);
+    case user_actions.USER_PREV_PAGE:
+      return Object.assign({}, state, action.data);
+    case user_actions.USER_NEXT_PAGE:
       return Object.assign({}, state, action.data);
     default:
       return state;

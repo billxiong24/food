@@ -1,6 +1,6 @@
-import { mangoal_actions } from './ManufacturingGoalActionTypes';
+import { mangoal_actions } from '../ActionTypes/ManufacturingGoalActionTypes';
 import axios from 'axios';
-import common from '../../Resources/common';
+import common from '../../../Resources/common';
 
 const hostname = common.hostname;
 
@@ -37,12 +37,12 @@ export const mangoalGetCalculations = (manGoal) => {
 }
 
 export const mangoalDeleteMangoalSkus = (manGoal, skus) => {
-  console.log({skus:skus});
   return (dispatch) => {
     return axios.delete(hostname + 'manufacturing_goals/' + manGoal.id + '/skus',
       {
         data: {
           skus: skus,
+          user_id: manGoal.user_id,
         }
       })
       .then((response) => {
@@ -76,7 +76,11 @@ export const mangoalDeleteMangoalSkus = (manGoal, skus) => {
 
 export const mangaolDeleteMangoal = (manGoal) => {
   return (dispatch) => {
-    return axios.delete(hostname + 'manufacturing_goals/' + manGoal.id)
+    return axios.delete(hostname + 'manufacturing_goals/' + manGoal.id, {
+      data: {
+        user_id: manGoal.user_id,
+      }
+    })
       .then((response) => {
         dispatch({
           type: mangoal_actions.MANGOAL_DELETE_MANGOAL,
@@ -106,7 +110,10 @@ export const mangaolDeleteMangoal = (manGoal) => {
 
 export const mangaolUpdateMangoalSkus = (manGoal, skus) => {
   return (dispatch) => {
-    return axios.post(hostname + 'manufacturing_goals/' + manGoal.id + '/skus', { skus: skus })
+    return axios.post(hostname + 'manufacturing_goals/' + manGoal.id + '/skus', {
+      skus: skus,
+      user_id: manGoal.user_id,
+    })
       .then((response) => {
         axios.get(hostname + 'manufacturing_goals/' + manGoal.id + '/skus')
           .then((response) => {
@@ -138,17 +145,6 @@ export const mangaolUpdateMangoalSkus = (manGoal, skus) => {
   }
 }
 
-export const mangoalUpdateFilters = (filters) => {
-  return (dispatch) => {
-    return dispatch({
-      type: mangoal_actions.MANGOAL_UPDATE_FILTERS,
-      data: {
-        filters: filters
-      }
-    });
-  }
-}
-
 export const mangoalAddFilter = (prdline) => {
   return (dispatch) => {
     return dispatch({
@@ -171,12 +167,13 @@ export const mangoalRemoveFilter = (prdline) => {
   }
 }
 
-export const mangoalGetProductLines = () => {
+export const mangoalSearchProductLines = (name) => {
   return (dispatch) => {
     return axios.get(hostname + 'productline/search', {
       params: {
-        name: '',
-        orderKey: 'name'
+        name: name,
+        orderKey: 'name',
+        limit: 10,
       }
     })
       .then((response) => {
@@ -201,6 +198,8 @@ export const mangoalSearchSkus = (name, prdlines) => {
         prodlines: prdlines.map((el) => {
           return el.name
         }),
+        orderKey: 'name',
+        limit: 10,
       }
     })
       .then((response) => {

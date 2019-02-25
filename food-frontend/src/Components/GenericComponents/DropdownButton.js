@@ -1,6 +1,5 @@
 
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Dropdown from './Dropdown';
 import WhiteDropdown from './WhiteDropdown';
