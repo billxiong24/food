@@ -14,15 +14,12 @@ var productlineRouter = require('./routes/productline');
 var skuRouter = require('./routes/sku');
 var mgRouter = require('./routes/manufacturing_goals');
 var bulkRouter = require('./routes/bulk');
-<<<<<<< HEAD
 var schedulerRouter = require('./routes/scheduler');
-=======
 var formulaRouter = require('./routes/formula');
 var mlRouter = require('./routes/manufacturing_lines');
 
 
 var { checkUserAll, checkCookie, checkAdminAll } = require('./routes/guard');
->>>>>>> e610088aa2d6832506c37b60ec8efc659a0cda1f
 
 var http = require('http');
 var https = require('https');
