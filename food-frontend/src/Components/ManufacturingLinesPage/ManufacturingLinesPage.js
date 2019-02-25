@@ -1,16 +1,11 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
-import Button from '@material-ui/core/Button';
 import ItemList from '../GenericComponents/ItemList';
 import TextField from '@material-ui/core/TextField';
 import Fab from '@material-ui/core/Fab';
 import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
 import ManufacturingLinesCard from './ManufacturingLinesCard';
-import back from '../../Resources/Images/baseline-navigate_before-24px.svg'
-import next from '../../Resources/Images/baseline-navigate_next-24px.svg'
-import Typography from '@material-ui/core/Typography';
-import { IconButton } from '@material-ui/core';
 import { manlineSearch, manlineCreate, manlineUpdate, 
           manlineDelete } from '../../Redux/Actions/ActionCreators/ManufacturingLineActionCreators';
 import ManufacturingLinesNewDialog from './ManufacturingLinesNewDialog';
@@ -154,7 +149,12 @@ class ManufacturingLinesPage extends Component {
   };
 
   handleNewClose = () => {
-    this.setState({ newDialog: false });
+    this.setState({ 
+      newDialog: false,
+      newName: '',
+      newShortName: '',
+      newComment: '',
+    });
   };
 
   handleClickEditOpen = (manline) => {
