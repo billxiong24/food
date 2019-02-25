@@ -25,8 +25,19 @@ const prod = {
   colab_redirect_uri: 'https%3A%2F%2Fcodemonkeys.colab.duke.edu%2Flogin',
 }
 
+const ritwikvm = {
+  hostname: 'http://vcm-8738.vm.duke.edu:8000/',
+  url: 'http://localhost:3000/',
+  https: false,
+  colab_client_id: 'code-monkeys-ritwik',
+  colab_client_secret: 'mYCevAXgB5d%23yHe38ipctjl%25AE%2AxaAk4eQdK2%233IzrDXL92k%219%0D%0A',
+  colab_redirect_uri: 'https%3A%2F%2Fcodemonkeys.colab.duke.edu%2Flogin',
+}
+
 const config = process.env.REACT_APP_STAGE === 'prod' ? prod :
               (process.env.REACT_APP_STAGE === 'dev' ? dev : local);
+// const config = ritwikvm
+
 
 export default {
   ...config

@@ -30,7 +30,6 @@ const checkAdminAll = (req, res, next) => {
 
 const checkUser = (req, res, next) => {
     console.log("checking user")
-
     console.log(req.session);
 
   if(!req.session.user || !req.sessionID) {
