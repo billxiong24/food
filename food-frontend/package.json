@@ -10,6 +10,7 @@
     "axios": "^0.18.0",
     "bootstrap-sweetalert": "^1.0.1",
     "cross-env": "^5.2.0",
+    "date-and-time": "^0.6.3",
     "dotenv": "^6.2.0",
     "emotion": "^10.0.6",
     "js-cookie": "^2.2.0",

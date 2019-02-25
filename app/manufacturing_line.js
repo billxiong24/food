@@ -72,6 +72,8 @@ class ManufacturingLine extends CRUD {
     }
 
     getSKUMapping(skus) {
+        if(skus.length === 0)
+            skus.push(-1);
         let query = squel.select()
         .from("manufacturing_line_sku")
         .field('*')
@@ -80,6 +82,7 @@ class ManufacturingLine extends CRUD {
         const queryGen = new QueryGenerator(query);
         queryGen.chainOrFilter(skus, "sku_id = ?");
         const queryStr = queryGen.getQuery().toString();
+        console.log(queryStr);
         let getAllLinesQuery = squel.select().from(this.tableName).field("*").toString();
 
         let that = this;

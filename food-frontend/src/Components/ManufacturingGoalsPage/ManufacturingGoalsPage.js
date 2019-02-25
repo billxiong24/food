@@ -25,6 +25,9 @@ import Chip from '@material-ui/core/Chip';
 import { withCookies } from 'react-cookie';
 import SkuAutocomplete from './SkuAutocomplete';
 import Autocomplete from './Autocomplete';
+import ManufacturingGoalsNewDialog from './ManufacturingGoalsNewDialog';
+import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
+let date = require('date-and-time');
 
 const styles = {
   man_goal_page_container: {
@@ -183,6 +186,10 @@ class ManufacturingGoalsPage extends Component {
       sku: null,
       search: '',
       searchProdLine: '',
+      newDialog: false,
+      newName: '',
+      newDeadline: date.format(new Date(), 'YYYY-MM-DD'),
+      defaultDate: date.format(new Date(), 'YYYY-MM-DD'),
     }
   }
 
@@ -216,18 +223,36 @@ class ManufacturingGoalsPage extends Component {
     });
   }
 
-  addManufacturingGoal(manGoal) {
-    this.props.mangoalCreateMangoal(Object.assign({}, manGoal, {
-      user_id: this.props.cookies.id
-    }))
-    .then(()=>{
-      if (this.props.manGoals.errMsg) {
-        this.setState({
-          alert: true,
-          message: 'Product Line NOT Added: ' + this.props.manGoals.errMsg
-        });
-      }
-    });
+  submitNewForm(e) {
+    e.preventDefault();
+    if(!this.state.newName || !this.state.newDeadline) {
+      this.setState({
+        message: "Please fill out all the information",
+        alert: true,
+      })
+    } else {
+      this.props.mangoalCreateMangoal(Object.assign({}, {
+        user_id: this.props.cookies.id,
+        name: this.state.newName,
+        deadline: this.state.newDeadline,
+      }))
+      .then(()=>{
+        if (this.props.manGoals.errMsg) {
+          this.setState({
+            alert: true,
+            message: 'Manufacturing Goal NOT Added: ' + this.props.manGoals.errMsg
+          });
+        } else {
+          this.setState({
+            alert: true,
+            message: 'Manufacturing Goal Successfully added',
+            newName: '',
+            newDeadline: this.state.defaultDate,
+          });
+          this.handleNewClose();
+        }
+      });
+    }
   }
 
   handleChange = name => event => {
@@ -321,6 +346,21 @@ class ManufacturingGoalsPage extends Component {
       });
   }
 
+  closeAlert() {
+    this.setState({
+      alert: false,
+      message: ""
+    });
+  }
+
+  handleClickNewOpen = () => {
+    this.setState({ newDialog: true });
+  };
+
+  handleNewClose = () => {
+    this.setState({ newDialog: false });
+  };
+
   exportManGoal() {
     return axios.post(common.hostname + 'manufacturing_goals/exported_file', {
         data: this.props.manGoals.activeGoal.skus,
@@ -347,11 +387,20 @@ class ManufacturingGoalsPage extends Component {
             {this.props.cookies.user}'s Manufacturing Goals
           </Typography>
           <div>
-            <ManufacturingGoalsCard
-              onEnter={(manGoal) => { this.addManufacturingGoal(manGoal) }}
-              editable={true}
-              item={{ name: 'Add New Manufacturing Goal' }}
-            ></ManufacturingGoalsCard>
+            <Button
+              variant="contained"
+              onClick={this.handleClickNewOpen}
+            >
+              New Manufacturing Goal
+            </Button>
+            <ManufacturingGoalsNewDialog
+              open={this.state.newDialog}
+              close={this.handleNewClose}
+              submit={(e) => this.submitNewForm(e)}
+              handleChange={this.handleChange}
+              name={this.state.newName}
+              date={this.state.newDeadline}
+            />
             <div variant="inset" className={classes.divider} />
           </div>
           <div className={classes.man_goal_list_container}>
@@ -423,17 +472,6 @@ class ManufacturingGoalsPage extends Component {
                     id={"prod"}
                   >
                   </Autocomplete>
-                  {/* <Select
-                    value=""
-                    onChange={(e)=>{this.addFilter(e.target.value)}}
-                  >
-                    <MenuItem value="">
-                      <em></em>
-                    </MenuItem>
-                    {manGoals.productLines.map((prdline)=>(
-                      <MenuItem key={prdline.id} value={prdline} data={prdline}>{prdline.name}</MenuItem>
-                    ))}
-                  </Select> */}
                   <FormHelperText>Select Product Lines to Filter By</FormHelperText>
                 </FormControl>
                 <div className={classes.active_filter_container}>
@@ -483,6 +521,13 @@ class ManufacturingGoalsPage extends Component {
             </div>
           </div>
         </div>
+        <SimpleSnackbar
+          open={this.state.alert}
+          handleClose={() => { this.closeAlert() }}
+          message={this.state.message}
+          autoHideDuration={this.state.autohide}
+        >
+        </SimpleSnackbar>
       </div>
     );
   }
