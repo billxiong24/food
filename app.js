@@ -77,12 +77,9 @@ app.use('/productline', productlineRouter);
 app.use('/sku', skuRouter);
 app.use('/manufacturing_goals', mgRouter);
 app.use('/bulk', bulkRouter);
-<<<<<<< HEAD
 app.use('/scheduler',schedulerRouter)
-=======
 app.use('/formula', formulaRouter);
 app.use('/manufacturing_line', mlRouter);
->>>>>>> e610088aa2d6832506c37b60ec8efc659a0cda1f
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
