@@ -164,7 +164,6 @@ class FormulaDetailViewPage extends Component {
     render() {
         const { made_formula, classes, editing, newValue } = this.props
         console.log("RENDINER FORMULA DETAIL");
-        console.log(made_formula);
         return (
             <div className = {classes.ingredient_page_container}>
                 <Button onClick={this.props.back}>

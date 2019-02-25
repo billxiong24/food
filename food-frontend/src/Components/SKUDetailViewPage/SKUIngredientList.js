@@ -14,8 +14,10 @@ import { ingDetSetIng } from '../../Redux/Actions/ActionCreators/IngredientDetai
 import { Icon, IconButton } from '@material-ui/core';
 import delete_icon from '../../Resources/Images/delete_button_1.svg'
 import labels from '../../Resources/labels';
+import { withRouter } from 'react-router-dom'
 import { addToList, removeFromList } from '../../Resources/common';
 import { skuDetDeleteIngLocal } from '../../Redux/Actions/ActionCreators/SKUDetailsActionCreators';
+import { formulaDetGetSkus, formulaDetGetIngredients, formulaDetSetFormula } from '../../Redux/Actions/ActionCreators/FormulaDetailsActionCreators';
 
 const styles = {
     card: {
@@ -77,7 +79,10 @@ class SKUIngredientList extends Component {
     onClick = (item) =>{
         this.props.delete(item)
     }
-
+    formulaOnClick= (item) =>{
+        console.log(item);
+        this.props.navigateToFormula(item, this.props.history);
+    }
     render() {
         const { classes, manufacturing_lines, current_ingredients, current_formula, editing } = this.props
         return (
@@ -123,7 +128,7 @@ class SKUIngredientList extends Component {
                     </Card>
                 ))
                 )}
-            <Card className={classes.card}>
+            <Card className={classes.card} onClick = {() => {this.formulaOnClick(current_formula)}}>
             <div>FORMULA</div>
             <div>Name: {current_formula.name} </div>
             <div>Num: {current_formula.num} </div>
@@ -169,9 +174,25 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        delete: (ing) => { dispatch(skuDetDeleteIngLocal(ing))}
+        delete: (ing) => { dispatch(skuDetDeleteIngLocal(ing))}, 
+        navigateToFormula: (formula, history) => {
+            formula.made_formula = true;
+            return Promise.resolve(null)
+            .then(function(res) {
+                dispatch(formulaDetSetFormula(formula))
+            })
+            .then(function(res) {
+                dispatch(formulaDetGetIngredients(formula.id))
+            })
+            .then(function(res) {
+                dispatch(formulaDetGetSkus(formula.id))
+            })
+            .then(function(res) {
+                history.push('/formula/details')
+            });
+        }
     }
     
 };  
 
-export default withStyles(styles)(connect(mapStateToProps,mapDispatchToProps)(SKUIngredientList));
+export default withRouter(withStyles(styles)(connect(mapStateToProps,mapDispatchToProps)(SKUIngredientList)));

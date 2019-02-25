@@ -215,7 +215,6 @@ export const formulaDetSetIngredients = (ings) => {
         
       })
       .then(response => {
-        console.log(response)
         dispatch({
           type: FORMULA_DET_GET_INGREDIENTS,
           data: response.data

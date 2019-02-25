@@ -13,6 +13,8 @@ import { routeToPage } from '../../Redux/Actions';
 import { ingDetSetIng } from '../../Redux/Actions/ActionCreators/IngredientDetailsActionCreators';
 import { Icon, IconButton } from '@material-ui/core';
 import delete_icon from '../../Resources/Images/delete_button_1.svg'
+import { withRouter } from 'react-router-dom'
+import { skuDetGetManLines, skuDetGetFormula, skuDetSetSku, skuDetGetIng, skuDetGetProductLine } from '../../Redux/Actions/ActionCreators/SKUDetailsActionCreators';
 
 import {formulaDeleteIngredient} from '../../Redux/Actions/ActionCreators/FormulaDetailsActionCreators';
 
@@ -68,6 +70,10 @@ class IngredientSKUList extends Component {
     onClick = (item) =>{
          
     }
+    onSkuClick = (item) => {
+        console.log(item);
+        this.props.navigateToSku(item, this.props.history);
+    }
     deleteItem = (item) => {
         console.log(this.props.id);
         console.log(item.id);
@@ -99,7 +105,7 @@ class IngredientSKUList extends Component {
             <div> ======= SKUS ======== </div>
             {
                 skus.map((item, index) => (
-                    <Card className={classes.card} key={index} onClick = {() => {this.onClick(item)}}>
+                    <Card className={classes.card} key={index} onClick = {() => {this.onSkuClick(item)}}>
                         <CardActionArea
                         className = {classes.cardAction}
                         >
@@ -131,11 +137,31 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
+        
+        navigateToSku: (sku, history) => {
+            Promise.resolve(dispatch(skuDetGetProductLine())) // dispatch
+                .then(function (response) {
+                    return Promise.resolve(dispatch(skuDetSetSku(sku)));
+                    //return response;
+                })
+                .then(function(r) {
+                    return Promise.resolve(dispatch(skuDetGetFormula(sku.formula_id)));
 
+                })
+                .then(function(r) {
+                    return Promise.resolve(dispatch(skuDetGetIng(sku.id)));
+                })
+                .then(function(r) {
+                    return Promise.resolve(dispatch(skuDetGetManLines(sku.id)));
+                })
+                .then(function(r) {
+                    history.push('/skus/details')
+                })
+        }, 
         deleteIngredient: (formula_id, ing_id) => {
             dispatch(formulaDeleteIngredient(formula_id, ing_id));
         }
     }
 };  
 
-export default withStyles(styles)(connect(mapStateToProps,mapDispatchToProps)(IngredientSKUList));
+export default withRouter(withStyles(styles)(connect(mapStateToProps,mapDispatchToProps)(IngredientSKUList)));
