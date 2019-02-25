@@ -92,6 +92,8 @@ export const formulaDetUpdateFormula = (formula) => {
   }
 
   export const formulaDetSetFormula = (ing) => {
+      console.log('SETING FORMULA');
+      console.log(ing);
     return (dispatch) => {
       return dispatch({
         type: FORMULA_DET_SET_FORMULA,
@@ -215,11 +217,13 @@ export const formulaDetSetIngredients = (ings) => {
     return (dispatch) => {
       return axios.post(hostname + 'formula/', params)
       .then((response) => {
+          console.log("responding from add formula");
+          console.log(response.data);
         dispatch({
           type: FORMULA_DET_ADD_FORMULA,
           data: {
             errMsg: '',
-            ing: ing
+            formula: response.data
           }
         })
       })

@@ -94,6 +94,7 @@ export const InitialStore = {
   },
 
   formula_details: {
+      made_formula: false,
       formulaName: null,
       formulaComment: null,
       formulaNum: null,

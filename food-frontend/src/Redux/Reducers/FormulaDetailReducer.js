@@ -34,7 +34,7 @@ const initState = {};
             return Object.assign({}, state, {
                 formulaName: action.data.formula.name,
                 formulaNum: action.data.formula.num,
-                formulaComment: action.data.formula.comments,
+                formulaComment: action.data.formula.comment,
                 editing: false
             });
         case FORMULA_DET_DELETE_FORMULA:
@@ -45,11 +45,13 @@ const initState = {};
                 editing: false
             });
         case FORMULA_DET_SET_FORMULA:
+            console.log("SETING FORMULA");
             console.log(action.data)
             return Object.assign({}, state, {
+                made_formula: action.data.made_formula,
                 formulaName: action.data.name,
                 formulaNum: action.data.num,
-                formulaComment: action.data.comments,
+                formulaComment: action.data.comment,
                 id:action.data.id
             });
 
@@ -60,7 +62,12 @@ const initState = {};
         case FORMULA_DET_ADD_FORMULA:
             return Object.assign({}, state, {
                 editing: false,
-                new:false
+                made_formula: true,
+                new:false,
+                formulaName: action.data.formula.name,
+                formulaNum: action.data.formula.num,
+                formulaComment: action.data.formula.comment,
+                id: action.data.formula.id
             });
         case FORMULA_DET_ADD_ERROR:
             console.log(action.data)
@@ -81,7 +88,8 @@ const initState = {};
         case FORMULA_DET_SET_EDITING:
             console.log(action.data)
             return Object.assign({}, state, {
-                editing: action.data
+                editing: action.data,
+                made_formula: action.data
             });
         case FORMULA_DET_SET_NEW:
             console.log(action.data)

@@ -3,12 +3,14 @@ const CRUD = require("./CRUD");
 const csv = require('csvtojson');
 const squel = require("squel").useFlavour("postgres");
 const QueryGenerator = require("./query_generator");
+const Formatter = require('./formatter');
 
 class SKUIngred extends CRUD {
     constructor() {
         super();
         this.tableName = "formula_ingredients";
         this.headerToDB = {
+            "FormulaID": "id",
             "Formula#": "num",
             "Name": "name", 
             "Ingr#": "ingredient_num", 
@@ -33,6 +35,36 @@ class SKUIngred extends CRUD {
             obj.unit = arr[1];
             console.log(obj);
         }
+    }
+
+    exportFile(jsonList, format, cb = null) {
+        const formatter = new Formatter(format);
+        jsonList = super.convertDBToHeader(jsonList);
+        let promise = Promise.resolve(null);
+        let form_ingred = [];
+        for(let i = 0; i < jsonList.length; i++) {
+            //get ingredients
+            promise = promise.then(function(res) {
+                return db.execSingleQuery("select num, quantity, formula_ingredients.unit from formula_ingredients inner join ingredients on ingredients_id = id where formula_id = $1", [jsonList[i]['FormulaID']]);
+            })
+            .then(function(res) {
+                console.log(res.rows);
+                for(let j = 0; j < res.rows.length; j++) {
+                    form_ingred.push({
+                        "Formula#": jsonList[i]["Formula#"],
+                        "Name": jsonList[i]["Name"],
+                        "Ingr#": res.rows[j].num,
+                        "Quantity": res.rows[j].quantity,
+                        "Comment": jsonList[i]["Comment"]
+                    });
+                }
+            });
+        }
+
+        console.log(form_ingred);
+        return promise.then(function(res) {
+            cb(formatter.generateFormat(form_ingred));
+        });
     }
 
     bulkImport(csv_str, cb) {

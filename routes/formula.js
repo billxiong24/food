@@ -83,6 +83,7 @@ router.post('/:id/ingredients', function(req, res, next) {
 });
 
 router.put('/:id', function(req, res, next) {
+    console.log(req.body);
     if(isNaN((req.params.id))) {
         return res.status(400).json({
             error: "Malformed URL."

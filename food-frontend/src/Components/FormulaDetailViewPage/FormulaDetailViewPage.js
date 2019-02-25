@@ -99,6 +99,8 @@ class FormulaDetailViewPage extends Component {
         this.props.edit()
     }
     onSaveClick = () => {
+        console.log("saving formula");
+        console.log(this.state);
         const formula = {
             name: this.state.formulaName,
             num: this.state.formulaNum,
@@ -149,6 +151,9 @@ class FormulaDetailViewPage extends Component {
     }
 
     addIngredient = () => {
+        console.log("ADDING ING");
+        console.log(this.props);
+        console.log(this.state);
         this.props.addIng(this.props.id, {
             name: this.state.new_ingredient_name,
             quantity: this.state.new_ingredient_quantity,
@@ -157,7 +162,9 @@ class FormulaDetailViewPage extends Component {
     }
 
     render() {
-        const { classes, editing, newValue } = this.props
+        const { made_formula, classes, editing, newValue } = this.props
+        console.log("RENDINER FORMULA DETAIL");
+        console.log(made_formula);
         return (
             <div className = {classes.ingredient_page_container}>
                 <Button onClick={this.props.back}>
@@ -248,7 +255,9 @@ class FormulaDetailViewPage extends Component {
 
                     
                 </div>
-                <div className={classes.left}>
+                {
+                    (made_formula) ? 
+                    <div className={classes.left}>
                     <Typography>
                         Ingredients List
                     </Typography>
@@ -286,6 +295,10 @@ class FormulaDetailViewPage extends Component {
                        Add 
                     </Button>
                 </div>
+                    :
+            <div></div>
+                }
+                
                 {
           this.props.errors.map((error, index) => (
             <SimpleSnackbar
@@ -303,7 +316,10 @@ class FormulaDetailViewPage extends Component {
 
 
 const mapStateToProps = state => {
+    console.log("MAPPING STATE TO PROPS DETAIL");
+    console.log(state.formula_details.id);
     return {
+        made_formula: state.formula_details.made_formula,
         formulaName: state.formula_details.formulaName, 
         formulaNum: state.formula_details.formulaNum,
         formulaComment: state.formula_details.formulaComment,

@@ -64,6 +64,8 @@ class IngredientList extends Component {
 
     onClick = (item) =>{
          console.log(item)
+        item.made_formula= true;
+        console.log(item);
          this.props.setFormula(item, this.props.history)
     }
 

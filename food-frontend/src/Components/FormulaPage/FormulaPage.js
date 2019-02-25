@@ -144,16 +144,16 @@ class FormulaPage extends Component {
   }
 
   onExportClick = () => {
+      console.log(this.props.items);
     axios.post(common.hostname + 'manufacturing_goals/exported_file', {
-      data: this.props.items.map((ing) => ({
-        num:ing.num,
-        name:ing.name,
-        vend_info:ing.vend_info,
-        pkg_size:ing.pkg_size,
-        pkg_cost:ing.pkg_cost,
-        comments:ing.comments
+      data: this.props.items.map((formula) => ({
+        id: formula.id,
+        num:formula.num,
+        name:formula.name,
+        comment: formula.comments
       })),
       format: "csv",
+      type: "formula"
     })
       .then((response) => {
         FileDownload(response.data, 'ingredients.csv');
@@ -239,15 +239,16 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return{
     setFormula: (history) => {
+    dispatch(formulaDetSetNew(true))
+    dispatch(formulaDetSetEditing(true))
+    dispatch(formulaDetSetIngredients([]))
       dispatch(formulaDetSetFormula({
+        made_formula: false,
         name: "",
         num: null,
         comments: "",
         id: null
     }))
-    dispatch(formulaDetSetNew(true))
-    dispatch(formulaDetSetEditing(true))
-    dispatch(formulaDetSetIngredients([]))
       history.push('/formula/details')
     },
     deleteError: (error) => {

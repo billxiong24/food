@@ -135,8 +135,8 @@ router.post('/exported_file', checkTokenUser, function(req, res, next) {
 
     const mg = new ManufacturingGoals();
     const crud = getCRUD(req.body.type);
-    if(req.body.type === 'sku') {
-        console.log("is sku type");
+    if(req.body.type === 'sku' || req.body.type === 'formula') {
+        console.log("its my type");
         crud.exportFile(jsonList, format, function(csv) {
             res.status(200).send(csv);
         });
