@@ -144,7 +144,7 @@ class Scheduler extends CRUD {
                 if(typeof(goals_id_map[goal.id]) === "undefined"){
                     goals_id_map[goal.id] = goal
                 }else{
-                    goals_id_map[goal.id].activities.push(goal)
+                    goals_id_map[goal.id].activities.push(activity)
                 }
             })
             for (var id in goals_id_map) {
