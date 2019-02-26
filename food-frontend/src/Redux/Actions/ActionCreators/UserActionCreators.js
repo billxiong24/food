@@ -223,7 +223,7 @@ export const userUpdate = (user) => {
 
 export const userDelete = (user) => {
   return (dispatch) => {
-    return axios.delete(hostname + 'user/' + user.id)
+    return axios.delete(hostname + 'users/' + user.id)
     .then((response) => {
       dispatch({
         type: user_actions.USER_DELETE,

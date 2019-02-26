@@ -153,8 +153,44 @@ class UserAdminPage extends Component {
   }
 
   handleSubmit = (e) => {
-    this.state.manGoals.forEach((manGoal) => {
-      Axios.put
+    let requests = this.state.manGoals.map((manGoal) => {
+      return new Promise((resolve) => {
+        Axios.put(common.hostname + 'manufacturing_goals/' + manGoal.id, {
+            user_id: this.props.cookies.id,
+        })
+        .then(() => {
+          resolve();
+        })
+        .catch((err) => {
+          this.setState({
+            alert: true,
+            message: "Error updating manufacturing goal owner: " + err.response,
+          })
+        })
+      })
+    })
+    Promise.all(requests).then(() => {
+      this.props.userDelete(this.state.user)
+      .then((response) => {
+        if(this.props.users.errMsg) {
+          this.setState({
+            alert:true,
+            message:"Unable to Delete User: " + this.props.users.errMsg,
+            manGoals: [],
+            user: null,
+          })
+          this.handleClose();
+        }
+        else {
+          this.setState({
+            alert:true,
+            message:"User Successfully Deleted!",
+            manGoals: [],
+            user: null,
+          })
+          this.handleClose();
+        }
+      })
     })
   }
 
