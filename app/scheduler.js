@@ -178,13 +178,13 @@ class Scheduler extends CRUD {
                     "shrt_name": row.shrt_name,
                     "comment": row.comment,
                     "id":row.id,
-                    "possible_skus":[sku_id]
+                    "possible_skus":[row.sku_id]
                 }
                 
                 if(typeof(man_line_id_map[man_line.id]) === "undefined"){
                     man_line_id_map[man_line.id] = man_line
                 }else{
-                    man_line_id_map[man_line.id].possible_skus.push(sku_id)
+                    man_line_id_map[man_line.id].possible_skus.push(row.sku_id)
                 }
             })
             for (var id in man_line_id_map) {
