@@ -155,9 +155,9 @@ class Scheduler extends CRUD {
                 }
             }
             if(filter_type_index==0){
-                return filtered_goals.filter(goal => goal.name.contains(filter))
+                return filtered_goals.filter(goal => goal.name.indexOf(filter) != -1)
             }
-            return filtered_goals.filter(goal => goal.author.contains(filter))
+            return filtered_goals.filter(goal => goal.author.indexOf(filter) != -1)
         })
     }
 
