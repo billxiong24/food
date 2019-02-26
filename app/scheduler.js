@@ -52,6 +52,6 @@ class Scheduler extends CRUD {
     }
 
   
-
+}
 
 module.exports = Scheduler;
