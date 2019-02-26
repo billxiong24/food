@@ -360,20 +360,12 @@ router.put('/goal_user_names', function (req, res, next) {
 });
 
 router.put('/filtered_goals', function (req, res, next) {
-    let filter = req.body.filter;
-    let filter_type_index = req.body.filter_type_index
-    let filtered_goals = []
-    filtered_goals = scheduler.get_filtered_goals(filter, filter_type_index)
-    console.log(filtered_goals)
-    filter_goals = []
-    if(filter_type_index == 0){
-        filtered_goals = dummySchedulerData.goals.filter(goal => goal.name.includes(filter))
-    }else{
-        filtered_goals = dummySchedulerData.goals.filter(goal => goal.author.includes(filter))
-    }
-    return res.status(200).json({
-       filtered_goals
-    })
+    let scheduler = new Scheduler()
+    scheduler.get_goals().then((filtered_goals) => {
+        res.status(200).json({
+            filtered_goals: filtered_goals
+        })
+    }) 
 });
 
 router.put('/schedule', function (req, res, next) {
