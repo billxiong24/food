@@ -35,7 +35,7 @@ class Scheduler extends CRUD {
             return true
         })
         .catch(function(error){
-            return false
+            return error
         })
     }
 

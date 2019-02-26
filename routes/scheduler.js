@@ -287,7 +287,7 @@ router.put('/set_enable', function (req, res, next) {
             })
         }else{
             res.status(400).json({
-                error:"bad request"
+                error:success
             }) 
         }
     })
