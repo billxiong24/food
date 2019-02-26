@@ -155,7 +155,7 @@ router.post('/', checkTokenUser, function(req, res, next) {
     });
 });
 
-router.put('/:id', checkTokenUser, function(req, res, next) {
+router.put('/:id', function(req, res, next) {
     let id = req.params.id;
     if(isNaN((id))) {
         return res.status(400).json({
