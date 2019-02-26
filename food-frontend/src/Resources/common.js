@@ -36,7 +36,7 @@ const ritwikvm = {
 
 // const config = process.env.REACT_APP_STAGE === 'prod' ? prod :
 //               (process.env.REACT_APP_STAGE === 'dev' ? dev : local);
-const config = dev
+const config = local
 
 
 export default {
