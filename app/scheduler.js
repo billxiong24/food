@@ -47,7 +47,7 @@ class Scheduler extends CRUD {
 
     get_goal_usernames(filter){
         var that = this;
-        console.log(filter)
+        // console.log(filter)
         let goal_user_names = []
         let query = `SELECT DISTINCT
         *
@@ -70,8 +70,93 @@ class Scheduler extends CRUD {
     }
 
     get_filtered_goals(filter, filter_type_index){
+        var that = this;
         let filtered_goals = []
-        return filtered_goals
+        let field = "name"
+        if(filter_type_index == 1){
+            field = "uname"
+        }
+        let query = `
+        SELECT
+        *,
+        users.uname
+        FROM ( 
+        SELECT
+        manufacturing_goal_sku.mg_id,
+        manufacturing_goal_sku.sku_id,
+        manufacturing_goal_sku.quantity,
+        manufacturing_goal_sku.start_time,
+        manufacturing_goal_sku.end_time,
+        manufacturing_goal_sku.man_line_id,
+        manufacturing_goal.name as mg_name,
+        manufacturing_goal.user_id,
+        manufacturing_goal.deadline,
+        enabled,
+        manufacturing_goal.name,
+        sku.name as sku_name,
+        sku.num,
+        sku.case_upc,
+        sku.unit_upc,
+        sku.unit_size,
+        sku.count_per_case,
+        sku.prd_line,
+        sku.comments,
+        sku.formula_id,
+        sku.formula_scale,
+        sku.man_rate,
+        manufacturing_line.shortname
+        FROM manufacturing_goal_sku 
+        INNER JOIN manufacturing_goal on manufacturing_goal_sku.mg_id= manufacturing_goal.id  
+        INNER JOIN sku ON manufacturing_goal_sku.sku_id=sku.id
+        INNER JOIN manufacturing_line ON manufacturing_goal_sku.man_line_id=manufacturing_line.id
+        ) AS foo
+        INNER JOIN users ON foo.user_id = users.id
+        WHERE ${field} LIKE \'%${filter}%\'
+        `
+        return db.execSingleQuery(query, [])
+        .then(function(res){
+            let goals_id_map = {}
+            let goals = []
+            res.rows.forEach(function(row){
+                let activity = {
+                    "name": row.sku_name,
+                    "case_upc": parseInt(row.case_upc),
+                    "num": row.sku_id,
+                    "unit_upc": parseInt(row.unit_upc),
+                    "unit_size": row.unit_size,
+                    "count_per_case": row.count_per_case,
+                    "prd_line": row.prd_line,
+                    "comments": row.comments,
+                    "cases_needed": parseInt(row.quantity),
+                    "mfg_rate": parseInt(row.man_rate),
+                    "start_time": that.get_date_string(row.start_time),
+                    "end_time": that.get_date_string(row.end_time),
+                    "man_line_num": that.get_zero_null(row.man_line_id)
+                }
+                let goal = {
+                    "name": row.mg_name,
+                    "activities": [
+                       activity
+                    ],
+                    "enabled": row.enabled,
+                    "deadline": that.get_date_string_day(row.start_time),
+                    "author": row.uname,
+                    author_id:row.user_id,
+                    "id": row.mg_id
+                }
+                if(typeof(goals_id_map[goal.id]) === "undefined"){
+                    goals_id_map[goal.id] = goal
+                }else{
+                    goals_id_map[goal.id].activities.push(activity)
+                }
+            })
+            for (var id in goals_id_map) {
+                if (goals_id_map.hasOwnProperty(id)) {
+                    filtered_goals.push(goals_id_map[id])
+                }
+            }
+            return filtered_goals
+        })
     }
 
     set_schedule(id, start_time, end_time, man_line_num){
@@ -112,8 +197,13 @@ class Scheduler extends CRUD {
 
     get_goals(){
         var that = this;
-        let goals = []
-        let query = `SELECT
+        let filtered_goals = []
+        let query = `
+        SELECT
+        *,
+        users.uname
+        FROM ( 
+        SELECT
         manufacturing_goal_sku.mg_id,
         manufacturing_goal_sku.sku_id,
         manufacturing_goal_sku.quantity,
@@ -140,7 +230,9 @@ class Scheduler extends CRUD {
         FROM manufacturing_goal_sku 
         INNER JOIN manufacturing_goal on manufacturing_goal_sku.mg_id= manufacturing_goal.id  
         INNER JOIN sku ON manufacturing_goal_sku.sku_id=sku.id
-        INNER JOIN manufacturing_line ON manufacturing_goal_sku.man_line_id=manufacturing_line.id 
+        INNER JOIN manufacturing_line ON manufacturing_goal_sku.man_line_id=manufacturing_line.id
+        ) AS foo
+        INNER JOIN users ON foo.user_id = users.id
         `
         return db.execSingleQuery(query, [])
         .then(function(res){
@@ -169,7 +261,8 @@ class Scheduler extends CRUD {
                     ],
                     "enabled": row.enabled,
                     "deadline": that.get_date_string_day(row.start_time),
-                    "author": row.user_id,
+                    "author": row.uname,
+                    author_id:row.user_id,
                     "id": row.mg_id
                 }
                 if(typeof(goals_id_map[goal.id]) === "undefined"){
@@ -180,11 +273,10 @@ class Scheduler extends CRUD {
             })
             for (var id in goals_id_map) {
                 if (goals_id_map.hasOwnProperty(id)) {
-                    goals.push(goals_id_map[id])
+                    filtered_goals.push(goals_id_map[id])
                 }
             }
-            console.log(goals)
-            return goals
+            return filtered_goals
         })
     }
 
