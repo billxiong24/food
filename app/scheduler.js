@@ -52,7 +52,7 @@ class Scheduler extends CRUD {
         let query = squel.select()
         .from(this.manufacturing_goal_sku)
         .toString();
-        db.execSingleQuery(query, []);
+        console.log(db.execSingleQuery(query, []));
         return goals
     }
 
