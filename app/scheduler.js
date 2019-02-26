@@ -117,7 +117,7 @@ class Scheduler extends CRUD {
             let goals = []
             res.rows.forEach(function(row){
                 let activity = {
-                    "name": row.mg_name,
+                    "name": row.sku_name,
                     "case_upc": row.case_upc,
                     "num": row.sku_id,
                     "unit_upc": row.unit_upc,
