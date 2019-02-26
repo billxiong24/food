@@ -50,7 +50,7 @@ class Scheduler extends CRUD {
 
     
     get_date_string(raw_time){
-        let time = parseInt(time)
+        let time = parseInt(raw_time)
         console.log(time)
         let date = new Date(time)
         console.log(date.toString())
@@ -58,7 +58,7 @@ class Scheduler extends CRUD {
     }
 
     get_date_string_day(raw_time){
-        let time = parseInt(time)
+        let time = parseInt(raw_time)
         console.log(time)
         let date = new Date(time)
         console.log(date.toString())
