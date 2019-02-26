@@ -48,20 +48,34 @@ class Scheduler extends CRUD {
         return success
     }
 
+    get_zero_null(num){
+        if(num == 0 || num == "empty"){
+            return null
+        }else{
+            return num
+        }
+    }
+
     
     get_date_string(raw_time){
         let time = parseInt(raw_time)
-        console.log(time)
+        if(time == 0){
+            return null
+        }
+        //console.log(time)
         let date = new Date(time)
-        console.log(date.toString())
+        //console.log(date.toString())
         return `${date.getUTCFullYear()}-${("0" + (date.getMonth() + 1)).slice(-2)}-${( "0" +date.getDate()).slice(-2)} ${( "0" +date.getHours()).slice(-2)}:${("0" +date.getMinutes()).slice(-2)}:${("0" +date.getSeconds()).slice(-2)}`
     }
 
     get_date_string_day(raw_time){
         let time = parseInt(raw_time)
-        console.log(time)
+        if(time == 0){
+            return null
+        }
+        //console.log(time)
         let date = new Date(time)
-        console.log(date.toString())
+        //console.log(date.toString())
         return `${date.getUTCFullYear()}-${("0" + (date.getMonth() + 1)).slice(-2)}-${( "0" +date.getDate()).slice(-2)}`
     }
 
@@ -115,7 +129,7 @@ class Scheduler extends CRUD {
                     "mfg_rate": row.man_rate,
                     "start_time": that.get_date_string(row.start_time),
                     "end_time": that.get_date_string(row.end_time),
-                    "man_line_num": "BMP1"
+                    "man_line_num": get_zero_null(row.man_line_id)
                 }
                 let goal = {
                     "name": row.mg_name,
@@ -139,7 +153,7 @@ class Scheduler extends CRUD {
                 }
             }
             console.log(goals)
-            return res
+            return goals
         })
     }
 
