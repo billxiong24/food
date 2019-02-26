@@ -9,6 +9,12 @@ class Scheduler extends CRUD {
     constructor() {
         super();
         this.tableName = "manufacturing_goal";
+        this.manufacturing_goal_sku = "manufacturing_goal_sku"
+        this.sku = "sku"
+        this.manufacturing_line = "manufacturing_line"
+        this.manufacturing_line_sku = "manufacturing_line_sku"
+        this.productline = "productline"
+        this.manufacturing_goal = "manufacturing_goal"
     }
 
     search_username(user_id) {
@@ -43,6 +49,10 @@ class Scheduler extends CRUD {
 
     get_goals(){
         let goals = []
+        let query = squel.select()
+        .from(this.manufacturing_goal_sku)
+        .toString();
+        db.execSingleQuery(query, []);
         return goals
     }
 
