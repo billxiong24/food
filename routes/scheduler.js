@@ -1,5 +1,5 @@
 let express = require('express');
-const scheduler = require('../app/scheduler.js');
+const Scheduler = require('../app/scheduler.js');
 let router = express.Router();
 
 var HomeStyleTurkeyMeal = {
@@ -427,7 +427,7 @@ function scheduleActivity(id, start_time, end_time, man_line_num) {
 
 
 router.get('/goals', function (req, res, next) {
-    console.log(scheduler)
+    let scheduler = new Scheduler()
     let goals = scheduler.get_goals()
     console.log(goals)
     return res.status(200).json({
