@@ -427,8 +427,8 @@ function scheduleActivity(id, start_time, end_time, man_line_num) {
 
 
 router.get('/goals', function (req, res, next) {
-    let goals = scheduler.get_goals()
-    console.log(goals)
+    // let goals = scheduler.get_goals()
+    // console.log(goals)
     return res.status(200).json({
         goals: dummySchedulerData.goals
     })
