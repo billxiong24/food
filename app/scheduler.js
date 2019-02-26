@@ -108,8 +108,8 @@ class Scheduler extends CRUD {
                     "comments": row.comments,
                     "cases_needed": row.quantity,
                     "mfg_rate": row.man_rate,
-                    "start_time": get_date_string(new Date(row.start_time)),
-                    "end_time": get_date_string(new Date(row.end_time)),
+                    "start_time": this.get_date_string(new Date(row.start_time)),
+                    "end_time": this.get_date_string(new Date(row.end_time)),
                     "man_line_num": "BMP1"
                 }
                 let goal = {
@@ -118,7 +118,7 @@ class Scheduler extends CRUD {
                        activity
                     ],
                     "enabled": row.enabled,
-                    "deadline": get_date_string_day(new Date(row.start_time)),
+                    "deadline": this.get_date_string_day(new Date(row.start_time)),
                     "author": row.user_id,
                     "id": row.mg_id
                 }
