@@ -161,11 +161,11 @@ class Scheduler extends CRUD {
         var that = this;
         let man_lines = []
         let query = `SELECT
-        manufacturing_line.id
+        manufacturing_line.id,
         manufacturing_line.shortname as shrt_name,
         manufacturing_line.comment,
         manufacturing_line.name,
-        manufacturing_line_sku.sku_id,
+        manufacturing_line_sku.sku_id
         FROM manufacturing_line 
         INNER JOIN manufacturing_line_sku on manufacturing_line.id= manufacturing_line_sku.manufacturing_line_id 
         `
