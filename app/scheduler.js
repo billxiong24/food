@@ -194,9 +194,9 @@ class Scheduler extends CRUD {
             end_time = new Date(raw_end_time).getTime()
         }
         if(raw_man_line_shrt_name === null){
-            man_line_shrt_name = raw_man_line_shrt_name
-        }else{
             man_line_shrt_name = "empty"
+        }else{
+            man_line_shrt_name = raw_man_line_shrt_name
         }
         console.log(start_time)
         console.log(end_time)
