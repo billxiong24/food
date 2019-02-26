@@ -214,7 +214,7 @@ class Scheduler extends CRUD {
         // WHERE 
         // manufacturing_goal_sku.sku_id = ${id}
         // `
-        let query = `UPDATE 
+        query = `UPDATE 
         manufacturing_goal_sku
         SET 
         start_time = ${start_time},
