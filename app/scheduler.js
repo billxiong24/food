@@ -229,7 +229,7 @@ class Scheduler extends CRUD {
             manufacturing_line.id
             FROM 
             manufacturing_line
-            WHERE manufacturing_line.shortname LIKE 'BMP1'
+            WHERE manufacturing_line.shortname LIKE \'${man_line_shrt_name}\'
         ) AS foo
         WHERE 
         manufacturing_goal_sku.sku_id = ${id}
