@@ -365,30 +365,36 @@ router.put('/schedule', function (req, res, next) {
     let start_time = req.body.start_time
     let end_time = req.body.end_time
     let man_line_num = req.body.man_line_num
-    var foundCount = 0;
-    let success = scheduler.set_schedule(id, start_time, end_time, man_line_num)
-    console.log(success)
-    for (var i = 0; i < activities.length; i++) {
-        if (activities[i].num == id) {
-            activities[i].start_time = start_time
-            activities[i].end_time = end_time
-            activities[i].man_line_num = man_line_num
-            foundCount = foundCount + 1
-        }
-    }
-    if (foundCount == 0) {
-        // console.log("400 error - id doesnt exist")
-        return res.status(400).json({
-            error: "id doesnt exist"
-        })
-    }
-    if (foundCount > 1) {
-        return res.status(500).json({
-            error: "multiple activities with the same id"
-        })
-    }
-    return res.status(200).json({
+    // var foundCount = 0;
+    // let success = scheduler.set_schedule(id, start_time, end_time, man_line_num)
+    // console.log(success)
+    // for (var i = 0; i < activities.length; i++) {
+    //     if (activities[i].num == id) {
+    //         activities[i].start_time = start_time
+    //         activities[i].end_time = end_time
+    //         activities[i].man_line_num = man_line_num
+    //         foundCount = foundCount + 1
+    //     }
+    // }
+    // if (foundCount == 0) {
+    //     // console.log("400 error - id doesnt exist")
+    //     return res.status(400).json({
+    //         error: "id doesnt exist"
+    //     })
+    // }
+    // if (foundCount > 1) {
+    //     return res.status(500).json({
+    //         error: "multiple activities with the same id"
+    //     })
+    // }
+    // return res.status(200).json({
         
+    // })
+    let scheduler = new Scheduler()
+    scheduler.set_schedule(id,start_time,end_time,man_line_shrt_name).then((success) => {
+        res.status(200).json({
+            
+        })
     })
 });
 

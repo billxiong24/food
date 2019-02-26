@@ -431,7 +431,7 @@ function get_date_string_day(date){
     return `${date.getUTCFullYear()}-${("0" + (date.getMonth() + 1)).slice(-2)}-${( "0" +date.getDate()).slice(-2)}`
 }
 
-a = (new Date("2019-02-22")).getTime()
+a = (new Date("2019-02-19 10:00:00")).getTime()
 console.log(a)
 date = new Date(a)
 console.log(date.toString())

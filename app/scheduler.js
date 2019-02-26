@@ -173,9 +173,68 @@ class Scheduler extends CRUD {
         })
     }
 
-    set_schedule(id, start_time, end_time, man_line_num){
-        let success = false
-        return success
+    set_schedule(id, raw_start_time, raw_end_time, raw_man_line_shrt_name){
+        var that = this;
+        // console.log(filter)
+        let start_time
+        let end_time
+        let man_line_shrt_name
+        let query
+        if(raw_start_time == null){
+            start_time = 0
+        }else{
+            start_time = new Date(raw_start_time).getTime()
+        }
+        if(raw_end_time == null){
+            end_time = 0
+        }else{
+            end_time = new Date(raw_end_time).getTime()
+        }
+        if(raw_man_line_shrt_name == null){
+            man_line_shrt_name = raw_man_line_shrt_name
+        }else{
+            man_line_shrt_name = "empty"
+        }
+        console.log(start_time)
+        console.log(end_time)
+        console.log(man_line_shrt_name)
+        // let query = `UPDATE 
+        // manufacturing_goal_sku 
+        // (
+        //     SELECT
+        //     id as man_line_id
+        //     FROM manufacturing_line
+        //     WHERE 
+        //     manufacturing_line.shortname = ${man_line_shrt_name}
+        // ) AS foo
+        // SET 
+        // manufacturing_goal_sku.start_time = ${start_time},
+        // end_time = ${end_time}
+        // man_line_id = foo.man_line_id
+        // WHERE 
+        // manufacturing_goal_sku.sku_id = ${id}
+        // `
+        let query = `UPDATE 
+        manufacturing_goal_sku
+        SET 
+        start_time = ${start_time},
+        end_time = ${end_time},
+        man_line_id = foo.id
+        FROM
+        (
+            SELECT
+            manufacturing_line.id
+            FROM 
+            manufacturing_line
+            WHERE manufacturing_line.shortname LIKE 'BMP1'
+        ) AS foo
+        WHERE 
+        manufacturing_goal_sku.sku_id = ${id}
+        `
+        return db.execSingleQuery(query, [])
+        .then(function(res){
+            return true
+        })
     }
 
     get_zero_null(num){
@@ -266,7 +325,7 @@ class Scheduler extends CRUD {
                     "mfg_rate": parseInt(row.man_rate),
                     "start_time": that.get_date_string(row.start_time),
                     "end_time": that.get_date_string(row.end_time),
-                    "man_line_num": that.get_zero_null(row.man_line_id)
+                    "man_line_num": that.get_zero_null(row.shortname)
                 }
                 let goal = {
                     "name": row.mg_name,
