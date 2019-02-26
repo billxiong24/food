@@ -111,16 +111,13 @@ class GoalList extends Component {
                             onClick={() => { this.onClick(item) }}
                             divider={true}
                         >
-                            <div className={classes.ingredient_id}>
-                                {item.name}
-                            </div>
+                            <ListItemText primary={item.name} />
                             <ListItemSecondaryAction>
                             <Checkbox
                                     checked={item.enabled}
                                     className={classes.checkbox}
                                 />
                             </ListItemSecondaryAction>
-    
                     </ListItem>
                 ))
                 }
