@@ -96,12 +96,7 @@ class Scheduler extends CRUD {
         INNER JOIN manufacturing_goal on manufacturing_goal_sku.mg_id= manufacturing_goal.id  
         INNER JOIN sku ON manufacturing_goal_sku.sku_id=sku.id
         INNER JOIN manufacturing_line ON manufacturing_goal_sku.man_line_id=manufacturing_line.id 
-        WHERE mg_id IN
-        (
-        SELECT mg_id
-        FROM manufacturing_goal_sku
-        WHERE start_time!=0 AND end_time!=0 AND man_line_id!=0
-        )`
+        `
         return db.execSingleQuery(query, [])
         .then(function(res){
             let goals_id_map = {}
