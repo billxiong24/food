@@ -1,5 +1,5 @@
 let express = require('express');
-const error_controller = require('../app/controller/error_controller');
+const scheduler = require('../app/scheduler.js');
 let router = express.Router();
 
 var HomeStyleTurkeyMeal = {
@@ -279,6 +279,8 @@ router.put('/set_enable', function (req, res, next) {
     // console.log(id)
     // console.log(req.body)
     let enable_status = req.body.enable_status
+    let success = scheduler.set_enable(id, enable_status)
+    console.log(success)
     var enableCount = 0;
     for (var i = 0; i < dummySchedulerData.goals.length; i++) {
         if (dummySchedulerData.goals[i].id == id) {
@@ -334,6 +336,8 @@ function getGoalNames(filter) {
 router.put('/goal_names', function (req, res, next) {
     let filter = req.body.filter;
     // console.log(req.body)
+    let goal_names = scheduler.get_goal_names(filter)
+    console.log(goal_names)
     return res.status(200).json({
         goal_names: dummySchedulerData.goals.filter(goal => goal.name.includes(filter)).map(goal => goal.name)
     })
@@ -345,6 +349,8 @@ function getGoalUserNames(filter) {
 
 router.put('/goal_user_names', function (req, res, next) {
     let filter = req.body.filter;
+    let goal_usernames = scheduler.get_goal_usernames(filter)
+    console.log(goal_usernames)
     return res.status(200).json({
         goal_user_names: Array.from(new Set(dummySchedulerData.goals.filter(goal => goal.author.includes(filter)).map(goal => goal.author)))
     })
@@ -354,6 +360,9 @@ router.put('/filtered_goals', function (req, res, next) {
     let filter = req.body.filter;
     let filter_type_index = req.body.filter_type_index
     let filtered_goals = []
+    filtered_goals = scheduler.get_filtered_goals(filter, filter_type_index)
+    console.log(filtered_goals)
+    filter_goals = []
     if(filter_type_index == 0){
         filtered_goals = dummySchedulerData.goals.filter(goal => goal.name.includes(filter))
     }else{
@@ -370,8 +379,8 @@ router.put('/schedule', function (req, res, next) {
     let end_time = req.body.end_time
     let man_line_num = req.body.man_line_num
     var foundCount = 0;
-    console.log(activities)
-    console.log(id)
+    let success = scheduler.set_schedule(id, start_time, end_time, man_line_num)
+    console.log(success)
     for (var i = 0; i < activities.length; i++) {
         if (activities[i].num == id) {
             activities[i].start_time = start_time
@@ -398,15 +407,14 @@ router.put('/schedule', function (req, res, next) {
 
 function scheduleActivity(id, start_time, end_time, man_line_num) {
     var foundCount = 0;
-    console.log("scheudle")
-    console.log(id)
+    
     for (var i = 0; i < activities.length; i++) {
         if (activities[i].num == id) {
             activities[i].start_time = start_time
             activities[i].end_time = end_time
             activities[i].man_line_num = man_line_num
             foundCount += 1
-            console.log(activities[i])
+            // console.log(activities[i])
         }
     }
     if (foundCount == 0) {
@@ -419,7 +427,8 @@ function scheduleActivity(id, start_time, end_time, man_line_num) {
 
 
 router.get('/goals', function (req, res, next) {
-    // console.log(goals)
+    let goals = scheduler.get_goals()
+    console.log(goals)
     return res.status(200).json({
         goals: dummySchedulerData.goals
     })
@@ -428,6 +437,8 @@ router.get('/goals', function (req, res, next) {
 
 
 router.get('/man_lines', function (req, res, next) {
+    let man_lines = scheduler.get_man_lines()
+    console.log(man_lines)
     return res.status(200).json({
         man_lines: dummySchedulerData.man_lines
     })
