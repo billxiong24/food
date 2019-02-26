@@ -118,15 +118,15 @@ class Scheduler extends CRUD {
             res.rows.forEach(function(row){
                 let activity = {
                     "name": row.sku_name,
-                    "case_upc": row.case_upc,
+                    "case_upc": parseInt(row.case_upc),
                     "num": row.sku_id,
-                    "unit_upc": row.unit_upc,
+                    "unit_upc": parseInt(row.unit_upc),
                     "unit_size": row.unit_size,
                     "count_per_case": row.count_per_case,
                     "prd_line": row.prd_line,
                     "comments": row.comments,
-                    "cases_needed": row.quantity,
-                    "mfg_rate": row.man_rate,
+                    "cases_needed": parseInt(row.quantity),
+                    "mfg_rate": parseInt(row.man_rate),
                     "start_time": that.get_date_string(row.start_time),
                     "end_time": that.get_date_string(row.end_time),
                     "man_line_num": that.get_zero_null(row.man_line_id)
@@ -158,8 +158,43 @@ class Scheduler extends CRUD {
     }
 
     get_man_lines(){
+        var that = this;
         let man_lines = []
-        return man_lines
+        let query = `SELECT
+        manufacturing_line.id
+        manufacturing_line.shortname as shrt_name,
+        manufacturing_line.comment,
+        manufacturing_line.name,
+        manufacturing_line_sku.sku_id,
+        FROM manufacturing_line 
+        INNER JOIN manufacturing_line_sku on manufacturing_line.id= manufacturing_line_sku.manufacturing_line_id 
+        `
+        return db.execSingleQuery(query, [])
+        .then(function(res){
+            let man_line_id_map = {}
+            res.rows.forEach(function(row){
+                let man_line = {
+                    "name": row.name,
+                    "shrt_name": row.shrt_name,
+                    "comment": row.comment,
+                    "id":row.id,
+                    "possible_skus":[sku_id]
+                }
+                
+                if(typeof(man_line_id_map[man_line.id]) === "undefined"){
+                    man_line_id_map[man_line.id] = man_line
+                }else{
+                    man_line_id_map[man_line.id].possible_skus.push(sku_id)
+                }
+            })
+            for (var id in man_line_id_map) {
+                if (man_line_id_map.hasOwnProperty(id)) {
+                    man_lines.push(man_line_id_map[id])
+                }
+            }
+            console.log(man_lines)
+            return man_lines
+        })
     }
 
   

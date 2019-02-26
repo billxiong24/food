@@ -440,11 +440,13 @@ router.get('/goals', function (req, res, next) {
 
 
 router.get('/man_lines', function (req, res, next) {
-    let man_lines = scheduler.get_man_lines()
-    console.log(man_lines)
-    return res.status(200).json({
-        man_lines: dummySchedulerData.man_lines
-    })
+    let scheduler = new Scheduler()
+    scheduler.get_man_lines().then((man_lines) => {
+        console.log(goals)
+        res.status(200).json({
+            man_lines: man_lines
+        })
+    }) 
 });
 
 
