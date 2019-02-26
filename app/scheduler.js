@@ -30,6 +30,7 @@ class Scheduler extends CRUD {
         SET enabled = ${enable_status}
         WHERE id = ${id}
         `
+        console.log(query)
         return db.execSingleQuery(query, [])
         .then(function(res){
             return true
