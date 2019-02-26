@@ -5,6 +5,7 @@ const Sku = require('./sku');
 const Formatter = require('./formatter');
 const QueryGenerator = require("./query_generator");
 
+
 class Scheduler extends CRUD {
     constructor() {
         super();
@@ -52,8 +53,7 @@ class Scheduler extends CRUD {
         let query = squel.select()
         .from(this.manufacturing_goal_sku)
         .toString();
-        console.log(db.execSingleQuery(query, []));
-        return goals
+        return db.execSingleQuery(query, []);
     }
 
     get_man_lines(){

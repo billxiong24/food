@@ -1,6 +1,7 @@
 let express = require('express');
 const Scheduler = require('../app/scheduler.js');
 let router = express.Router();
+const Controller = require('../app/controller/controller');
 
 var HomeStyleTurkeyMeal = {
     "name": "Homestyle Turkey Meal",
@@ -428,11 +429,12 @@ function scheduleActivity(id, start_time, end_time, man_line_num) {
 
 router.get('/goals', function (req, res, next) {
     let scheduler = new Scheduler()
-    let goals = scheduler.get_goals()
-    console.log(goals)
-    return res.status(200).json({
-        goals: dummySchedulerData.goals
-    })
+    scheduler.get_goals().then((goals) => {
+        console.log(goals)
+        res.status(200).json({
+            goals: dummySchedulerData.goals
+        })
+    }) 
 });
 
 
