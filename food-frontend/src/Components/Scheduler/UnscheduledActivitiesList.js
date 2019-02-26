@@ -8,7 +8,7 @@ import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import { CardActionArea, Modal, TextField } from '@material-ui/core';
+import { CardActionArea, Modal, TextField, ListItem, ListItemText, Divider } from '@material-ui/core';
 import { routeToPage } from '../../Redux/Actions';
 import { withRouter } from 'react-router-dom'
 import { ingDetSetIng, ingDetGetSkus } from '../../Redux/Actions/ActionCreators/IngredientDetailsActionCreators';
@@ -46,6 +46,11 @@ const styles = theme => ({
     cardAction: {
         padding: 10
     },
+    root: {
+        width: '100%',
+        maxWidth: 360,
+        backgroundColor: theme.palette.background.paper,
+    },
     bullet: {
         display: 'inline-block',
         margin: '0 2px',
@@ -56,12 +61,7 @@ const styles = theme => ({
         fontFamily: 'Open Sans',
         fontWeight: 400,
     },
-    ingredient_id: {
-        fontSize: 14,
-        float: 'right',
-        fontFamily: 'Open Sans',
-        fontWeight: 400,
-    },
+    ingredient_id: labels.common_styles.simple_list_text,
     goal_name: {
         fontSize: 14,
         float: 'right',
@@ -123,33 +123,9 @@ const styles = theme => ({
     goal_name_deadline_title_container: {
         marginTop: 12,
     },
-    info_box:{
-        backgroundColor:"#DCDCDC",
-        color:"#696969",
-        paddingRight: "10px",
-        paddingTop:"5px",
-        paddingBottom:"5px",
-        marginBottom:"2px",
-        marginTop:"2px"
-    },
-    warning_box:{
-        backgroundColor:"#FFFF99",
-        color:"#696969",
-        paddingRight: "10px",
-        paddingTop:"5px",
-        paddingBottom:"5px",
-        marginBottom:"2px",
-        marginTop:"2px"
-    },
-    error_box:{
-        backgroundColor:"#F08080",
-        color:"#696969",
-        paddingRight: "10px",
-        paddingTop:"5px",
-        paddingBottom:"5px",
-        marginBottom:"2px",
-        marginTop:"2px"
-    },
+    info_box: labels.common_styles.info_box,
+    warning_box: labels.common_styles.warning_box,
+    error_box: labels.common_styles.error_box,
     left_button:{
         float: 'left'
     },
@@ -164,8 +140,9 @@ const styles = theme => ({
     },
     error_list:{
         marginTop: "12px"
-    }
-
+    },
+    unscheduled_activities_title: labels.common_styles.simple_list_title,
+    divider: labels.common_styles
 });
 
 
@@ -378,25 +355,50 @@ class UnscheduledActivitiesList extends Component {
                 <Button onClick={this.handleOpen}>Open Modal</Button> */}
                 {
                     this.props.unscheduled_activities.map((item, index) => (
-                        <Card className={classes.card} key={index} onClick={() => { this.onClick(item) }}>
-                            <CardActionArea
-                                className={classes.cardAction}
+                        // <Card className={classes.card} key={index} onClick={() => { this.onClick(item) }}>
+                        //     <CardActionArea
+                        //         className={classes.cardAction}
+                        //     >
+                        //         <CardContent>
+                        //             <Typography className={classes.ingredrient_name} color="textSecondary" >
+                        //                 {item.name}
+                        //             </Typography>
+                        //             {
+                        //                 multipleGoalActivity(item) ?
+                        //                 <Typography className={classes.ingredient_id} color="textSecondary" >
+                        //                     Multigoal Activity
+                        //                 </Typography>
+                        //                 :
+                        //                 <div></div>
+                        //             }
+                        //         </CardContent>
+                        //     </CardActionArea>
+                        // </Card>
+                        multipleGoalActivity(item) ?
+                        <ListItem 
+                            button 
+                            onClick={() => { this.onClick(item) }}
+                            divider={true}
+                        >
+                            <div className={classes.left}>
+                                {item.name}
+                            </div>
+                            <Divider></Divider>
+                        </ListItem>
+                        :
+                        <ListItem 
+                            button
+                            onClick={() => { this.onClick(item) }}
+                            divider={true}
+                        >
+                            <div 
+                                className={classes.ingredient_id}
+
                             >
-                                <CardContent>
-                                    <Typography className={classes.ingredrient_name} color="textSecondary" >
-                                        {item.name}
-                                    </Typography>
-                                    {
-                                        multipleGoalActivity(item) ?
-                                        <Typography className={classes.ingredient_id} color="textSecondary" >
-                                            Multigoal Activity
-                                        </Typography>
-                                        :
-                                        <div></div>
-                                    }
-                                </CardContent>
-                            </CardActionArea>
-                        </Card>
+                                {item.name}
+                            </div>
+                            <Divider></Divider>
+                        </ListItem>
                     ))
                 }
                 <Modal

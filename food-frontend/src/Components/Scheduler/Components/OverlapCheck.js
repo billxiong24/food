@@ -17,6 +17,7 @@ import { ENETDOWN } from 'constants';
 import { getEnabledGoals, calculate_scheduled_time, get_scheduled_activity_warnings } from '../UtilityFunctions';
 import { Typography } from '@material-ui/core';
 import labels from '../../../Resources/labels';
+import config from '../config';
 
 const styles = theme => ({
     card: {
@@ -154,12 +155,15 @@ class OverlapCheck extends Component{
     constructor(props){
         super(props);
         let scheduler_data = new SchedulerData('2019-02-18', ViewTypes.Week, false, false, {
-            checkConflict: true,
+            checkConflict: true,newConfig : config
         });
+        console.log(config)
         scheduler_data.localeMoment.locale('en');
         scheduler_data.setDate('2019-02-18');
         scheduler_data.setResources(this.props.resources);
         scheduler_data.setEvents(this.props.events);
+        console.log("hello")
+        scheduler_data.config.schedulerWidth = "65%"
         this.state = {
             scheduler_data
         }

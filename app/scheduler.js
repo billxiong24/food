@@ -25,12 +25,12 @@ class Scheduler extends CRUD {
 
     set_enable(id, enable_status){
         var that = this;
-        // console.log(filter)
+        // // console.log(filter)
         let query = `UPDATE manufacturing_goal
         SET enabled = ${enable_status}
         WHERE id = ${id}
         `
-        console.log(query)
+        // console.log(query)
         return db.execSingleQuery(query, [])
         .then(function(res){
             return true
@@ -59,7 +59,7 @@ class Scheduler extends CRUD {
 
     get_goal_usernames(filter){
         var that = this;
-        // console.log(filter)
+        // // console.log(filter)
         let goal_user_names = []
         let query = `SELECT DISTINCT
         *
@@ -175,14 +175,14 @@ class Scheduler extends CRUD {
 
     set_schedule(id, raw_start_time, raw_end_time, raw_man_line_shrt_name){
         var that = this;
-        // console.log(filter)
+        // // console.log(filter)
         let start_time
         let end_time
         let man_line_shrt_name
         let query
-        console.log(raw_start_time)
-        console.log(raw_end_time)
-        console.log(raw_man_line_shrt_name)
+        // console.log(raw_start_time)
+        // console.log(raw_end_time)
+        // console.log(raw_man_line_shrt_name)
         if(raw_start_time === null){
             start_time = 0
         }else{
@@ -198,9 +198,9 @@ class Scheduler extends CRUD {
         }else{
             man_line_shrt_name = raw_man_line_shrt_name
         }
-        console.log(start_time)
-        console.log(end_time)
-        console.log(man_line_shrt_name)
+        // console.log(start_time)
+        // console.log(end_time)
+        // console.log(man_line_shrt_name)
         // let query = `UPDATE 
         // manufacturing_goal_sku 
         // (
@@ -254,9 +254,9 @@ class Scheduler extends CRUD {
         if(time == 0){
             return null
         }
-        //console.log(time)
+        //// console.log(time)
         let date = new Date(time)
-        //console.log(date.toString())
+        //// console.log(date.toString())
         return `${date.getUTCFullYear()}-${("0" + (date.getMonth() + 1)).slice(-2)}-${( "0" +date.getDate()).slice(-2)} ${( "0" +date.getHours()).slice(-2)}:${("0" +date.getMinutes()).slice(-2)}:${("0" +date.getSeconds()).slice(-2)}`
     }
 
@@ -265,9 +265,9 @@ class Scheduler extends CRUD {
         if(time == 0){
             return null
         }
-        //console.log(time)
+        //// console.log(time)
         let date = new Date(time)
-        //console.log(date.toString())
+        //// console.log(date.toString())
         return `${date.getUTCFullYear()}-${("0" + (date.getMonth() + 1)).slice(-2)}-${( "0" +date.getDate()).slice(-2)}`
     }
 
@@ -391,7 +391,7 @@ class Scheduler extends CRUD {
                     man_lines.push(man_line_id_map[id])
                 }
             }
-            console.log(man_lines)
+            // console.log(man_lines)
             return man_lines
         })
     }

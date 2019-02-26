@@ -275,12 +275,12 @@ var dummySchedulerData = {
 
 router.put('/set_enable', function (req, res, next) {
     let rid = req.params.id
-    //console.log(rid)
+    //// console.log(rid)
     let id = req.body.id;
-    // console.log(id)
-    // console.log(req.body)
+    // // console.log(id)
+    // // console.log(req.body)
     let enable_status = req.body.enable_status
-    console.log(req.body)
+    // console.log(req.body)
     let scheduler = new Scheduler()
     scheduler.set_enable(id, enable_status).then((success) => {
         if(success){
@@ -304,17 +304,17 @@ router.put('/set_enable', function (req, res, next) {
 //         //Do something
 //     }
 //     if (enableCount == 0) {
-//         console.log("400 error - id doesnt exist")
+//         // console.log("400 error - id doesnt exist")
 //     }
 //     if (enableCount > 1) {
-//         console.log("500 error - multiple goal with same id")
+//         // console.log("500 error - multiple goal with same id")
 //     }
 // }
 
 function printEnabledGoals() {
     for (var i = 0; i < dummySchedulerData.goals.length; i++) {
         if (dummySchedulerData.goals[i].enabled) {
-            console.log(dummySchedulerData.goals[i].name)
+            // console.log(dummySchedulerData.goals[i].name)
         }
         //Do something
     }
@@ -326,7 +326,7 @@ function getGoalNames(filter) {
 
 router.put('/goal_names', function (req, res, next) {
     let filter = req.body.filter;
-    // console.log(req.body)
+    // // console.log(req.body)
     let scheduler = new Scheduler()
     scheduler.get_goal_names(filter).then((goal_names) => {
         res.status(200).json({
@@ -367,7 +367,7 @@ router.put('/schedule', function (req, res, next) {
     let man_line_num = req.body.man_line_num
     // var foundCount = 0;
     // let success = scheduler.set_schedule(id, start_time, end_time, man_line_num)
-    // console.log(success)
+    // // console.log(success)
     // for (var i = 0; i < activities.length; i++) {
     //     if (activities[i].num == id) {
     //         activities[i].start_time = start_time
@@ -377,7 +377,7 @@ router.put('/schedule', function (req, res, next) {
     //     }
     // }
     // if (foundCount == 0) {
-    //     // console.log("400 error - id doesnt exist")
+    //     // // console.log("400 error - id doesnt exist")
     //     return res.status(400).json({
     //         error: "id doesnt exist"
     //     })
@@ -407,14 +407,14 @@ function scheduleActivity(id, start_time, end_time, man_line_num) {
             activities[i].end_time = end_time
             activities[i].man_line_num = man_line_num
             foundCount += 1
-            // console.log(activities[i])
+            // // console.log(activities[i])
         }
     }
     if (foundCount == 0) {
-        console.log("400 error - id doesnt exist")
+        // console.log("400 error - id doesnt exist")
     }
     if (foundCount > 1) {
-        console.log("500 error - multiple activities with same id")
+        // console.log("500 error - multiple activities with same id")
     }
 }
 
@@ -422,7 +422,7 @@ function scheduleActivity(id, start_time, end_time, man_line_num) {
 router.get('/goals', function (req, res, next) {
     let scheduler = new Scheduler()
     scheduler.get_goals().then((goals) => {
-        console.log(goals)
+        // console.log(goals)
         res.status(200).json({
             goals: goals
         })

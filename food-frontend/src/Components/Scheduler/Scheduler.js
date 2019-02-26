@@ -70,31 +70,25 @@ const styles = {
     },
     lists_view:{
         display:'flex',
-        flexDirection: 'row'
+        flexDirection: 'column',
+        width: '30%',
+        margin: 10
     },
     goals_list_view:{
-        height: '10vh',
+        height: '45vh',
+        overflow: 'auto',
     },
     goals_list_container:{
-        height: '30vh',
         width: '100%',
-        margin: 5,
-        padding: 5,
         overflow: 'auto'
     },
     unscheduled_activities_list_container:{
-        height: '30vh',
         width: '100%',
-        margin: 5,
-        padding: 5,
-        overflow: 'auto'
     },
     unscheduled_activities_list_view:{
-        height: '30vh',
+        height: '45vh',
         width: '100%',
-        margin: 5,
-        padding: 5,
-        overflow: 'auto'
+        overflow: 'auto',
 
     },
     warnings_list_view:{
@@ -102,7 +96,7 @@ const styles = {
     },
     page_view:{
         display:'flex',
-        flexDirection: 'column',
+        flexDirection: 'row',
     },
     scheduler_view:{
 
@@ -121,7 +115,19 @@ const styles = {
     goals_search_filter_dropdown:{
 
     },
-    warning_box:labels.common_styles.warning_box
+    warning_box:labels.common_styles.warning_box,
+    unscheduled_activities_title: {
+        textAlign:'left',
+        fontSize: 22,
+        fontFamily: 'Open Sans',
+        fontWeight: 700,
+        padding:10
+    },
+    
+    info_box: labels.common_styles.info_box,
+    warning_box: labels.common_styles.warning_box,
+    error_box: labels.common_styles.error_box,
+    small_list: labels.common_styles.small_list
 
 };
 
@@ -206,6 +212,11 @@ class Scheduler extends Component {
             <div className={classes.page_view}>
                 <div className={classes.lists_view}>
                     <div className={classes.goals_list_view}>
+                            <div 
+                                className={classes.unscheduled_activities_title}
+                            >
+                                Goal List
+                            </div>
                         <div className={classes.goals_search_view}>
                             <div className={classes.goals_search_bar}>
                                 <GoalAutocomplete></GoalAutocomplete>
@@ -214,14 +225,39 @@ class Scheduler extends Component {
                                 <GoalFilterDropdown></GoalFilterDropdown>
                             </div>
                         </div>
+                        <div className={classes.small_list}>
+                            {
+                                [
+                                    "note: checked goals are enabled"
+                                ].map(alert => (
+                                    <div className={classes.info_box}>
+                                        {alert}
+                                    </div>
+                                ))
+                            }
+                            </div>
                         <div className={classes.goals_list_container}>
                             <GoalList></GoalList>
                         </div>
                     </div>
                     <div className={classes.unscheduled_activities_list_view}>
-                        <Typography>
-                            Unscheduled Activities
-                        </Typography>
+                            <div 
+                                className={classes.unscheduled_activities_title}
+                            >
+                                Unscheduled Activities
+                            </div>
+                            <div className={classes.small_list}>
+                            {
+                                [
+                                    "note: activities with multiple goals are bolded",
+                                    "note: click to scheduled activities"
+                                ].map(alert => (
+                                    <div className={classes.info_box}>
+                                        {alert}
+                                    </div>
+                                ))
+                            }
+                            </div>
                         <div className={classes.unscheduled_activities_list_container}>
                             <UnscheduledActivitiesListWrapped></UnscheduledActivitiesListWrapped>
                         </div>
@@ -231,7 +267,18 @@ class Scheduler extends Component {
                     <div className={classes.scheduler_view}>
                         <OverlapCheck></OverlapCheck>
                     </div>
-                    <div className={classes.warnings_list_view}>
+                    <div className={classes.small_list}>
+                            {
+                                [
+                                    "note: the scheduler displays activities on the granularity of the time span selected"
+                                ].map(alert => (
+                                    <div className={classes.info_box}>
+                                        {alert}
+                                    </div>
+                                ))
+                            }
+                    </div>
+                    <div className={classes.small_list}>
                         {
                             get_all_warnings(this.props.scheduled_activities, this.props.unscheduled_activities).map(warning => (
                                 <div className={classes.warning_box}>

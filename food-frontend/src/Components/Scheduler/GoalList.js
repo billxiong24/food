@@ -8,12 +8,13 @@ import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import { CardActionArea } from '@material-ui/core';
+import { CardActionArea, ListItem, ListItemSecondaryAction, ListItemText } from '@material-ui/core';
 import { routeToPage } from '../../Redux/Actions';
 import { withRouter } from 'react-router-dom'
 import { ingDetSetIng, ingDetGetSkus } from '../../Redux/Actions/ActionCreators/IngredientDetailsActionCreators';
 import labels from '../../Resources/labels';
 import { mapStateToProps, mapDispatchToProps } from './DataConverter';
+import Checkbox from '@material-ui/core/Checkbox';
 
 const styles = {
     card: {
@@ -43,8 +44,17 @@ const styles = {
       pos: {
         marginBottom: 12,
       },
+      ingredient_id: labels.common_styles.simple_list_text,
       button:{
           width:'100%'
+      },
+      checkbox:{
+          marginRight: "auto",
+          float:"right"
+      },
+      item:{
+          height: "100px",
+          
       }
 
 };
@@ -82,20 +92,36 @@ class GoalList extends Component {
             <div>
                 {
                 this.props.filtered_goals.map((item, index) => (
-                    <Card className={classes.card} key={index} onClick = {() => {this.onClick(item)}}>
-                        <CardActionArea
-                        className = {classes.cardAction}
+                    // <Card className={classes.card} key={index} onClick = {() => {this.onClick(item)}}>
+                    //     <CardActionArea
+                    //     className = {classes.cardAction}
+                    //     >
+                    //     <CardContent onClick={console.log("")}>
+                    //         <Typography className={classes.ingredrient_name} color="textSecondary" gutterBottom>
+                    //             {item.name}
+                    //         </Typography>
+                    //         <Typography className={classes.ingredient_id} color="textSecondary" gutterBottom>
+                    //             {"enabled:" + item.enabled}
+                    //         </Typography>
+                    //     </CardContent>
+                    //     </CardActionArea>
+                    // </Card>
+                    <ListItem 
+                            button 
+                            onClick={() => { this.onClick(item) }}
+                            divider={true}
                         >
-                        <CardContent onClick={console.log("")}>
-                            <Typography className={classes.ingredrient_name} color="textSecondary" gutterBottom>
+                            <div className={classes.ingredient_id}>
                                 {item.name}
-                            </Typography>
-                            <Typography className={classes.ingredient_id} color="textSecondary" gutterBottom>
-                                {"enabled:" + item.enabled}
-                            </Typography>
-                        </CardContent>
-                        </CardActionArea>
-                    </Card>
+                            </div>
+                            <ListItemSecondaryAction>
+                            <Checkbox
+                                    checked={item.enabled}
+                                    className={classes.checkbox}
+                                />
+                            </ListItemSecondaryAction>
+    
+                    </ListItem>
                 ))
                 }
             </div>
