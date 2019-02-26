@@ -37,7 +37,7 @@ function getCRUD(type) {
 
 const checkUser = (req, res, next) => {
   let userID = parseInt(req.body.user_id);
-  if(userID !== req.session.user_id || req.session.admin === "false") {
+  if(userID !== req.session.user_id && req.session.admin === "false") {
     res.status(401).json({
       error: "You are not authorized to edit this manufacturing goal"
     });
