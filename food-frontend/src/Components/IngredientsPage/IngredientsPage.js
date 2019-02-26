@@ -150,8 +150,6 @@ class IngredientsPage extends Component {
 
 
   render() {
-    console.log(this.props)
-    console.log(this.props.errors)
     const { classes, dummy_ingredients } = this.props
     return (
       <div className={classes.ingredients_page_container}>
@@ -236,7 +234,6 @@ const mapDispatchToProps = dispatch => {
     }))
     dispatch(ingDetSetNew(true))
     dispatch(ingDetSetEditing(true))
-    console.log("History")
       history.push('/ingredients/details')
     },
     deleteError: (error) => {

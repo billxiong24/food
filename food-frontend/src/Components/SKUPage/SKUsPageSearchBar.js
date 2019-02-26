@@ -40,7 +40,6 @@ class SKUsPageSearchBar extends Component {
     }
 
     onIngredientChange = (input) => {
-        console.log(input)
         this.props.getIngredients(input)
     }
 
@@ -61,13 +60,10 @@ class SKUsPageSearchBar extends Component {
     }
 
     onProductLineChange = (input) => {
-        console.log(input)
         this.props.getProductLines(input)
     }
 
     onSKUFilterEnter = (input) => {
-        console.log(input + ":" + this.props.filter_type)
-        console.log((input + ":" + this.props.filter_type).hashCode())
         let new_filter = {
             type: this.props.filter_type,
             string: input,

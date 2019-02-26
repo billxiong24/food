@@ -23,7 +23,6 @@ class FilterList extends Component {
 
     render() {
         const { classes, filters } = this.props
-        console.log(filters)
         return (
             <div className={classes.filters_list}>
                 <ItemList items={filters}>

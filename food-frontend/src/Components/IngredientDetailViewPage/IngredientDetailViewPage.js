@@ -69,8 +69,6 @@ class IngredientDetailViewPage extends Component {
               return ing.id === this.props.id;
             }).length === 1,
         }
-        console.log("INGREDIENT DETAIL VIEW")
-        console.log(this.props.id)
         if(this.props.id == null){
             this.state.editing = true
             this.state.new = true
@@ -83,13 +81,9 @@ class IngredientDetailViewPage extends Component {
     }
 
     onChange = (input,key) => {
-        console.log("INGREDIETNTVIEW DETAIL CHANGE")
-        console.log(input)
-        console.log(key)
         this.setState({
             [key]:input
         });
-        console.log(this.state)
     }
 
     
@@ -113,7 +107,6 @@ class IngredientDetailViewPage extends Component {
         
         let errors = getIngErrors(ing);
         if(errors.length == 0){
-            console.log("SKUDETAILVIEW")
             this.props.update(ing) // dispatch
         }else{
             for (var i = 0; i < errors.length; i++) {
@@ -139,8 +132,6 @@ class IngredientDetailViewPage extends Component {
                 editing:false,
                 new: false
             });
-            console.log("INGREDIENTDETAILVIEW")
-            console.log(ing)
             this.props.add(ing)
         }else{
             for (var i = 0; i < errors.length; i++) {
@@ -159,8 +150,6 @@ class IngredientDetailViewPage extends Component {
             comments:this.state.comment,
             id:this.props.id
         }
-        console.log("INGREDIENTDETAILVIEW")
-        console.log(ing)
         this.props.delete(ing)
         
     }
@@ -176,7 +165,6 @@ class IngredientDetailViewPage extends Component {
         id:this.props.id,
         skus:this.props.skus
     }
-    console.log(this.state.checked);
       if(this.state.checked) {
         this.props.removeIngFromReport(ing)
         this.setState({
@@ -201,7 +189,6 @@ class IngredientDetailViewPage extends Component {
             id:this.props.id,
             skus:this.props.skus
         }
-        console.log(this.props.skus)
         this.props.addIngToReport(ing)
     }
 

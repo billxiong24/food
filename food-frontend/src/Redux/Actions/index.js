@@ -9,8 +9,9 @@ import { SKU_ADD_FILTER, SKU_REMOVE_FILTER, SKU_SEARCH, SKU_SORT_BY,
     SKU_ING_NAME_AUTOCOMPLETE,
     SKU_PRODUCT_LINE_NAME_AUTOCOMPLETE,
     SKU_ADD_ERROR,
-    SKU_DELETE_ERROR} from './SkuActionType';
-import { PRDLINE_CHANGE_LIMITS, PRDLINE_NEXT_PAGE, PRDLINE_PREV_PAGE, PRDLINE_ADD_PRDLINE, PRDLINE_UPDATE_PRDLINE, PRDLINE_DELETE_PRDLINE, PRDLINE_SEARCH } from './ActionTypes/ProductLineActionTypes';
+    SKU_DELETE_ERROR,
+    SKU_ADD_SELECTED,
+    SKU_REMOVE_SELECTED, } from './SkuActionType';
 import {
     FORMULA_ADD_FILTER,
     FORMULA_ADD_INGREDIENT,
@@ -63,6 +64,74 @@ export const ingredientsFormulaAuto = (name) => {
     .catch(error => {
       throw(error);
     });
+  }
+}
+
+export const skuAddSelected = (skus) => {
+  return (dispatch) => {
+    dispatch({
+      type: SKU_ADD_SELECTED,
+      skus: skus,
+    })
+  }
+}
+
+export const skuRemoveSelected = (skus) => {
+  return (dispatch) => {
+    dispatch({
+      type: SKU_REMOVE_SELECTED,
+      skus: skus,
+    })
+  }
+}
+
+export const skuAddAllSelected = () => {
+  return (dispatch) => {
+    const params = {
+      names: store.getState().skus.filters.filter((el) => { return el.type === labels.skus.filter_type.SKU_NAME }).map((a) => { return a.string }),
+      ingredients: store.getState().skus.filters.filter((el) => { return el.type === labels.skus.filter_type.INGREDIENTS }).map((a) => { return a.string }),
+      prodlines: store.getState().skus.filters.filter((el) => { return el.type === labels.skus.filter_type.PRODUCT_LINE }).map((a) => { return a.string }),
+      orderKey: labels.skus.sort_by_map[store.getState().skus.sortby]
+    }
+    return axios.get(hostname + 'sku/search', {
+      params
+    })
+      .then(response => {
+        dispatch({
+          type: SKU_ADD_SELECTED,
+          skus: response.data.map((sku) => {
+            return sku.id;
+          })
+        })
+      })
+      .catch(error => {
+        throw (error);
+      })
+  }
+}
+
+export const skuRemoveAllSelected = () => {
+  return (dispatch) => {
+    const params = {
+      names:store.getState().skus.filters.filter((el)=>{return el.type === labels.skus.filter_type.SKU_NAME}).map((a)=>{return a.string}),
+      ingredients:store.getState().skus.filters.filter((el)=>{return el.type === labels.skus.filter_type.INGREDIENTS}).map((a)=>{return a.string}),
+      prodlines:store.getState().skus.filters.filter((el)=>{return el.type === labels.skus.filter_type.PRODUCT_LINE}).map((a)=>{return a.string}),
+      orderKey:labels.skus.sort_by_map[store.getState().skus.sortby],
+    }
+    return axios.get(hostname + 'sku/search', {
+      params
+    })
+      .then(response => {
+        dispatch({
+          type: SKU_REMOVE_SELECTED,
+          skus: response.data.map((sku) => {
+            return sku.id;
+          })
+        })
+      })
+      .catch(error => {
+        throw (error);
+      })
   }
 }
 
@@ -128,11 +197,6 @@ export const skuRemoveFilter = (filter) => {
 }
 
 export const skuSearch = (offset) => {
-  console.log("SKU_SEARCH ACTION CREATOR")
-  console.log(store.getState().skus.filters)
-  console.log(labels.skus.sort_by_map[store.getState().skus.sortby])
-  console.log(store.getState().skus.limit)
-  console.log(store.getState().skus.offset)
   let params;
   let full = store.getState().skus.full
   if(offset === undefined){
@@ -512,13 +576,11 @@ export const formulaSearch = (offset) => {
 }
 
 export const formulaDelete = (form_id) => {
-      console.log(form_id);
     return (dispatch) => {
       return axios.delete(hostname + 'formula/'+form_id, {
         
       })
       .then(response => {
-          console.log(response);
         dispatch({
           type: FORMULA_DELETE_FORMULA,
           data: response.data
@@ -600,10 +662,6 @@ export const ingRemoveFilter = (filter_id) => {
 }
 
 export const ingSearch = (offset) => {
-  console.log("ING SEARCH ACTION CREATOR")
-  console.log(labels.ingredients.sort_by_map[store.getState().ingredients.sortby])
-  console.log(store.getState().ingredients.limit)
-  console.log(store.getState().ingredients.offset)
   let params;
   let full = store.getState().ingredients.full
   if(offset === undefined){
@@ -750,7 +808,6 @@ export const ingGetSkus = (ing) => {
       ingredients: [],
       prodlines: [],
     }
-    console.log(params)
     return axios.get(hostname + 'sku/search', {
       params
     })
@@ -838,7 +895,6 @@ export const ingDeleteIng = (ing) => {
 
 // Need to do something, probably involved with search
 export const ingAddError = (err) => {
-  console.log("ING_ADD_ERROR ACTION CREATOR")
   return (dispatch) => {
     return dispatch({
       type: ING_ADD_ERROR,
@@ -848,7 +904,6 @@ export const ingAddError = (err) => {
 }
 
 export const ingDeleteError = (err) => {
-  console.log("ING_DELETE_ERROR ACTION CREATOR")
   return (dispatch) => {
     return dispatch({
       type: ING_DELETE_ERROR,

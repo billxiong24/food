@@ -14,6 +14,9 @@ import { IconButton } from '@material-ui/core';
 import { withCookies } from 'react-cookie';
 import { Link } from 'react-router-dom';
 import UserCard from './UserCard';
+import Axios from 'axios';
+import common from '../../Resources/common';
+import UserWarningDialog from './UserWarningDialog';
 
 const styles = {
   ingredients_list:{
@@ -81,7 +84,11 @@ class UserAdminPage extends Component {
     this.state = {
       query: '',
       alert: false,
-      message: ''
+      message: '',
+      goalCount: 0,
+      warningDialog: false,
+      manGoals: [],
+      user: null,
     }
   }
 
@@ -123,20 +130,68 @@ class UserAdminPage extends Component {
   }
 
   deleteUser(user) {
-    this.props.userDelete(user)
-    .then(()=>{
-      if(!this.props.users.errMsg) {
-        this.setState({
-          alert: true,
-          message: 'User Successfully Removed!'
-        });
-      } else {
-        this.setState({
-          alert:true,
-          message: 'User NOT Deleted: ' + this.props.users.errMsg
-        });
+    Axios.get(common.hostname + 'manufacturing_goals/', {
+      params: {
+        user_id: user.id
       }
-    });
+    })
+    .then((response) => {
+      this.setState({
+        goalCount: response.data.length,
+        warningDialog: true,
+        manGoals: response.data,
+        user: user,
+      })
+    })
+  }
+
+  handleClose = (e) => {
+    this.setState({
+      goalCount: 0,
+      warningDialog: false,
+    })
+  }
+
+  handleSubmit = (e) => {
+    let requests = this.state.manGoals.map((manGoal) => {
+      return new Promise((resolve) => {
+        Axios.put(common.hostname + 'manufacturing_goals/' + manGoal.id, {
+            user_id: this.props.cookies.id,
+        })
+        .then(() => {
+          resolve();
+        })
+        .catch((err) => {
+          this.setState({
+            alert: true,
+            message: "Error updating manufacturing goal owner: " + err.response,
+          })
+        })
+      })
+    })
+    Promise.all(requests).then(() => {
+      this.props.userDelete(this.state.user)
+      .then((response) => {
+        if(this.props.users.errMsg) {
+          this.setState({
+            alert:true,
+            message:"Unable to Delete User: " + this.props.users.errMsg,
+            manGoals: [],
+            user: null,
+          })
+          this.handleClose();
+        }
+        else {
+          this.setState({
+            alert:true,
+            message:"User Successfully Deleted!",
+            manGoals: [],
+            user: null,
+          })
+          this.handleClose();
+        }
+      })
+    })
   }
 
   handleToggle(user) {
@@ -246,6 +301,13 @@ class UserAdminPage extends Component {
         message={this.state.message}
         >
         </SimpleSnackbar>
+        <UserWarningDialog
+          user={this.state.user}
+          open={this.state.warningDialog}
+          handleClose={this.handleClose}
+          goalCount={this.state.goalCount}
+          handleSubmit={this.handleSubmit}
+        />
       </div>
     );
   }

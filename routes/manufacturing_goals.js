@@ -37,7 +37,7 @@ function getCRUD(type) {
 
 const checkUser = (req, res, next) => {
   let userID = parseInt(req.body.user_id);
-  if(userID !== req.session.user_id) {
+  if(userID !== req.session.user_id && req.session.admin === "false") {
     res.status(401).json({
       error: "You are not authorized to edit this manufacturing goal"
     });
@@ -165,7 +165,7 @@ router.post('/', checkTokenUser, function(req, res, next) {
     controller.constructPostResponse(res, mg.create(req.body));
 });
 
-router.put('/:id', checkTokenUser, function(req, res, next) {
+router.put('/:id', function(req, res, next) {
     let id = req.params.id;
     if(isNaN((id))) {
         return res.status(400).json({
