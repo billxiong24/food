@@ -156,11 +156,14 @@ class ManufacturingLine extends CRUD {
             try {
                 await client.query('BEGIN');
                 const insRows = await client.query(insQuery, []);
-                const delRows = await client.query(delQuery, [])
+                let delRows = null;
+                if(none.length > 0) {
+                    delRows = await client.query(delQuery, [])
+                }
                 await client.query('COMMIT')
                 return {
                     insertedRows: insRows.rowCount,
-                    deletedRows: delRows.rowCount
+                    deletedRows: delRows ? delRows.rowCount : 0
                 }
             } catch (e) {
                 await client.query('ROLLBACK')
