@@ -1,29 +1,12 @@
 import React, { Component } from 'react';
 import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
-import SimpleList from '../GenericComponents/ItemList';
-import ItemList from '../GenericComponents/ItemList';
-import { purple } from '@material-ui/core/colors';
-import color from '@material-ui/core/colors/cyan';
 import Card from '@material-ui/core/Card';
 import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
 import { connect } from 'react-redux';
-import { getDummyIngredients, ingDeleteError, ingSearch } from '../../Redux/Actions';
-import DropdownButton from '../GenericComponents/DropdownButton';
-import Fab from '@material-ui/core/Fab';
-import AddIcon from '@material-ui/icons/Add';
-import Icon from '@material-ui/core/Icon';
-import DeleteIcon from '@material-ui/icons/Delete';
-import NavigationIcon from '@material-ui/icons/Navigation';
-import IconButton from '@material-ui/core/IconButton';
-import back from '../../Resources/Images/baseline-navigate_before-24px.svg'
-import next from '../../Resources/Images/baseline-navigate_next-24px.svg'
-import SimpleCard from '../GenericComponents/SimpleCard';
-import FilterItem from './FilterItem';
+import { ingDeleteError, ingSearch } from '../../Redux/Actions';
 import FilterList from './FilterList';
 import IngredientList from './IngredientList';
-import IntegrationAutosuggest from '../GenericComponents/IntegrationAutosuggest';
 import FilterDropdown from './FilterDropdown';
 import SortByDropdown from './SortByDropdown';
 import PageSelector from './PageSelector';
@@ -34,6 +17,7 @@ import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
 import axios from 'axios';
 import FileDownload from 'js-file-download';
 import common from '../../Resources/common';
+import { withCookies } from 'react-cookie';
 
 const styles = {
   card: {
@@ -149,11 +133,12 @@ class IngredientsPage extends Component {
         num:ing.num,
         name:ing.name,
         vend_info:ing.vend_info,
-        pkg_size:ing.pkg_size,
+        pkg_size:ing.pkg_size + " " + ing.unit,
         pkg_cost:ing.pkg_cost,
         comments:ing.comments
       })),
       format: "csv",
+      type: "ingredient"
     })
       .then((response) => {
         FileDownload(response.data, 'ingredients.csv');
@@ -165,8 +150,6 @@ class IngredientsPage extends Component {
 
 
   render() {
-    console.log(this.props)
-    console.log(this.props.errors)
     const { classes, dummy_ingredients } = this.props
     return (
       <div className={classes.ingredients_page_container}>
@@ -190,7 +173,7 @@ class IngredientsPage extends Component {
             <div className={classes.ingredients_search_bar}>
           </div>
           <div className={classes.other_actions}>
-            { this.props.users.id === common.admin ?
+            { this.props.cookies.admin === "true" ?
                 <Button
                 className={classes.add_ingredient}
                 onClick={this.onAddClick}
@@ -228,12 +211,12 @@ class IngredientsPage extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
   return {
     dummy_ingredients: state.dummy_ingredients,
     errors: state.ingredients.errors,
     items: state.ingredients.items,
-    users: state.users
+    cookies: ownProps.cookies.cookies
   };
 };
 
@@ -251,7 +234,6 @@ const mapDispatchToProps = dispatch => {
     }))
     dispatch(ingDetSetNew(true))
     dispatch(ingDetSetEditing(true))
-    console.log("History")
       history.push('/ingredients/details')
     },
     deleteError: (error) => {
@@ -264,4 +246,5 @@ const mapDispatchToProps = dispatch => {
 }
 
 
-export default withRouter(withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(IngredientsPage)));
+export default withRouter(withStyles(styles)(withCookies(connect(mapStateToProps, mapDispatchToProps)(IngredientsPage))));
+//export default withRouter(withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(IngredientsPage)));

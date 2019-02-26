@@ -1,4 +1,4 @@
-import { PRDLINE_CHANGE_LIMITS, PRDLINE_PREV_PAGE, PRDLINE_ADD_PRDLINE, PRDLINE_UPDATE_PRDLINE, PRDLINE_DELETE_PRDLINE, PRDLINE_SEARCH, PRDLINE_NEXT_PAGE } from '../Actions/ProductLineActionTypes';
+import { prdline_actions } from '../Actions/ActionTypes/ProductLineActionTypes';
 
 const initialState = {
   keyword: "",
@@ -10,15 +10,15 @@ const initialState = {
 
 export default function productLineReducer(state = initialState, action) {
   switch(action.type) {
-    case PRDLINE_CHANGE_LIMITS:
+    case prdline_actions.PRDLINE_CHANGE_LIMITS:
       return Object.assign({}, state, action.data);
-    case PRDLINE_PREV_PAGE:
+    case prdline_actions.PRDLINE_PREV_PAGE:
       return Object.assign({}, state, action.data);
-    case PRDLINE_NEXT_PAGE:
+    case prdline_actions.PRDLINE_NEXT_PAGE:
       return Object.assign({}, state, action.data);
-    case PRDLINE_ADD_PRDLINE:
+    case prdline_actions.PRDLINE_ADD_PRDLINE:
       return Object.assign({}, state, action.data);
-    case PRDLINE_DELETE_PRDLINE:
+    case prdline_actions.PRDLINE_DELETE_PRDLINE:
       if(action.data.productLineToDelete) {
         return Object.assign({}, state, {
           errMsg: action.data.errMsg,
@@ -29,9 +29,9 @@ export default function productLineReducer(state = initialState, action) {
       } else {
         return Object.assign({}, state, action.data);
       }
-    case PRDLINE_SEARCH:
+    case prdline_actions.PRDLINE_SEARCH:
       return Object.assign({}, state, action.data);
-    case PRDLINE_UPDATE_PRDLINE:
+    case prdline_actions.PRDLINE_UPDATE_PRDLINE:
       if(action.data.productLineToUpdate){
         return Object.assign({}, state, {
           errMsg: action.data.errMsg,

@@ -1,8 +1,8 @@
 
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Dropdown from './Dropdown';
+import WhiteDropdown from './WhiteDropdown';
 
 const styles = {
     card: {
@@ -53,17 +53,14 @@ class DropdownButton extends Component {
     }
 
     resetThenSet = (id, key) => {
-        console.log(key)
-        console.log(this.state)
         let temp = this.state[key];
-        console.log(temp)
         for (var i = 0; i < temp.length; i++) {
             temp[i].selected = false;
        }
         temp[id].selected = true;
-        this.setState({
+        this.state = {
             [key]: temp
-        });
+        };
         if (this.props.onSelect != null){
             // your code here.
             this.props.onSelect(id)
@@ -71,14 +68,25 @@ class DropdownButton extends Component {
     }
 
     render() {
-        const { classes, items, selected_index } = this.props;
-        return (
-            <Dropdown
-                title={this.state.list[selected_index].title}
-                list={this.state.list}
-                resetThenSet={this.resetThenSet}
-            />
-        );
+        const { classes, items, selected_index, type } = this.props;
+        if(type == "white"){
+            // console.log.log("white")
+            return (
+                <WhiteDropdown
+                    title={this.state.list[selected_index].title}
+                    list={this.state.list}
+                    resetThenSet={this.resetThenSet}
+                />
+            );
+        }else{
+            return (
+                <Dropdown
+                    title={this.state.list[selected_index].title}
+                    list={this.state.list}
+                    resetThenSet={this.resetThenSet}
+                />
+            );
+        }
     }
 }
 

@@ -1,5 +1,4 @@
 import { GET_INGREDIENTS_DUMMY_DATA } from './ActionTypes';
-import { USER_LOG_OUT, USER_LOG_IN_ATTEMPT, USER_CREATE_ATTEMPT } from './UserActionTypes';
 import { ROUTERS_ROUTE_TO_PAGE } from './RoutingActionTypes';
 import { ING_ADD_DEPENDENCY, ING_REMOVE_DEPENDENCY, ING_ADD_FILTER, ING_REMOVE_FILTER, ING_SEARCH, ING_SORT_BY,
   ING_ADD_ING, ING_GET_SKUS, ING_UPDATE_ING, ING_DELETE_ING, ING_SET_FILTER_TYPE, ING_ADD_ERROR, ING_DELETE_ERROR, ING_ADD_ING_TO_DEP_REPORT } from './IngredientActionTypes';
@@ -10,8 +9,24 @@ import { SKU_ADD_FILTER, SKU_REMOVE_FILTER, SKU_SEARCH, SKU_SORT_BY,
     SKU_ING_NAME_AUTOCOMPLETE,
     SKU_PRODUCT_LINE_NAME_AUTOCOMPLETE,
     SKU_ADD_ERROR,
-    SKU_DELETE_ERROR} from './SkuActionType';
-import { PRDLINE_CHANGE_LIMITS, PRDLINE_NEXT_PAGE, PRDLINE_PREV_PAGE, PRDLINE_ADD_PRDLINE, PRDLINE_UPDATE_PRDLINE, PRDLINE_DELETE_PRDLINE, PRDLINE_SEARCH } from './ProductLineActionTypes';
+    SKU_DELETE_ERROR,
+    SKU_ADD_SELECTED,
+    SKU_REMOVE_SELECTED, } from './SkuActionType';
+import {
+    FORMULA_ADD_FILTER,
+    FORMULA_ADD_INGREDIENT,
+    FORMULA_REMOVE_INGREDIENT, 
+    FORMULA_REMOVE_FILTER,
+    FORMULA_SEARCH,
+    FORMULA_UPDATE_FORMULA,
+    FORMULA_ADD_FORMULA,
+    FORMULA_DELETE_FORMULA,
+    FORMULA_SORT_BY,
+    FORMULA_SET_FILTER_TYPE,
+    FORMULA_ADD_ERROR,
+    FORMULA_DELETE_ERROR,
+    FORMULA_ING_NAME_AUTOCOMPLETE
+} from '../Actions/FormulaActionTypes';
 import labels from "../../Resources/labels";
 import axios from 'axios';
 import common from "../../Resources/common";
@@ -31,14 +46,100 @@ export const getDummyIngredients = () => {
 /*
 ========================================================( SKUs Action Creators )========================================================
 */
-
-export const ingredientNameAutocomplete = (name) => {
-  console.log("SKU_ING_NAME_AUTOCOMPLETE ACTION CREATOR")
+export const ingredientsFormulaAuto = (name) => {
   let params = {
     names:[name],
     skus: [],
   }
-  console.log(params)
+  return (dispatch) => {
+    return axios.get(hostname + 'ingredients/search', {
+      params
+    })
+    .then(response => {
+      dispatch({
+        type: FORMULA_ING_NAME_AUTOCOMPLETE,
+        data: response.data
+      })
+    })
+    .catch(error => {
+      throw(error);
+    });
+  }
+}
+
+export const skuAddSelected = (skus) => {
+  return (dispatch) => {
+    dispatch({
+      type: SKU_ADD_SELECTED,
+      skus: skus,
+    })
+  }
+}
+
+export const skuRemoveSelected = (skus) => {
+  return (dispatch) => {
+    dispatch({
+      type: SKU_REMOVE_SELECTED,
+      skus: skus,
+    })
+  }
+}
+
+export const skuAddAllSelected = () => {
+  return (dispatch) => {
+    const params = {
+      names: store.getState().skus.filters.filter((el) => { return el.type === labels.skus.filter_type.SKU_NAME }).map((a) => { return a.string }),
+      ingredients: store.getState().skus.filters.filter((el) => { return el.type === labels.skus.filter_type.INGREDIENTS }).map((a) => { return a.string }),
+      prodlines: store.getState().skus.filters.filter((el) => { return el.type === labels.skus.filter_type.PRODUCT_LINE }).map((a) => { return a.string }),
+      orderKey: labels.skus.sort_by_map[store.getState().skus.sortby]
+    }
+    return axios.get(hostname + 'sku/search', {
+      params
+    })
+      .then(response => {
+        dispatch({
+          type: SKU_ADD_SELECTED,
+          skus: response.data.map((sku) => {
+            return sku.id;
+          })
+        })
+      })
+      .catch(error => {
+        throw (error);
+      })
+  }
+}
+
+export const skuRemoveAllSelected = () => {
+  return (dispatch) => {
+    const params = {
+      names:store.getState().skus.filters.filter((el)=>{return el.type === labels.skus.filter_type.SKU_NAME}).map((a)=>{return a.string}),
+      ingredients:store.getState().skus.filters.filter((el)=>{return el.type === labels.skus.filter_type.INGREDIENTS}).map((a)=>{return a.string}),
+      prodlines:store.getState().skus.filters.filter((el)=>{return el.type === labels.skus.filter_type.PRODUCT_LINE}).map((a)=>{return a.string}),
+      orderKey:labels.skus.sort_by_map[store.getState().skus.sortby],
+    }
+    return axios.get(hostname + 'sku/search', {
+      params
+    })
+      .then(response => {
+        dispatch({
+          type: SKU_REMOVE_SELECTED,
+          skus: response.data.map((sku) => {
+            return sku.id;
+          })
+        })
+      })
+      .catch(error => {
+        throw (error);
+      })
+  }
+}
+
+export const ingredientNameAutocomplete = (name) => {
+  let params = {
+    names:[name],
+    skus: [],
+  }
   return (dispatch) => {
     return axios.get(hostname + 'ingredients/search', {
       params
@@ -56,8 +157,6 @@ export const ingredientNameAutocomplete = (name) => {
 }
 
 export const productLineNameAutoComplete = (name) => {
-  console.log("SKU_PRODUCT_LINE_NAME_AUTOCOMPLETE ACTION CREATOR")
-  console.log(name)
   return (dispatch) => {
     return axios.get(hostname + 'productline/search', {
       params: {
@@ -98,24 +197,16 @@ export const skuRemoveFilter = (filter) => {
 }
 
 export const skuSearch = (offset) => {
-  console.log("SKU_SEARCH ACTION CREATOR")
-  console.log(store.getState().skus.filters)
-  console.log(labels.skus.sort_by_map[store.getState().skus.sortby])
-  console.log(store.getState().skus.limit)
-  console.log(store.getState().skus.offset)
   let params;
   let full = store.getState().skus.full
   if(offset === undefined){
     offset = 0
-    console.log("Regular Request")
   }else if(offset == -1){
     offset = 0
     full = true
-    console.log("Full Request")
   }else if(offset == -2){
     offset = 0
     full = false
-    console.log("Full Request")
   }else{
   }
   if(full){
@@ -372,7 +463,6 @@ export const skuDeleteSku = (sku) => {
 }
 
 export const skuAddError = (err) => {
-  console.log("SKU_ADD_ERROR ACTION CREATOR")
   return (dispatch) => {
     return dispatch({
       type: SKU_ADD_ERROR,
@@ -382,7 +472,6 @@ export const skuAddError = (err) => {
 }
 
 export const skuDeleteError = (err) => {
-  console.log("SKU_DELETE_ERROR ACTION CREATOR")
   return (dispatch) => {
     return dispatch({
       type: SKU_DELETE_ERROR,
@@ -438,7 +527,122 @@ export const ingAddDependency = (ing) => {
   }
 }
 
+export const formulaSearch = (offset) => {
+  let params;
+  let full = store.getState().formulas.full
+  if(offset === undefined){
+    offset = 0
+  }else if(offset == -1){
+    offset = 0
+    full = true
+  }else if(offset == -2){
+    offset = 0
+    full = false
+  }else{
+  }
+  if(full){
+    params = {
+      ingredients: store.getState().formulas.filters.filter((el)=>{return el.type === labels.formulas.filter_type.INGREDIENTS}).map((a)=>{return a.string}),
+      names: store.getState().formulas.filters.filter((el)=>{return el.type === labels.formulas.filter_type.FORMULA_NAME}).map((a)=>{return a.string}),
+      orderKey: labels.formulas.sort_by_map[store.getState().formulas.sortby],
+      offset,
+    }
+  }else{
+    params = {
+      ingredients :store.getState().formulas.filters.filter((el)=>{return el.type === labels.formulas.filter_type.INGREDIENTS}).map((a)=>{return a.string}),
+      names : store.getState().formulas.filters.filter((el)=>{return el.type === labels.formulas.filter_type.FORMULA_NAME}).map((a)=>{return a.string}),
+      orderKey:labels.formulas.sort_by_map[store.getState().formulas.sortby],
+      limit: store.getState().formulas.limit + 1,
+      offset,
+    }
+  }
+  return (dispatch) => {
+    return axios.get(hostname + 'formula/search', {
+      params
+    })
+      .then(response => {
+        dispatch({
+          type:FORMULA_SEARCH,
+          data: response.data,
+          other:response,
+          offset,
+          full
+        })
+      })
+      .catch(error => {
+        throw (error);
+      });
+  }
+}
 
+export const formulaDelete = (form_id) => {
+    return (dispatch) => {
+      return axios.delete(hostname + 'formula/'+form_id, {
+        
+      })
+      .then(response => {
+        dispatch({
+          type: FORMULA_DELETE_FORMULA,
+          data: response.data
+        })
+      })
+      .catch(error => {
+        throw(error);
+      });
+    }
+
+}
+
+export const formulaSortBy = (category) => {
+  return (dispatch) => {
+    return dispatch({
+      type: FORMULA_SORT_BY,
+      data: category
+    })
+  }
+}
+
+export const formulaAddFilter = (filter) => {
+  return (dispatch) => {
+    return dispatch({
+      type: FORMULA_ADD_FILTER,
+      data: filter
+    })
+  }
+}
+export const formulaAddError = (filter) => {
+  return (dispatch) => {
+    return dispatch({
+      type: FORMULA_ADD_ERROR,
+      data: filter
+    })
+  }
+}
+export const formulaDeleteError = (filter) => {
+  return (dispatch) => {
+    return dispatch({
+      type: FORMULA_DELETE_ERROR,
+      data: filter
+    })
+  }
+}
+export const formulaRemoveFilter = (filter_id) => {
+  return (dispatch) => {
+    return dispatch({
+      type: FORMULA_REMOVE_FILTER,
+      filter_id
+    })
+  }
+}
+
+export const formulaSetFilterType = (filter_type) => {
+  return (dispatch) => {
+    return dispatch({
+      type: FORMULA_SET_FILTER_TYPE,
+      data: filter_type
+    })
+  }
+}
 export const ingAddFilter = (filter) => {
   return (dispatch) => {
     return dispatch({
@@ -449,8 +653,6 @@ export const ingAddFilter = (filter) => {
 }
 
 export const ingRemoveFilter = (filter_id) => {
-  console.log("filter delete action")
-  console.log("filter_id:" + filter_id)
   return (dispatch) => {
     return dispatch({
       type: ING_REMOVE_FILTER,
@@ -460,23 +662,16 @@ export const ingRemoveFilter = (filter_id) => {
 }
 
 export const ingSearch = (offset) => {
-  console.log("ING SEARCH ACTION CREATOR")
-  console.log(labels.ingredients.sort_by_map[store.getState().ingredients.sortby])
-  console.log(store.getState().ingredients.limit)
-  console.log(store.getState().ingredients.offset)
   let params;
   let full = store.getState().ingredients.full
   if(offset === undefined){
     offset = 0
-    console.log("Regular Request")
   }else if(offset == -1){
     offset = 0
     full = true
-    console.log("Full Request")
   }else if(offset == -2){
     offset = 0
     full = false
-    console.log("Full Request")
   }else{
   }
   if(full){
@@ -495,16 +690,11 @@ export const ingSearch = (offset) => {
       offset,
     }
   }
-  console.log(store.getState().ingredients.filters)
-  console.log(params)
   return (dispatch) => {
-    console.log("AXIOS")
-    console.log(params)
     return axios.get(hostname + 'ingredients/search', {
       params
     })
       .then(response => {
-        console.log(response)
         dispatch({
           type: ING_SEARCH,
           data: response.data,
@@ -618,7 +808,6 @@ export const ingGetSkus = (ing) => {
       ingredients: [],
       prodlines: [],
     }
-    console.log(params)
     return axios.get(hostname + 'sku/search', {
       params
     })
@@ -706,7 +895,6 @@ export const ingDeleteIng = (ing) => {
 
 // Need to do something, probably involved with search
 export const ingAddError = (err) => {
-  console.log("ING_ADD_ERROR ACTION CREATOR")
   return (dispatch) => {
     return dispatch({
       type: ING_ADD_ERROR,
@@ -716,180 +904,11 @@ export const ingAddError = (err) => {
 }
 
 export const ingDeleteError = (err) => {
-  console.log("ING_DELETE_ERROR ACTION CREATOR")
   return (dispatch) => {
     return dispatch({
       type: ING_DELETE_ERROR,
       data: err
     })
-  }
-}
-
-/*
-========================================================( Product Line Action Creators )========================================================
-*/
-
-export const prdlineChangeLimit = (val) => {
-  return (dispatch) => {
-    return dispatch({
-      type: PRDLINE_CHANGE_LIMITS,
-      data: {
-        limit: val
-      }
-    })
-  }
-}
-
-export const prdlinePrevPage = () => {
-  return (dispatch) => {
-    const curPage = store.getState().productLine.current_page_number;
-    return dispatch({
-      type: PRDLINE_NEXT_PAGE,
-      data: {
-        current_page_number: curPage === 1 ? curPage : curPage - 1,
-      }
-    })
-  }
-}
-
-export const prdlineNextPage = () => {
-  return (dispatch) => {
-    const curPage = store.getState().productLine.current_page_number;
-    return dispatch({
-      type: PRDLINE_PREV_PAGE,
-      data: {
-        current_page_number: curPage === store.getState().productLine.total_pages ? curPage : curPage + 1,
-      }
-    })
-  }
-}
-
-export const prdlineSearch = (name) => {
-  return (dispatch) => {
-    const curPage = store.getState().productLine.current_page_number;
-    const limit = store.getState().productLine.limit;
-    let offset = limit ? (curPage - 1) * limit : 0;
-    return axios.get(hostname + 'productline/search', {
-      params: {
-        names: name,
-        offset: offset,
-        limit: limit,
-      }
-    })
-      .then(response => {
-        let totalRows = response.data.length > 0 ? response.data[0].row_count : 0;
-        dispatch({
-          type: PRDLINE_SEARCH,
-          data: {
-            productLines: response.data,
-            total_pages: Math.ceil(totalRows / limit),
-            errMsg: '',
-          }
-        })
-      })
-      .catch(error => {
-        throw (error);
-      })
-  }
-}
-
-export const prdlineAddPrdline = (prdline) => {
-  return (dispatch) => {
-    return axios.post(hostname + 'productline/', prdline)
-      .then((response) => {
-        dispatch({
-          type: PRDLINE_ADD_PRDLINE,
-          data: {
-            errMsg: ''
-          }
-        })
-      })
-      .catch((err) => {
-        console.log(err);
-        if (err.response.status === 409) {
-          dispatch({
-            type: PRDLINE_ADD_PRDLINE,
-            data: {
-              errMsg: err.response.data.error
-            }
-          })
-        } else {
-          dispatch({
-            type: PRDLINE_ADD_PRDLINE,
-            data: {
-              errMsg: 'Something unexpected went wrong'
-            }
-          });
-          throw (err.response);
-        }
-      });
-  }
-}
-
-export const prdlineUpdatePrdline = (prdline) => {
-  return (dispatch) => {
-    return axios.put(hostname + 'productline/' + prdline.id, prdline)
-      .then((response) => {
-        delete prdline.oldname;
-        dispatch({
-          type: PRDLINE_UPDATE_PRDLINE,
-          data: {
-            productLineToUpdate: prdline,
-            errMsg: ''
-          }
-        })
-      })
-      .catch((err) => {
-        if (err.response.status === 400) {
-          dispatch({
-            type: PRDLINE_UPDATE_PRDLINE,
-            data: {
-              errMsg: err.response.data.error
-            }
-          })
-        } else {
-          dispatch({
-            type: PRDLINE_UPDATE_PRDLINE,
-            data: {
-              errMsg: 'Something unexpected went wrong'
-            }
-          })
-          throw (err.response);
-        }
-      })
-  }
-}
-
-export const prdlineDeletePrdline = (prdline) => {
-  return (dispatch) => {
-    return axios.delete(hostname + 'productline/' + prdline.id)
-      .then((response) => {
-        dispatch({
-          type: PRDLINE_DELETE_PRDLINE,
-          data: {
-            productLineToDelete: prdline,
-            errMsg: ''
-          }
-        })
-      })
-      .catch((err) => {
-        if (err.response.status === 409) {
-          dispatch({
-            type: PRDLINE_DELETE_PRDLINE,
-            data: {
-              errMsg: err.response.data.error
-            }
-          })
-        } else {
-          dispatch({
-            type: PRDLINE_DELETE_PRDLINE,
-            data: {
-              errMsg: 'Something unexpected went wrong'
-            }
-          });
-          throw (err.response);
-        }
-      })
   }
 }
 
@@ -906,99 +925,3 @@ export const routeToPage = (val) => {
     })
   }
 };
-
-/*
-========================================================( Users Action Creators )========================================================
-*/
-
-// User Log Out
-export const userLogout = () => {
-  return (dispatch) => {
-    dispatch({
-      type: USER_LOG_OUT
-    })
-  }
-}
-
-// User Creation
-export const userCreateAttempt = (dataObj) => {
-  return (dispatch) => {
-    return axios.put(hostname + 'users/' + dataObj.uname, {
-      uname: dataObj.uname,
-      password: dataObj.password
-    })
-      .then(response => {
-        dispatch({
-          type: USER_CREATE_ATTEMPT,
-          data: {
-            isSuccess: true,
-            errMsg: ''
-          }
-        });
-      })
-      .catch(err => {
-        if (err.response.status == 400 || err.response.status == 409) {
-          dispatch({
-            type: USER_CREATE_ATTEMPT,
-            data: {
-              isSuccess: false,
-              errMsg: err.response.data.error
-            }
-          });
-        } else {
-          dispatch({
-            type: USER_LOG_IN_ATTEMPT,
-            data: {
-              errMsg: "Something unexpected went wrong"
-            }
-          });
-          throw (err.response);
-        }
-      })
-  }
-}
-
-// User Authentication
-export const userLoginAttempt = (dataObj) => {
-  return (dispatch) => {
-    return axios.post(hostname + 'users/', {
-      uname: dataObj.uname,
-      password: dataObj.password
-    })
-      .then(response => {
-        dispatch({
-          type: USER_LOG_IN_ATTEMPT,
-          data: {
-            uname: response.data.uname,
-            id: response.data.id,
-            errMsg: ''
-          }
-        });
-      })
-      .catch(error => {
-        let msg = '';
-        if (error.response.status == 400) {
-          if (error.response.data.error == "User Doesn't Exist") {
-            msg = "Incorrect Username or Password";
-          } else {
-            msg = "Incorrect Password";
-          }
-          dispatch({
-            type: USER_LOG_IN_ATTEMPT,
-            data: {
-              errMsg: msg
-            }
-          });
-        } else {
-          dispatch({
-            type: USER_LOG_IN_ATTEMPT,
-            data: {
-              errMsg: "Something unexpected went wrong"
-            }
-          });
-          throw (error.response);
-        }
-      });
-  }
-}
-

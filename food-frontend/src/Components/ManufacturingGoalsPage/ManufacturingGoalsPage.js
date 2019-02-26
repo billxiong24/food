@@ -8,7 +8,7 @@ import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
 import DeleteIcon from '@material-ui/icons/Delete';
 import ManufacturingGoalsCard from './ManufacturingGoalsCard';
-import { mangoalAddFilter, mangoalRemoveFilter, mangoalDeleteMangoalSkus, mangaolDeleteMangoal, mangaolUpdateMangoalSkus, mangoalUpdateFilters, mangoalGetProductLines, mangoalSetActiveMangoal, mangoalGetMangoals, mangoalCreateMangoal, mangoalSearchSkus } from '../../Redux/Actions/ManufacturingGoalActionCreators';
+import { mangoalAddFilter, mangoalRemoveFilter, mangoalDeleteMangoalSkus, mangaolDeleteMangoal, mangaolUpdateMangoalSkus, mangoalSearchProductLines, mangoalSetActiveMangoal, mangoalGetMangoals, mangoalCreateMangoal, mangoalSearchSkus } from '../../Redux/Actions/ActionCreators/ManufacturingGoalActionCreators';
 import ManufacturingGoalsSkuSearch from './ManufacturingGoalsSkuSearch';
 import TextField from '@material-ui/core/TextField';
 import SkuCard from './SkuCard';
@@ -22,6 +22,12 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Chip from '@material-ui/core/Chip';
+import { withCookies } from 'react-cookie';
+import SkuAutocomplete from './SkuAutocomplete';
+import Autocomplete from './Autocomplete';
+import ManufacturingGoalsNewDialog from './ManufacturingGoalsNewDialog';
+import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
+let date = require('date-and-time');
 
 const styles = {
   man_goal_page_container: {
@@ -178,28 +184,29 @@ class ManufacturingGoalsPage extends Component {
       suggestions:[],
       quantity: '',
       sku: null,
+      search: '',
+      searchProdLine: '',
+      newDialog: false,
+      newName: '',
+      newDeadline: date.format(new Date(), 'YYYY-MM-DD'),
+      defaultDate: date.format(new Date(), 'YYYY-MM-DD'),
     }
   }
 
   componentWillMount() {
-    this.props.mangoalGetProductLines();
-    this.getSkuSuggestions();
-    this.props.mangoalGetMangoals(this.props.users.id);
+    this.props.mangoalSearchSkus({name:''}, this.props.manGoals.filters);
+    this.props.mangoalSearchProductLines('');
+    this.props.mangoalGetMangoals(this.props.cookies.id);
   }
 
-  updateFilters(filters) {
-    new Promise((resolve, reject) => {
-      resolve(this.props.mangoalUpdateFilters(filters));
-    })
-    .then((value) => {
-      this.getSkuSuggestions();
-    });
-  }
-
-  addFilter(prdline) {
-    if (prdline) {
+  addFilter = (id) => {
+    if (id) {
       new Promise((resolve, reject) => {
-        resolve(this.props.mangoalAddFilter(prdline));
+        resolve(this.props.mangoalAddFilter(
+          this.props.manGoals.productLines.filter((prodline) => {
+            return prodline.id === id;
+          })[0]
+        ));
       })
       .then((value) => {
         this.getSkuSuggestions();
@@ -216,18 +223,36 @@ class ManufacturingGoalsPage extends Component {
     });
   }
 
-  addManufacturingGoal(manGoal) {
-    this.props.mangoalCreateMangoal(Object.assign({}, manGoal, {
-      user_id: this.props.users.id
-    }))
-    .then(()=>{
-      if (this.props.manGoals.errMsg) {
-        this.setState({
-          alert: true,
-          message: 'Product Line NOT Added: ' + this.props.manGoals.errMsg
-        });
-      }
-    });
+  submitNewForm(e) {
+    e.preventDefault();
+    if(!this.state.newName || !this.state.newDeadline) {
+      this.setState({
+        message: "Please fill out all the information",
+        alert: true,
+      })
+    } else {
+      this.props.mangoalCreateMangoal(Object.assign({}, {
+        user_id: this.props.cookies.id,
+        name: this.state.newName,
+        deadline: this.state.newDeadline,
+      }))
+      .then(()=>{
+        if (this.props.manGoals.errMsg) {
+          this.setState({
+            alert: true,
+            message: 'Manufacturing Goal NOT Added: ' + this.props.manGoals.errMsg
+          });
+        } else {
+          this.setState({
+            alert: true,
+            message: 'Manufacturing Goal Successfully added',
+            newName: '',
+            newDeadline: this.state.defaultDate,
+          });
+          this.handleNewClose();
+        }
+      });
+    }
   }
 
   handleChange = name => event => {
@@ -236,18 +261,38 @@ class ManufacturingGoalsPage extends Component {
     });
   };
 
-  handleQueryChange = name => event => {
+  onChange = e => {
     this.setState({
-      [name]: event,
+      search: e.currentTarget.value,
+      sku: null,
     });
+    return this.props.mangoalSearchSkus({name:e.currentTarget.value}, this.props.manGoals.filters);
+  };
+
+  selectSku = skuNum => {
+    this.setState({
+      sku: skuNum,
+    })
+  }
+
+  onChangeProdline = e => {
+    this.setState({
+      searchProdLine: e.currentTarget.value,
+    });
+    return this.props.mangoalSearchProductLines(e.currentTarget.value);
   }
 
   addSku() {
     let sku = {
-      sku_id: this.state.sku.value.id,
+      sku_id: this.state.sku,
       quantity: this.state.quantity,
     }
-    this.props.mangaolUpdateMangoalSkus(this.props.manGoals.activeGoal, [sku])
+    this.props.mangaolUpdateMangoalSkus(
+      Object.assign({}, this.props.manGoals.activeGoal, {
+        user_id: this.props.cookies.id
+      }),
+      [sku]
+    )
     .then((response) => {
       this.setState({
         sku: null,
@@ -257,23 +302,16 @@ class ManufacturingGoalsPage extends Component {
   }
 
   removeSku(sku) {
-    this.props.mangoalDeleteMangoalSkus(this.props.manGoals.activeGoal, [sku.id]);
+    this.props.mangoalDeleteMangoalSkus(
+      Object.assign({}, this.props.manGoals.activeGoal, {
+        user_id: this.props.cookies.id
+      }),
+      [sku.id]
+    );
   }
 
   getSkuSuggestions() {
-    this.props.mangoalSearchSkus({name:''}, this.props.manGoals.filters)
-    .then(()=>{
-      let newSuggestions = this.props.manGoals.skus
-      .map(sku => ({
-        value: sku,
-        label: sku.name + ': ' +
-          sku.unit_size + ' * ' +
-          sku.count_per_case
-      }));
-      this.setState({
-        suggestions: newSuggestions // TODO update this when the query changes so we don't get all skus for autocomplete
-      });
-    })
+    this.props.mangoalSearchSkus({name:this.state.search}, this.props.manGoals.filters);
   }
 
   updateManufacturingGoal(manGoal){
@@ -295,16 +333,33 @@ class ManufacturingGoalsPage extends Component {
   }
 
   removeManufacturingGoal(manGoal){
-    this.props.mangaolDeleteMangoal(manGoal)
-    .then(()=>{
-      if(this.props.manGoals.errMsg) {
-        this.setState({
-          alert:true,
-          message: 'Product Line NOT Deleted: ' + this.props.manGoals.errMsg
-        });
-      }
+    this.props.mangaolDeleteMangoal(Object.assign({}, manGoal, {
+      user_id: this.props.cookies.id
+    }))
+      .then(() => {
+        if (this.props.manGoals.errMsg) {
+          this.setState({
+            alert: true,
+            message: 'Product Line NOT Deleted: ' + this.props.manGoals.errMsg
+          });
+        }
+      });
+  }
+
+  closeAlert() {
+    this.setState({
+      alert: false,
+      message: ""
     });
   }
+
+  handleClickNewOpen = () => {
+    this.setState({ newDialog: true });
+  };
+
+  handleNewClose = () => {
+    this.setState({ newDialog: false });
+  };
 
   exportManGoal() {
     return axios.post(common.hostname + 'manufacturing_goals/exported_file', {
@@ -329,14 +384,23 @@ class ManufacturingGoalsPage extends Component {
       <div className={classes.man_goal_page_container}>
         <div className={classes.user_man_goals_container}>
           <Typography className={classes.user_man_goals_title}>
-            {this.props.users.uname}'s Manufacturing Goals
+            {this.props.cookies.user}'s Manufacturing Goals
           </Typography>
           <div>
-            <ManufacturingGoalsCard
-              onEnter={(manGoal) => { this.addManufacturingGoal(manGoal) }}
-              editable={true}
-              item={{ name: 'Add New Manufacturing Goal' }}
-            ></ManufacturingGoalsCard>
+            <Button
+              variant="contained"
+              onClick={this.handleClickNewOpen}
+            >
+              New Manufacturing Goal
+            </Button>
+            <ManufacturingGoalsNewDialog
+              open={this.state.newDialog}
+              close={this.handleNewClose}
+              submit={(e) => this.submitNewForm(e)}
+              handleChange={this.handleChange}
+              name={this.state.newName}
+              date={this.state.newDeadline}
+            />
             <div variant="inset" className={classes.divider} />
           </div>
           <div className={classes.man_goal_list_container}>
@@ -368,12 +432,14 @@ class ManufacturingGoalsPage extends Component {
             <div className={classes.sku_search_container}>
               <div className={classes.man_goal_content_add}>
                 <div className={classes.sku_search_bar}>
-                  <ManufacturingGoalsSkuSearch
-                    suggestions={this.state.suggestions}
-                    value={this.state.sku}
-                    onChange={this.handleQueryChange('sku')}
-                    placeholder={"Search for SKUs to Add"}
-                  ></ManufacturingGoalsSkuSearch>
+                  <SkuAutocomplete
+                    suggestions={manGoals.skus}
+                    value={this.state.search}
+                    onChange={this.onChange}
+                    selectId={this.selectSku}
+                    placeholder={"Please Search and Select a SKU"}
+                  >
+                  </SkuAutocomplete>
                 </div>
                 <TextField
                   id="standard-number"
@@ -397,18 +463,15 @@ class ManufacturingGoalsPage extends Component {
               </div>
               <div className={classes.filter_container}>
                 <FormControl className={classes.drop_down}>
-                  <InputLabel htmlFor="age-simple">Product Line</InputLabel>
-                  <Select
-                    value=""
-                    onChange={(e)=>{this.addFilter(e.target.value)}}
+                  <Autocomplete
+                    suggestions={manGoals.productLines}
+                    value={this.state.searchProdLine}
+                    onChange={this.onChangeProdline}
+                    selectId={this.addFilter}
+                    placeholder={"Product Line"}
+                    id={"prod"}
                   >
-                    <MenuItem value="">
-                      <em></em>
-                    </MenuItem>
-                    {manGoals.productLines.map((prdline)=>(
-                      <MenuItem key={prdline.id} value={prdline} data={prdline}>{prdline.name}</MenuItem>
-                    ))}
-                  </Select>
+                  </Autocomplete>
                   <FormHelperText>Select Product Lines to Filter By</FormHelperText>
                 </FormControl>
                 <div className={classes.active_filter_container}>
@@ -458,15 +521,22 @@ class ManufacturingGoalsPage extends Component {
             </div>
           </div>
         </div>
+        <SimpleSnackbar
+          open={this.state.alert}
+          handleClose={() => { this.closeAlert() }}
+          message={this.state.message}
+          autoHideDuration={this.state.autohide}
+        >
+        </SimpleSnackbar>
       </div>
     );
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
   return {
     dummy_ingredients: state.dummy_ingredients,
-    users: state.users,
+    cookies: ownProps.cookies.cookies,
     manGoals: state.manGoals
   };
 };
@@ -476,8 +546,7 @@ const mapDispatchToProps = {
   mangoalGetMangoals,
   mangoalCreateMangoal,
   mangoalSearchSkus,
-  mangoalGetProductLines,
-  mangoalUpdateFilters,
+  mangoalSearchProductLines,
   mangaolUpdateMangoalSkus,
   mangaolDeleteMangoal,
   mangoalDeleteMangoalSkus,
@@ -486,4 +555,4 @@ const mapDispatchToProps = {
 }
 
 
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(ManufacturingGoalsPage));
+export default withStyles(styles)(withCookies(connect(mapStateToProps, mapDispatchToProps)(ManufacturingGoalsPage)));

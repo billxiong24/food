@@ -9,6 +9,10 @@ class ProductLine extends CRUD {
     constructor() {
         super();
         this.tableName = "productline";
+        this.headerToDB = {
+            "Name": "name"
+        }
+        this.dbToHeader = this.reverseKeys(this.headerToDB);
     }
 
     checkExisting(dataObj) {
@@ -25,7 +29,7 @@ class ProductLine extends CRUD {
             return Promise.reject("Must include valid name for product line.");
         }
 
-        let query = QueryGenerator.genInsQuery(dataObj, this.tableName).toString();
+        let query = QueryGenerator.genInsQuery(dataObj, this.tableName).returning("*").toString();
         return super.insert(query, dataObj, "Error creating product line: product line exists.");
     }
 
@@ -42,7 +46,7 @@ class ProductLine extends CRUD {
         const queryGen = new QueryGenerator(query);
         queryGen.chainAndFilter(names, "name LIKE ?");
         let queryStr = filter.applyFilter(queryGen.getQuery()).toString();
-        console.log(queryStr);
+        //logger.debug(queryStr);
         return db.execSingleQuery(queryStr, []);
     }
 
@@ -75,33 +79,4 @@ class ProductLine extends CRUD {
     }
 }
 
-//const p = new ProductLine();
-
-//p.update({
-    //name: "wagdfivby"
-//}, "prod188")
-//.then(function(res) {
-    //console.log(res);
-//})
-//.catch(function(err) {
-    //console.log(err);
-//});
-
-//p.remove("prod6")
-//.then(function(res) {
-    //console.log(res);
-//})
-//.catch(function(err) {
-    //console.log(err);
-//});
-
-//p.create({
-    //name: "prod44"
-//})
-//.then(function(res) {
-    //console.log(res);
-//})
-//.catch(function(err) {
-    //console.log(err);
-//});
 module.exports = ProductLine;

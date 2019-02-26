@@ -109,9 +109,16 @@ function renderSuggestion(suggestion, { query, isHighlighted }) {
             </strong>
           ),
         )}
-        <span style={id}>
-              {" (" +suggestion.id +")"}
-        </span>
+        {suggestion.id ? (
+            <span style={id}>
+                {" (" +suggestion.id +")"}
+            </span>
+          ) : (
+            <span style={id}>
+                {""}
+            </span>
+          )
+        }
         
 
       </div>
@@ -228,7 +235,6 @@ class IntegrationAutosuggest extends React.Component {
     })
   }
   handleChange = name => (event, { newValue, method }) => {
-    console.log(this.props)
     this.setState({
       single : newValue
     });

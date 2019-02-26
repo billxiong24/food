@@ -32,7 +32,6 @@ class SortByDropdown extends Component {
     }
 
     onSortBySelected = (id) => {
-        console.log(this.state.items[id])
         this.props.search(this.state.items[id])
     }
 

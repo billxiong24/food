@@ -3,6 +3,7 @@ const Ingredient = require('../app/ingredient');
 let router = express.Router();
 const Filter = require("../app/filter");
 const error_controller = require('../app/controller/error_controller');
+const Controller = require('../app/controller/controller');
 
 
 //TODO 22P02
@@ -15,48 +16,20 @@ router.get('/search', function(req, res, next) {
     let offset = parseInt(req.query.offset) || 0;
 
     const filter = new Filter();
-    filter.setOrderKey(orderKey).setAsc(asc).setOffset(req.query.offset).setLimit(req.query.limit);
+    filter.setOrderKey(orderKey).setAsc(asc).setOffset(offset).setLimit(limit);
+
+    names = Controller.convertParamToArray(names);
+    list = Controller.convertParamToArray(list);
 
     const ing = new Ingredient();
-    if(!names) {
-        names = [];
-    }
-    else if(!Array.isArray(names)) {
-        names = [names];
-    }
-
-    if(!list) {
-        list = [];
-    }
-    else if (!Array.isArray(list)) {
-        list = [list];
-    }
-
-    ing.search(names, list, filter).then((result) => {
-        res.status(200).json(result.rows);
-    })
-    .catch((err) => {
-        res.status(400).json({
-            error: error_controller.getErrMsg(err)
-        });
-    });
+    const controller = new Controller();
+    controller.constructGetResponse(res, ing.search(names, list, filter));
 });
 
 router.post('/', function(req, res, next) {
     const ing = new Ingredient();
-    ing.create(req.body)
-    .then((result) => {
-        //HTTP 201 is successful addition
-        res.status(201).json({
-            rowCount: result.rowCount
-        });
-    })
-    .catch((err) => {
-        //HTTP 409 is conflict status
-        res.status(409).json({
-            error: error_controller.getErrMsg(err)
-        });
-    });
+    const controller = new Controller();
+    controller.constructPostResponse(res, ing.create(req.body));
 });
 
 router.get('/:id/skus', function(req, res, next) {
@@ -65,19 +38,11 @@ router.get('/:id/skus', function(req, res, next) {
         return res.status(400).json({
             error: "Malformed URL."
         });
-
     }
 
     const ing = new Ingredient();
-    ing.getSkus(id)
-    .then((result) => {
-        res.status(200).json(result.rows);
-    })
-    .catch((err) => {
-        res.status(400).json({
-            error: error_controller.getErrMsg(err)
-        });
-    });
+    const controller = new Controller();
+    controller.constructGetResponse(res, ing.getSkus(id));
 });
 
 router.put('/:id', function(req, res, next) {
@@ -94,18 +59,11 @@ router.put('/:id', function(req, res, next) {
         });
     }
     const ing = new Ingredient();
-    ing.update(req.body, id)
-    .then((result) => {
-        res.status(200).json({
-            rowCount: result.rowCount
-        });
-    })
-    .catch((err) => {
-        res.status(409).json({
-            error: error_controller.getErrMsg(err)
-        });
-    });
+    const controller = new Controller();
+    controller.constructUpdateResponse(res, ing.update(req.body, id));
 });
+
+
 
 router.delete('/:id', function(req, res, next) {
     let id = req.params.id;
@@ -115,17 +73,8 @@ router.delete('/:id', function(req, res, next) {
         });
     }
     const ing = new Ingredient();
-    ing.remove(id)
-    .then((result) => {
-        res.status(200).json({
-            rowCount: result.rowCount
-        });
-    })
-    .catch((err) => {
-        res.status(409).json({
-            error: error_controller.getErrMsg(err)
-        });
-    });
+    const controller = new Controller();
+    controller.constructDeleteResponse(res, ing.remove(id));
 });
 
 module.exports = router;

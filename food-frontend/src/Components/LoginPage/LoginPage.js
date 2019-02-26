@@ -10,8 +10,14 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import withStyles from '@material-ui/core/styles/withStyles';
 import { connect } from 'react-redux';
-import { userLoginAttempt, routeToPage } from '../../Redux/Actions';
+import { routeToPage } from '../../Redux/Actions';
+import { userLoginAttempt, userNetIdLogin } from '../../Redux/Actions/ActionCreators/UserActionCreators';
 import { Redirect } from 'react-router-dom';
+import querystring from 'querystring';
+import axios from 'axios';
+import common from '../../Resources/common';
+import { withCookies } from 'react-cookie';
+import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
 
 const styles = theme => ({
   main: {
@@ -42,9 +48,6 @@ const styles = theme => ({
   },
   submit: {
     marginTop: theme.spacing.unit * 3,
-  },
-  status: {
-    marginTop:20,
   }
 });
 
@@ -53,7 +56,25 @@ class LoginPage extends Component {
     super(props);
     this.state = {
       uname:"",
-      password:""
+      password:"",
+      message:"",
+      alert:false,
+    }
+  }
+
+  componentWillMount() {
+    if (window.location.hash) {
+      const hash = querystring.parse(window.location.hash.slice(1));
+      axios.get('https://api.colab.duke.edu/identity/v1/', {
+        headers: {
+          'x-api-key': common.colab_client_id,
+          'Authorization': `Bearer ${hash.access_token}`
+        },
+        withCredentials: false,
+      })
+      .then((response) => {
+        this.props.userNetIdLogin({uname: response.data.netid, password: response.data.duDukeID});
+      })
     }
   }
 
@@ -73,11 +94,26 @@ class LoginPage extends Component {
   submitFormCheck(e) {
     e.preventDefault();
     this.props.userLoginAttempt(Object.assign({},this.state))
+    .then((response) => {
+      if(this.props.users.errMsg) {
+        this.setState({
+          alert: true,
+          message: this.props.users.errMsg,
+        })
+      }
+    })
+  }
+  
+  closeAlert() {
+    this.setState({
+      alert: false,
+      message: ""
+    });
   }
 
   render() {
-    const { classes, users } = this.props;
-    if (users.id) {
+    const { classes, users, cookies } = this.props;
+    if (cookies.user) {
       return <Redirect to='/manufacturing_goals'/>
     }
 
@@ -109,21 +145,42 @@ class LoginPage extends Component {
             >
               Sign in
             </Button>
-            <div className={classes.status}>
-              <label>{users.errMsg}</label>
-            </div>
+            <Button
+              fullWidth
+              variant="contained"
+              className={classes.submit}
+              href={"https://oauth.oit.duke.edu/oauth/authorize.php?client_id=" + common.colab_client_id + 
+                   "&redirect_uri=" + common.colab_redirect_uri + 
+                   "&client_secret=" + common.colab_client_secret + 
+                   "&response_type=token&state=1234&scope=basic"}
+            >
+              NetID Sign In
+            </Button>
           </form>
         </Paper>
+        <SimpleSnackbar
+          open={this.state.alert}
+          handleClose={() => { this.closeAlert() }}
+          message={this.state.message}
+        >
+        </SimpleSnackbar>
       </main>
     );
   }
   
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
   return {
-    users: state.users
+    users: state.users,
+    cookies: ownProps.cookies.cookies,
   }
 }
 
-export default withStyles(styles)(connect(mapStateToProps,{userLoginAttempt, routeToPage})(LoginPage));
+const mapDispatchToProps = {
+  userLoginAttempt: userLoginAttempt,
+  routeToPage: routeToPage,
+  userNetIdLogin: userNetIdLogin,
+}
+
+export default withStyles(styles)(withCookies(connect(mapStateToProps,mapDispatchToProps)(LoginPage)));
