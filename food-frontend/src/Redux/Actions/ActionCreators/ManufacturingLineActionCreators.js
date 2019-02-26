@@ -176,5 +176,33 @@ export const manlineUpdateMappings = () => {
       if(values[key] === 1) none.push(key);
       else all.push(key);
     });
+    return axios.put(hostname + 'manufacturing_line/sku_mapping', {
+      all,
+      none,
+      skus,
+    })
+    .then((response) => {
+      dispatch({
+        type: manline_actions.MANLINE_UPDATE_MAPPINGS,
+      })
+    })
+    .catch((err) => {
+      if (err.response.status === 409) {
+        dispatch({
+          type: manline_actions.MANLINE_UPDATE_MAPPINGS,
+          data: {
+            errMsg: err.response.data.error
+          }
+        })
+      } else {
+        dispatch({
+          type: manline_actions.MANLINE_UPDATE_MAPPINGS,
+          data: {
+            errMsg: 'Something unexpected went wrong'
+          }
+        });
+        throw (err.response);
+      }
+    })
   }
 }

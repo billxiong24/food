@@ -62,10 +62,6 @@ class BulkEditDialog extends Component {
     this.props.manlineChangeMapping(manline, e.target.value);
   }
 
-  submit = (e) => {
-    this.props.manlineUpdateMappings();
-  }
-
   render() {
     const { classes, selected, manlines, values } = this.props;
     return (
@@ -125,7 +121,7 @@ class BulkEditDialog extends Component {
               </Button>
               <Button
                 color="primary"
-                onClick={this.submit}
+                onClick={this.props.submit}
               >
                 Update
               </Button>
@@ -158,9 +154,6 @@ const mapDispatchToProps = (dispatch, ownProps) => {
     },
     manlineChangeMapping: (manline, value) => {
       dispatch(manlineChangeMapping(manline, value));
-    },
-    manlineUpdateMappings: () => {
-      dispatch(manlineUpdateMappings());
     }
   }
 }

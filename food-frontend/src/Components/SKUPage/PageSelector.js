@@ -74,7 +74,6 @@ class PageSelector extends Component {
                 </IconButton>
                 :
                 <IconButton 
-                    color={labels.colors.primaryColor}
                     className={classes.off}
                     aria-label="Add an alarm"
                     opacity={0.5}
@@ -87,7 +86,6 @@ class PageSelector extends Component {
             </Typography>
             { enableIncrease ?
                 <IconButton 
-                    color={labels.colors.primaryColor}
                     className={classes.button}
                     aria-label="Add an alarm"
                     onClick={this.increaseOffset}
@@ -96,7 +94,6 @@ class PageSelector extends Component {
                 </IconButton>
                 :
                 <IconButton 
-                    color={labels.colors.primaryColor}
                     className={classes.off}
                     aria-label="Add an alarm"
                     opacity={0.5}

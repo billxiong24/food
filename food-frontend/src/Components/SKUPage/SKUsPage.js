@@ -20,7 +20,7 @@ import FileDownload from 'js-file-download';
 import common from '../../Resources/common';
 import { withCookies } from 'react-cookie';
 import BulkEditDialog from './BulkEditDialog';
-import { manlineGetMappings, manlineResetMapping } from '../../Redux/Actions/ActionCreators/ManufacturingLineActionCreators';
+import { manlineGetMappings, manlineResetMapping, manlineUpdateMappings } from '../../Redux/Actions/ActionCreators/ManufacturingLineActionCreators';
 
 const styles = {
   card: {
@@ -37,7 +37,7 @@ const styles = {
   SKUs_list_container: {
     height: '100%',
     width: '73%',
-    float: 'right', 
+    float: 'right',
     marginRight: 5,
     marginLeft: 5,
     marginTop: 5,
@@ -53,7 +53,7 @@ const styles = {
     padding: 5,
     overflow: 'auto'
   },
-  filters_list:{
+  filters_list: {
     overflow: 'auto'
   },
   active_filters_container: {
@@ -102,7 +102,7 @@ const styles = {
   input: {
     display: 'none',
   },
-  autosuggest:{
+  autosuggest: {
     fontSize: 14,
     fontFamily: 'Open Sans',
     fontWeight: 300
@@ -112,10 +112,10 @@ const styles = {
     flexDirection: 'row',
     display: 'flex'
   },
-  add_ingredient:{
+  add_ingredient: {
     marginRight: 'auto'
   },
-  export_to_csv:{
+  export_to_csv: {
     marginLeft: 'auto'
   }
 };
@@ -131,7 +131,7 @@ class SKUsPage extends Component {
   componentWillMount() {
   }
 
-  onAddClick = () =>{
+  onAddClick = () => {
     this.props.setSKU(this.props.history)
   }
 
@@ -139,19 +139,19 @@ class SKUsPage extends Component {
     axios.post(common.hostname + 'manufacturing_goals/exported_file', {
       data: this.props.items.map((sku) => ({
         id: sku.id,
-        num:sku.num,
-        name:sku.name,
-        case_upc:sku.case_upc,
-        unit_upc:sku.unit_upc,
-        unit_size:sku.unit_size,
-        count_per_case:sku.count_per_case,
-        prd_line:sku.prd_line,
-        formula_id: sku.formula_id, 
+        num: sku.num,
+        name: sku.name,
+        case_upc: sku.case_upc,
+        unit_upc: sku.unit_upc,
+        unit_size: sku.unit_size,
+        count_per_case: sku.count_per_case,
+        prd_line: sku.prd_line,
+        formula_id: sku.formula_id,
         man_rate: sku.man_rate,
         formula_scale: sku.formula_scale,
-        comments:sku.comments
+        comments: sku.comments
       })),
-      format: "csv", 
+      format: "csv",
       type: "sku"
     })
       .then((response) => {
@@ -159,17 +159,22 @@ class SKUsPage extends Component {
       })
       .catch(err => {
         console.log(err);
-    })
+      })
   }
 
   openBulkEdit() {
     this.props.manlineGetMappings(this.props.selected);
-    this.setState({bulkEditDialog:true})
+    this.setState({ bulkEditDialog: true })
   }
 
   closeBulkEdit() {
     this.props.manlineResetMapping();
-    this.setState({bulkEditDialog:false})
+    this.setState({ bulkEditDialog: false })
+  }
+
+  submitBulkEdit = () => {
+    this.props.manlineUpdateMappings();
+    this.closeBulkEdit();
   }
 
 
@@ -178,14 +183,14 @@ class SKUsPage extends Component {
     return (
       <div className={classes.SKUs_page_container}>
         <Card className={classes.active_filters_container}>
-        <Typography className={classes.active_filters_container_title}>
+          <Typography className={classes.active_filters_container_title}>
             Search Bar Filter Type
         </Typography>
-        <FilterDropdown></FilterDropdown>
-        <Typography className={classes.active_filters_container_title}>
+          <FilterDropdown></FilterDropdown>
+          <Typography className={classes.active_filters_container_title}>
             Sort By
           </Typography>
-              <SortByDropdown></SortByDropdown>
+          <SortByDropdown></SortByDropdown>
           <Typography className={classes.active_filters_container_title}>
             Active Filters
           </Typography>
@@ -211,8 +216,8 @@ class SKUsPage extends Component {
                 this.props.cookies.admin === "true" ?
                   <Button
                     className={classes.add_ingredient}
-                    onClick={()=>{this.props.addAllFilter()}}
-                    >
+                    onClick={() => { this.props.addAllFilter() }}
+                  >
                     Select All
                   </Button>
                   :
@@ -222,8 +227,8 @@ class SKUsPage extends Component {
                 this.props.cookies.admin === "true" ?
                   <Button
                     className={classes.add_ingredient}
-                    onClick={()=>{this.props.removeAllFilter()}}
-                    >
+                    onClick={() => { this.props.removeAllFilter() }}
+                  >
                     Remove All
                   </Button>
                   :
@@ -233,16 +238,17 @@ class SKUsPage extends Component {
                 this.props.cookies.admin === "true" ?
                   <Button
                     className={classes.add_ingredient}
-                    onClick={()=>{this.openBulkEdit()}}
-                    >
+                    onClick={() => { this.openBulkEdit() }}
+                  >
                     Bulk Edit Manufacturing Line
                   </Button>
                   :
                   <div></div>
               }
-              <BulkEditDialog 
-              open={this.state.bulkEditDialog}
-              close={()=>{this.closeBulkEdit()}}
+              <BulkEditDialog
+                open={this.state.bulkEditDialog}
+                close={() => { this.closeBulkEdit() }}
+                submit={this.submitBulkEdit}
               />
               <Button
                 className={classes.export_to_csv}
@@ -250,7 +256,7 @@ class SKUsPage extends Component {
               >
                 Export to CSV
             </Button>
-          </div>
+            </div>
             <SKUList></SKUList>
           </div>
           <div variant="inset" className={classes.SKUs_list_divider} />
@@ -259,13 +265,13 @@ class SKUsPage extends Component {
         {
           this.props.errors.map((error, index) => (
             <SimpleSnackbar
-              open={true} 
-              handleClose={()=>{this.props.deleteError(error)}}
+              open={true}
+              handleClose={() => { this.props.deleteError(error) }}
               message={error.errMsg}
             >
             </SimpleSnackbar>
           ))
-          }
+        }
       </div>
     );
   }
@@ -278,44 +284,48 @@ const mapStateToProps = (state, ownProps) => {
     items: state.skus.items,
     cookies: ownProps.cookies.cookies,
     selected: state.skus.selectedSkus,
+    manline: state.manLine,
   };
 };
 
 const mapDispatchToProps = dispatch => {
-  return{
+  return {
     deleteError: (error) => {
       dispatch(skuDeleteError(error))
     },
     setSKU: (history) => {
       Promise.resolve(dispatch(skuDetGetProductLine())) // dispatch
-          .then(function (response) {
-            dispatch(skuDetSetSku({      
-              manufacturing_lines: [],
-              formula_id: null,
-              name: "",     
-              case_upc: null,     
-              unit_upc: null,     
-              unit_size: "",     
-              count_per_case: null,    
-              prd_line: "",    
-              comments: "",
-              id:null    
+        .then(function (response) {
+          dispatch(skuDetSetSku({
+            manufacturing_lines: [],
+            formula_id: null,
+            name: "",
+            case_upc: null,
+            unit_upc: null,
+            unit_size: "",
+            count_per_case: null,
+            prd_line: "",
+            comments: "",
+            id: null
           }))
           dispatch(skuDetSetNew(true))
           dispatch(skuDetSetEditing(true))
-            history.push('/skus/details')
+          history.push('/skus/details')
 
           return response;
-          })
-          .then(function(response){console.log("@RESPONSE",response)})
+        })
+        .then(function (response) { console.log("@RESPONSE", response) })
     },
-    addAllFilter: () => {dispatch(skuAddAllSelected())},
-    removeAllFilter: () => {dispatch(skuRemoveAllSelected())},
+    addAllFilter: () => { dispatch(skuAddAllSelected()) },
+    removeAllFilter: () => { dispatch(skuRemoveAllSelected()) },
     manlineGetMappings: (skus) => {
       dispatch(manlineGetMappings(skus));
     },
     manlineResetMapping: () => {
       dispatch(manlineResetMapping());
+    },
+    manlineUpdateMappings: () => {
+      dispatch(manlineUpdateMappings());
     }
   }
 }

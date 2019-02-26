@@ -57,9 +57,9 @@ class DropdownButton extends Component {
             temp[i].selected = false;
        }
         temp[id].selected = true;
-        this.setState({
+        this.state = {
             [key]: temp
-        });
+        };
         if (this.props.onSelect != null){
             // your code here.
             this.props.onSelect(id)
