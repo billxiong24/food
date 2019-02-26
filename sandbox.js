@@ -422,3 +422,17 @@ sql_manufacturing_goals_sku(getActivities(dummySchedulerData.goals))
 //sql_get_man_lines(dummySchedulerData.man_lines)
 //sql_get_man_line_sku(dummySchedulerData.man_lines, skus)
 //sql_empty_man_line()
+
+function get_date_string(date){
+    return `${date.getUTCFullYear()}-${("0" + (date.getMonth() + 1)).slice(-2)}-${( "0" +date.getDate()).slice(-2)} ${( "0" +date.getHours()).slice(-2)}:${("0" +date.getMinutes()).slice(-2)}:${("0" +date.getSeconds()).slice(-2)}`
+}
+
+function get_date_string_day(date){
+    return `${date.getUTCFullYear()}-${("0" + (date.getMonth() + 1)).slice(-2)}-${( "0" +date.getDate()).slice(-2)}`
+}
+
+a = (new Date("2019-02-22")).getTime()
+console.log(a)
+date = new Date(a)
+console.log(date.toString())
+console.log(get_date_string_day(new Date(a)))

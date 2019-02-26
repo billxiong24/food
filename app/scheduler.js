@@ -48,12 +48,13 @@ class Scheduler extends CRUD {
         return success
     }
 
+    
     get_date_string(date){
-        return `${date.getYear()}-${date.getMonth()}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
+        return `${date.getUTCFullYear()}-${("0" + (date.getMonth() + 1)).slice(-2)}-${( "0" +date.getDate()).slice(-2)} ${( "0" +date.getHours()).slice(-2)}:${("0" +date.getMinutes()).slice(-2)}:${("0" +date.getSeconds()).slice(-2)}`
     }
 
     get_date_string_day(date){
-        return `${date.getYear()}-${date.getMonth()}-${date.getDate()}`
+        return `${date.getUTCFullYear()}-${("0" + (date.getMonth() + 1)).slice(-2)}-${( "0" +date.getDate()).slice(-2)}`
     }
 
     get_goals(){
