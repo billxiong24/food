@@ -9,8 +9,9 @@ export default function manufacturingLineReducer(state = initialState, action) {
   switch (action.type) {
     case manline_actions.MANLINE_SEARCH:
       return Object.assign({}, state, {
-        ...action.data,
-        values: action.data.manLines.reduce((obj, item) => {
+        manLines: action.data.manLines.filter(man_line => man_line.id != 0),
+        values: action.data.manLines.filter(man_line => man_line.id != 0
+        ).reduce((obj, item) => {
           obj[item.id] = 0;
           return obj
         }, {}),
