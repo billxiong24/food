@@ -1,5 +1,4 @@
-name,num,case_upc,unit_upc,unit_size,count_per_case,prd_line,comments
-trea,5,222222,23511,55lbs,22,prod69,
-skutran,53444,25333,65653,12 lbs,998,prod4,
-sku1,142424,2333333,112553,10 lbs,4,prod444,a comment
-skuamb,78,102,877733,229834,6,prod4,ambiguouss
+Name,SKU#,Case UPC,Unit UPC,Unit size,Count per case,PL Name,Comment,ML Shortnames,Formula#,Formula factor,Rate
+f1,55353333,2654333,25625345,59 lb14dds,22,prod4,sgs,,4,2.4,1
+f2,64654644,65434511,7634546,59 lb14dds,22,prod69,sgs,"manli, man6d, maxi",4,2.4,1
+f3,82646,111266,57578487,ytikjy656,46,prod4,sgs,"hi33, man69, man22",2,2.7,1

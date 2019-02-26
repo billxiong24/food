@@ -1,4 +1,4 @@
-import { mangoal_actions } from '../Actions/ManufacturingGoalActionTypes';
+import { mangoal_actions } from '../Actions/ActionTypes/ManufacturingGoalActionTypes';
 
 const initialState = {
   goals: [],
@@ -19,20 +19,20 @@ export default function manufacturingGoalReducer(state = initialState, action) {
   switch (action.type) {
     case mangoal_actions.MANGOAL_REMOVE_FILTER:
       return Object.assign({}, state, {
-        productLines: [
-          ...state.productLines,
-          action.data.filterToRemove,
-        ].sort((a,b)=>{return a.name.localeCompare(b.name)}),
         filters: state.filters.filter((prdline) => {return prdline.id !== action.data.filterToRemove.id})
       });
     case mangoal_actions.MANGOAL_ADD_FILTER:
-      return Object.assign({}, state, {
-        productLines: state.productLines.filter((prdline) => {return prdline.id !== action.data.filterToAdd.id}),
-        filters: [
-          ...state.filters,
-          action.data.filterToAdd
-        ]
-      })
+      if(state.filters.filter((prdline)=>{return prdline.id === action.data.filterToAdd.id}).length > 0) {
+        return Object.assign({}, state);
+      }
+      else {
+        return Object.assign({}, state, {
+          filters: [
+            ...state.filters,
+            action.data.filterToAdd
+          ]
+        })
+      }
     case mangoal_actions.MANGOAL_GET_CALCULATIONS:
       return Object.assign({}, state, {
         activeGoal: {
@@ -67,8 +67,6 @@ export default function manufacturingGoalReducer(state = initialState, action) {
           errMsg: action.data.errMsg,
         }
       })
-    case mangoal_actions.MANGOAL_UPDATE_FILTERS:
-      return Object.assign({}, state, action.data);
     case mangoal_actions.MANGOAL_GET_PRODUCTLINES:
       return Object.assign({}, state, action.data);
     case mangoal_actions.MANGOAL_GET_MANGOALS:

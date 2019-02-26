@@ -24,7 +24,6 @@ class FilterDropdown extends Component {
     }
 
     onFilterSelected = (id) => {
-        console.log(this.state.items[id])
         this.props.setFilterType(this.state.items[id])
     }
 

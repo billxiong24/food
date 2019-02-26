@@ -4,5 +4,4 @@ node_modules/
 .env
 food-frontend/node_modules/
 food-frontend/build/
-test.js
 *.csv

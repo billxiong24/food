@@ -2,11 +2,14 @@ const db = require("./db");
 const squel = require("squel").useFlavour("postgres");
 const csv=require('csvtojson');
 const QueryGenerator = require("./query_generator");
+const Formatter = require('./formatter');
 
 class CRUD {
 
     constructor() {
         this.tableName = null;
+        this.headerToDB = null;
+        this.dbToHeader = null;
     }
 
     makeParamList(obj) {
@@ -26,7 +29,9 @@ class CRUD {
         return this.checkExisting(dataObj).then(function(res) {
             let count = parseInt(res.rows[0].count);
             //already exists
+            //logger.debug(count);
             if(count > 0) {
+                //logger.debug("entry exists already.");
                 return Promise.reject(errMsg);
             }
             return res;
@@ -53,7 +58,7 @@ class CRUD {
         }
         q = q.where(primaryKeyName + "='" + oldPrimaryKey+"'");
         q = q.toString();
-        console.log(q);
+        //logger.debug(q);
         return db.execSingleQuery(q, []);
     }
 
@@ -63,6 +68,9 @@ class CRUD {
     
       inputArray.map(function(item) {
           var itemPropertyName = item[propertyName];    
+          if(!itemPropertyName) {
+              return;
+          }
           if (itemPropertyName in testObject) {
                 testObject[itemPropertyName].duplicate = true;
                 item.duplicate = true;
@@ -78,6 +86,7 @@ class CRUD {
     }
 
     bulkCleanData(jsonList) {
+        jsonList = this.convertHeaderToDB(jsonList);
         for(let i = 0; i < jsonList.length; i++) {
             let obj = jsonList[i];
             for(let key in obj) {
@@ -132,12 +141,12 @@ class CRUD {
                     inserts++;
                     query = QueryGenerator.genInsQuery(rows[i], table).toString();
                 }
-                console.log("QUERY: " + query);
+                //logger.debug("QUERY: " + query);
                 prom = prom.then(function(r) {
                     return client.query(query).catch(function(err) {
                         error = true;
                         errMsgs.push(err);
-                        console.log("found error.");
+                        //logger.debug("found error.");
                         client.query("ROLLBACK");
                     });
                 });
@@ -145,13 +154,13 @@ class CRUD {
 
             prom.then(function(r) {
                 if(error) {
-                    console.log("there's an error, rolling back");
+                    //logger.debug("there's an error, rolling back");
                     client.query("ROLLBACK");
                     client.query("ABORT");
                     cb(that.generateErrorResult(errMsgs));
                 }
                 else {
-                    console.log("No errors, committing transaction");
+                    //logger.debug("No errors, committing transaction");
                     client.query("COMMIT");
                     cb({
                         updates: updates,
@@ -225,12 +234,12 @@ class CRUD {
                         if(abort)
                             errObj.abort = true;
                         errObj.rows = errObj.abort ? [] : rows;
-                        console.log("There was an error, rolling back");
+                        //logger.debug("There was an error, rolling back");
                         client.query("ROLLBACK");
                         client.query("ABORT");
                     }
                     else {
-                        console.log("No errors, committing transaction");
+                        //logger.debug("No errors, committing transaction");
                         client.query("COMMIT");
                     }
 
@@ -240,8 +249,46 @@ class CRUD {
         });
     }
 
+    convertHeaderToDB(jsonList) {
+        return this.changeKeys(jsonList, this.headerToDB);
+    }
+
+    reverseKeys(data) {
+        return Object.keys(data).reduce(function(obj,key){
+           obj[data[key]] = key;
+           return obj;
+        },{});
+    }
+    changeKeys(jsonList, obj) {
+        let headers = obj;
+        for(let i = 0; i < jsonList.length; i++) {
+            let obj = jsonList[i];
+            let updatedObj = {};
+            for(let key in obj) {
+                let newKey = headers[key];
+                updatedObj[newKey] = obj[key];
+            }
+            jsonList[i] = updatedObj;
+        }
+        return jsonList;
+
+    }
+    convertDBToHeader(jsonList) {
+        return this.changeKeys(jsonList, this.dbToHeader);
+    }
+
+    exportFile(jsonList, format, cb=null) {
+        const formatter = new Formatter(format);
+        jsonList = this.convertDBToHeader(jsonList);
+        return formatter.generateFormat(jsonList);
+    }
+
 
     //abstract methods
+
+    checkExisting(dataObj) {
+        return Promise.resolve(null);
+    }
     create(dataObj) {
 
     }
@@ -265,6 +312,7 @@ class CRUD {
     duplicateObjs(jsonList) {
 
     }
+
 }
 
 module.exports = CRUD;
