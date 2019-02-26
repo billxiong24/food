@@ -129,7 +129,7 @@ class Scheduler extends CRUD {
                     "mfg_rate": row.man_rate,
                     "start_time": that.get_date_string(row.start_time),
                     "end_time": that.get_date_string(row.end_time),
-                    "man_line_num": get_zero_null(row.man_line_id)
+                    "man_line_num": that.get_zero_null(row.man_line_id)
                 }
                 let goal = {
                     "name": row.mg_name,
