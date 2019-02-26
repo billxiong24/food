@@ -5,16 +5,18 @@ import {store} from "../../../index";
 
 const hostname = common.hostname;
 
-export const manlineSearch = (name) => {
+export const manlineSearch = (str) => {
+  let params = {
+    orderKey: 'name',
+  }
+  if (str) params.name = str;
   return (dispatch) => {
     return axios.get(hostname + 'manufacturing_line/search', {
       params: {
-        name: name,
-        orderKey: ''
+        orderKey: 'name'
       }
     })
       .then(response => {
-        let totalRows = response.data.length > 0 ? response.data[0].row_count : 0;
         dispatch({
           type: manline_actions.MANLINE_SEARCH,
           data: {
@@ -125,5 +127,57 @@ export const manlineDelete = (manline) => {
           throw (err.response);
         }
       })
+  }
+}
+
+export const manlineChangeMapping = (manline, mapping) => {
+  return (dispatch) => {
+    dispatch({
+      type: manline_actions.MANLINE_CHANGE_MAPPING,
+      data: {
+        manline: manline,
+        mapping: mapping,
+      }
+    })
+  }
+}
+
+export const manlineResetMapping = () => {
+  return (dispatch) => {
+    dispatch({
+      type: manline_actions.MANLINE_RESET_MAPPING,
+    })
+  }
+}
+
+export const manlineGetMappings = (skus) => {
+  return (dispatch) => {
+    return axios.get(hostname + 'manufacturing_line/sku_mapping', {
+      params: {
+        skus: skus,
+      }
+    })
+    .then(response => {
+      dispatch({
+        type: manline_actions.MANLINE_GET_MAPPINGS,
+        data: response.data,
+      })
+    })
+  }
+}
+
+export const manlineUpdateMappings = () => {
+  return (dispatch) => {
+    let skus = store.getState().skus.selectedSkus;
+    let none = [];
+    let all = [];
+    const values = store.getState().manLine.values;
+    Object.keys(values).forEach((key) => {
+      if(values[key] === 0) return;
+      if(values[key] === 1) none.push(key);
+      else all.push(key);
+    });
+    console.log(none);
+    console.log(all);
   }
 }

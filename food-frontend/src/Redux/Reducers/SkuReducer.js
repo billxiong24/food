@@ -5,7 +5,9 @@ import { SKU_ADD_FILTER, SKU_REMOVE_FILTER, SKU_SEARCH, SKU_SORT_BY,
   SKU_ING_NAME_AUTOCOMPLETE,
   SKU_PRODUCT_LINE_NAME_AUTOCOMPLETE,
   SKU_ADD_ERROR,
-  SKU_DELETE_ERROR} from '../Actions/SkuActionType';
+  SKU_DELETE_ERROR,
+  SKU_ADD_SELECTED,
+  SKU_REMOVE_SELECTED} from '../Actions/SkuActionType';
 
   import { addToList, removeFromList } from '../../Resources/common';
 
@@ -21,6 +23,14 @@ const initialState = {
 
 export default function skuReducer(state = initialState, action) {
   switch(action.type) {
+    case SKU_ADD_SELECTED:
+      return Object.assign({}, state, {
+        selectedSkus: [...new Set([...state.selectedSkus, ...action.skus])],
+      });
+    case SKU_REMOVE_SELECTED:
+      return Object.assign({}, state, {
+        selectedSkus: state.selectedSkus.filter((el) => {return !action.skus.includes(el)})
+      });
     case SKU_ADD_FILTER:
       let filters = state.filters.filter((el)=>{
         return el.id !== action.filter_id

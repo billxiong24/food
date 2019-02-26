@@ -8,7 +8,13 @@ const initialState = {
 export default function manufacturingLineReducer(state = initialState, action) {
   switch (action.type) {
     case manline_actions.MANLINE_SEARCH:
-      return Object.assign({}, state, action.data);
+      return Object.assign({}, state, {
+        ...action.data,
+        values: action.data.manLines.reduce((obj, item) => {
+          obj[item.id] = 0;
+          return obj
+        }, {}),
+      });
     case manline_actions.MANLINE_CREATE:
       return Object.assign({}, state, action.data);
     case manline_actions.MANLINE_UPDATE:
@@ -35,6 +41,24 @@ export default function manufacturingLineReducer(state = initialState, action) {
       } else {
         return Object.assign({}, state, action.data);
       }
+    case manline_actions.MANLINE_GET_MAPPINGS:
+      return Object.assign({}, state, {
+        ...action.data
+      });
+    case manline_actions.MANLINE_CHANGE_MAPPING:
+      return Object.assign({}, state, {
+        values: Object.assign({}, state.values, {
+          [action.data.manline.id]:action.data.mapping,
+        })
+      })
+    case manline_actions.MANLINE_RESET_MAPPING:
+      let newValues = {};
+      Object.keys(state.values).forEach((value) => {
+        newValues[value] = 0;
+      });
+      return Object.assign({}, state, {
+        values: newValues,
+      })
     default:
       return state;
   }

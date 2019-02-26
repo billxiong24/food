@@ -14,10 +14,13 @@ import { withRouter } from 'react-router-dom'
 import { skuDetSetSku, skuDetGetProductLine, skuDetSetNew, skuDetSetEditing } from '../../Redux/Actions/ActionCreators/SKUDetailsActionCreators';
 import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
 import { skuDeleteError } from '../../Redux/Actions';
+import { skuAddAllSelected, skuRemoveAllSelected } from '../../Redux/Actions/index';
 import axios from 'axios';
 import FileDownload from 'js-file-download';
 import common from '../../Resources/common';
 import { withCookies } from 'react-cookie';
+import BulkEditDialog from './BulkEditDialog';
+import { manlineGetMappings, manlineResetMapping } from '../../Redux/Actions/ActionCreators/ManufacturingLineActionCreators';
 
 const styles = {
   card: {
@@ -118,6 +121,12 @@ const styles = {
 };
 
 class SKUsPage extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      bulkEditDialog: false,
+    }
+  }
 
   componentWillMount() {
   }
@@ -149,9 +158,18 @@ class SKUsPage extends Component {
     })
   }
 
+  openBulkEdit() {
+    this.props.manlineGetMappings(this.props.selected);
+    this.setState({bulkEditDialog:true})
+  }
+
+  closeBulkEdit() {
+    this.props.manlineResetMapping();
+    this.setState({bulkEditDialog:false})
+  }
+
 
   render() {
-    console.log(this.props)
     const { classes, dummy_SKUs } = this.props
     return (
       <div className={classes.SKUs_page_container}>
@@ -175,21 +193,58 @@ class SKUsPage extends Component {
             <div className={classes.SKUs_search_bar}>
             </div>
             <div className={classes.other_actions}>
-            { 
-              this.props.cookies.admin === "true" ?
+              {
+                this.props.cookies.admin === "true" ?
+                  <Button
+                    className={classes.add_ingredient}
+                    onClick={this.onAddClick}>
+                    Add SKU
+                  </Button>
+                  :
+                  <div></div>
+              }
+              {
+                this.props.cookies.admin === "true" ?
+                  <Button
+                    className={classes.add_ingredient}
+                    onClick={()=>{this.props.addAllFilter()}}
+                    >
+                    Select All
+                  </Button>
+                  :
+                  <div></div>
+              }
+              {
+                this.props.cookies.admin === "true" ?
+                  <Button
+                    className={classes.add_ingredient}
+                    onClick={()=>{this.props.removeAllFilter()}}
+                    >
+                    Remove All
+                  </Button>
+                  :
+                  <div></div>
+              }
+              {
+                this.props.cookies.admin === "true" ?
+                  <Button
+                    className={classes.add_ingredient}
+                    onClick={()=>{this.openBulkEdit()}}
+                    >
+                    Bulk Edit Manufacturing Line
+                  </Button>
+                  :
+                  <div></div>
+              }
+              <BulkEditDialog 
+              open={this.state.bulkEditDialog}
+              close={()=>{this.closeBulkEdit()}}
+              />
               <Button
-                className={classes.add_ingredient}
-                onClick={this.onAddClick}>
-                Add SKU
-              </Button>
-              :
-              <div></div>
-            }
-            <Button
-              className={classes.export_to_csv}
-              onClick={this.onExportClick}
-            >
-              Export to CSV
+                className={classes.export_to_csv}
+                onClick={this.onExportClick}
+              >
+                Export to CSV
             </Button>
           </div>
             <SKUList></SKUList>
@@ -218,6 +273,7 @@ const mapStateToProps = (state, ownProps) => {
     errors: state.skus.errors,
     items: state.skus.items,
     cookies: ownProps.cookies.cookies,
+    selected: state.skus.selectedSkus,
   };
 };
 
@@ -247,6 +303,14 @@ const mapDispatchToProps = dispatch => {
           return response;
           })
           .then(function(response){console.log("@RESPONSE",response)})
+    },
+    addAllFilter: () => {dispatch(skuAddAllSelected())},
+    removeAllFilter: () => {dispatch(skuRemoveAllSelected())},
+    manlineGetMappings: (skus) => {
+      dispatch(manlineGetMappings(skus));
+    },
+    manlineResetMapping: () => {
+      dispatch(manlineResetMapping());
     }
   }
 }

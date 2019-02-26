@@ -9,7 +9,9 @@ import { SKU_ADD_FILTER, SKU_REMOVE_FILTER, SKU_SEARCH, SKU_SORT_BY,
     SKU_ING_NAME_AUTOCOMPLETE,
     SKU_PRODUCT_LINE_NAME_AUTOCOMPLETE,
     SKU_ADD_ERROR,
-    SKU_DELETE_ERROR} from './SkuActionType';
+    SKU_DELETE_ERROR,
+    SKU_ADD_SELECTED,
+    SKU_REMOVE_SELECTED, } from './SkuActionType';
 import labels from "../../Resources/labels";
 import axios from 'axios';
 import common from "../../Resources/common";
@@ -29,6 +31,74 @@ export const getDummyIngredients = () => {
 /*
 ========================================================( SKUs Action Creators )========================================================
 */
+
+export const skuAddSelected = (skus) => {
+  return (dispatch) => {
+    dispatch({
+      type: SKU_ADD_SELECTED,
+      skus: skus,
+    })
+  }
+}
+
+export const skuRemoveSelected = (skus) => {
+  return (dispatch) => {
+    dispatch({
+      type: SKU_REMOVE_SELECTED,
+      skus: skus,
+    })
+  }
+}
+
+export const skuAddAllSelected = () => {
+  return (dispatch) => {
+    const params = {
+      names: store.getState().skus.filters.filter((el) => { return el.type === labels.skus.filter_type.SKU_NAME }).map((a) => { return a.string }),
+      ingredients: store.getState().skus.filters.filter((el) => { return el.type === labels.skus.filter_type.INGREDIENTS }).map((a) => { return a.string }),
+      prodlines: store.getState().skus.filters.filter((el) => { return el.type === labels.skus.filter_type.PRODUCT_LINE }).map((a) => { return a.string }),
+      orderKey: labels.skus.sort_by_map[store.getState().skus.sortby]
+    }
+    return axios.get(hostname + 'sku/search', {
+      params
+    })
+      .then(response => {
+        dispatch({
+          type: SKU_ADD_SELECTED,
+          skus: response.data.map((sku) => {
+            return sku.id;
+          })
+        })
+      })
+      .catch(error => {
+        throw (error);
+      })
+  }
+}
+
+export const skuRemoveAllSelected = () => {
+  return (dispatch) => {
+    const params = {
+      names:store.getState().skus.filters.filter((el)=>{return el.type === labels.skus.filter_type.SKU_NAME}).map((a)=>{return a.string}),
+      ingredients:store.getState().skus.filters.filter((el)=>{return el.type === labels.skus.filter_type.INGREDIENTS}).map((a)=>{return a.string}),
+      prodlines:store.getState().skus.filters.filter((el)=>{return el.type === labels.skus.filter_type.PRODUCT_LINE}).map((a)=>{return a.string}),
+      orderKey:labels.skus.sort_by_map[store.getState().skus.sortby],
+    }
+    return axios.get(hostname + 'sku/search', {
+      params
+    })
+      .then(response => {
+        dispatch({
+          type: SKU_REMOVE_SELECTED,
+          skus: response.data.map((sku) => {
+            return sku.id;
+          })
+        })
+      })
+      .catch(error => {
+        throw (error);
+      })
+  }
+}
 
 export const ingredientNameAutocomplete = (name) => {
   console.log("SKU_ING_NAME_AUTOCOMPLETE ACTION CREATOR")
