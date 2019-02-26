@@ -29,8 +29,20 @@ class Scheduler extends CRUD {
     }
 
     get_goal_names(filter){
+        var that = this;
         let goal_names = []
-        return goal_names
+        let query = `SELECT
+        manufacturing_goal.name
+        FROM manufacturing_goal 
+        WHERE name LIKE \'%${filter}%\'
+        `
+        return db.execSingleQuery(query, [])
+        .then(function(res){
+            res.rows.forEach(function(row){
+                goal_names.push(row.name)
+            })
+            return goal_names
+        })
     }
 
     get_goal_usernames(filter){

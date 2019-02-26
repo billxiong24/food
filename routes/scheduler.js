@@ -337,11 +337,13 @@ function getGoalNames(filter) {
 router.put('/goal_names', function (req, res, next) {
     let filter = req.body.filter;
     // console.log(req.body)
-    let goal_names = scheduler.get_goal_names(filter)
-    console.log(goal_names)
-    return res.status(200).json({
-        goal_names: dummySchedulerData.goals.filter(goal => goal.name.includes(filter)).map(goal => goal.name)
-    })
+    let scheduler = new Scheduler()
+    scheduler.get_goal_names(filter).then((goal_names) => {
+        console.log(goals)
+        res.status(200).json({
+            goal_names: goal_names
+        })
+    }) 
 });
 
 function getGoalUserNames(filter) {
