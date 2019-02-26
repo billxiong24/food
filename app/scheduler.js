@@ -111,7 +111,6 @@ class Scheduler extends CRUD {
         INNER JOIN manufacturing_line ON manufacturing_goal_sku.man_line_id=manufacturing_line.id
         ) AS foo
         INNER JOIN users ON foo.user_id = users.id
-        WHERE ${field} LIKE \'%${filter}%\'
         `
         return db.execSingleQuery(query, [])
         .then(function(res){
@@ -155,7 +154,10 @@ class Scheduler extends CRUD {
                     filtered_goals.push(goals_id_map[id])
                 }
             }
-            return filtered_goals
+            if(filter_type_index==0){
+                return filtered_goals.filter(goal => goal.name.contains(filter))
+            }
+            return filtered_goals.filter(goal => goal.author.contains(filter))
         })
     }
 
