@@ -364,7 +364,6 @@ router.put('/filtered_goals', function (req, res, next) {
     let filter_type_index = req.body.filter_type_index
     let scheduler = new Scheduler()
     scheduler.get_filtered_goals(filter, filter_type_index).then((filtered_goals) => {
-        console.log(goals)
         res.status(200).json({
             filtered_goals: filtered_goals
         })
