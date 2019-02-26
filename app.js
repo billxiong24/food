@@ -32,8 +32,6 @@ var app = express();
 app.use(cors({
   credentials: true,
   origin: function(origin, callback) {
-    console.log(origin);
-    console.log("https://" + domain);
     if (origin == "https://" + domain || origin == 'http://localhost:3000' || origin === undefined) {
       callback(null, true);
     } else {

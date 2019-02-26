@@ -34,9 +34,8 @@ const ritwikvm = {
   colab_redirect_uri: 'https%3A%2F%2Fcodemonkeys.colab.duke.edu%2Flogin',
 }
 
-// const config = process.env.REACT_APP_STAGE === 'prod' ? prod :
-//               (process.env.REACT_APP_STAGE === 'dev' ? dev : local);
-const config = dev
+const config = process.env.REACT_APP_STAGE === 'prod' ? prod :
+              (process.env.REACT_APP_STAGE === 'dev' ? dev : local);
 
 
 export default {
