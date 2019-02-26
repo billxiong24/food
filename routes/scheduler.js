@@ -432,7 +432,7 @@ router.get('/goals', function (req, res, next) {
     scheduler.get_goals().then((goals) => {
         console.log(goals)
         res.status(200).json({
-            goals: dummySchedulerData.goals
+            goals: goals
         })
     }) 
 });
