@@ -280,6 +280,7 @@ router.put('/set_enable', function (req, res, next) {
     // console.log(id)
     // console.log(req.body)
     let enable_status = req.body.enable_status
+    console.log(req.body)
     let scheduler = new Scheduler()
     scheduler.set_enable(id, enable_status).then((success) => {
         if(success){
