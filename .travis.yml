@@ -16,6 +16,7 @@ env:
         - REACT_APP_DOMAIN=cmdev.colab.duke.edu
         - REACT_APP_ADMINID=7
         - NODE_ENV=test
+        - SESSION_SECRET=aert2384742el1ng0grjfliqjh
 services:
     - postgresql
 cache:
@@ -26,6 +27,6 @@ install:
     - npm install
 
 before_script:
-    - psql -f test/foodtest.sql -U postgres
+    - psql -v tabl=postgres -f db/food.sql -U postgres
 script:
     - npm test

@@ -8,6 +8,7 @@ class Formatter {
     }
 
     generateFormat(jsonList) {
+        console.log("formattinggg");
         if(this.format === 'csv') {
             return this.generateCSV(jsonList);
         }

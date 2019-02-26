@@ -9,6 +9,10 @@ class ProductLine extends CRUD {
     constructor() {
         super();
         this.tableName = "productline";
+        this.headerToDB = {
+            "Name": "name"
+        }
+        this.dbToHeader = this.reverseKeys(this.headerToDB);
     }
 
     checkExisting(dataObj) {

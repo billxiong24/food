@@ -187,6 +187,7 @@ class ProductLinePage extends Component {
         }
       }),
       format: "csv",
+      type: "productline"
     })
       .then((response) => {
         FileDownload(response.data, 'product_lines.csv');

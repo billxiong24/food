@@ -1,4 +1,6 @@
-import {  SKU_DET_GET_ING,SKU_DET_ADD_ING,SKU_DET_UPDATE_SKU,SKU_DET_DELETE_SKU,SKU_DET_DELETE_ING,SKU_DET_SET_SKU, SKU_DET_INGREDIENT_AUTOCOMPLETE, SKU_DET_PRODUCT_LINE_LIST, SKU_DET_ADD_ING_LOCAL, SKU_DET_DELETE_ING_LOCAL, SKU_DET_ADD_SKU, SKU_DET_ADD_ERROR, SKU_DET_DELETE_ERROR, SKU_DET_SET_NEW, SKU_DET_SET_VALID, SKU_DET_SET_EDITING } from "../Actions/SKUDetailActionTypes";
+import {SKU_DET_MANLINE_AUTOCOMPLETE, SKU_DET_GET_MAN_LINES, SKU_DET_SET_FORMULA_LOCAL, SKU_DET_FORMULA_AUTOCOMPLETE, SKU_DET_GET_FORMULA, SKU_DET_GET_ING,SKU_DET_ADD_ING,SKU_DET_UPDATE_SKU,SKU_DET_DELETE_SKU,SKU_DET_DELETE_ING,SKU_DET_SET_SKU, SKU_DET_INGREDIENT_AUTOCOMPLETE, SKU_DET_PRODUCT_LINE_LIST, SKU_DET_ADD_ING_LOCAL, SKU_DET_DELETE_ING_LOCAL, SKU_DET_ADD_SKU, SKU_DET_ADD_ERROR, SKU_DET_DELETE_ERROR, SKU_DET_SET_NEW, SKU_DET_SET_VALID, SKU_DET_SET_EDITING } from "../Actions/SKUDetailActionTypes";
+
+
 import { addToList, removeFromList } from "../../Resources/common";
 
 const initialState = {
@@ -21,15 +23,11 @@ export default function SKUDetailReducer(state = initialState, action) {
     let completion;
     switch (action.type) {
         case SKU_DET_GET_ING:
-            console.log("SKU_DET_GET_ING REDUCER")
-            console.log(action.data)
             return Object.assign({}, state, {
                 ingredients:action.data,
                 current_ingredients: action.data
             });
         case SKU_DET_ADD_ING:
-            console.log("SKU_DET_ADD_ING REDUCER")
-            console.log(action.data)
             if(action.data.errMsg === ""){
                 completion = "Adding Ingredients Successful"
             }else{
@@ -39,8 +37,6 @@ export default function SKUDetailReducer(state = initialState, action) {
                 completion:completion,
             });
         case SKU_DET_UPDATE_SKU:
-            console.log("SKU_DET_UPDATE_SKU REDUCER")
-            console.log(action.data)
             if(action.data.errMsg === ""){
                 completion = "Updating SKU Successful"
             }else{
@@ -51,23 +47,28 @@ export default function SKUDetailReducer(state = initialState, action) {
                 editing: false
             });
         case SKU_DET_DELETE_SKU:
-            console.log("SKU_DET_DELETE_SKU REDUCER")
-            console.log(action.data)
             return Object.assign({}, state, {
+                ingredients:[],
+                comments:null, 
+                completion:null, 
+                product_lines:[],
+                current_ingredients:[], 
+                current_formula: null, 
                 name: null,
-                case_upc:null,
-                unit_upc:null,
-                num:null,
-                unit_size:null,
-                count_per_case:null,
-                prd_line:null,
-                ingredients:null,
-                comments:null,
-                id:null
+                case_upc: null,
+                unit_upc: null,
+                num: null,
+                unit_size: null,
+                count_per_case: null,
+                prd_line: null,
+                comments: null,
+                id: null,
+                formula_id : null,
+                manufacturing_lines: [],
+                man_rate: null,
+                formula_scale: null
             });
         case SKU_DET_DELETE_ING:
-            console.log("SKU_DET_DELETE_ING REDUCER")
-            console.log(action.data)
             if(action.data.errMsg === ""){
                 completion = "Adding Ingredients Successful"
             }else{
@@ -77,9 +78,8 @@ export default function SKUDetailReducer(state = initialState, action) {
                 completion: completion
             });
         case SKU_DET_SET_SKU:
-            console.log("SKU_DET_SET_SKU REDUCER")
-            console.log(action.data)
-            return Object.assign({}, state, {
+            let obj = {
+                current_formula: action.data.current_formula, 
                 name: action.data.name,
                 case_upc:action.data.case_upc,
                 unit_upc:action.data.unit_upc,
@@ -88,71 +88,85 @@ export default function SKUDetailReducer(state = initialState, action) {
                 count_per_case:action.data.count_per_case,
                 prd_line:action.data.prd_line,
                 comments:action.data.comments,
-                id:action.data.id
+                id:action.data.id,
+                formula_id :action.data.formula_id,
+                manufacturing_lines: action.data.manufacturing_lines,
+                man_rate: action.data.man_rate,
+                formula_scale: action.data.formula_scale
+            }
+            if(action.data.id === null)
+                obj.current_ingredients = [];
+
+            return Object.assign({}, state, obj);
+        case SKU_DET_FORMULA_AUTOCOMPLETE:
+            return Object.assign({}, state, {
+                formula_suggestions: action.data
             });
+        case SKU_DET_MANLINE_AUTOCOMPLETE:
+            return Object.assign({}, state, {
+                manline_suggestions: action.data
+            });
+
         case SKU_DET_INGREDIENT_AUTOCOMPLETE:
-            console.log("SKU_DET_INGREDIENT_AUTOCOMPLETE REDUCER")
-            console.log(action.data)
             return Object.assign({}, state, {
                 ingredient_suggestions: action.data
             });
         case SKU_DET_PRODUCT_LINE_LIST:
-            console.log("SKU_DET_PRODUCT_LINE_LIST REDUCER")
-            console.log(action.data)
             return Object.assign({}, state, {
                 product_lines: action.data
             });
-        case SKU_DET_ADD_ING_LOCAL:
-            console.log("SKU_DET_ADD_ING_LOCAL REDUCER")
-            console.log(action.data)
-            console.log(state)
-            console.log(addToList(action.data,state.current_ingredients))
+        case SKU_DET_GET_FORMULA:
             return Object.assign({}, state, {
-                current_ingredients:addToList(action.data,state.current_ingredients),
+                current_formula: action.data
             });
+        case SKU_DET_SET_FORMULA_LOCAL:
+            return Object.assign({}, state, {
+                current_formula: action.data
+            });
+        case SKU_DET_GET_MAN_LINES:
+            let manufacturing_lines = action.data;
+            if(Array.isArray(manufacturing_lines)) {
+                for(let i = 0; i < manufacturing_lines.length; i++) {
+                    state.manufacturing_lines.push(manufacturing_lines[i]);
+                }
+              return Object.assign({}, state, {
+                  manufacturing_lines: state.manufacturing_lines
+              });
+            }
+              return Object.assign({}, state, {
+                manufacturing_lines: [
+                  ...state.manufacturing_lines,
+                  action.data
+                ]
+              });
+        case SKU_DET_ADD_ING_LOCAL:
         case SKU_DET_DELETE_ING_LOCAL:
-            console.log("SKU_DET_DELETE_ING_LOCAL REDUCER")
-            console.log(action.data)
-            console.log(state)
-            console.log(removeFromList(action.data, state.current_ingredients))
             return Object.assign({}, state, {
                 current_ingredients:removeFromList(action.data, state.current_ingredients),
             });
         case SKU_DET_ADD_SKU:
-            console.log("SKU_DET_ADD_SKU REDUCER")
-            console.log(action.data.id)
             return Object.assign({}, state, {
                 id: action.data.id,
                 editing: false,
                 new: false,
             });
         case SKU_DET_ADD_ERROR:
-            console.log("SKU_DET_ADD_ERROR REDUCER")
-            console.log(action.data)
             return Object.assign({}, state, {
               errors: addToList(action.data, state.errors)
             });
         case SKU_DET_DELETE_ERROR:
-            console.log("SKU_DET_DELETE_ERROR REDUCER")
-            console.log(action.data)
             return Object.assign({}, state, {
               errors: removeFromList(action.data, state.errors)
             });
         case SKU_DET_SET_NEW:
-            console.log("SKU_DET_SET_NEW REDUCER")
-            console.log(action.data)
             return Object.assign({}, state, {
                 new: action.data
             });
         case SKU_DET_SET_VALID:
-            console.log("SKU_DET_SET_VALID REDUCER")
-            console.log(action.data)
             return Object.assign({}, state, {
                 valid: action.data
             });
         case SKU_DET_SET_EDITING:
-            console.log("SKU_DET_SET_EDITING REDUCER")
-            console.log(action.data)
             return Object.assign({}, state, {
                 editing: action.data
             });

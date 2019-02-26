@@ -104,6 +104,7 @@ class Navbar extends React.Component {
             <Tab value={1} label="Ingredients" component={Link} to={'/ingredients'} />
             <Tab value={2} label="SKUs" component={Link} to={'/skus'} />
             <Tab value={3} label="Product Line" component={Link} to={'/product_lines'} />
+            <Tab value={3} label="Formula" component={Link} to={'/formula'} />
             <Tab value={4} label="Ingredient Dependency" component={Link} to={'/ingredients/dependency'} />
             <Tab value={5} label="Bulk Import/Export" component={Link} to={'/bulk'} />
             <Tab value={6} className={cookies.admin === 'true' ? '' : classes.hidden} label="Manage Users" component={Link} to={'/users'} />
@@ -127,5 +128,7 @@ const mapStateToProps = (state, ownProps) => {
   }
 }
 
-export default withRouter(withCookies(connect(mapStateToProps, { routeToPage })(withStyles(styles)(Navbar))));
+export default withRouter(withCookies(connect(mapStateToProps,{routeToPage})(withStyles(styles)(Navbar))));
+// export default withStyles(styles)withRouter(connect(mapStateToProps,{routeToPage})(Navbar));
+//export default withRouter(connect(mapStateToProps,{routeToPage})(withStyles(styles)(Navbar)));
 // export default withStyles(styles)withRouter(connect(mapStateToProps,{routeToPage})(Navbar));

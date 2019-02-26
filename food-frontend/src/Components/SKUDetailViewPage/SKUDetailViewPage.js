@@ -11,7 +11,7 @@ import ProductLineDropdown from './ProductLineDropdown';
 import { findDifferences } from '../../Resources/common';
 import { withRouter } from 'react-router-dom';
 import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
-import { getSkuErrors } from '../../Resources/common';
+import { skuCheckFormula, getSkuErrors } from '../../Resources/common';
 import EditableNumeric from '../GenericComponents/EditableNumeric';
 import {store} from "../../index"
 import axios from 'axios';
@@ -67,6 +67,8 @@ class SKUDetailViewPage extends Component {
 
     constructor(props){
         super(props);
+        console.log("SKU DETAILS CONSTRUCTOR");
+        console.log(this.props);
         this.state = {
             buttonText:"Edit",
             editing:false,
@@ -79,6 +81,10 @@ class SKUDetailViewPage extends Component {
             prd_line:this.props.prd_line,
             ingredients:this.props.ingredients,
             comments:this.props.comments,
+            man_rate:this.props.man_rate,
+            manufacturing_lines: this.props.manufacturing_lines, 
+            formula_scale:this.props.formula_scale,
+            current_formula: this.props.current_formula, 
             new:false
         }
         console.log("SKU DETAIL VIEW")
@@ -138,6 +144,15 @@ class SKUDetailViewPage extends Component {
     
 
     onSaveClick = () => {
+        if(!this.props.current_formula) {
+            let formErrors = skuCheckFormula(this.props.current_formula);
+            if(formErrors.length == 0){
+                for (var i = 0; i < formErrors.length; i++) {
+                    this.props.pushError(formErrors[i])
+                }
+                return;
+            }
+        }
         const sku = {
             name:this.state.name,
             case_upc:this.state.case_upc,
@@ -147,12 +162,13 @@ class SKUDetailViewPage extends Component {
             count_per_case:this.state.count_per_case,
             prd_line:this.state.prd_line,
             comments:this.state.comments,
-            id:this.props.id
+            id:this.props.id,
+            formula_id: this.props.current_formula.id
         }
         let errors = getSkuErrors(sku)
         if(errors.length == 0){
             console.log("SKUDETAILVIEW")
-            this.props.update(sku, this.props.current_ingredients, this.props.ingredients)
+            this.props.update(sku)
         }else{
             for (var i = 0; i < errors.length; i++) {
                 this.props.pushError(errors[i])
@@ -162,6 +178,18 @@ class SKUDetailViewPage extends Component {
     }
 
     onAddClick = () => {
+        if(!this.props.current_formula) {
+            console.log("THIS WAS AN ERRORRRRR IN NO FORMUAL");
+            let formErrors = skuCheckFormula(this.props.current_formula);
+            if(formErrors.length == 0){
+                for (var i = 0; i < formErrors.length; i++) {
+                    this.props.pushError(formErrors[i]);
+                }
+            }
+            return;
+        }
+        console.log("LINES");
+        console.log(this.props.manufacturing_lines);
         const sku = {
             name:this.state.name,
             case_upc:this.state.case_upc,
@@ -170,13 +198,17 @@ class SKUDetailViewPage extends Component {
             unit_size:this.state.unit_size,
             count_per_case:this.state.count_per_case,
             prd_line:this.state.prd_line,
+            man_lines: this.props.manufacturing_lines, 
             comments:this.state.comments,
+            formula_id: this.props.current_formula.id,
+            man_rate: this.state.man_rate,
+            formula_scale:this.state.formula_scale
         }
         let errors = getSkuErrors(sku)
         if(errors.length == 0){
             console.log("INGREDIENTDETAILVIEW")
             console.log(sku)
-            this.props.add(sku, this.props.current_ingredients)
+            this.props.add(sku)
         }else{
             for (var i = 0; i < errors.length; i++) {
                 this.props.pushError(errors[i])
@@ -262,6 +294,20 @@ class SKUDetailViewPage extends Component {
                         onChange={this.onChange}>
                         {this.state.count_per_case}
                     </EditableNumeric>
+                    <EditableNumeric
+                        label={"Manufacturing rate"} 
+                        editing={editing}
+                        field={"man_rate"}
+                        onChange={this.onChange}>
+                        {this.state.man_rate}
+                    </EditableNumeric>
+                    <EditableNumeric
+                        label={"Formula Scale"} 
+                        editing={editing}
+                        field={"formula_scale"}
+                        onChange={this.onChange}>
+                        {this.state.formula_scale}
+                    </EditableNumeric>
 
                     <ProductLineDropdown
                         onChange={this.onProductLineChange}
@@ -291,7 +337,7 @@ class SKUDetailViewPage extends Component {
                         <div></div>
                     }
                     {
-                        (this.props.cookies.admin === "true" === common.admin && !editing) ?
+                        (this.props.cookies.admin === "true" && !editing) ?
                         <Button 
                             className={classes.button} 
                             editing={editing}
@@ -366,8 +412,9 @@ class SKUDetailViewPage extends Component {
 
 
 const mapStateToProps = (state, ownProps) => {
-    console.log(state)
-    return {
+    console.log("MAP STATE TO PROPS SKUDETAIL");
+    let obj = {
+        current_formula: state.sku_details.current_formula,
         name: state.sku_details.name,
         case_upc:state.sku_details.case_upc,
         unit_upc:state.sku_details.unit_upc,
@@ -376,7 +423,10 @@ const mapStateToProps = (state, ownProps) => {
         count_per_case:state.sku_details.count_per_case,
         prd_line:state.sku_details.prd_line,
         ingredients:state.sku_details.ingredients,
-        comments:state.sku_details.comments,
+        man_rate:state.sku_details.man_rate,
+        manufacturing_lines: state.sku_details.manufacturing_lines,
+        formula_scale: state.sku_details.formula_scale,
+        ingredients:state.sku_details.ingredients,
         id:state.sku_details.id,
         current_ingredients:state.sku_details.current_ingredients,
         errors: state.sku_details.errors,
@@ -385,28 +435,16 @@ const mapStateToProps = (state, ownProps) => {
         editing: state.sku_details.editing,
         valid: state.sku_details.valid
     };
+    return obj;
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => {
     return {
-        update : (sku, current_ingredients, ingredients) =>
+        update : (sku) =>
 
         {
-            console.log(current_ingredients)
-            console.log(ingredients)
             Promise.resolve(dispatch(skuDetUpdateSku(sku))) // dispatch
                 .then(function (response) {
-                    let editing = store.getState().sku_details.editing
-                    console.log(ownProps)
-                    if(!editing){
-                        let object = findDifferences(current_ingredients, ingredients)
-                        console.log(object.original)
-                        console.log(object.newlist)
-                        console.log(object.additions)
-                        console.log(object.deletions)
-                        dispatch(skuDetAddIng(sku,object.additions))
-                        dispatch(skuDetDeleteIng(sku,object.deletions))
-                    }
                 return response;
                 })
         },
@@ -420,15 +458,11 @@ const mapDispatchToProps = (dispatch, ownProps) => {
             dispatch(skuDetSetEditing(false))
             ownProps.history.push('/skus')
         },
-        add: (sku, current_ingredients) =>{
+        add: (sku) =>{
             Promise.resolve(dispatch(skuDetAddSku(sku))) // dispatch
                 .then(function (response) {
                     sku.id = store.getState().sku_details.id
-                    console.log(ownProps)
-                    if(sku.id !== null){
-                        dispatch(skuDetAddIng(sku,current_ingredients))
-                    }
-                return response;
+                    return response;
                 })
           .then(function(response){console.log("@RESPONSE",response)})
             

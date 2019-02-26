@@ -14,6 +14,24 @@ export const InitialStore = {
   // Persistent data concerning routing
   route: 0,
   // Persistent data concnerning ingredients view
+  formulas: {
+    filters: [],
+    items: [],
+    ingredient_names: [],
+    formula_names: [],
+    sortby: labels.formulas.sort_by.FORMULA_NAME,
+    filter_type: labels.formulas.filter_type.INGREDIENTS,
+    current_page_number: 1,
+    total_pages: 12,
+    offset:0,
+    limit:10,
+    full:false,
+    row_count:0,
+    end:false,
+    skus: [],
+    errMsg: null,
+    errors:[]
+  },
   ingredients: {
     filters: [],
     items: [],
@@ -75,6 +93,21 @@ export const InitialStore = {
     filters: [],
     errMsg: null
   },
+
+  formula_details: {
+      made_formula: false,
+      formulaName: null,
+      formulaComment: null,
+      formulaNum: null,
+      new: false,
+      valid: false,
+      editing: false,
+      id: null,
+      ingredients:[],
+      skus: [],
+      new_ingredients: [],
+      errors:[]
+  },
   ingredient_details:{
     ingredientName:null,
     ingredientNum:null,
@@ -96,11 +129,18 @@ export const InitialStore = {
       unit_size:"45 Pomericans",
       count_per_case:"34",
       prd_line:"Campbell Home Products",
+      formula_id: null,
+      man_rate: null,
+      formula_scale: null,
       ingredients:[],
+      current_formula: null,
       comments:"Insert Funny Side Comment",
       completion:"All Good",
       id:null,
       product_lines:[],
+      manufacturing_lines: [], 
+      manline_suggestions: [],
+      formula_suggestions: [],
       ingredient_suggestions:[],
       current_ingredients:[],
       errors:[],

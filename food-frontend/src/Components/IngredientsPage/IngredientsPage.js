@@ -133,11 +133,12 @@ class IngredientsPage extends Component {
         num:ing.num,
         name:ing.name,
         vend_info:ing.vend_info,
-        pkg_size:ing.pkg_size,
+        pkg_size:ing.pkg_size + " " + ing.unit,
         pkg_cost:ing.pkg_cost,
         comments:ing.comments
       })),
       format: "csv",
+      type: "ingredient"
     })
       .then((response) => {
         FileDownload(response.data, 'ingredients.csv');
@@ -249,3 +250,4 @@ const mapDispatchToProps = dispatch => {
 
 
 export default withRouter(withStyles(styles)(withCookies(connect(mapStateToProps, mapDispatchToProps)(IngredientsPage))));
+//export default withRouter(withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(IngredientsPage)));

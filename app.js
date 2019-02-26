@@ -14,6 +14,9 @@ var productlineRouter = require('./routes/productline');
 var skuRouter = require('./routes/sku');
 var mgRouter = require('./routes/manufacturing_goals');
 var bulkRouter = require('./routes/bulk');
+var formulaRouter = require('./routes/formula');
+var mlRouter = require('./routes/manufacturing_lines');
+
 
 var { checkUserAll, checkCookie, checkAdminAll } = require('./routes/guard');
 
@@ -41,30 +44,30 @@ app.use(cors({
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
-if(process.env.NODE_ENV !== 'test')
+//if(process.env.NODE_ENV !== 'test')
     app.use(logger('dev'));
 
 app.use(express.json());
+app.set('trust proxy', 1);
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.set('trust proxy', 1);
 app.use(session({
   secret: process.env.SESSION_SECRET,
   store: new (require('connect-pg-simple')(session))(),
-  resave: false,
-  saveUninitialized: false,
     //change this later
   cookie: { secure: encrypt, maxAge: 24*60*60*1000 }
 }));
 
 // Check for sessions
-app.use(checkCookie);
-app.use(checkUserAll);
-app.post('*', checkAdminAll);
-app.put('*', checkAdminAll);
-app.delete('*', checkAdminAll);
+if(process.env.NODE_ENV !== 'test') {
+    app.use(checkCookie);
+    app.use(checkUserAll);
+    app.post('*', checkAdminAll);
+    app.put('*', checkAdminAll);
+    app.delete('*', checkAdminAll);
+}
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
@@ -73,6 +76,8 @@ app.use('/productline', productlineRouter);
 app.use('/sku', skuRouter);
 app.use('/manufacturing_goals', mgRouter);
 app.use('/bulk', bulkRouter);
+app.use('/formula', formulaRouter);
+app.use('/manufacturing_line', mlRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
