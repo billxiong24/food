@@ -49,11 +49,17 @@ class Scheduler extends CRUD {
     }
 
     
-    get_date_string(date){
+    get_date_string(time){
+        console.log(time)
+        let date = new Date(time)
+        console.log(date.toString())
         return `${date.getUTCFullYear()}-${("0" + (date.getMonth() + 1)).slice(-2)}-${( "0" +date.getDate()).slice(-2)} ${( "0" +date.getHours()).slice(-2)}:${("0" +date.getMinutes()).slice(-2)}:${("0" +date.getSeconds()).slice(-2)}`
     }
 
-    get_date_string_day(date){
+    get_date_string_day(time){
+        console.log(time)
+        let date = new Date(time)
+        console.log(date.toString())
         return `${date.getUTCFullYear()}-${("0" + (date.getMonth() + 1)).slice(-2)}-${( "0" +date.getDate()).slice(-2)}`
     }
 
@@ -110,8 +116,8 @@ class Scheduler extends CRUD {
                     "comments": row.comments,
                     "cases_needed": row.quantity,
                     "mfg_rate": row.man_rate,
-                    "start_time": that.get_date_string(new Date(row.start_time)),
-                    "end_time": that.get_date_string(new Date(row.end_time)),
+                    "start_time": that.get_date_string(row.start_time),
+                    "end_time": that.get_date_string(row.end_time),
                     "man_line_num": "BMP1"
                 }
                 let goal = {
@@ -120,7 +126,7 @@ class Scheduler extends CRUD {
                        activity
                     ],
                     "enabled": row.enabled,
-                    "deadline": that.get_date_string_day(new Date(row.start_time)),
+                    "deadline": that.get_date_string_day(row.start_time),
                     "author": row.user_id,
                     "id": row.mg_id
                 }
