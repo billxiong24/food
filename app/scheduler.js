@@ -336,7 +336,7 @@ class Scheduler extends CRUD {
                        activity
                     ],
                     "enabled": row.enabled,
-                    "deadline": that.get_date_string_day(row.start_time),
+                    "deadline": that.get_date_string_day(row.deadline),
                     "author": row.uname,
                     author_id:row.user_id,
                     "id": row.mg_id
