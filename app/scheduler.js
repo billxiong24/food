@@ -81,7 +81,7 @@ class Scheduler extends CRUD {
         FROM manufacturing_goal_sku
         WHERE start_time!=0 AND end_time!=0 AND man_line_id!=0
         )`
-        db.execSingleQuery(query, [])
+        return db.execSingleQuery(query, [])
         .then(function(res){
             console.log(res)
             return res
