@@ -52,6 +52,9 @@ class Scheduler extends CRUD {
         let goals = []
         let query = squel.select()
         .from(this.manufacturing_goal_sku)
+        .where("start_time != ?", 0)
+        .where("end_time != ?", 0)
+        .where("man_line_id != ?", 0)
         .toString();
         return db.execSingleQuery(query, []);
     }
