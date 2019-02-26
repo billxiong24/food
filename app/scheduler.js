@@ -49,14 +49,16 @@ class Scheduler extends CRUD {
     }
 
     
-    get_date_string(time){
+    get_date_string(raw_time){
+        let time = parseInt(time)
         console.log(time)
         let date = new Date(time)
         console.log(date.toString())
         return `${date.getUTCFullYear()}-${("0" + (date.getMonth() + 1)).slice(-2)}-${( "0" +date.getDate()).slice(-2)} ${( "0" +date.getHours()).slice(-2)}:${("0" +date.getMinutes()).slice(-2)}:${("0" +date.getSeconds()).slice(-2)}`
     }
 
-    get_date_string_day(time){
+    get_date_string_day(raw_time){
+        let time = parseInt(time)
         console.log(time)
         let date = new Date(time)
         console.log(date.toString())
