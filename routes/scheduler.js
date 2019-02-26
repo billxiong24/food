@@ -339,7 +339,6 @@ router.put('/goal_names', function (req, res, next) {
     // console.log(req.body)
     let scheduler = new Scheduler()
     scheduler.get_goal_names(filter).then((goal_names) => {
-        console.log(goals)
         res.status(200).json({
             goal_names: goal_names
         })
