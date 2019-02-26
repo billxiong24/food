@@ -180,7 +180,10 @@ class Scheduler extends CRUD {
         let end_time
         let man_line_shrt_name
         let query
-        if(raw_start_time ===null){
+        console.log(raw_start_time)
+        console.log(raw_end_time)
+        console.log(raw_man_line_shrt_name)
+        if(raw_start_time === null){
             start_time = 0
         }else{
             start_time = new Date(raw_start_time).getTime()
