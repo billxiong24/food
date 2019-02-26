@@ -24,8 +24,19 @@ class Scheduler extends CRUD {
     }
 
     set_enable(id, enable_status){
-        let success = false
-        return success
+        var that = this;
+        // console.log(filter)
+        let query = `UPDATE manufacturing_goal
+        SET enabled = ${enable_status}
+        WHERE id = ${id}
+        `
+        return db.execSingleQuery(query, [])
+        .then(function(res){
+            return true
+        })
+        .catch(function(error){
+            return false
+        })
     }
 
     get_goal_names(filter){

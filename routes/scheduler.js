@@ -280,27 +280,16 @@ router.put('/set_enable', function (req, res, next) {
     // console.log(id)
     // console.log(req.body)
     let enable_status = req.body.enable_status
-    let success = scheduler.set_enable(id, enable_status)
-    console.log(success)
-    var enableCount = 0;
-    for (var i = 0; i < dummySchedulerData.goals.length; i++) {
-        if (dummySchedulerData.goals[i].id == id) {
-            dummySchedulerData.goals[i].enabled = enable_status
-            enableCount = enableCount + 1
+    let scheduler = new Scheduler()
+    scheduler.set_enable(id, enable_status).then((success) => {
+        if(success){
+            res.status(200).json({
+            })
+        }else{
+            res.status(400).json({
+                error:"bad request"
+            }) 
         }
-    }
-    if (enableCount == 0) {
-        return res.status(400).json({
-            error: "id doest exist",
-        })
-    }
-    if (enableCount > 1) {
-        return res.status(500).json({
-            error: "multiple goal with the same id",
-        })
-    }
-    return res.status(200).json({
-    
     })
 });
 
