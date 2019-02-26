@@ -136,7 +136,6 @@ class SKUsPage extends Component {
   }
 
   onExportClick = () => {
-    console.log("EXPORTING FROM SKUSSSSSS");
     axios.post(common.hostname + 'manufacturing_goals/exported_file', {
       data: this.props.items.map((sku) => ({
         id: sku.id,
@@ -156,7 +155,6 @@ class SKUsPage extends Component {
       type: "sku"
     })
       .then((response) => {
-          console.log(response);
         FileDownload(response.data, 'skus.csv');
       })
       .catch(err => {

@@ -32,9 +32,6 @@ export default function ingredientReducer(state = initialState, action) {
       let filters = state.filters.filter((el)=>{
         return el.id !== action.filter_id
       })
-      console.log("ING ADD FILTER")
-      console.log(filters)
-      console.log(action.data)
       return Object.assign({}, state, {
         filters: [
           ...filters,
@@ -42,18 +39,12 @@ export default function ingredientReducer(state = initialState, action) {
         ]
       });
     case ING_REMOVE_FILTER:
-      console.log("filter delete reducer")
-      console.log(state.filters)
       return Object.assign({}, state, {
         filters: state.filters.filter((el)=>{
-          console.log(el.id)
-          console.log(action.filter_id)
           return el.id !== action.filter_id
         })
       });
     case ING_SEARCH:
-      console.log("ING_SEARCH")
-      console.log(action)
       let items = action.data
       let row_count = 0
       let offset = action.offset
@@ -64,8 +55,6 @@ export default function ingredientReducer(state = initialState, action) {
         end = !(state.limit + 1 == items.length)
         row_count = items[0].row_count
       }
-      console.log(row_count)
-      console.log("Full:"+action.full)
       let full = action.full
       if(!full){
         items = items.slice(0,state.limit)
@@ -82,15 +71,12 @@ export default function ingredientReducer(state = initialState, action) {
         sortby: action.data
       });
     case ING_SET_FILTER_TYPE:
-      console.log("filter type set to " + action.data)
       return Object.assign({}, state, {
         filter_type: action.data
       });
     case ING_ADD_ING:
       return Object.assign({}, state, action.data);
     case ING_GET_SKUS:
-      console.log("ING GET SKUS")
-      console.log(action.data)
       return Object.assign({}, state, {
         skus: action.data.items
       });
@@ -99,20 +85,14 @@ export default function ingredientReducer(state = initialState, action) {
     case ING_DELETE_ING:
       return Object.assign({}, state, action.data);
     case ING_ADD_ERROR:
-      console.log("ING_ADD_ERROR REDUCER")
-      console.log(action.data)
       return Object.assign({}, state, {
         errors: addToList(action.data, state.errors)
       });
     case ING_DELETE_ERROR:
-      console.log("ING_DELETE_ERROR REDUCER")
-      console.log(action.data)
       return Object.assign({}, state, {
         errors: removeFromList(action.data, state.errors)
       });
     case ING_ADD_ING_TO_DEP_REPORT:
-      console.log("ING_ADD_ING_TO_DEP_REPORT REDUCER")
-      console.log(action.data)
       return Object.assign({}, state, {
         ingDependency: addToList(action.data, state.ingDependency)
       });

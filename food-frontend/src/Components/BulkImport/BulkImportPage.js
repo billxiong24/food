@@ -131,9 +131,7 @@ class BulkImportPage extends Component {
             }
         })
             .then((response) => {
-                console.log("RESPONDED FROM BULK IMPORT");
                 if(!response.data.abort){
-                    console.log("NOT ABORTING");
                     this.setState({
                         skuErrors:response.data.errors,
                     })
@@ -156,7 +154,6 @@ class BulkImportPage extends Component {
       }
 
     skuConfirm = () =>{
-        console.log(this.state.skuUpdates)
         axios.post(common.hostname + 'bulk/accept_bulk_import', {
             rows: this.state.skuUpdates,
             type: "sku",
@@ -176,7 +173,6 @@ class BulkImportPage extends Component {
         if (file === undefined ){
             return
         }
-        console.log(file)
         if(!isProductLineCSV(file.name)){
             this.props.pushError(createError("Import Product Line File Name Format: \'product_line*.csv\'"))
             return
@@ -207,7 +203,6 @@ class BulkImportPage extends Component {
       }
 
     productLineConfirm = () =>{
-        console.log(this.state.skuUpdates)
         axios.post(common.hostname + 'bulk/accept_bulk_import', {
             rows: this.state.productLineUpdates,
             type: "productline",
@@ -227,7 +222,6 @@ class BulkImportPage extends Component {
         if (file === undefined ){
             return
         }
-        console.log(file)
         if(!isIngredientCSV(file.name)){
             this.props.pushError(createError("Import Ingredient File Name Format: \'ingredient*.csv\'"))
             return
@@ -235,14 +229,12 @@ class BulkImportPage extends Component {
         var formData = new FormData();
         formData.append("csvfile", file);
         formData.append("type","ingredient")
-        console.log("HEYYYYY")
         axios.post(common.hostname + 'bulk/bulk_import', formData, {
             headers: {
             'Content-Type': 'multipart/form-data'
             }
         })
             .then((response) => {
-                console.log("I GOT A RESPONSE FROM ingredient");
                 if(response.data === null) {
                     this.setState({
                         ingredientErrors:[{
@@ -284,7 +276,6 @@ class BulkImportPage extends Component {
     }
 
       formulaUpload = file => {
-        console.log(file)
         if (file === undefined ){
             return
         }
@@ -301,7 +292,6 @@ class BulkImportPage extends Component {
             }
         })
         .then((response) => {
-            console.log("I GOT A RESPONSE FROM FORMULA");
             if(response.data === null) {
                 this.setState({
                     formulaErrors:[{
@@ -350,8 +340,6 @@ class BulkImportPage extends Component {
     
     render() {
         const { classes } = this.props
-        console.log(this.state)
-        console.log(this.state.skuUpdates.length)
         return (
             <div className={classes.bulk_import_page}>
             <Typography>
@@ -388,7 +376,7 @@ class BulkImportPage extends Component {
                     {
                         this.state.skuUpdates.map((update, index) => (
                             <Card className={classes.card} key={index}>
-                                <CardContent onClick={console.log("")}>
+                                <CardContent>
                                     <Typography className={classes.ingredrient_name} color="textSecondary" gutterBottom>
                                         {update.name}
                                     </Typography>
@@ -435,7 +423,7 @@ class BulkImportPage extends Component {
                     {
                         this.state.formulaUpdates.map((update, index) => (
                             <Card className={classes.card} key={index}>
-                                <CardContent onClick={console.log("")}>
+                                <CardContent>
                                     <Typography className={classes.ingredrient_name} color="textSecondary" gutterBottom>
                                         {update.name}
                                     </Typography>
@@ -482,7 +470,7 @@ class BulkImportPage extends Component {
                     {
                         this.state.ingredientUpdates.map((update, index) => (
                             <Card className={classes.card} key={index}>
-                                <CardContent onClick={console.log("")}>
+                                <CardContent>
                                     <Typography className={classes.ingredrient_name} color="textSecondary" gutterBottom>
                                         {update.name}
                                     </Typography>
@@ -529,7 +517,7 @@ class BulkImportPage extends Component {
                     {
                         this.state.productLineUpdates.map((update, index) => (
                             <Card className={classes.card} key={index}>
-                                <CardContent onClick={console.log("")}>
+                                <CardContent>
                                     <Typography className={classes.ingredrient_name} color="textSecondary" gutterBottom>
                                         {update.name}
                                     </Typography>

@@ -63,7 +63,6 @@ class IngredientSKUList extends Component {
 
     render() {
         const { classes, skus } = this.props
-        console.log(skus)
         return (
             <div>
                 {
@@ -72,7 +71,7 @@ class IngredientSKUList extends Component {
                         <CardActionArea
                         className = {classes.cardAction}
                         >
-                        <CardContent onClick={console.log("")}>
+                        <CardContent>
                             <Typography className={classes.ingredrient_name} color="textSecondary" gutterBottom>
                                 {item.name + ":" + item.unit_size + "*" + item.count_per_case }
                             </Typography>

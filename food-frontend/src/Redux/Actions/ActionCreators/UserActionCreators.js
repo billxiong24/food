@@ -188,7 +188,6 @@ export const userSearch = (user) => {
 
 export const userUpdate = (user) => {
   return (dispatch) => {
-    console.log(user);
     return axios.put(hostname + 'users/update/' + user.id, user)
     .then((response) => {
       dispatch({
@@ -200,7 +199,6 @@ export const userUpdate = (user) => {
       })
     })
     .catch((err) => {
-      console.log(err);
       if (err.response.status === 400) {
         dispatch({
           type: user_actions.USER_UPDATE,

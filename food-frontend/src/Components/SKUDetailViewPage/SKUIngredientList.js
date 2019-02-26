@@ -80,7 +80,6 @@ class SKUIngredientList extends Component {
         this.props.delete(item)
     }
     formulaOnClick= (item) =>{
-        console.log(item);
         this.props.navigateToFormula(item, this.props.history);
     }
     render() {

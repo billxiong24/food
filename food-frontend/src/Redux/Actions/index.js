@@ -197,11 +197,6 @@ export const skuRemoveFilter = (filter) => {
 }
 
 export const skuSearch = (offset) => {
-  console.log("SKU_SEARCH ACTION CREATOR")
-  console.log(store.getState().skus.filters)
-  console.log(labels.skus.sort_by_map[store.getState().skus.sortby])
-  console.log(store.getState().skus.limit)
-  console.log(store.getState().skus.offset)
   let params;
   let full = store.getState().skus.full
   if(offset === undefined){
@@ -581,13 +576,11 @@ export const formulaSearch = (offset) => {
 }
 
 export const formulaDelete = (form_id) => {
-      console.log(form_id);
     return (dispatch) => {
       return axios.delete(hostname + 'formula/'+form_id, {
         
       })
       .then(response => {
-          console.log(response);
         dispatch({
           type: FORMULA_DELETE_FORMULA,
           data: response.data
@@ -669,10 +662,6 @@ export const ingRemoveFilter = (filter_id) => {
 }
 
 export const ingSearch = (offset) => {
-  console.log("ING SEARCH ACTION CREATOR")
-  console.log(labels.ingredients.sort_by_map[store.getState().ingredients.sortby])
-  console.log(store.getState().ingredients.limit)
-  console.log(store.getState().ingredients.offset)
   let params;
   let full = store.getState().ingredients.full
   if(offset === undefined){
@@ -819,7 +808,6 @@ export const ingGetSkus = (ing) => {
       ingredients: [],
       prodlines: [],
     }
-    console.log(params)
     return axios.get(hostname + 'sku/search', {
       params
     })
@@ -907,7 +895,6 @@ export const ingDeleteIng = (ing) => {
 
 // Need to do something, probably involved with search
 export const ingAddError = (err) => {
-  console.log("ING_ADD_ERROR ACTION CREATOR")
   return (dispatch) => {
     return dispatch({
       type: ING_ADD_ERROR,
@@ -917,7 +904,6 @@ export const ingAddError = (err) => {
 }
 
 export const ingDeleteError = (err) => {
-  console.log("ING_DELETE_ERROR ACTION CREATOR")
   return (dispatch) => {
     return dispatch({
       type: ING_DELETE_ERROR,

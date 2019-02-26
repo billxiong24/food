@@ -66,7 +66,6 @@ class SKUList extends Component {
   }
 
   onClick = (item) => {
-    console.log(item)
     this.props.setSku(item)
   }
 

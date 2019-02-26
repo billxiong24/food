@@ -23,15 +23,10 @@ const initState = {};
                 skus: action.data
             });
         case FORMULA_DET_DELETE_INGREDIENTS: 
-            console.log(state.ingredients);
-            console.log(action.data);
             return Object.assign({}, state, {
                 ingredients: removeFromList(action.data, state.ingredients)
             });
         case FORMULA_DET_ADD_INGREDIENTS:
-            console.log("add ingredients formla");
-            console.log(state.ingredients);
-            console.log(action.data);
             return Object.assign({}, state, {
                 ingredients: addToList(action.data, state.ingredients)
             });
@@ -73,29 +68,23 @@ const initState = {};
                 id: action.data.formula.id
             });
         case FORMULA_DET_ADD_ERROR:
-            console.log(action.data)
             return Object.assign({}, state, {
               errors: addToList(action.data, state.errors)
             });
         case FORMULA_DET_DELETE_ERROR:
-            console.log("formula_DET_DELETE_ERROR REDUCER")
-            console.log(action.data)
             return Object.assign({}, state, {
               errors: removeFromList(action.data, state.errors)
             });
         case FORMULA_DET_SET_VALID:
-            console.log(action.data)
             return Object.assign({}, state, {
               valid: action.data
             });
         case FORMULA_DET_SET_EDITING:
-            console.log(action.data)
             return Object.assign({}, state, {
                 editing: action.data,
                 made_formula: action.data
             });
         case FORMULA_DET_SET_NEW:
-            console.log(action.data)
             return Object.assign({}, state, {
                 new: action.data
             });

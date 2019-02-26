@@ -69,25 +69,20 @@ class FilterItem extends Component {
 
     delete(e, index){
         e.preventDefault();
-        console.log("handled filter delete on click")
-        console.log("onClick.index:" + index)
         this.props.deleteFilter(index)
       }
 
     mouseOut() {
-        console.log("Mouse out!!!");
         this.setState({focus: false});
       }
       
       mouseOver() {
-        console.log("Mouse over!!!");
         this.setState({focus: true});
       }
 
     render() {
         const { classes } = this.props;
         const item = this.props.item
-        console.log(item)
         return (
             <div className={classes.filter_container} >
                 <div className={classes.filter_text_container}>

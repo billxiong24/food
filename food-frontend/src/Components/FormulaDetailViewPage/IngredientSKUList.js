@@ -71,12 +71,9 @@ class IngredientSKUList extends Component {
          
     }
     onSkuClick = (item) => {
-        console.log(item);
         this.props.navigateToSku(item, this.props.history);
     }
     deleteItem = (item) => {
-        console.log(this.props.id);
-        console.log(item.id);
         this.props.deleteIngredient(this.props.id, item.id);
     }
 
@@ -90,7 +87,7 @@ class IngredientSKUList extends Component {
                         <CardActionArea
                         className = {classes.cardAction}
                         >
-                        <CardContent onClick={console.log("")}>
+                        <CardContent>
                             <Typography className={classes.ingredrient_name} color="textSecondary" gutterBottom>
                                 {item.name + ":" + item.num+ "*" + item.pkg_size + "  " + "Quantity: " + item.quantity + " " + item.formula_unit}
                             </Typography>
@@ -109,7 +106,7 @@ class IngredientSKUList extends Component {
                         <CardActionArea
                         className = {classes.cardAction}
                         >
-                        <CardContent onClick={console.log("")}>
+                        <CardContent>
                             <Typography className={classes.ingredrient_name} color="textSecondary" gutterBottom>
                                 {item.name + ":" + item.num }
                                 <div>

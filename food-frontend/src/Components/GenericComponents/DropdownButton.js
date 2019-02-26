@@ -52,10 +52,7 @@ class DropdownButton extends Component {
     }
 
     resetThenSet = (id, key) => {
-        console.log(key)
-        console.log(this.state)
         let temp = this.state[key];
-        console.log(temp)
         for (var i = 0; i < temp.length; i++) {
             temp[i].selected = false;
        }

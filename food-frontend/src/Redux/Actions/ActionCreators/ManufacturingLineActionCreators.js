@@ -43,7 +43,6 @@ export const manlineCreate = (manline) => {
         })
       })
       .catch((err) => {
-        console.log(err);
         if (err.response.status === 409) {
           dispatch({
             type: manline_actions.MANLINE_CREATE,
@@ -177,7 +176,5 @@ export const manlineUpdateMappings = () => {
       if(values[key] === 1) none.push(key);
       else all.push(key);
     });
-    console.log(none);
-    console.log(all);
   }
 }

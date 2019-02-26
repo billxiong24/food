@@ -42,16 +42,10 @@ class PageSelector extends Component {
     }
 
     decreaseOffset = () => {
-        console.log("PAGE SELECTOR")
-        console.log(this.props.offset)
-        console.log(this.props.limit)
         this.props.search(this.props.offset - this.props.limit)
     }
 
     increaseOffset = () => {
-        console.log("PAGE SELECTOR")
-        console.log(this.props.offset)
-        console.log(this.props.limit)
         this.props.search(this.props.offset + this.props.limit)
     }
 

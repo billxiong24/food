@@ -75,8 +75,6 @@ export function removeFromList(item,list){
 }
 
 export function findDifferences(newlist,original){
-  console.log(newlist)
-  console.log(original)
   var originalSet = new Set();
   for(var i = 0; i < original.length; i++){
     originalSet.add(original[i].id)
@@ -106,16 +104,12 @@ export function findDifferences(newlist,original){
 }
 
 function removeListFromList(listToRemove, original){
-  console.log("REMOVEFROMLIST")
-  console.log(listToRemove)
-  console.log(original)
   var set = new Set();
   for(var i = 0; i < listToRemove.length; i++){
     set.add(listToRemove[i].id)
   }
 
   let newlist = original.filter(item => !set.has(item.id))
-  console.log(newlist)
   return newlist
 }
 export function isInteger(string){

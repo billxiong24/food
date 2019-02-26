@@ -35,9 +35,6 @@ export default function skuReducer(state = initialState, action) {
       let filters = state.filters.filter((el)=>{
         return el.id !== action.filter_id
       })
-      console.log("SKU_ADD_FILTER REDUCER")
-      console.log(filters)
-      console.log(action.data)
       return Object.assign({}, state, {
         filters: [
           ...filters,
@@ -45,20 +42,12 @@ export default function skuReducer(state = initialState, action) {
         ]
       });
     case SKU_REMOVE_FILTER:
-      console.log("SKU_REMOVE_FILTER REDUCER")
-      console.log(state.filters)
-      console.log(action.data)
       return Object.assign({}, state, {
         filters: state.filters.filter((el)=>{
-          console.log(el.id)
-          console.log(action.data)
           return el.id !== action.data
         })
       });
     case SKU_SEARCH:
-      console.log("SKU_SEARCH")
-      console.log(action.data.items)
-      console.log(action)
       let items = action.data.items
       let row_count = 0
       let offset = action.offset
@@ -66,14 +55,9 @@ export default function skuReducer(state = initialState, action) {
       if (items === undefined || items.length == 0) {
           end = true
       }else{
-        console.log("END STUFF")
-        console.log(state.limit)
-        console.log(items.length)
         end = !(state.limit + 1 == items.length)
         row_count = items[0].row_count
       }
-      console.log(row_count)
-      console.log("Full:"+action.full)
       let full = action.full
       if(!full){
         items = items.slice(0,state.limit)
@@ -102,31 +86,22 @@ export default function skuReducer(state = initialState, action) {
     case SKU_DELETE_SKU:
       return Object.assign({}, state, action.data);
     case SKU_ING_NAME_AUTOCOMPLETE:
-      console.log("SKU_ING_NAME_AUTOCOMPLETE REDUCER")
-      console.log(action.data)
       return Object.assign({}, state, {
         ingredient_names: action.data
       });
     case SKU_PRODUCT_LINE_NAME_AUTOCOMPLETE:
-      console.log("SKU_PRODUCT_LINE_NAME_AUTOCOMPLETE REDUCER")
-      console.log(action.data)
       return Object.assign({}, state, {
         product_line_names: action.data.productLines
       }); 
     case SKU_SET_FILTER_TYPE:
-      console.log("SKU filter type set to " + action.data)
       return Object.assign({}, state, {
         filter_type: action.data
       });
     case SKU_ADD_ERROR:
-      console.log("SKU_ADD_ERROR REDUCER")
-      console.log(action.data)
       return Object.assign({}, state, {
         errors: addToList(action.data, state.errors)
       });
     case SKU_DELETE_ERROR:
-      console.log("SKU_DELETE_ERROR REDUCER")
-      console.log(action.data)
       return Object.assign({}, state, {
         errors: removeFromList(action.data, state.errors)
       });
