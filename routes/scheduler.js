@@ -391,9 +391,9 @@ router.put('/schedule', function (req, res, next) {
         
     // })
     let scheduler = new Scheduler()
-    scheduler.set_schedule(id,start_time,end_time,man_line_shrt_name).then((success) => {
+    scheduler.set_schedule(id,start_time,end_time,man_line_num).then((success) => {
         res.status(200).json({
-            
+
         })
     })
 });
