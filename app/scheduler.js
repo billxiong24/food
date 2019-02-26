@@ -48,6 +48,14 @@ class Scheduler extends CRUD {
         return success
     }
 
+    get_date_string(date){
+        return `${date.getYear()}-${date.getMonth()}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
+    }
+
+    get_date_string_day(date){
+        return `${date.getYear()}-${date.getMonth()}-${date.getDate()}`
+    }
+
     get_goals(){
         let goals = []
         let query = `SELECT
@@ -57,11 +65,12 @@ class Scheduler extends CRUD {
         manufacturing_goal_sku.start_time,
         manufacturing_goal_sku.end_time,
         manufacturing_goal_sku.man_line_id,
-        manufacturing_goal.name,
+        manufacturing_goal.name as mg_name,
         manufacturing_goal.user_id,
         manufacturing_goal.deadline,
         enabled,
         manufacturing_goal.name,
+        sku.name as sku_name,
         sku.num,
         sku.case_upc,
         sku.unit_upc,
@@ -71,10 +80,12 @@ class Scheduler extends CRUD {
         sku.comments,
         sku.formula_id,
         sku.formula_scale,
-        sku.man_rate
+        sku.man_rate,
+        manufacturing_line.shortname
         FROM manufacturing_goal_sku 
         INNER JOIN manufacturing_goal on manufacturing_goal_sku.mg_id= manufacturing_goal.id  
-        INNER JOIN sku ON manufacturing_goal_sku.sku_id=sku.id 
+        INNER JOIN sku ON manufacturing_goal_sku.sku_id=sku.id
+        INNER JOIN manufacturing_line ON manufacturing_goal_sku.man_line_id=manufacturing_line.id 
         WHERE mg_id IN
         (
         SELECT mg_id
@@ -83,7 +94,46 @@ class Scheduler extends CRUD {
         )`
         return db.execSingleQuery(query, [])
         .then(function(res){
-            console.log(res)
+            let goals_id_map = {}
+            let goals = []
+            res.rows.forEach(function(row){
+                let activity = {
+                    "name": row.mg_name,
+                    "case_upc": row.case_upc,
+                    "num": row.sku_id,
+                    "unit_upc": row.unit_upc,
+                    "unit_size": row.unit_size,
+                    "count_per_case": row.count_per_case,
+                    "prd_line": row.prd_line,
+                    "comments": row.comments,
+                    "cases_needed": row.quantity,
+                    "mfg_rate": row.man_rate,
+                    "start_time": get_date_string(new Date(row.start_time)),
+                    "end_time": get_date_string(new Date(row.end_time)),
+                    "man_line_num": "BMP1"
+                }
+                let goal = {
+                    "name": row.mg_name,
+                    "activities": [
+                       activity
+                    ],
+                    "enabled": row.enabled,
+                    "deadline": get_date_string_day(new Date(row.start_time)),
+                    "author": row.user_id,
+                    "id": row.mg_id
+                }
+                if(typeof(goals_id_map[goal.id]) === "undefined"){
+                    goals_id_map[goal.id] = goal
+                }else{
+                    goals_id_map[goal.id].activities.push(goal)
+                }
+            })
+            for (var id in goals_id_map) {
+                if (goals_id_map.hasOwnProperty(id)) {
+                    goals.push(goals_id_map[id])
+                }
+            }
+            console.log(goals)
             return res
         })
     }
