@@ -31,7 +31,7 @@ class Scheduler extends CRUD {
     get_goal_names(filter){
         var that = this;
         let goal_names = []
-        let query = `SELECT
+        let query = `SELECT DISTINCT
         manufacturing_goal.name
         FROM manufacturing_goal 
         WHERE name LIKE \'%${filter}%\'
@@ -46,8 +46,26 @@ class Scheduler extends CRUD {
     }
 
     get_goal_usernames(filter){
-        let goal_usernames = []
-        return goal_usernames
+        var that = this;
+        let goal_user_names = []
+        let query = `SELECT DISTINCT
+        *
+                FROM (
+                    SELECT 
+                    users.uname as name
+                    FROM
+                    manufacturing_goal
+                    INNER JOIN users on manufacturing_goal.user_id = users.id
+                ) AS foo
+        WHERE name LIKE \'%${filter}%\'
+        `
+        return db.execSingleQuery(query, [])
+        .then(function(res){
+            res.rows.forEach(function(row){
+                goal_user_names.push(row.name)
+            })
+            return goal_user_names
+        })
     }
 
     get_filtered_goals(filter, filter_type_index){
