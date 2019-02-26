@@ -47,6 +47,7 @@ class Scheduler extends CRUD {
 
     get_goal_usernames(filter){
         var that = this;
+        console.log(filter)
         let goal_user_names = []
         let query = `SELECT DISTINCT
         *
