@@ -140,6 +140,7 @@ class SKUIngredientList extends Component {
                 
             </Card>
             <div>
+            ===== MANUFACTURING LINES ======
             {
                 manufacturing_lines.map((item, index) => (
                     <Card className={classes.card} key={index}>
