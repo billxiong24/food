@@ -1,4 +1,5 @@
 import labels from "../../Resources/labels";
+import { initialSchedulerStore } from "../../Components/Scheduler/DataConverter";
 
 export const InitialStore = {
   // For now, only persistent data about users is who is actually logged in if there is someone logged in
@@ -151,6 +152,7 @@ export const InitialStore = {
   bulk_import:{
     errors:[]
   },
+  scheduler: initialSchedulerStore,
   manLine: {
     manLines: [],
     errMsg: null,

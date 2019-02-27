@@ -109,9 +109,16 @@ function renderSuggestion(suggestion, { query, isHighlighted }) {
             </strong>
           ),
         )}
-        <span style={id}>
-              {" (" +suggestion.id +")"}
-        </span>
+        {suggestion.id ? (
+            <span style={id}>
+                {" (" +suggestion.id +")"}
+            </span>
+          ) : (
+            <span style={id}>
+                {""}
+            </span>
+          )
+        }
         
 
       </div>

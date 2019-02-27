@@ -14,6 +14,7 @@ var productlineRouter = require('./routes/productline');
 var skuRouter = require('./routes/sku');
 var mgRouter = require('./routes/manufacturing_goals');
 var bulkRouter = require('./routes/bulk');
+var schedulerRouter = require('./routes/scheduler');
 var formulaRouter = require('./routes/formula');
 var mlRouter = require('./routes/manufacturing_lines');
 
@@ -31,7 +32,7 @@ var app = express();
 app.use(cors({
   credentials: true,
   origin: function(origin, callback) {
-    if (origin == domain || origin == 'http://localhost:3000' || origin === undefined) {
+    if (origin == "https://" + domain || origin == 'http://localhost:3000' || origin === undefined) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
@@ -57,7 +58,10 @@ app.use(session({
   secret: process.env.SESSION_SECRET,
   store: new (require('connect-pg-simple')(session))(),
     //change this later
+  resave: false,
+  saveUninitialized: false,
   cookie: { secure: encrypt, maxAge: 24*60*60*1000 }
+
 }));
 
 // Check for sessions
@@ -76,6 +80,7 @@ app.use('/productline', productlineRouter);
 app.use('/sku', skuRouter);
 app.use('/manufacturing_goals', mgRouter);
 app.use('/bulk', bulkRouter);
+app.use('/scheduler',schedulerRouter)
 app.use('/formula', formulaRouter);
 app.use('/manufacturing_line', mlRouter);
 

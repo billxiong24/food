@@ -273,7 +273,7 @@ class ManufacturingLinesPage extends Component {
       <div>
       <div className={classes.ingredients_list}>
           <div className={classes.top_section}>
-            <div className={classes.search_bar}>
+            {/* <div className={classes.search_bar}>
               <TextField
                 id="outlined-search"
                 label="Search Manufacturing Lines"
@@ -295,7 +295,7 @@ class ManufacturingLinesPage extends Component {
               >
                 Search
               </Fab>
-            </div>
+            </div> */}
             <div className={classes.query_button}>
               <Fab
                 variant="extended"

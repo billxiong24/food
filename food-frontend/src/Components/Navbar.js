@@ -110,6 +110,7 @@ class Navbar extends React.Component {
             <Tab value={6} className={cookies.admin === 'true' ? '' : classes.hidden} label="Manage Users" component={Link} to={'/users'} />
             <Tab value={7} className={cookies.admin === 'true' ? '' : classes.hidden} label="Manufacturing Lines" component={Link} to={'/manufacturing_lines'} />
             <Tab value={8} className={cookies.user ? '' : classes.hidden} label="Log Out" component={Link} to={'/logout'} />
+            <Tab value={9} label="Scheduler" component={Link} to={'/scheduler'} />         
           </Tabs>
         </AppBar>
       </div>

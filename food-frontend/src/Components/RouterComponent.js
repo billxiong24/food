@@ -19,6 +19,8 @@ import IngredientDetailViewPage from './IngredientDetailViewPage/IngredientDetai
 import FormulaDetailViewPage from './FormulaDetailViewPage/FormulaDetailViewPage';
 import SKUDetailViewPage from './SKUDetailViewPage/SKUDetailViewPage'
 import BulkImportPage from './BulkImport/BulkImportPage'
+import common from '../Resources/common';
+import Scheduler from './Scheduler/Scheduler';
 import { withCookies } from 'react-cookie';
 import PrivacyPage from './PrivacyPage/PrivacyPage';
 import UserAdminPage from './UserAdminPage/UserAdminPage';
@@ -60,6 +62,7 @@ class RouterComponent extends Component {
             <PrivateRoute exact={true} path="/users" component={UserAdminPage} 
               block={cookies.admin === 'false'} altPath={landingPage}/>
             <PrivateRoute exact={true} path="/logout" component={LogoutPage} />
+            <PrivateRoute exact={true} path="/scheduler" component={Scheduler} />
             <PrivateRoute exact={true} path="/manufacturing_goals/calculations" component={CalculatorPage}
               block={!manGoals.activeGoal.id} altPath={landingPage} />
             <PrivateRoute exact={true} path="/manufacturing_lines" component={ManufacturingLinesPage}

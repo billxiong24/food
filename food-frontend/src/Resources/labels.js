@@ -100,7 +100,83 @@ export default {
       ADMIN:'admin'
     },
     colors:{
-        primaryColor:'#6F3AD3'
+        primaryColor:'#6F3AD3',
+        warningColor:'#FFFF99',
+        infoColor:'#DCDCDC',
+        errorColor:'#F08080',
+        grayText:'#696969',
+        yellow:"#CCCC00"
+    },
+    common_styles:{
+        simple_list_text: {
+            fontSize: 14,
+            float: 'right',
+            fontFamily: 'Open Sans',
+            fontWeight: 400,
+        },
+        divider:{
+            backgroundColor:"696969",
+            height:"1px",
+            width: "100%",
+            display: "block"
+        },
+      info_box:{
+        backgroundColor:"#DCDCDC",
+        textAlign: "left",
+        color:"#696969",
+        borderRadius:1,
+        padding:5,
+        paddingRight: "10px",
+        paddingTop:"5px",
+        paddingBottom:"5px",
+        marginBottom:"2px",
+        marginTop:"2px",
+        borderColor:"#696969",
+        border: "solid black 1px",
+        borderSize:1
+      },
+      warning_box:{
+          backgroundColor:"#FFFF99",
+          color:"#696969",
+          textAlign: "left",
+          padding:5,
+          borderRadius:1,
+          paddingRight: "10px",
+          paddingTop:"5px",
+          paddingBottom:"5px",
+          marginBottom:"2px",
+          marginTop:"2px",
+          borderColor:"#CCCC00",
+          border: "solid black 1px",
+          borderSize:1
+      },
+      error_box:{
+          backgroundColor:"#F08080",
+          color:"#696969",
+          textAlign: "left",
+          padding:5,
+          borderRadius:1,
+          paddingRight: "10px",
+          paddingTop:"5px",
+          paddingBottom:"5px",
+          marginBottom:"2px",
+          marginTop:"2px",
+          borderColor:"#B22222",
+          border: "solid black 1px",
+          borderSize:1
+      },
+      simple_list_title:{
+        fontSize: 22,
+        float: 'right',
+        fontFamily: 'Open Sans',
+        fontWeight: 700,
+        margin:10,
+        marginBottom:0
+        },
+        small_list:{
+            marginTop: "6px",
+            margin:5
+        }
     }
   }
 
