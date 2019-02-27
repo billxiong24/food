@@ -137,7 +137,7 @@ class Scheduler extends Component {
 
     componentWillMount() {
         this.props.get_goals()
-        this.props.set_filter("S")
+        this.props.set_filter("")
         this.props.set_filter_type_index(1)
         this.props.get_goal_names()
         this.props.get_goal_user_names()

@@ -160,6 +160,7 @@ class GoalList extends Component {
                             <Checkbox
                                     checked={item.enabled}
                                     className={classes.checkbox}
+                                    onClick={() => { this.onClick(item) }}
                                 />
                             </ListItemSecondaryAction>
     
