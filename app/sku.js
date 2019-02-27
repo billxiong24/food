@@ -49,6 +49,43 @@ class SKU extends CRUD {
         return Promise.reject("No valid name or num provided.");
     }
 
+    deleteManLines(id, manlines) {
+        //let arr = [];
+        //for(let i = 0; i < manlines.length; i++) {
+            //let obj = {};
+            //arr.push({
+                //manufacturing_line_id: manlines[i],
+                //sku_id: id
+            //});
+        //}
+
+        let delQuery = squel.delete()
+        .from('manufacturing_line_sku');
+        let expr = squel.expr();
+        for(let i = 0; i < manlines.length; i++) {
+            expr = expr.or("sku_id = ? AND manufacturing_line_id = ?", id, manlines[i]);
+        }
+
+
+        delQuery = delQuery.where(expr).toString();
+        console.log(delQuery);
+        return db.execSingleQuery(delQuery, []);
+    }
+    addManLines(id, manlines) {
+        let arr = [];
+        for(let i = 0; i < manlines.length; i++) {
+            let obj = {};
+            arr.push({
+                manufacturing_line_id: manlines[i],
+                sku_id: id
+            });
+        }
+
+        let query = QueryGenerator.genInsConflictQuery(arr, 'manufacturing_line_sku', 'ON CONFLICT DO NOTHING').toString();
+        console.log(query);
+        return db.execSingleQuery(query, []);
+    }
+
     getIngredients(id) {
         const ing = new Ingredient();
         return ing.search([], [id], new Filter());

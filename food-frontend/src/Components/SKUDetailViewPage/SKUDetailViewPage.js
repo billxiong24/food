@@ -124,22 +124,6 @@ class SKUDetailViewPage extends Component {
         })
     }
 
-    onExportClick = () => {
-        axios.post(common.hostname + 'manufacturing_goals/exported_file', {
-            data: this.props.current_ingredients.map((ing) => ({
-                sku_num:this.state.num,
-                ingred_num:ing.name,
-                quantity: ing.quantity
-              })),
-          format: "csv",
-        })
-          .then((response) => {
-            FileDownload(response.data, 'formulas.csv');
-          })
-          .catch(err => {
-            console.log(err);
-          })
-      }
 
     
 
@@ -167,8 +151,9 @@ class SKUDetailViewPage extends Component {
         }
         let errors = getSkuErrors(sku)
         if(errors.length == 0){
-            console.log("SKUDETAILVIEW")
-            this.props.update(sku)
+            console.log("manu FACTURING LINES ON SAVE")
+            console.log(this.props.manufacturing_lines);
+            this.props.update(sku, this.props.manufacturing_lines);
         }else{
             for (var i = 0; i < errors.length; i++) {
                 this.props.pushError(errors[i])
@@ -179,7 +164,6 @@ class SKUDetailViewPage extends Component {
 
     onAddClick = () => {
         if(!this.props.current_formula) {
-            console.log("THIS WAS AN ERRORRRRR IN NO FORMUAL");
             let formErrors = skuCheckFormula(this.props.current_formula);
             if(formErrors.length == 0){
                 for (var i = 0; i < formErrors.length; i++) {
@@ -188,8 +172,6 @@ class SKUDetailViewPage extends Component {
             }
             return;
         }
-        console.log("LINES");
-        console.log(this.props.manufacturing_lines);
         const sku = {
             name:this.state.name,
             case_upc:this.state.case_upc,
@@ -373,15 +355,6 @@ class SKUDetailViewPage extends Component {
                         <div></div>
                     }
                     {
-                        (!newValue && !editing)?
-                        <Button 
-                            className={classes.button} 
-                            editing={editing}
-                            onClick = {this.onExportClick}
-                        >
-                            EXPORT TO CSV
-                        </Button>
-                        :
                         <div></div>
                     }
                 </div>
@@ -440,10 +413,11 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch, ownProps) => {
     return {
-        update : (sku) =>
+        update : (sku, lines) =>
 
         {
-            Promise.resolve(dispatch(skuDetUpdateSku(sku))) // dispatch
+            let line_ids = lines.map(el => el.id);
+            Promise.resolve(dispatch(skuDetUpdateSku(sku, line_ids))) // dispatch
                 .then(function (response) {
                 return response;
                 })
