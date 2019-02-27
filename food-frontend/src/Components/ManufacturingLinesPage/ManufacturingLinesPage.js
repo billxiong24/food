@@ -141,7 +141,7 @@ class ManufacturingLinesPage extends Component {
   }
 
   handleQuery(){
-    this.props.manlineSearch(this.state.query);
+    return this.props.manlineSearch(this.state.query);
   }
 
   handleClickNewOpen = () => {
