@@ -86,6 +86,32 @@ export const skuDetGetManLines = (sku_id) => {
       });
     }
 }
+
+export const skuDetDeleteManLine = (sku_id,  item) => {
+    console.log("deleting a mfnuactinglne");
+    console.log(item.id);
+    return (dispatch) => {
+      return axios.delete(hostname + 'sku/' + sku_id + '/manufacturing_lines', {
+          data: {
+              man_lines: [item.id]
+          }
+      })
+      .then(response => {
+          console.log(response);
+              dispatch({
+                  type: SKU_DET_ADD_ERROR,
+                  data: createError("Successfully deleted line.")
+              })
+      })
+      .catch(error => {
+              dispatch({
+                  type: SKU_DET_ADD_ERROR,
+                  data: createError("Something was wrong. Check your input.")
+              })
+      });
+    }
+}
+
 export const skuDetGetManLinesAuto = (name) => {
     return (dispatch) => {
         let params = {
@@ -152,7 +178,7 @@ export const skuDetAddIng = (sku,ingredients) => {
     }
   }
 //  PUT /sku/:id
-export const skuDetUpdateSku = (sku) => {
+export const skuDetUpdateSku = (sku, manufacturing_lines) => {
     // [{ingred_num: 1, quantity: 1}, {ingred_num: 2, quantity: 2}]
     
     return (dispatch) => {
@@ -160,10 +186,15 @@ export const skuDetUpdateSku = (sku) => {
         ...sku
       })
       .then(response => {
-        dispatch({
-          type: SKU_DET_UPDATE_SKU,
-          data: response.data
-        })
+          axios.post(hostname + 'sku/' + sku.id + '/manufacturing_lines', {
+              man_lines: manufacturing_lines
+          })
+          .then(function(re) {
+                dispatch({
+                  type: SKU_DET_UPDATE_SKU,
+                  data: response.data
+                })
+          })
       })
       .catch(error => {
         let message;
@@ -300,6 +331,7 @@ export const skuDetGetProductLine = ()  => {
     for(let i = 0; i < sku.man_lines.length; i++) {
         sku.man_lines[i] = sku.man_lines[i].id;
     }
+      console.log(sku.man_lines);
     return (dispatch) => {
       return axios.post(hostname + 'sku/', {
         ...sku

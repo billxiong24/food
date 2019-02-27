@@ -5,12 +5,15 @@ import IntegrationAutosuggest2 from '../GenericComponents/IntegrationAutosuggest
 import labels from '../../Resources/labels';
 import { ingAddFilter, ingSearch, ingGetSkus } from '../../Redux/Actions';
 import { skuFormatter } from '../../Scripts/Formatters';
-import { skuDetGetManLinesAuto, skuDetSetLines, skuDetGetFormulaNames,  skuDetGetIng, skuDetIngAutocomplete, skuDetAddIngLocal , skuDetSetFormula } from '../../Redux/Actions/ActionCreators/SKUDetailsActionCreators';
+import { skuDetDeleteManLine, skuDetGetManLinesAuto, skuDetSetLines, skuDetGetFormulaNames,  skuDetGetIng, skuDetIngAutocomplete, skuDetAddIngLocal , skuDetSetFormula } from '../../Redux/Actions/ActionCreators/SKUDetailsActionCreators';
 import TextField from '@material-ui/core/TextField';
 import SimpleCard from '../GenericComponents/SimpleCard';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
+import { CardActionArea } from '@material-ui/core';
+import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
 
 const styles = {
     autosuggest:{
@@ -74,6 +77,13 @@ class SKUDetailIngredientAutocomplete extends Component {
     onLineChange = (input) => {
         this.props.getLines(input)
     }
+    deleteManLine(item) {
+        console.log("deeteteletleing");
+        console.log(item);
+        console.log(this.props.id);
+
+        this.props.deleteLine(this.props.id, item);
+    }
 
     render() {
         const { classes, current_formula, formula_names, manufacturing_lines, manline_suggestions, filter_type, editing } = this.props
@@ -110,14 +120,18 @@ class SKUDetailIngredientAutocomplete extends Component {
             {
                 manufacturing_lines.map((item, index) => (
                     <Card className={classes.card} key={index}>
-                        <CardContent >
-                                <div>
-                                    {item.name}
-                                </div>
-                                <div>
-                                    {item.shortname}
-                                </div>
+                        <CardActionArea
+                        className = {classes.cardAction}
+                        >
+                        <CardContent>
+                            <Typography className={classes.ingredrient_name} color="textSecondary" gutterBottom>
+                    {item.shortname}
+                            </Typography>
                         </CardContent>
+                        </CardActionArea>
+                            <Button onClick={() => this.deleteManLine(item)}>
+                                Delete
+                            </Button>
                     </Card>
 
                 ))
@@ -139,6 +153,7 @@ const mapStateToProps = state => {
         manufacturing_lines: state.sku_details.manufacturing_lines,
         manline_suggestions: state.sku_details.manline_suggestions,
         current_formula: state.sku_details.current_formula,
+        id: state.sku_details.id
     };
 };
 
@@ -148,7 +163,8 @@ const mapDispatchToProps = dispatch => {
         getFormulaNames: name => dispatch(skuDetGetFormulaNames(name)),
         addForm: form => dispatch(skuDetSetFormula(form)),
         addLine: form => dispatch(skuDetSetLines(form)),
-        getLines: name => dispatch(skuDetGetManLinesAuto(name))
+        getLines: name => dispatch(skuDetGetManLinesAuto(name)),
+        deleteLine: (sku_id, item) => dispatch(skuDetDeleteManLine(sku_id, item))
     };
 };
 

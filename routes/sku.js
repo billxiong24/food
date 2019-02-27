@@ -39,6 +39,41 @@ router.get('/:id/ingredients', function(req, res, next) {
     controller.constructGetResponse(res, sku.getIngredients(id));
 });
 
+router.post('/:id/manufacturing_lines', function(req, res, next) {
+    let id = req.params.id;
+    if(isNaN((id))) {
+        return res.status(400).json({
+            error: "Malformed URL."
+        });
+    }
+    console.log(req.body);
+    let lines = Controller.convertParamToArray(req.body.man_lines);
+    const sku = new Sku();
+    const controller = new Controller();
+    controller.constructUpdateResponse(res, sku.addManLines(id, lines));
+});
+
+router.delete('/:id/manufacturing_lines', function(req, res, next) {
+    let id = req.params.id;
+    if(isNaN((id))) {
+        return res.status(400).json({
+            error: "Malformed URL."
+        });
+    }
+
+    console.log(req.body);
+    let lines = Controller.convertParamToArray(req.body.man_lines);
+    if(lines.length === 0) {
+        return res.status(200).json({
+            rowCount: 0
+        });
+    }
+    console.log(req.body);
+    const sku = new Sku();
+    const controller = new Controller();
+    controller.constructDeleteResponse(res, sku.deleteManLines(id, lines));
+});
+
 router.get('/:id/manufacturing_lines', function(req, res, next) {
     let id = req.params.id;
     if(isNaN((id))) {
