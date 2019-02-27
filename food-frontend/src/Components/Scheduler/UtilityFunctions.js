@@ -6,6 +6,7 @@ export function getActivities(goals){
       let {activities, ...goal} = goals[i]
       for(var j = 0; j < activities.length; j++){
         let activity = activities[j]
+        activity.name = `${activity.name}:${activity.unit_size}*${activity.count_per_case}`
         if(typeof(activities_map[activity.num]) === "undefined"){
             activities_map[activity.num] = {
               ...activity,
@@ -350,6 +351,39 @@ export function getActivities(goals){
     return start_moment.format('YYYY-MM-DD HH:mm').replace(" ","T");
     //return "2019-02-19T08:00"
   }
+
+  export function day_start_time_trim(time){
+    //// // // console.log.log(start_time)
+    let time_string = time.replace("T", " ")
+    var time_moment = moment(time_string, "YYYY-MM-DD HH:mm")
+    time_moment.hour(8)
+    time_moment.minute(0)
+    // // // console.log.log(start_moment)
+    return time_moment.format('YYYY-MM-DD HH:mm');
+    //return "2019-02-19T08:00"
+  }
+
+  export function day_end_time_trim(time){
+    //// // // console.log.log(start_time)
+    let time_string = time.replace("T", " ")
+    var time_moment = moment(time_string, "YYYY-MM-DD HH:mm")
+    time_moment.hour(18)
+    time_moment.minute(0)
+    // // // console.log.log(start_moment)
+    return time_moment.format('YYYY-MM-DD HH:mm');
+    //return "2019-02-19T08:00"
+  }
+
+  export function hour_time_trim(time){
+    //// // // console.log.log(start_time)
+    let time_string = time.replace("T", " ")
+    var time_moment = moment(time_string, "YYYY-MM-DD HH:mm")
+    time_moment.minute(0)
+    // // // console.log.log(start_moment)
+    return time_moment.format('YYYY-MM-DD HH:mm');
+    //return "2019-02-19T08:00"
+  }
+
 
   export function calculate_scheduled_time(start_time, end_time){
     //// // // console.log.log(start_time)

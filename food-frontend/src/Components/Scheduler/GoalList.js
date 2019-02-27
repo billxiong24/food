@@ -15,6 +15,7 @@ import { ingDetSetIng, ingDetGetSkus } from '../../Redux/Actions/ActionCreators/
 import labels from '../../Resources/labels';
 import { mapStateToProps, mapDispatchToProps } from './DataConverter';
 import Checkbox from '@material-ui/core/Checkbox';
+import swal from 'sweetalert';
 
 const styles = {
     card: {
@@ -74,13 +75,54 @@ class GoalList extends Component {
         console.log(item)
         //  this.props.setIngredient(item, this.props.history)
         if(item.enabled){
-            if(window.confirm(`Do you want to disable ${item.name} goal`)) {
-                this.props.goal_set_enable(item, !item.enabled)
-            }
+            // if(window.confirm(`Do you want to disable ${item.name} goal`)) {
+            //     this.props.goal_set_enable(item, !item.enabled)
+            // }
+            // swal(`Disable ${item.name}? `, {
+            //     buttons: ["Cancel", "Disable"],
+            //   });
+            // swal({
+            //     button: {
+            //         cancel: {
+            //           text: "Cancel",
+            //           value: null,
+            //           visible: false,
+            //           className: "",
+            //           closeModal: true,
+            //         },
+            //         confirm: {
+            //           text: "OK",
+            //           value: true,
+            //           visible: true,
+            //           className: "",
+            //           closeModal: true
+            //         }
+            //       },
+            //   });
+            swal(`Disable ${item.name}? `, {
+                dangerMode: true,
+                buttons: ["No", "Yes"],
+              })
+              .then((value) => {
+                if(value){
+                    this.props.goal_set_enable(item, !item.enabled)
+                }
+            })
         }else{
-            if(window.confirm(`Do you want to enable ${item.name} goal`)) {
-                this.props.goal_set_enable(item, !item.enabled)
-            }
+            // if(window.confirm(`Do you want to enable ${item.name} goal`)) {
+            //     this.props.goal_set_enable(item, !item.enabled)
+            // }
+            // swal(`Enable ${item.name}? `, {
+            //     buttons: ["Cancel", "Enable"],
+            //   });
+            swal(`Enable ${item.name}? `, {
+                buttons: ["No", "Yes"],
+              })
+            .then((value) => {
+                if(value){
+                    this.props.goal_set_enable(item, !item.enabled)
+                }
+            })
         }
         
     }

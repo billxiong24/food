@@ -559,14 +559,14 @@ export const mapDispatchToProps = (dispatch, ownProps) => {
          setTimeout(() => {
             dispatch(get_goals())
             dispatch(get_filtered_goals(store.getState().scheduler.filter, store.getState().scheduler.filter_type_index))
-         }, 500);
+         }, 600);
       },
       set_activity_schedule: (activity) => {
          dispatch(set_activity_schedule(activity))
          setTimeout(() => {
             dispatch(get_goals())
             dispatch(get_filtered_goals(store.getState().scheduler.filter, store.getState().scheduler.filter_type_index))
-         }, 500);
+         }, 600);
       },
       prev_click: () => {dispatch(prev_click())},
       get_filtered_goals: (filter, filter_type_index) => {

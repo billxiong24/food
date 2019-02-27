@@ -270,7 +270,7 @@ class Scheduler extends Component {
                     <div className={classes.small_list}>
                             {
                                 [
-                                    "note: the scheduler displays activities on the granularity of the time span selected"
+                                    "note: the scheduler displays and allows adjustments to activities on the granularity of the time span selected\n(ex: if an activity starts at 13:00 on 02/18 and ends at 9:00 on 02/19 then on Week View it will occupy both 02/18 and 02/19 and if it is adjusted on Week View start times will be adjusted to the begining of the start day and end times will be adjusted to the ending of the end day. For higher granularity go to more specific view"
                                 ].map(alert => (
                                     <div className={classes.info_box}>
                                         {alert}

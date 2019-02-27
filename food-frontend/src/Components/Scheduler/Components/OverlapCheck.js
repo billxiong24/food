@@ -14,10 +14,11 @@ import Row from 'antd/lib/row'
 import Button from 'antd/lib/button'
 import moment from 'moment'
 import { ENETDOWN } from 'constants';
-import { getEnabledGoals, calculate_scheduled_time, get_scheduled_activity_warnings } from '../UtilityFunctions';
+import { getEnabledGoals, calculate_scheduled_time, get_scheduled_activity_warnings, day_start_time_trim, day_end_time_trim, hour_time_trim, valid_start_end_pair, valid_time, push_conflict_errors_without_duplication, calculate_end_time } from '../UtilityFunctions';
 import { Typography } from '@material-ui/core';
 import labels from '../../../Resources/labels';
 import config from '../config';
+import swal from 'sweetalert';
 
 const styles = theme => ({
     card: {
@@ -164,6 +165,7 @@ class OverlapCheck extends Component{
         scheduler_data.setEvents(this.props.events);
         console.log("hello")
         scheduler_data.config.schedulerWidth = "65%"
+        scheduler_data.config.views = [scheduler_data.config.views[0], scheduler_data.config.views[1]]
         this.state = {
             scheduler_data
         }
@@ -273,28 +275,109 @@ class OverlapCheck extends Component{
     }
 
     updateEventStart = (schedulerData, event, newStart) => {
-        if(window.confirm(`Do you want to adjust the start of the event? {eventId: ${event.id}, eventTitle: ${event.title}, newStart: ${newStart}}`)) {
-            schedulerData.updateEventStart(event, newStart);
-            let activity = event.activity
-            activity.start_time = newStart
-            // console.log.log("NEW ACTIVITY")
-            // console.log.log(activity)
-            this.props.set_activity_schedule(activity)
+        if(schedulerData.viewType == 0){
+            newStart = hour_time_trim(newStart)
+        }else{
+            newStart = day_start_time_trim(newStart)
         }
+        // console.log(event)
+        // if(!valid_start_end_pair(newStart, event.activity.end_time)){
+        //     swal(`Invalid Start Time: ${event.activity.end_time} is before start time ${newStart}`,{
+        //         icon: "error",
+        //       });
+        //     return
+        // }
+        if(!valid_time(newStart)){
+            swal(`Invalid Start Time: Operating Hours are between 8:00 and 18:00`,{
+                icon: "error",
+              });
+            return
+        }
+        let conflict_errors = push_conflict_errors_without_duplication(newStart, event.activity.end_time, event.activity.man_line_num, this.props.scheduled_activities.filter(activity => activity.id != event.activity.id), [])
+        if(conflict_errors.length > 0){
+            swal(`Activity Conflicts`,{
+                icon: "error",
+              });
+            return
+        }
+        swal(`Do you want to adjust the start of ${event.title}?\n\n New Start: ${newStart}`, {
+            buttons: ["No", "Yes"],
+          })
+          .then((value) => {
+            if(value){
+                schedulerData.updateEventStart(event, newStart);
+                let activity = event.activity
+                activity.start_time = newStart
+                // console.log.log("NEW ACTIVITY")
+                // console.log.log(activity)
+                this.props.set_activity_schedule(activity)
+            }
+        })
+        // if(window.confirm(`Do you want to adjust the start of the event? {eventId: ${event.id}, eventTitle: ${event.title}, newStart: ${newStart}}`)) {
+        //     schedulerData.updateEventStart(event, newStart);
+        //     let activity = event.activity
+        //     activity.start_time = newStart
+        //     // console.log.log("NEW ACTIVITY")
+        //     // console.log.log(activity)
+        //     this.props.set_activity_schedule(activity)
+        // }
         this.setState({
             viewModel: schedulerData
         })
     }
 
     updateEventEnd = (schedulerData, event, newEnd) => {
-        if(window.confirm(`Do you want to adjust the end of the event? {eventId: ${event.id}, eventTitle: ${event.title}, newEnd: ${newEnd}}`)) {
-            schedulerData.updateEventEnd(event, newEnd);
-            let activity = event.activity
-            activity.end_time = newEnd
-            // console.log.log("NEW ACTIVITY")
-            // console.log.log(activity)
-            this.props.set_activity_schedule(activity)
+        if(schedulerData.viewType == 0){
+            newEnd = hour_time_trim(newEnd)
+        }else{
+            newEnd = day_start_time_trim(newEnd)
         }
+        // if(!valid_start_end_pair(event.start_time, newEnd)){
+        //     swal(`Invalid End Time: ${newEnd} is before start time ${event.activity.start_time}`,{
+        //         icon: "error",
+        //       });
+        //     return
+        // }
+        // if(!valid_start_end_pair(event.start_time, newEnd)){
+        //     swal(`Invalid End Time: ${newEnd} is before start time ${event.activity.start_time}`,{
+        //         icon: "error",
+        //       });
+        //     return
+        // }
+        if(!valid_time(newEnd)){
+            swal(`Invalid End Time: Operating Hours are between 8:00 and 18:00`,{
+                icon: "error",
+              });
+            return
+        }
+        let conflict_errors = push_conflict_errors_without_duplication(event.activity.start_time, newEnd, event.activity.man_line_num, this.props.scheduled_activities.filter(activity => activity.id != event.activity.id), [])
+        if(conflict_errors.length > 0){
+            swal(`Activity Conflicts`,{
+                icon: "error",
+              });
+            return
+        }
+        swal(`Do you want to adjust the end of ${event.title}?\n\n New End: ${newEnd}`, {
+            buttons: ["No", "Yes"],
+          })
+          .then((value) => {
+            if(value){
+                schedulerData.updateEventEnd(event, newEnd);
+                let activity = event.activity
+                activity.end_time = newEnd
+                // console.log.log("NEW ACTIVITY")
+                // console.log.log(activity)
+                this.props.set_activity_schedule(activity)
+            }
+        })
+        // if(window.confirm(`Do you want to adjust the end of the event? {eventId: ${event.id}, eventTitle: ${event.title}, newEnd: ${newEnd}}`)) {
+        //     schedulerData.updateEventEnd(event, newEnd);
+        //     let activity = event.activity
+        //     activity.end_time = newEnd
+        //     // console.log.log("NEW ACTIVITY")
+        //     // console.log.log(activity)
+        //     this.props.set_activity_schedule(activity)
+        // }
         this.setState({
             viewModel: schedulerData
         })
@@ -429,24 +512,78 @@ class OverlapCheck extends Component{
 
 
     moveEvent = (schedulerData, event, slotId, slotName, start, end) => {
-        if(window.confirm(`Do you want to move the event? {eventId: ${event.id}, eventTitle: ${event.title}, newSlotId: ${slotId}, newSlotName: ${slotName}, newStart: ${start}, newEnd: ${end}`)) {
-            schedulerData.moveEvent(event, slotId, slotName, start, end);
-            let activity = event.activity
-            activity.start_time = start
-            activity.end_time = end
-            activity.man_line_num = slotName
-            // console.log.log("NEW ACTIVITY")
-            // console.log.log(activity)
-            this.props.set_activity_schedule(activity)
-            //schedulerData.moveEvent(event, slotId, slotName, start, end);
-            // this.setState({
-            //     viewModel: schedulerData
-            // })
+        
+        if(schedulerData.viewType == 0){
+            start = hour_time_trim(start)
+            end = calculate_end_time(start, calculate_scheduled_time(event.activity.start_time, event.activity.end_time))
+        }else{
+            start = day_start_time_trim(start)
+            end = day_end_time_trim(end)
         }
+        // if(!valid_start_end_pair(start, end)){
+        //     swal(`Invalid End Time: ${end} is before start time ${start}`,{
+        //         icon: "error",
+        //       });
+        //     return
+        // }
+        if(!valid_time(start)){
+            swal(`Invalid Start Time: Operating Hours are between 8:00 and 18:00`,{
+                icon: "error",
+              });
+            return
+        }
+        if(!valid_time(end)){
+            swal(`Invalid End Time: Operating Hours are between 8:00 and 18:00`,{
+                icon: "error",
+              });
+            return
+        }
+        let conflict_errors = push_conflict_errors_without_duplication(start, end, event.activity.man_line_num, this.props.scheduled_activities.filter(activity => activity.id != event.activity.id), [])
+        if(conflict_errors.length > 0){
+            swal(`Activity Conflicts`,{
+                icon: "error",
+              });
+            return
+        }
+        swal(`Do you want to adjust the end of ${event.title}?\n\n New Start: ${start}\n New End: ${end}`, {
+            buttons: ["No", "Yes"],
+          })
+          .then((value) => {
+            if(value){
+                schedulerData.moveEvent(event, slotId, slotName, start, end);
+                let activity = event.activity
+                activity.start_time = start
+                activity.end_time = end
+                activity.man_line_num = slotName
+                // console.log.log("NEW ACTIVITY")
+                // console.log.log(activity)
+                this.props.set_activity_schedule(activity)
+                //schedulerData.moveEvent(event, slotId, slotName, start, end);
+                // this.setState({
+                //     viewModel: schedulerData
+                // })
+            }
+        })
+        // if(window.confirm(`Do you want to move the event? {eventId: ${event.id}, eventTitle: ${event.title}, newSlotId: ${slotId}, newSlotName: ${slotName}, newStart: ${start}, newEnd: ${end}`)) {
+        //     schedulerData.moveEvent(event, slotId, slotName, start, end);
+        //     let activity = event.activity
+        //     activity.start_time = start
+        //     activity.end_time = end
+        //     activity.man_line_num = slotName
+        //     // console.log.log("NEW ACTIVITY")
+        //     // console.log.log(activity)
+        //     this.props.set_activity_schedule(activity)
+        //     //schedulerData.moveEvent(event, slotId, slotName, start, end);
+        //     // this.setState({
+        //     //     viewModel: schedulerData
+        //     // })
+        // }
     }
 
     conflictOccurred = (schedulerData, action, event, type, slotId, slotName, start, end) => {
-        alert(`Conflict occurred. {action: ${action}, event: ${event}`);
+        swal(`Activity Conflicts`,{
+            icon: "error",
+          });
     }
 }
 
