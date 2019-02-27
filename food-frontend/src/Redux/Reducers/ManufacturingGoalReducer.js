@@ -77,6 +77,13 @@ export default function manufacturingGoalReducer(state = initialState, action) {
       return Object.assign({}, state, action.data);
     case mangoal_actions.MANGOAL_SET_CURRENT_MANGOAL:
       return Object.assign({}, state, action.data);
+    case mangoal_actions.MANGOAL_UPDATE_MANGOAL:
+      return Object.assign({}, state, {
+        activeGoal: {
+          ...state.activeGoal,
+          ...action.data.updates
+        }
+      })
     default:
       return state;
   }

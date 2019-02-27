@@ -1,6 +1,6 @@
 const local = {
-  //hostname: 'https://cmdev.colab.duke.edu:8000/',
-  hostname: 'http://localhost:8000/',
+  hostname: 'https://cmdev.colab.duke.edu:8000/',
+  // hostname: 'http://localhost:8000/',
   url: 'http://localhost:3000/',
   https: false,
   colab_client_id: 'code-monkeys-local',

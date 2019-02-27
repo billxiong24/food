@@ -326,3 +326,35 @@ export const mangoalSetActiveMangoal = (manGoal) => {
       })
   }
 }
+
+export const mangoalUpdateMangoal = (manGoal) => {
+  return (dispatch) => {
+    return axios.put(hostname + 'manufacturing_goals/' + manGoal.id, manGoal)
+      .then((response) => {
+        dispatch({
+          type: mangoal_actions.MANGOAL_UPDATE_MANGOAL,
+          data: {
+            updates: manGoal,
+          }
+        });
+      })
+      .catch((err) => {
+        if (err.response.status === 400) {
+          dispatch({
+            type: mangoal_actions.MANGOAL_UPDATE_MANGOAL,
+            data: {
+              errMsg: err.response.data.error
+            }
+          });
+        } else {
+          dispatch({
+            type: mangoal_actions.MANGOAL_UPDATE_MANGOAL,
+            data: {
+              errMsg: 'Something unexpected went wrong'
+            }
+          });
+          throw (err.response);
+        }
+      })
+  }
+}
