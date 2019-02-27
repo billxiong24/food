@@ -54,7 +54,13 @@ sudo apt-get install certbot
 sudo node ca/app.js   
 sudo certbot certonly --webroot -w ca/ -d <YOUR DOMAIN NAME HERE>   
 ```   
-Follow prompts.    
+Follow prompts.   
+
+### Register Duke Colab WebApp for NetID Authentication
+Follow the tutorial here to register a webapp with Duke Colab:
+[Tutorial](https://documentation.colab.duke.edu/guides/apidocs.html)
+You can set privacy link to  https://\<YOUR DOMAIN NAME HERE>/privacy
+Take note of your secret and id for later. 
 
 ### Set Environment Information
 Create .env in root folder of repository
@@ -66,14 +72,19 @@ PGDATABASE='sku_mgmt'
 PGPORT=5432
 HTTPS='true'
 DOMAIN='<YOUR DOMAIN NAME HERE>'
+SESSION_SECRET='<YOUR SECRETE HERE>'
 ```
 
 Navigate to food/food-frontend/src/Resources/common.js
-Edit file so that at the top:
+Edit the prod profile so that:
 ```
-export default {
-  hostname: '<https://<YOUR DOMAIN NAME>/',
-  admin: 7,
+const prod = {
+hostname: 'https://<YOUR DOMAIN NAME HERE>:8000/',
+url: 'https://<YOUR DOMAIN NAME HERE>/',
+https: true,
+colab_client_id: '<YOUR COLAB CLIENT ID>',
+colab_client_secret: '<YOUR COLAB SECRET HERE>',
+colab_redirect_uri: 'https%3A%2F%2F<YOUR DOMAIN NAME HERE>%2Flogin',
 }
 ```
 
