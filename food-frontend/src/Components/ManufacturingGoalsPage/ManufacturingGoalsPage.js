@@ -365,6 +365,7 @@ class ManufacturingGoalsPage extends Component {
     return axios.post(common.hostname + 'manufacturing_goals/exported_file', {
         data: this.props.manGoals.activeGoal.skus,
         format: "csv",
+        type: "mangoal"
     })
     .then((response)=>{
       FileDownload(response.data, this.props.manGoals.activeGoal.name + '.csv');

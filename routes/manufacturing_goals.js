@@ -27,6 +27,9 @@ function getCRUD(type) {
         console.log("creating an productline");
         crud = new ProdLine();
     }
+    else if(type == 'mangoal') {
+        crud = new ManufacturingGoals();
+    }
     else {
         return null;
     }
@@ -100,6 +103,7 @@ router.post('/:id/skus', checkTokenUser, function(req, res, next) {
     }
     const mg = new ManufacturingGoals();
     const controller = new Controller();
+    console.log(req.body.skus);
     controller.constructRowCountPostResponse(res, mg.addSkus(req.params.id, req.body.skus));
 });
 
@@ -155,6 +159,8 @@ router.post('/exported_file', checkTokenUser, function(req, res, next) {
         });
         return;
     }
+    console.log("made it here");
+    console.log(req.body.type);
     let csv = crud.exportFile(jsonList, format);
     res.status(200).send(csv);
 });

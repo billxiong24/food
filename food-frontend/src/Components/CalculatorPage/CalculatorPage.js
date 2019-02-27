@@ -57,6 +57,7 @@ class CalculatorPage extends Component {
     axios.post(common.hostname + 'manufacturing_goals/exported_file', {
       data: this.props.activeGoal.ingredients,
       format: "csv",
+        type: "mangoal"
     })
       .then((response) => {
         FileDownload(response.data, this.props.activeGoal.name + '_calculations.csv');
