@@ -9,6 +9,30 @@ class Formula extends CRUD {
     constructor() {
         super();
         this.tableName = "formula";
+        //this.unitMap = {
+            //"ounce": "oz",
+            //"oz": "oz",
+            //"lb": "lb",
+            //"pound": "lb",
+            //"t": "t",
+            //"ton", "ton"
+            //"g": "g",
+            //"gram": "g",
+            //"fl-oz": "fl-oz",
+            //"fluidounce": "fl-oz",
+            //"pt": "pnt",
+            //"pint": "pnt",
+            //"qt": "qt",
+            //"quart": "qt",
+            //"gal": "gal",
+            //"gallon": "gal",
+            //"milliliter": "ml",
+            //"ml": "ml",
+            //"l": "l",
+            //"liter": "l",
+            //"count": "count",
+            //"ct": "count"
+        //}
     }
 
     checkExisting(dataObj) {

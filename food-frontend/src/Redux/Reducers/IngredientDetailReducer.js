@@ -18,6 +18,7 @@ import { addToList, removeFromList } from '../../Resources/common';
     switch (action.type) {
         case ING_DET_UPDATE_ING:
             return Object.assign({}, state, {
+                unit: action.data.ing.unit,
                 ingredientName: action.data.ing.name,
                 ingredientNum: action.data.ing.num,
                 vend_info: action.data.ing.vend_info,
@@ -28,6 +29,7 @@ import { addToList, removeFromList } from '../../Resources/common';
             });
         case ING_DET_SET_INGREDIENT:
             return Object.assign({}, state, {
+                unit: action.data.unit,
                 ingredientName: action.data.name,
                 ingredientNum: action.data.num,
                 vend_info: action.data.vend_info,

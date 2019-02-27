@@ -200,6 +200,7 @@ const mapDispatchToProps = dispatch => {
   return{
     setIngredient: (history) => {
       dispatch(ingDetSetIng({
+        unit: "",
         name: "",
         num: null,
         vend_info: "",
