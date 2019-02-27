@@ -55,6 +55,7 @@ class IngredientDependencyPage extends Component {
     axios.post(common.hostname + 'manufacturing_goals/exported_file', {
       data: rows,
       format: "csv",
+      type: "mangoal"
     })
       .then((response) => {
         FileDownload(response.data, 'ingredient_dependency_report.csv');
