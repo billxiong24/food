@@ -114,6 +114,7 @@ export const InitialStore = {
     ingredientNum:null,
     packageSize:null,
     costPerPackage:null,
+    unit: null,
     comment:null,
     id:null,
     skus:[],

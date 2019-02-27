@@ -56,6 +56,7 @@ class IngredientDetailViewPage extends Component {
     constructor(props){
         super(props);
         this.state = {
+            unit: this.props.unit,
             buttonText:"Edit",
             editing:false,
             ingredientName:this.props.ingredientName,
@@ -96,6 +97,7 @@ class IngredientDetailViewPage extends Component {
 
     onSaveClick = () => {
         const ing = {
+            unit: this.state.unit,
             name:this.state.ingredientName,
             num:this.state.ingredientNum,
             vend_info:this.state.vend_info,
@@ -118,6 +120,7 @@ class IngredientDetailViewPage extends Component {
 
     onAddClick = () => {
         const ing = {
+            unit: this.state.unit,
             name:this.state.ingredientName,
             num:this.state.ingredientNum,
             vend_info:this.state.vend_info,
@@ -180,6 +183,7 @@ class IngredientDetailViewPage extends Component {
 
     addToReport = () => {
         const ing = {
+            unit: this.state.unit,
             name:this.state.ingredientName,
             num:this.state.ingredientNum,
             vend_info:this.state.vend_info,
@@ -249,6 +253,15 @@ class IngredientDetailViewPage extends Component {
                         onChange={this.onChange}>
                         {this.state.costPerPackage}
                     </EditableNumeric>
+                    <EditableText 
+                        label={"Unit"} 
+                        editing={editing}
+                        key={"unit"}
+                        field={"unit"}
+                        onChange={this.onChange}
+                        multiline={true}>
+                        {this.state.unit}
+                    </EditableText>
 
                     <EditableText 
                         label={"Comment"} 
@@ -350,6 +363,7 @@ class IngredientDetailViewPage extends Component {
 const mapStateToProps = (state, ownProps) => {
     return {
         ingredientName: state.ingredient_details.ingredientName,
+        unit: state.ingredient_details.unit,
         ingredientNum: state.ingredient_details.ingredientNum,
         vend_info: state.ingredient_details.vend_info,
         packageSize: state.ingredient_details.packageSize,
