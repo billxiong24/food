@@ -311,7 +311,7 @@ class ManufacturingGoalsPage extends Component {
 
   addSku() {
     let sku = {
-      sku_id: this.state.sku,
+      sku_id: this.props.manGoals.skus.filter((sku) => { return sku.num == this.state.sku })[0].id,
       quantity: this.state.quantity,
     }
     this.props.mangaolUpdateMangoalSkus(

@@ -57,7 +57,8 @@ class DropdownButton extends Component {
         for (var i = 0; i < temp.length; i++) {
             temp[i].selected = false;
        }
-        temp[id].selected = true;
+	    if(temp[id])
+		temp[id].selected = true;
         this.state = {
             [key]: temp
         };
