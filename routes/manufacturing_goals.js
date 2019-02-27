@@ -27,6 +27,9 @@ function getCRUD(type) {
         console.log("creating an productline");
         crud = new ProdLine();
     }
+    else if(type == 'mangoal') {
+        crud = new ManufacturingGoals();
+    }
     else {
         return null;
     }
@@ -37,7 +40,7 @@ function getCRUD(type) {
 
 const checkUser = (req, res, next) => {
   let userID = parseInt(req.body.user_id);
-  if(userID !== req.session.user_id) {
+  if(userID !== req.session.user_id && req.session.admin === "false") {
     res.status(401).json({
       error: "You are not authorized to edit this manufacturing goal"
     });
@@ -100,6 +103,7 @@ router.post('/:id/skus', checkTokenUser, function(req, res, next) {
     }
     const mg = new ManufacturingGoals();
     const controller = new Controller();
+    console.log(req.body.skus);
     controller.constructRowCountPostResponse(res, mg.addSkus(req.params.id, req.body.skus));
 });
 
@@ -155,6 +159,8 @@ router.post('/exported_file', checkTokenUser, function(req, res, next) {
         });
         return;
     }
+    console.log("made it here");
+    console.log(req.body.type);
     let csv = crud.exportFile(jsonList, format);
     res.status(200).send(csv);
 });
@@ -165,7 +171,7 @@ router.post('/', checkTokenUser, function(req, res, next) {
     controller.constructPostResponse(res, mg.create(req.body));
 });
 
-router.put('/:id', checkTokenUser, function(req, res, next) {
+router.put('/:id', function(req, res, next) {
     let id = req.params.id;
     if(isNaN((id))) {
         return res.status(400).json({

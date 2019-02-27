@@ -56,6 +56,7 @@ class IngredientDetailViewPage extends Component {
     constructor(props){
         super(props);
         this.state = {
+            unit: this.props.unit,
             buttonText:"Edit",
             editing:false,
             ingredientName:this.props.ingredientName,
@@ -69,8 +70,6 @@ class IngredientDetailViewPage extends Component {
               return ing.id === this.props.id;
             }).length === 1,
         }
-        console.log("INGREDIENT DETAIL VIEW")
-        console.log(this.props.id)
         if(this.props.id == null){
             this.state.editing = true
             this.state.new = true
@@ -83,13 +82,9 @@ class IngredientDetailViewPage extends Component {
     }
 
     onChange = (input,key) => {
-        console.log("INGREDIETNTVIEW DETAIL CHANGE")
-        console.log(input)
-        console.log(key)
         this.setState({
             [key]:input
         });
-        console.log(this.state)
     }
 
     
@@ -102,6 +97,7 @@ class IngredientDetailViewPage extends Component {
 
     onSaveClick = () => {
         const ing = {
+            unit: this.state.unit,
             name:this.state.ingredientName,
             num:this.state.ingredientNum,
             vend_info:this.state.vend_info,
@@ -113,7 +109,6 @@ class IngredientDetailViewPage extends Component {
         
         let errors = getIngErrors(ing);
         if(errors.length == 0){
-            console.log("SKUDETAILVIEW")
             this.props.update(ing) // dispatch
         }else{
             for (var i = 0; i < errors.length; i++) {
@@ -125,6 +120,7 @@ class IngredientDetailViewPage extends Component {
 
     onAddClick = () => {
         const ing = {
+            unit: this.state.unit,
             name:this.state.ingredientName,
             num:this.state.ingredientNum,
             vend_info:this.state.vend_info,
@@ -139,8 +135,6 @@ class IngredientDetailViewPage extends Component {
                 editing:false,
                 new: false
             });
-            console.log("INGREDIENTDETAILVIEW")
-            console.log(ing)
             this.props.add(ing)
         }else{
             for (var i = 0; i < errors.length; i++) {
@@ -159,8 +153,6 @@ class IngredientDetailViewPage extends Component {
             comments:this.state.comment,
             id:this.props.id
         }
-        console.log("INGREDIENTDETAILVIEW")
-        console.log(ing)
         this.props.delete(ing)
         
     }
@@ -176,7 +168,6 @@ class IngredientDetailViewPage extends Component {
         id:this.props.id,
         skus:this.props.skus
     }
-    console.log(this.state.checked);
       if(this.state.checked) {
         this.props.removeIngFromReport(ing)
         this.setState({
@@ -192,6 +183,7 @@ class IngredientDetailViewPage extends Component {
 
     addToReport = () => {
         const ing = {
+            unit: this.state.unit,
             name:this.state.ingredientName,
             num:this.state.ingredientNum,
             vend_info:this.state.vend_info,
@@ -201,7 +193,6 @@ class IngredientDetailViewPage extends Component {
             id:this.props.id,
             skus:this.props.skus
         }
-        console.log(this.props.skus)
         this.props.addIngToReport(ing)
     }
 
@@ -262,6 +253,15 @@ class IngredientDetailViewPage extends Component {
                         onChange={this.onChange}>
                         {this.state.costPerPackage}
                     </EditableNumeric>
+                    <EditableText 
+                        label={"Unit"} 
+                        editing={editing}
+                        key={"unit"}
+                        field={"unit"}
+                        onChange={this.onChange}
+                        multiline={true}>
+                        {this.state.unit}
+                    </EditableText>
 
                     <EditableText 
                         label={"Comment"} 
@@ -363,6 +363,7 @@ class IngredientDetailViewPage extends Component {
 const mapStateToProps = (state, ownProps) => {
     return {
         ingredientName: state.ingredient_details.ingredientName,
+        unit: state.ingredient_details.unit,
         ingredientNum: state.ingredient_details.ingredientNum,
         vend_info: state.ingredient_details.vend_info,
         packageSize: state.ingredient_details.packageSize,

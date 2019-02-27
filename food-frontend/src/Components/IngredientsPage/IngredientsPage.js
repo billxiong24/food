@@ -128,30 +128,10 @@ class IngredientsPage extends Component {
   }
 
   onExportClick = () => {
-    axios.post(common.hostname + 'manufacturing_goals/exported_file', {
-      data: this.props.items.map((ing) => ({
-        num:ing.num,
-        name:ing.name,
-        vend_info:ing.vend_info,
-        pkg_size:ing.pkg_size + " " + ing.unit,
-        pkg_cost:ing.pkg_cost,
-        comments:ing.comments
-      })),
-      format: "csv",
-      type: "ingredient"
-    })
-      .then((response) => {
-        FileDownload(response.data, 'ingredients.csv');
-      })
-      .catch(err => {
-        console.log(err);
-      })
   }
 
 
   render() {
-    console.log(this.props)
-    console.log(this.props.errors)
     const { classes, dummy_ingredients } = this.props
     return (
       <div className={classes.ingredients_page_container}>
@@ -186,12 +166,6 @@ class IngredientsPage extends Component {
             <div></div>
 
             }
-            <Button
-              className={classes.export_to_csv}
-              onClick={this.onExportClick}
-            >
-              Export to CSV
-            </Button>
           </div>
             <IngredientList></IngredientList>
         </div>
@@ -226,6 +200,7 @@ const mapDispatchToProps = dispatch => {
   return{
     setIngredient: (history) => {
       dispatch(ingDetSetIng({
+        unit: "",
         name: "",
         num: null,
         vend_info: "",
@@ -236,7 +211,6 @@ const mapDispatchToProps = dispatch => {
     }))
     dispatch(ingDetSetNew(true))
     dispatch(ingDetSetEditing(true))
-    console.log("History")
       history.push('/ingredients/details')
     },
     deleteError: (error) => {

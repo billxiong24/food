@@ -81,7 +81,6 @@ export const prdlineAddPrdline = (prdline) => {
         })
       })
       .catch((err) => {
-        console.log(err);
         if (err.response.status === 409) {
           dispatch({
             type: prdline_actions.PRDLINE_ADD_PRDLINE,

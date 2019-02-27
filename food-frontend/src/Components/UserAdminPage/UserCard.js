@@ -114,16 +114,16 @@ class UserCard extends Component {
                   label="Admin"
                 />
               </div>
-              {/* <IconButton
+              <IconButton
                 key="close"
                 aria-label="Close"
                 color="inherit"
                 className={classes.button + ' ' + classes.close_button}
-                onClick={(e) => { this.props.delete(e) }}
-                disabled={item.uname === "admin"}
+                onClick={(e) => { this.props.delete(item) }}
+                disabled={item.uname === "admin" || item.uname === this.props.currentUser }
               >
                 <CloseIcon />
-              </IconButton> */}
+              </IconButton>
             </CardContent>
           </Card>
         );

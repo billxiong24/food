@@ -60,7 +60,6 @@ class IngredientList extends Component {
     }
 
     onClick = (item) =>{
-         console.log(item)
          this.props.setIngredient(item, this.props.history)
     }
 
@@ -75,7 +74,7 @@ class IngredientList extends Component {
                         <CardActionArea
                         className = {classes.cardAction}
                         >
-                        <CardContent onClick={console.log("")}>
+                        <CardContent>
                             <Typography className={classes.ingredrient_name} color="textSecondary" gutterBottom>
                                 {item.name}
                             </Typography>

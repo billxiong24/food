@@ -17,16 +17,11 @@ import { addToList, removeFromList } from '../../Resources/common';
 
 const initialState = {};
 export default function FormulaReducer(state = initialState, action) {
-    console.log("actionnnasbair");
-    console.log(action);
   switch (action.type) {
     case FORMULA_ADD_FILTER:
       let filters = state.filters.filter((el)=>{
         return el.id !== action.filter_id
       })
-          console.log("ADDING A FILTERRR");
-          console.log(action.data);
-          console.log(filters);
       return Object.assign({}, state, {
         filters: [
           ...filters,
@@ -36,13 +31,10 @@ export default function FormulaReducer(state = initialState, action) {
     case FORMULA_REMOVE_FILTER:
       return Object.assign({}, state, {
         filters: state.filters.filter((el)=>{
-          console.log(el.id)
-          console.log(action.filter_id)
           return el.id !== action.filter_id
         })
       });
     case FORMULA_SEARCH:
-          console.log("FORMUA SEARCHING");
       let items = action.data
       let row_count = 0
       let offset = action.offset
@@ -57,7 +49,6 @@ export default function FormulaReducer(state = initialState, action) {
       if(!full){
         items = items.slice(0,state.limit)
       }
-          console.log(items);
       return Object.assign({}, state, {
         items,
         row_count,
@@ -66,8 +57,6 @@ export default function FormulaReducer(state = initialState, action) {
         end
       });
     case FORMULA_ING_NAME_AUTOCOMPLETE:
-      console.log("FORMULA_ING_NAME_AUTOCOMPLETE REDUCER")
-      console.log(action.data)
       return Object.assign({}, state, {
         ingredient_names: action.data
       });
@@ -86,12 +75,10 @@ export default function FormulaReducer(state = initialState, action) {
     case FORMULA_DELETE_FORMULA:
       return Object.assign({}, state, action.data);
     case FORMULA_ADD_ERROR:
-      console.log(action.data)
       return Object.assign({}, state, {
         errors: addToList(action.data, state.errors)
       });
     case FORMULA_DELETE_ERROR:
-      console.log(action.data)
       return Object.assign({}, state, {
         errors: removeFromList(action.data, state.errors)
       });

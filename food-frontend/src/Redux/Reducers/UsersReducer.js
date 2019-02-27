@@ -38,7 +38,7 @@ export default function userReducer(state = initialState, action) {
       if (action.data.userToDelete) {
         return Object.assign({}, state, {
           errMsg: action.data.errMsg,
-          productLines: state.users.filter((el) => {
+          users: state.users.filter((el) => {
             return el.id !== action.data.userToDelete.id;
           })
         });

@@ -45,7 +45,6 @@ export const formulaDeleteIngredient = (formula_id, ing_id) => {
       })
       .catch((error) => {
         let message;
-        console.log(error)
         if(error.error !== undefined){
           message = error.error
         }else{
@@ -63,8 +62,6 @@ export const formulaDetUpdateFormula = (formula) => {
     let params = {
         ...formula
     }
-    console.log("formula UPDATING ");
-    console.log(params)
     return (dispatch) => {
       return axios.put(hostname + 'formula/' + params.id, params)
       .then((response) => {
@@ -78,7 +75,6 @@ export const formulaDetUpdateFormula = (formula) => {
       })
       .catch((error) => {
         let message;
-        console.log(error)
         if(error.error !== undefined){
           message = error.error
         }else{
@@ -93,8 +89,6 @@ export const formulaDetUpdateFormula = (formula) => {
   }
 
   export const formulaDetSetFormula = (ing) => {
-      console.log('SETING FORMULA');
-      console.log(ing);
     return (dispatch) => {
       return dispatch({
         type: FORMULA_DET_SET_FORMULA,
@@ -103,8 +97,6 @@ export const formulaDetUpdateFormula = (formula) => {
     }
   }
   export const formulaDetAddIngredient= (formula_id, ing) => {
-      console.log(formula_id);
-      console.log(ing);
           let ingObj = null;
     return (dispatch) => {
       return axios.get(hostname + 'ingredients/search', {
@@ -118,7 +110,6 @@ export const formulaDetUpdateFormula = (formula) => {
           //data: response.data
         //})
           if(response.data.length === 0) {
-              console.log("ingredient doesnt exist");
               dispatch(formulaDetAddError({
                   errMsg: "Ingredient doesn't exist.",
                   id: hashCode("Ingredient doesn't exist")
@@ -128,8 +119,6 @@ export const formulaDetUpdateFormula = (formula) => {
           ingObj = response.data[0];
           ingObj.quantity = ing.quantity;
           ingObj.formula_unit = ing.unit;
-          console.log("HELLO WORLD");
-          console.log(ingObj.unit);
 
           return axios.post(hostname + 'formula/' + formula_id + '/ingredients', {
               ingredients: [
@@ -142,7 +131,6 @@ export const formulaDetUpdateFormula = (formula) => {
           }
           )
           .then(response => {
-              console.log(response);
               if(response.status === 201) {
                   return dispatch({
                       type: FORMULA_DET_ADD_INGREDIENTS,
@@ -169,7 +157,6 @@ export const formulaDetUpdateFormula = (formula) => {
         
       })
       .then(response => {
-          console.log(response);
         dispatch({
           type: FORMULA_DET_DELETE_FORMULA,
           data: response.data
@@ -196,14 +183,12 @@ export const formulaDetSetIngredients = (ings) => {
         
       })
       .then(response => {
-        console.log(response)
         dispatch({
           type: FORMULA_DET_GET_SKUS,
           data: response.data
         })
       })
       .catch(error => {
-        console.log("error")
         throw(error);
       });
     }
@@ -221,7 +206,6 @@ export const formulaDetSetIngredients = (ings) => {
         })
       })
       .catch(error => {
-        console.log("error")
         throw(error);
       });
     }
@@ -231,12 +215,9 @@ export const formulaDetSetIngredients = (ings) => {
     let params = {
         ...ing
     }
-    console.log(params)
     return (dispatch) => {
       return axios.post(hostname + 'formula/', params)
       .then((response) => {
-          console.log("responding from add formula");
-          console.log(response.data);
         dispatch({
           type: FORMULA_DET_ADD_FORMULA,
           data: {
@@ -261,7 +242,6 @@ export const formulaDetSetIngredients = (ings) => {
   }
 
 export const formulaDetAddError = (err) => {
-  console.log("formula adding error")
   return (dispatch) => {
     return dispatch({
       type: FORMULA_DET_ADD_ERROR,
@@ -271,7 +251,6 @@ export const formulaDetAddError = (err) => {
 }
 
 export const formulaDetDeleteError = (err) => {
-  console.log("formula delet erACTION CREATOR")
   return (dispatch) => {
     return dispatch({
       type: FORMULA_DET_DELETE_ERROR,
@@ -281,7 +260,6 @@ export const formulaDetDeleteError = (err) => {
 }
 
 export const formulaDetSetValid = (validity) => {
-  console.log("ING_DET_SET_VALID ACTION CREATOR")
   return (dispatch) => {
     return dispatch({
       type: FORMULA_DET_SET_VALID,
@@ -291,8 +269,6 @@ export const formulaDetSetValid = (validity) => {
 }
 
 export const formulaDetSetEditing = (editing) => {
-  console.log("formula edit ACTION CREATOR")
-  console.log(editing)
   return (dispatch) => {
     return dispatch({
       type: FORMULA_DET_SET_EDITING,
@@ -302,8 +278,6 @@ export const formulaDetSetEditing = (editing) => {
 }
 
 export const formulaDetSetNew = (newValue) => {
-  console.log("form_DET_SET_NEW ACTION CREATOR")
-  console.log(newValue)
   return (dispatch) => {
     return dispatch({
       type: FORMULA_DET_SET_NEW,

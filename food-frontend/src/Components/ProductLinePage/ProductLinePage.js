@@ -179,23 +179,6 @@ class ProductLinePage extends Component {
     this.handleQuery();
   }
 
-  onExportClick = () => {
-    axios.post(common.hostname + 'manufacturing_goals/exported_file', {
-      data: this.props.productLine.productLines.map((e)=>{
-        return {
-          name: e.name,
-        }
-      }),
-      format: "csv",
-      type: "productline"
-    })
-      .then((response) => {
-        FileDownload(response.data, 'product_lines.csv');
-      })
-      .catch(err => {
-        console.log(err);
-      })
-  }
 
 
   render() {
@@ -233,7 +216,6 @@ class ProductLinePage extends Component {
                 variant="extended"
                 aria-label="Delete"
                 className={classes.fab}
-                onClick={this.onExportClick}
                 disabled={productLine.productLines.length === 0}
               >
                 Export Search

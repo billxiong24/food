@@ -106,10 +106,22 @@ class Users extends CRUD {
     }
 
     remove(id) {
-        if(!id) {
-            return Promise.reject("Bad User ID.");
-        }
-        return db.execSingleQuery("DELETE FROM " + this.tableName + " WHERE id = $1", [id]);
+        // if(!id) {
+        //     return Promise.reject("Bad User ID.");
+        // }
+        // return db.execSingleQuery("DELETE FROM " + this.tableName + " WHERE id = $1", [id]);
+        //if SKUs have this product line, we should not be able to remove it
+        return db.execSingleQuery("SELECT * FROM manufacturing_goal WHERE user_id=$1 LIMIT 1", [id])
+        .then((res)=> {
+            if(res.rows.length > 0) {
+                return Promise.reject("Cannot remove " + id + ": Manufacturing Goals are owned by user.");
+            }
+            return res;
+        })
+        .then((res)=> {
+            //verify that no SKUs depend on this product line
+            return db.execSingleQuery("DELETE FROM " + this.tableName + " WHERE id=$1", [id]);
+        });
     }
 }
 

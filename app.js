@@ -32,7 +32,7 @@ var app = express();
 app.use(cors({
   credentials: true,
   origin: function(origin, callback) {
-    if (origin == domain || origin == 'http://localhost:3000' || origin === undefined) {
+    if (origin == "https://" + domain || origin == 'http://localhost:3000' || origin === undefined) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
@@ -58,7 +58,10 @@ app.use(session({
   secret: process.env.SESSION_SECRET,
   store: new (require('connect-pg-simple')(session))(),
     //change this later
+  resave: false,
+  saveUninitialized: false,
   cookie: { secure: encrypt, maxAge: 24*60*60*1000 }
+
 }));
 
 // Check for sessions

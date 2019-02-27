@@ -76,7 +76,8 @@ export const InitialStore = {
     full:false,
     row_count:0,
     end:false,
-    errors:[]
+    errors:[],
+    selectedSkus:[],
   },
   // Manufacturing Goals
   manGoals: {
@@ -113,6 +114,7 @@ export const InitialStore = {
     ingredientNum:null,
     packageSize:null,
     costPerPackage:null,
+    unit: null,
     comment:null,
     id:null,
     skus:[],
@@ -154,5 +156,9 @@ export const InitialStore = {
   manLine: {
     manLines: [],
     errMsg: null,
+    none: [],
+    all: [],
+    some: [],
+    values: {},
   }
 }

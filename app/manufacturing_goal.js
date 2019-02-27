@@ -11,6 +11,40 @@ class ManufacturingGoals extends CRUD {
     constructor() {
         super();
         this.tableName = "manufacturing_goal";
+        this.dbToHeader = {"name": "name"};
+        this.headerToDB = {"name": "name"};
+        this.unitMap = {
+            "ounce": "oz",
+            "oz": "oz",
+            "lb": "lb",
+            "pound": "lb",
+            "t": "t",
+            "ton": "ton",
+            "g": "g",
+            "gram": "g",
+            "fl-oz": "fl-oz",
+            "fluidounce": "fl-oz",
+            "pt": "pnt",
+            "pint": "pnt",
+            "qt": "qt",
+            "quart": "qt",
+            "gal": "gal",
+            "gallon": "gal",
+            "milliliter": "ml",
+            "ml": "ml",
+            "l": "l",
+            "liter": "l",
+            "count": "count",
+            "ct": "count"
+        }
+    }
+    
+    //override
+    exportFile(jsonList, format, cb=null) {
+        console.log(format);
+        console.log(jsonList);
+        const formatter = new Formatter(format);
+        return formatter.generateFormat(jsonList);
     }
 
     checkExisting(dataObj) {
@@ -60,6 +94,7 @@ class ManufacturingGoals extends CRUD {
         }
         let query = QueryGenerator.genInsConflictQuery(skus, 'manufacturing_goal_sku',  'ON CONFLICT (mg_id, sku_id) DO UPDATE SET quantity = EXCLUDED.quantity');
         query = query.toString();
+        console.log(query);
         //logger.debug(query);
         return db.execSingleQuery(query, []);
     }
@@ -98,6 +133,7 @@ true
        .group("ingredients.id")
        .group("formula_ingredients.unit")
        .toString();
+       let that = this;
        return db.execSingleQuery(query, [])
        .then(function(res) {
            if(useUnits)
@@ -106,7 +142,13 @@ true
            for(let i = 0; i < res.rows.length; i++) {
                let num = parseFloat(res.rows[i].calc_res);
                if(!useUnits) {
-                   let conversion = convert(1).from(res.rows[i].formula_unit).to(res.rows[i].unit);
+                   let conversion = null;
+                   try {
+                       conversion = convert(1).from(res.rows[i].formula_unit).to(res.rows[i].unit);
+                   }
+                   catch(err) {
+                       conversion = 1;
+                   }
                    num *= conversion;
                }
                res.rows[i].calc_res = num;

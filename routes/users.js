@@ -170,6 +170,12 @@ router.put('/update/:id', checkAdmin, function(req, res, next) {
 
 router.delete('/:id', checkAdmin, function(req, res, next) {
     const users = new Users();
+    let id = req.params.id;
+    if(isNaN((id))) {
+        return res.status(400).json({
+            error: "Malformed URL."
+        });
+    }
     
     if(id == 7) {
       return res.status(401).json({
