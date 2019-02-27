@@ -82,7 +82,16 @@ export default function manufacturingGoalReducer(state = initialState, action) {
         activeGoal: {
           ...state.activeGoal,
           ...action.data.updates
-        }
+        },
+        goals: state.goals.map((goal) => {
+          if(goal.id===action.data.updates.id) {
+            return {
+              ...goal,
+              ...action.data.updates,
+            }
+          }
+          else return goal;
+        })
       })
     default:
       return state;
