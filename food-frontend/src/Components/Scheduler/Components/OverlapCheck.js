@@ -330,7 +330,7 @@ class OverlapCheck extends Component{
         if(schedulerData.viewType == 0){
             newEnd = hour_time_trim(newEnd)
         }else{
-            newEnd = day_start_time_trim(newEnd)
+            newEnd = day_end_time_trim(newEnd)
         }
         // if(!valid_start_end_pair(event.start_time, newEnd)){
         //     swal(`Invalid End Time: ${newEnd} is before start time ${event.activity.start_time}`,{
@@ -515,10 +515,10 @@ class OverlapCheck extends Component{
         
         if(schedulerData.viewType == 0){
             start = hour_time_trim(start)
-            end = calculate_end_time(start, calculate_scheduled_time(event.activity.start_time, event.activity.end_time))
+            end = calculate_end_time(start, calculate_scheduled_time(event.activity.start_time, event.activity.end_time)).replace("T", " ")
         }else{
             start = day_start_time_trim(start)
-            end = day_end_time_trim(end)
+            end = calculate_end_time(start, calculate_scheduled_time(event.activity.start_time, event.activity.end_time)).replace("T", " ")
         }
         // if(!valid_start_end_pair(start, end)){
         //     swal(`Invalid End Time: ${end} is before start time ${start}`,{

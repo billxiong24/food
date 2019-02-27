@@ -6,7 +6,7 @@ export function getActivities(goals){
       let {activities, ...goal} = goals[i]
       for(var j = 0; j < activities.length; j++){
         let activity = activities[j]
-        activity.name = `${activity.name}:${activity.unit_size}*${activity.count_per_case}`
+        activity.name = `${activity.name}:${activity.unit_size}*${activity.count_per_case} (${activity.num})`
         if(typeof(activities_map[activity.num]) === "undefined"){
             activities_map[activity.num] = {
               ...activity,
