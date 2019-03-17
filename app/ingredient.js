@@ -113,7 +113,7 @@ class Ingredient extends CRUD {
     }
 
     getNextNum(){
-        query = "SELECT num FROM ingredients"
+        let query = "SELECT num FROM ingredients"
         return db.execSingleQuery(query, [])
         .then(function(res){
             console.log(res.rows)
