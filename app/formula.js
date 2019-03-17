@@ -64,7 +64,7 @@ class Formula extends CRUD {
             return db.execSingleQuery(ingredientQuery, [])
                 .then(function(res){
                 console.log(res.rows)
-                formulas = res.rows.map(item => {
+                ingredients = res.rows.map(item => {
                     return {
                         label: item.name,
                         id: item.id
