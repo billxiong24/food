@@ -111,6 +111,15 @@ class Ingredient extends CRUD {
         }
         return db.execSingleQuery("DELETE FROM " + this.tableName + " WHERE id = $1", [id]);
     }
+
+    getNextNum(){
+        query = "SELECT num FROM ingredients"
+        return db.execSingleQuery(query, [])
+        .then(function(res){
+            console.log(res.rows)
+            return 0
+        })
+    }
 }
 
 module.exports = Ingredient;
