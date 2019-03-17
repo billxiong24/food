@@ -366,6 +366,7 @@ class SKU extends CRUD {
         let case_upc = this.generateRandomUPC()
         let unit_upc = this.generateRandomUPC()
         this.generateRandomUPC()
+        let that = this
         return db.execSingleQuery(numQuery, [])
         .then(function(res){
             console.log(res.rows)
@@ -381,19 +382,19 @@ class SKU extends CRUD {
                 if(!numSet.has(num)){
                     break
                 }
-                num = this.generateRandomNum()
+                num = that.generateRandomNum()
             }
             while(true){
                 if(!caseUPCSet.has(case_upc)){
                     break
                 }
-                case_upc = this.generateRandomUPC()
+                case_upc = that.generateRandomUPC()
             }
             while(true){
                 if(!unitUPCSet.has(unit_upc)){
                     break
                 }
-                unit_upc = this.generateRandomUPC()
+                unit_upc = that.generateRandomUPC()
             }
             console.log(num)
             console.log(case_upc)

@@ -118,6 +118,7 @@ class Ingredient extends CRUD {
 
     getNextNum(){
         let query = "SELECT num FROM ingredients"
+        let that = this
         return db.execSingleQuery(query, [])
         .then(function(res){
             console.log(res.rows)
@@ -125,12 +126,12 @@ class Ingredient extends CRUD {
             for(var i = 0; i < res.rows.length; i++){
                 numSet.add(res.rows[i].num)
             }
-            let num = this.generateRandomNum()
+            let num = that.generateRandomNum()
             while(true){
                 if(!numSet.has(num)){
                     break
                 }
-                num = this.generateRandomNum()
+                num = that.generateRandomNum()
             }
             return num
         })
