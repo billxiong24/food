@@ -28,58 +28,56 @@ router.get('/search', function(req, res, next) {
 
 router.get('/init_sku', function(req, res, next) {
     const sku = new Sku();
-    // scheduler.get_goal_usernames(filter).then((goal_user_names) => {
-    //     res.status(200).json({
-    //         goal__user_names: goal_user_names
-    //     })
-    // })
-    return res.status(200).json({
-        num: 0,
-        case_upc: 0,
-        unit_upc: 0,
-        formulas:[
-            {
-                label: "forumula1",
-                id: 1
-            },
-            {
-                label: "forumula2",
-                id: 2
-            },
-            {
-                label: "formula3",
-                id: 3
-            }
-        ],
-        prod_lines:[
-            {
-                label: "prod1",
-                id: 1
-            },
-            {
-                label: "prod2",
-                id: 2
-            },
-            {
-                label: "prod3",
-                id: 3
-            }
-        ],
-        man_lines:[
-            {
-                label: "manline1",
-                id: 1
-            },
-            {
-                label: "manline2",
-                id: 2
-            },
-            {
-                label: "manline3",
-                id: 3
-            }
-        ]
+    sku.initializeSKU().then((res) => {
+        res.status(200).json(res)
     })
+    // return res.status(200).json({
+    //     num: 0,
+    //     case_upc: 0,
+    //     unit_upc: 0,
+    //     formulas:[
+    //         {
+    //             label: "forumula1",
+    //             id: 1
+    //         },
+    //         {
+    //             label: "forumula2",
+    //             id: 2
+    //         },
+    //         {
+    //             label: "formula3",
+    //             id: 3
+    //         }
+    //     ],
+    //     prod_lines:[
+    //         {
+    //             label: "prod1",
+    //             id: 1
+    //         },
+    //         {
+    //             label: "prod2",
+    //             id: 2
+    //         },
+    //         {
+    //             label: "prod3",
+    //             id: 3
+    //         }
+    //     ],
+    //     man_lines:[
+    //         {
+    //             label: "manline1",
+    //             id: 1
+    //         },
+    //         {
+    //             label: "manline2",
+    //             id: 2
+    //         },
+    //         {
+    //             label: "manline3",
+    //             id: 3
+    //         }
+    //     ]
+    // })
 });
 
 router.get('/:id/ingredients', function(req, res, next) {

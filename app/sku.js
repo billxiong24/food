@@ -333,6 +333,123 @@ class SKU extends CRUD {
             });
         });
     }
+
+    getRandomArbitrary(min, max) {
+        return Math.random() * (max - min) + min;
+    }
+
+    generateRandomUPC(){
+        let randomElevenDigit = 10000000000 + Math.random() * (9999999999 - 1000000000) + 1000000000;
+        return Math.floor(randomElevenDigit*10 + this.generateUPCCheckDigit(randomElevenDigit))
+    }
+
+    generateUPCCheckDigit(num){
+        let numString = String(num)
+        let total = (parseInt(numString[0]) + parseInt(numString[2]) + parseInt(numString[4]) + parseInt(numString[6]) + parseInt(numString[8]) + parseInt(numString[10]))*3 + (parseInt(numString[1]) + parseInt(numString[3]) + parseInt(numString[5])  + parseInt(numString[7]) + parseInt(numString[9]))
+        return 10 - (total % 10)
+    }
+
+    generateRandomNum(){
+        return Math.floor(Math.random() * (9999999999 - 0));
+    }
+
+
+    initializeSKU(){
+        let numQuery = "SELECT num, case_upc, unit_upc FROM sku"
+        let formulaQuery = "SELECT name, id FROM formula"
+        let manLineQuery = "SELECT id, shortname FROM manufacturing_line"
+        let prodLineQuery = "SELECT name, id FROM productline"
+        let formulas = []
+        let manlines = []
+        let prodlines = []
+        let num = this.generateRandomNum()
+        let case_upc = this.generateRandomUPC()
+        let unit_upc = this.generateRandomUPC()
+        this.generateRandomUPC()
+        return db.execSingleQuery(numQuery, [])
+        .then(function(res){
+            console.log(res.rows)
+            const numSet = new Set()
+            const caseUPCSet = new Set()
+            const unitUPCSet = new Set()
+            for(var i = 0; i < res.rows.length; i++){
+                numSet.add(res.rows[i].num)
+                caseUPCSet.add(res.rows[i].case_upc)
+                unitUPCSet.add(res.rows[i].unit_upc)
+            }
+            while(true){
+                if(!numSet.has(num)){
+                    break
+                }
+                num = this.generateRandomNum()
+            }
+            while(true){
+                if(!caseUPCSet.has(case_upc)){
+                    break
+                }
+                case_upc = this.generateRandomUPC()
+            }
+            while(true){
+                if(!unitUPCSet.has(unit_upc)){
+                    break
+                }
+                unit_upc = this.generateRandomUPC()
+            }
+            console.log(num)
+            console.log(case_upc)
+            console.log(unit_upc)
+        })
+        .then(function(){
+            return db.execSingleQuery(formulaQuery, [])
+                .then(function(res){
+                console.log(res.rows)
+                formulas = res.rows.map(item => {
+                    return {
+                        label: item.name,
+                        id: item.id
+                    }
+                })
+            })
+        })
+        .then(function(){
+            return db.execSingleQuery(manLineQuery, [])
+                .then(function(res){
+                console.log(res.rows)
+                manlines = res.rows.map(item => {
+                    return {
+                        label: item.shortname,
+                        id: item.id
+                    }
+                })
+            })
+        })
+        .then(function(){
+            return db.execSingleQuery(prodLineQuery, [])
+                .then(function(res){
+                console.log(res.rows)
+                prodlines = res.rows.map(item => {
+                    return {
+                        label: item.name,
+                        id: item.id
+                    }
+                })
+            })
+        })
+        .then(function(){
+            return {
+                num: num,
+                case_upc: case_upc,
+                unit_upc: unit_upc,
+                formulas: formulas,
+                prod_lines:prodlines,
+                man_lines:manlines
+            }
+        })
+
+
+    }
+
+
     bulkImport(csv_str, cb) {
         let table = this.tableName;
         let that = this;
