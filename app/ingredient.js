@@ -117,7 +117,18 @@ class Ingredient extends CRUD {
         return db.execSingleQuery(query, [])
         .then(function(res){
             console.log(res.rows)
-            return 0
+            const numSet = new Set()
+            for(var i = 0; i < res.rows.length; i++){
+                numSet.add(res.rows[i].num)
+            }
+            let num = 1
+            while(true){
+                if(!numSet.has(num)){
+                    break
+                }
+                num++;
+            }
+            return num
         })
     }
 }
