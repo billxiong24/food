@@ -26,6 +26,31 @@ router.get('/search', function(req, res, next) {
 
 });
 
+router.get('/init_formula', function(req, res, next) {
+    const formula = new Formula();
+    // scheduler.get_goal_usernames(filter).then((goal_user_names) => {
+    //     res.status(200).json({
+    //         goal__user_names: goal_user_names
+    //     })
+    // })
+    return res.status(200).json({
+        num: 0,
+        ingredients:[
+            {
+                label: "ing1",
+                id: 1
+            },
+            {
+                label: "ing2",
+                id: 2
+            },
+            {
+                label: "ing3",
+                id: 3
+            }
+        ]
+    })
+});
 router.get('/:id', function(req, res, next) {
     const formula = new Formula();
     const controller = new Controller();

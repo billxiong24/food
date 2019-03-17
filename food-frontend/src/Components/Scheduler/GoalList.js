@@ -161,7 +161,7 @@ class GoalList extends Component {
                                     onClick={() => { this.onClick(item) }}
                                 />
                             </ListItemSecondaryAction>
-                    </ListItem>
+    `                    </ListItem>
                 ))
                 }
             </div>

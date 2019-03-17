@@ -8,12 +8,15 @@ import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import { CardActionArea } from '@material-ui/core';
+import { CardActionArea, Input } from '@material-ui/core';
 import { routeToPage, skuAddSelected, skuRemoveSelected } from '../../Redux/Actions';
 import { withRouter } from 'react-router-dom'
 import { skuDetGetManLines, skuDetGetFormula, skuDetSetSku, skuDetGetIng, skuDetGetProductLine } from '../../Redux/Actions/ActionCreators/SKUDetailsActionCreators';
 import labels from '../../Resources/labels';
 import Checkbox from '@material-ui/core/Checkbox';
+import UnitSelect from '../GenericComponents/UnitSelect';
+import DetailView from '../GenericComponents/DetailView';
+import swal from 'sweetalert';
 
 const styles = {
   entry: {
@@ -58,6 +61,9 @@ class SKUList extends Component {
 
   constructor(props) {
     super(props);
+    this.state = {
+      editDialog: false
+    }
   }
 
 
@@ -77,6 +83,237 @@ class SKUList extends Component {
     }
   }
 
+  suggestionsApi = (value) => {
+      let suggestions = ["Afghanistan", "Azerbijan"]
+      return suggestions
+  }
+
+  onClick = (item) =>{
+      this.props.setIngredient(item, this.props.history)
+  }
+
+  openSKUEditPage = (sku, closeCallback) => {
+      console.log(sku)
+      // let unitItems = ["kg", "g", "grams"]
+      // let unitItem = unitItems[0]
+      // let unitValue = String(ingredient.pkg_size)
+      // for(var i = 0; i < unitItems.length; i++){
+      //     if(unitValue.endsWith(unitItems[i])){
+      //         unitItem = unitItems[i]
+      //         unitValue = unitValue.slice(0, -unitItems[i].length)
+      //         break
+      //     }
+      // }
+
+
+      return (
+          <DetailView
+              open={true}
+              close={closeCallback}
+              submit={(e) => {
+                  console.log(e)
+                  swal({
+                      icon: "success",
+                  });
+                  closeCallback()
+              }}
+              handleChange={() => console.log("handle change")}
+              title={"Edit SKU"}
+          >
+              <Input
+                  id="name"
+                  error={true}
+                  name={"Name"}
+                  errorCallback={this.errorCallback}
+                  defaultValue = {sku.name}
+              />
+              <Input
+                  id="num"
+                  type="number"
+                  name={"Number"}
+                  errorCallback={this.errorCallback}
+                  defaultValue = {sku.num}
+              />
+              <Input
+                  id="case_upc"
+                  type="number"
+                  name={"Case UPC"}
+                  errorCallback={this.errorCallback}
+                  defaultValue = {sku.case_upc}
+              />
+              <Input
+                  id="unit_upc"
+                  type="number"
+                  name={"Unit UPC"}
+                  errorCallback={this.errorCallback}
+                  defaultValue = {sku.unit_upc}
+              />
+              
+              {/* <Input
+                  id="vend_info"
+                  rows="4"
+                  name={"Vendor Info"}
+                  errorCallback={this.errorCallback}
+                  defaultValue={ingredient.vend_info}
+              />
+              <UnitSelect
+                  id="pkg_size"
+                  unitSelect={true}
+                  name={"Package Size"}
+                  item={unitItem}
+                  items={unitItems}
+                  defaultValue={unitValue}
+                  errorCallback={this.errorCallback}
+              />
+              <Input
+                  id="pkg_cost"
+                  rows="4"
+                  type="number"
+                  name={"Package Cost"}
+                  errorCallback={this.errorCallback}
+                  defaultValue={ingredient.pkg_cost}
+              />
+              <Input
+                  id="comment"
+                  rows="4"
+                  multiline
+                  type="number"
+                  name={"Comment"}
+                  errorCallback={this.errorCallback}
+                  defaultValue={ingredient.comments}
+              /> */}
+              {/* <InputAutoCompleteOpenPage
+                  id="formula"
+                  name={"Formula"}
+                  suggestionsCallback={this.suggestionsApi}
+                  openCreatePage={this.openCreatePage}
+                  openEditPage={this.openEditPage}
+                  errorCallback={this.errorCallback}
+              />
+              <InputSelect
+                  id="prd_line"
+                  item="prod1"
+                  items={["prod1","prod2","prod3","12"]}
+                  name={"Product Line"}
+                  errorCallback={this.errorCallback}
+              />
+              <InputList
+                  id="ing_list"
+                  item="ing1"
+                  items={[
+                      {
+                          label:"ing1",
+                          id:1
+                      },
+                      {
+                          label:"ing2",
+                          id:2
+                      },
+                      {
+                          label:"ing3",
+                          id:3
+                      },
+                      {
+                          label:"ing4",
+                          id:4
+                      },
+                      {
+                          label:"ing5",
+                          id:5
+                      },
+                      {
+                          label:"ing6",
+                          id:6
+                      },
+                      {
+                          label:"ing7",
+                          id:7
+                      },
+                      {
+                          label:"ing8",
+                          id:8
+                      }
+                  ]}
+                  name={"Ingredient List"}
+                  errorCallback={this.errorCallback}
+              /> */}
+          </DetailView>
+      )
+  }
+
+
+
+  openFormulaCreatePage = (closeCallBack) => {
+      return (
+          <DetailView
+              open={true}
+              close={closeCallBack}
+              submit={(e) => console.log(e)}
+              handleChange={() => console.log("handle change")}
+              name={"Ingredient Name"}
+              shortname={"Ingredient Short Name"}
+              comment={"Ingredient Comment"}
+              title={"Open"}
+          >
+              <Input
+                  id="ing_name"
+                  rows="4"
+                  name={"Name"}
+                  value={()=>console.log("hello")}
+                  errorCallback={this.errorCallback}
+
+              />
+              <Input
+                  id="ing_name"
+                  rows="4"
+                  name={"Name"}
+                  value={()=>console.log("hello")}
+                  errorCallback={this.errorCallback}
+              />
+          </DetailView>
+      )
+  }
+
+  openFormulaEditPage = (closeCallBack) => {
+      return (
+          <DetailView
+              open={true}
+              close={closeCallBack}
+              submit={(e) => console.log(e)}
+              handleChange={() => console.log("handle change")}
+              name={"Ingredient Name"}
+              shortname={"Ingredient Short Name"}
+              comment={"Ingredient Comment"}
+              title={"Edit"}
+          >
+              <Input
+                  id="ing_name"
+                  rows="4"
+                  name={"Name"}
+                  value={()=>console.log("hello")}
+                  errorCallback={this.errorCallback}
+              />
+              <Input
+                  id="ing_name"
+                  rows="4"
+                  name={"Name"}
+                  value={()=>console.log("hello")}
+                  errorCallback={this.errorCallback}
+              />
+          </DetailView>
+      )
+  }
+
+  errorCallback = (value) => {
+      value = String(value)
+      if(value.includes("12")){
+          return "Input cannot contain 12"
+      }else{
+          return null
+      }
+  }
+
+
   render() {
     const { classes, SKUs, sortby, selected } = this.props
     return (
@@ -89,7 +326,12 @@ class SKUList extends Component {
                 onChange={() => { this.handleChange(item) }}
                 value="Select"
               />
-              <Card className={classes.card} onClick={() => { this.onClick(item) }}>
+              <Card className={classes.card} onClick={() => { 
+                  this.setState({
+                    editDialog: true,
+                    sku: item
+                  }) 
+                }}>
                 <CardActionArea
                   className={classes.cardAction}
                 >
@@ -105,6 +347,11 @@ class SKUList extends Component {
               </Card>
             </div>
           ))
+        }
+        {
+            this.state.editDialog ? this.openSKUEditPage(this.state.sku, () => {
+                this.setState({ editDialog: false });
+            }) : null
         }
       </div>
     );

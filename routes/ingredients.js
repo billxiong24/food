@@ -26,6 +26,18 @@ router.get('/search', function(req, res, next) {
     controller.constructGetResponse(res, ing.search(names, list, filter));
 });
 
+router.get('/init_ing', function(req, res, next) {
+    const ing = new Ingredient();
+    // scheduler.get_goal_usernames(filter).then((goal_user_names) => {
+    //     res.status(200).json({
+    //         goal__user_names: goal_user_names
+    //     })
+    // })
+    return res.status(200).json({
+        num: 0
+    })
+});
+
 router.post('/', function(req, res, next) {
     const ing = new Ingredient();
     const controller = new Controller();
