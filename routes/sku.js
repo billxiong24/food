@@ -28,8 +28,8 @@ router.get('/search', function(req, res, next) {
 
 router.get('/init_sku', function(req, res, next) {
     const sku = new Sku();
-    sku.initializeSKU().then((res) => {
-        res.status(200).json(res)
+    sku.initializeSKU().then((b) => {
+        res.status(200).json(b)
     })
     // return res.status(200).json({
     //     num: 0,
