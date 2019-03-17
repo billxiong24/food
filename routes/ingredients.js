@@ -33,9 +33,14 @@ router.get('/init_ing', function(req, res, next) {
     //         goal__user_names: goal_user_names
     //     })
     // })
-    return res.status(200).json({
-        num: 0
-    })
+    ing.getNextNum().then((num) => {
+        res.status(200).json({
+            num: num
+        })
+    }) 
+    // return res.status(200).json({
+    //     num: 0
+    // })
 });
 
 router.post('/', function(req, res, next) {
