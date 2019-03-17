@@ -35,6 +35,53 @@ class Formula extends CRUD {
         //}
     }
 
+    generateRandomNum(){
+        return Math.floor(Math.random() * (9999999999 - 0));
+    }
+
+    initializeFormula(){
+        let numQuery = "SELECT num FROM formula"
+        let ingredientQuery = "SELECT name, id FROM ingredients"
+        let ingredients = []
+        let num = this.generateRandomNum()
+        let that = this
+        return db.execSingleQuery(numQuery, [])
+        .then(function(res){
+            console.log(res.rows)
+            const numSet = new Set()
+            for(var i = 0; i < res.rows.length; i++){
+                numSet.add(res.rows[i].num)
+            }
+            while(true){
+                if(!numSet.has(num)){
+                    break
+                }
+                num = that.generateRandomNum()
+            }
+            console.log(num)
+        })
+        .then(function(){
+            return db.execSingleQuery(ingredientQuery, [])
+                .then(function(res){
+                console.log(res.rows)
+                formulas = res.rows.map(item => {
+                    return {
+                        label: item.name,
+                        id: item.id
+                    }
+                })
+            })
+        })
+        .then(function(){
+            return {
+                num: num,
+                ingredients: ingredients
+            }
+        })
+
+
+    }
+
     checkExisting(dataObj) {
         if(dataObj.num)
             return db.execSingleQuery("SELECT COUNT(*) FROM " + this.tableName + " WHERE num = $1", [dataObj.num]);
