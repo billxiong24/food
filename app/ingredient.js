@@ -112,6 +112,10 @@ class Ingredient extends CRUD {
         return db.execSingleQuery("DELETE FROM " + this.tableName + " WHERE id = $1", [id]);
     }
 
+    generateRandomNum(){
+        return Math.floor(Math.random() * (9999999999 - 0));
+    }
+
     getNextNum(){
         let query = "SELECT num FROM ingredients"
         return db.execSingleQuery(query, [])
@@ -121,12 +125,12 @@ class Ingredient extends CRUD {
             for(var i = 0; i < res.rows.length; i++){
                 numSet.add(res.rows[i].num)
             }
-            let num = 1
+            let num = this.generateRandomNum()
             while(true){
                 if(!numSet.has(num)){
                     break
                 }
-                num++;
+                num = this.generateRandomNum()
             }
             return num
         })
