@@ -387,7 +387,7 @@ class SKU extends CRUD {
         if(!validUPC){
             console.log("invalid UPC")
         }
-        if(num < 1){
+        if(case_upc < 1){
             console.log("negative number")
         }
         let query = "SELECT case_upc FROM sku"
