@@ -383,6 +383,7 @@ class SKU extends CRUD {
         let string_case_upc = this.pad(case_upc, 12)
         let prefix = string_case_upc.slice(0,11)
         let lastDigit = this.generateUPCCheckDigit(parseInt(prefix))
+        console.log(lastDigit)
         let validUPC = lastDigit == parseInt(string_case_upc[11]) && (parseInt(string_case_upc[0]) == 0 || parseInt(string_case_upc[0]) == 1|| parseInt(string_case_upc[0]) == 6 || parseInt(string_case_upc[0]) == 7 || parseInt(string_case_upc[0]) == 8 || parseInt(string_case_upc[0]) == 9)
         if(!validUPC){
             console.log("invalid UPC")
