@@ -403,7 +403,7 @@ class SKU extends CRUD {
             for(var i = 0; i < res.rows.length; i++){
                 caseUPCSet.add(res.rows[i].case_upc)
             }
-            return !caseUPCSet.has(case_upc) && validUPC && num > 0
+            return !caseUPCSet.has(case_upc) && validUPC && case_upc > 0
         })
     }
 
