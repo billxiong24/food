@@ -377,7 +377,7 @@ class SKU extends CRUD {
     }
 
     validCaseUPC(case_upc){
-        let string_case_upc = pad(12, case_upc)
+        let string_case_upc = this.pad(12, case_upc)
         let prefix = string_case_upc.slice(0,11)
         let lastDigit = this.generateUPCCheckDigit(parseInt(prefix))
         let validUPC = lastDigit == parseInt(string_case_upc[11]) && (parseInt(string_case_upc[0]) == 0 || parseInt(string_case_upc[0]) == 1|| parseInt(string_case_upc[0]) == 6 || parseInt(string_case_upc[0]) == 7 || parseInt(string_case_upc[0]) == 8 || parseInt(string_case_upc[0]) == 9)
@@ -401,7 +401,7 @@ class SKU extends CRUD {
     }
 
     validUnitUPC(unit_upc){
-        let string_unit_upc = pad(12, unit_upc)
+        let string_unit_upc = this.pad(12, unit_upc)
         let prefix = string_unit_upc.slice(0,11)
         let lastDigit = this.generateUPCCheckDigit(parseInt(prefix))
         let validUPC = lastDigit == parseInt(string_unit_upc[11]) && (parseInt(string_unit_upc[0]) == 0 || parseInt(string_unit_upc[0]) == 1|| parseInt(string_unit_upc[0]) == 6 || parseInt(string_unit_upc[0]) == 7 || parseInt(string_unit_upc[0]) == 8 || parseInt(string_unit_upc[0]) == 9)
