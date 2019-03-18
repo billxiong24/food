@@ -345,6 +345,7 @@ class SKU extends CRUD {
 
     generateUPCCheckDigit(num){
         let numString = String(num)
+        console.log(numString)
         let total = (parseInt(numString[0]) + parseInt(numString[2]) + parseInt(numString[4]) + parseInt(numString[6]) + parseInt(numString[8]) + parseInt(numString[10]))*3 + (parseInt(numString[1]) + parseInt(numString[3]) + parseInt(numString[5])  + parseInt(numString[7]) + parseInt(numString[9]))
         return 10 - (total % 10)
     }
