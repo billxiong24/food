@@ -39,6 +39,38 @@ class Formula extends CRUD {
         return Math.floor(Math.random() * (9999999999 - 0));
     }
 
+    validNum(num){
+        if(num < 1){
+            return false
+        }
+        let query = "SELECT num FROM formula"
+        let that = this
+        return db.execSingleQuery(query, [])
+        .then(function(res){
+            console.log(res.rows)
+            const numSet = new Set()
+            for(var i = 0; i < res.rows.length; i++){
+                numSet.add(res.rows[i].num)
+            }
+            return !numSet.has(num)
+        })
+    }
+
+    formulaAutocomplete(prefix){
+        let query = `SELECT name, id FROM formula WHERE name LIKE \'${prefix}%\'`
+        let that = this
+        return db.execSingleQuery(query, [])
+        .then(function(res){
+            console.log(res.rows)
+            return res.rows.map(item => {
+                return {
+                    label: item.name,
+                    id: item.id
+                }
+            })
+        })
+    }
+
     initializeFormula(){
         let numQuery = "SELECT num FROM formula"
         let ingredientQuery = "SELECT name, id FROM ingredients"

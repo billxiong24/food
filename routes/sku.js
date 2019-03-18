@@ -26,6 +26,36 @@ router.get('/search', function(req, res, next) {
     controller.constructGetResponse(res, sku.search(names, ingredients, prodlines, filter));
 });
 
+router.put('/valid_num', function(req, res, next) {
+    const sku = new Sku();
+    let num = req.body.num
+    sku.validNum(num).then((valid) => {
+        res.status(200).json({
+            valid
+        })
+    })
+});
+
+router.put('/valid_case_upc', function(req, res, next) {
+    const sku = new Sku();
+    let case_upc = req.body.case_upc
+    sku.validCaseUPC(case_upc).then((valid) => {
+        res.status(200).json({
+            valid
+        })
+    })
+});
+
+router.put('/valid_unit_upc', function(req, res, next) {
+    const sku = new Sku();
+    let unit_upc = req.body.unit_upc
+    sku.validUnitUPC(unit_upc).then((valid) => {
+        res.status(200).json({
+            valid
+        })
+    })
+});
+
 router.get('/init_sku', function(req, res, next) {
     const sku = new Sku();
     sku.initializeSKU().then((b) => {

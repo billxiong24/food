@@ -136,6 +136,23 @@ class Ingredient extends CRUD {
             return num
         })
     }
+
+    validNum(num){
+        if(num < 1){
+            return false
+        }
+        let query = "SELECT num FROM ingredients"
+        let that = this
+        return db.execSingleQuery(query, [])
+        .then(function(res){
+            console.log(res.rows)
+            const numSet = new Set()
+            for(var i = 0; i < res.rows.length; i++){
+                numSet.add(res.rows[i].num)
+            }
+            return !numSet.has(num)
+        })
+    }
 }
 
 module.exports = Ingredient;

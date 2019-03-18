@@ -353,6 +353,77 @@ class SKU extends CRUD {
         return Math.floor(Math.random() * (9999999999 - 0));
     }
 
+    pad(n, width, z) {
+        z = z || '0';
+        n = n + '';
+        return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+    }
+
+    validNum(num){
+        if(num < 1){
+            return false
+        }
+        let query = "SELECT num FROM sku"
+        let that = this
+        return db.execSingleQuery(query, [])
+        .then(function(res){
+            console.log(res.rows)
+            const numSet = new Set()
+            for(var i = 0; i < res.rows.length; i++){
+                numSet.add(res.rows[i].num)
+            }
+            return !numSet.has(num)
+        })
+    }
+
+    validCaseUPC(case_upc){
+        let string_case_upc = pad(12, case_upc)
+        let prefix = string_case_upc.slice(0,11)
+        let lastDigit = this.generateUPCCheckDigit(parseInt(prefix))
+        let validUPC = lastDigit == parseInt(string_case_upc[11]) && (parseInt(string_case_upc[0]) == 0 || parseInt(string_case_upc[0]) == 1|| parseInt(string_case_upc[0]) == 6 || parseInt(string_case_upc[0]) == 7 || parseInt(string_case_upc[0]) == 8 || parseInt(string_case_upc[0]) == 9)
+        if(!validUPC){
+            return false
+        }
+        if(num < 1){
+            return false
+        }
+        let query = "SELECT case_upc FROM sku"
+        let that = this
+        return db.execSingleQuery(query, [])
+        .then(function(res){
+            console.log(res.rows)
+            const caseUPCSet = new Set()
+            for(var i = 0; i < res.rows.length; i++){
+                caseUPCSet.add(res.rows[i].case_upc)
+            }
+            return !caseUPCSet.has(case_upc)
+        })
+    }
+
+    validUnitUPC(unit_upc){
+        let string_unit_upc = pad(12, unit_upc)
+        let prefix = string_unit_upc.slice(0,11)
+        let lastDigit = this.generateUPCCheckDigit(parseInt(prefix))
+        let validUPC = lastDigit == parseInt(string_unit_upc[11]) && (parseInt(string_unit_upc[0]) == 0 || parseInt(string_unit_upc[0]) == 1|| parseInt(string_unit_upc[0]) == 6 || parseInt(string_unit_upc[0]) == 7 || parseInt(string_unit_upc[0]) == 8 || parseInt(string_unit_upc[0]) == 9)
+        if(!validUPC){
+            return false
+        }
+        if(num < 1){
+            return false
+        }
+        let query = "SELECT unit_upc FROM sku"
+        let that = this
+        return db.execSingleQuery(query, [])
+        .then(function(res){
+            console.log(res.rows)
+            const unitUPCSet = new Set()
+            for(var i = 0; i < res.rows.length; i++){
+                unitUPCSet.add(res.rows[i].unit_upc)
+            }
+            return !unitUPCSet.has(unit_upc)
+        })
+    }
+
 
     initializeSKU(){
         let numQuery = "SELECT num, case_upc, unit_upc FROM sku"

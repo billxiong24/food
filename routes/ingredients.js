@@ -26,6 +26,16 @@ router.get('/search', function(req, res, next) {
     controller.constructGetResponse(res, ing.search(names, list, filter));
 });
 
+router.put('/valid_num', function(req, res, next) {
+    const ing = new Ingredient();
+    let num = req.body.num
+    ing.validNum(num).then((valid) => {
+        res.status(200).json({
+            valid
+        })
+    })
+});
+
 router.get('/init_ing', function(req, res, next) {
     const ing = new Ingredient();
     // scheduler.get_goal_usernames(filter).then((goal_user_names) => {

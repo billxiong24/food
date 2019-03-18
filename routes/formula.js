@@ -38,6 +38,26 @@ router.get('/:id', function(req, res, next) {
     controller.constructGetResponse(res, formula.read(req.params.id));
 });
 
+router.put('/valid_num', function(req, res, next) {
+    const formula = new Formula();
+    let num = req.body.num
+    formula.validNum(num).then((valid) => {
+        res.status(200).json({
+            valid
+        })
+    })
+});
+
+router.put('/formula_autocomplete', function(req, res, next) {
+    const formula = new Formula();
+    let prefix = req.body.prefix
+    formula.formulaAutocomplete(prefix).then((list) => {
+        res.status(200).json({
+            formulas: list
+        })
+    })
+});
+
 router.get('/:id/ingredients', function(req, res, next) {
     let id = req.params.id;
     if(isNaN((id))) {
