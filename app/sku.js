@@ -385,10 +385,10 @@ class SKU extends CRUD {
         let lastDigit = this.generateUPCCheckDigit(parseInt(prefix))
         let validUPC = lastDigit == parseInt(string_case_upc[11]) && (parseInt(string_case_upc[0]) == 0 || parseInt(string_case_upc[0]) == 1|| parseInt(string_case_upc[0]) == 6 || parseInt(string_case_upc[0]) == 7 || parseInt(string_case_upc[0]) == 8 || parseInt(string_case_upc[0]) == 9)
         if(!validUPC){
-            return false
+            console.log("invalid UPC")
         }
         if(num < 1){
-            return false
+            console.log("negative number")
         }
         let query = "SELECT case_upc FROM sku"
         let that = this
@@ -399,7 +399,7 @@ class SKU extends CRUD {
             for(var i = 0; i < res.rows.length; i++){
                 caseUPCSet.add(res.rows[i].case_upc)
             }
-            return !caseUPCSet.has(case_upc)
+            return !caseUPCSet.has(case_upc) && validUPC && num > 0
         })
     }
 
