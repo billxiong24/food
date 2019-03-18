@@ -356,6 +356,9 @@ class SKU extends CRUD {
     pad(n, width, z) {
         z = z || '0';
         n = n + '';
+        console.log(n)
+        console.log(width)
+        console.log(z)
         return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
     }
 
