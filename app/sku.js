@@ -408,7 +408,7 @@ class SKU extends CRUD {
     }
 
     validUnitUPC(unit_upc){
-        let string_unit_upc = this.pad(case_upc, 12)
+        let string_unit_upc = this.pad(unit_upc, 12)
         let prefix = string_unit_upc.slice(0,11)
         let lastDigit = this.generateUPCCheckDigit(parseInt(prefix))
         let validUPC = lastDigit == parseInt(string_unit_upc[11]) && (parseInt(string_unit_upc[0]) == 0 || parseInt(string_unit_upc[0]) == 1|| parseInt(string_unit_upc[0]) == 6 || parseInt(string_unit_upc[0]) == 7 || parseInt(string_unit_upc[0]) == 8 || parseInt(string_unit_upc[0]) == 9)
