@@ -4,19 +4,7 @@ var chaiHttp = require('chai-http');
 var should = chai.should();
 chai.use(chaiHttp);
 var server = require('../app');
-const execSync = require('child_process').execSync;
 const db = ("../app/db");
-
-//mocha --exit
-//function clean(done) {
-    //execSync("./cleandb.sh");
-    //done();
-//}
-
-//before(function(done) {
-    //execSync("./cleandb.sh");
-    //done();
-//});
 
 describe('Manufacturing goals', function() {
     it('should get goals of user', function(done) {
@@ -52,17 +40,57 @@ describe('Manufacturing goals', function() {
             done();
         });
     });
+    it('should get calculations for goal', function(done) {
+        chai.request(server)
+        .get('/manufacturing_goals/7/calculations')
+        .query({
+            units: 1
+        })
+        .end(function(err, res) {
+            res.should.have.status(200);
+            res.body.length.should.equal(3);
+            console.log(res.body);
+            res.body[0].calc_res.should.equal("17.900");
+            done();
+        });
+    });
+
+    it('should get calculations for goal with package size, unit conversions', function(done) {
+        chai.request(server)
+        .get('/manufacturing_goals/7/calculations')
+        .end(function(err, res) {
+            res.should.have.status(200);
+            res.body.length.should.equal(3);
+            res.body[0].calc_res.should.equal(0.559375);
+            done();
+        });
+    });
 
     it('should add manufacturing goal', function(done) {
         chai.request(server)
         .post('/manufacturing_goals')
         .send({
             name: "goal4",
-            user_id: 7 
+            user_id: 7,
+            deadline: "2019-05-09"
         })
         .end(function(err, res) {
             res.should.have.status(201);
             res.body.should.have.property("id");
+            done();
+        });
+    });
+    it('should fail to add manufacturing goal with bad deadline', function(done) {
+        chai.request(server)
+        .post('/manufacturing_goals')
+        .send({
+            name: "goal4",
+            user_id: 7,
+            deadline: "243-4441-22"
+        })
+        .end(function(err, res) {
+            res.should.have.status(409);
+            res.body.should.have.property("error");
             done();
         });
     });
@@ -72,10 +100,12 @@ describe('Manufacturing goals', function() {
         .post('/manufacturing_goals')
         .send({
             name: "goal4",
-            user_id: 7 
+            user_id: 7,
+            deadline: "2019-02-11"
         })
         .end(function(err, res) {
             res.should.have.status(409);
+            res.body.should.have.property("error");
             done();
         });
     });
@@ -144,7 +174,7 @@ describe('Manufacturing goals', function() {
             ]
         })
         .end(function(err, res) {
-            res.should.have.status(200);
+            res.should.have.status(201);
             res.body.should.have.property("rowCount");
             res.body.rowCount.should.equal(2);
             done();
@@ -167,18 +197,9 @@ describe('Manufacturing goals', function() {
             ]
         })
         .end(function(err, res) {
-            res.should.have.status(400);
+            res.should.have.status(409);
             done();
         });
     });
 
-    it('should get calculations for goal', function(done) {
-        chai.request(server)
-        .get('/manufacturing_goals/7/calculations')
-        .end(function(err, res) {
-            res.should.have.status(200);
-            res.body.length.should.equal(10);
-            done();
-        });
-    });
 });

@@ -10,7 +10,9 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import withStyles from '@material-ui/core/styles/withStyles';
 import { connect } from 'react-redux';
-import { userCreateAttempt } from '../../Redux/Actions'
+import { userCreateAttempt } from '../../Redux/Actions/ActionCreators/UserActionCreators';
+import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
+import { Link } from 'react-router-dom';
 
 const styles = theme => ({
   main: {
@@ -51,6 +53,7 @@ const styles = theme => ({
 });
 
 const unameRegex = "^(?=.{3,32}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$";
+const netidRegex = /^netid_/i;
 const passwordRegex = "^(?=.{8,70}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$";
 
 class SignUpPage extends Component {
@@ -60,7 +63,10 @@ class SignUpPage extends Component {
       uname:"",
       password:"",
       passwordCheck:"",
-      status:""
+      status:"",
+      message:"",
+      alert:false,
+      autohide:null,
     }
   }
 
@@ -84,16 +90,20 @@ class SignUpPage extends Component {
 
   submitFormCheck(e) {
     e.preventDefault();
-    if(this.state.uname.match(unameRegex)===null) {
+    if(this.state.uname.match(unameRegex)===null || this.state.uname.match(netidRegex)!==null) {
       this.setState({
-        status: "Usernames must be between 3 and 32 characters of length and only use alphanumerical characters, -, and _",
-        uname: ""
+        uname: "",
+        message: "Usernames must be between 3 and 32 characters of length and only use alphanumerical characters, -, and _. Cannot begin with 'netid_'.",
+        alert: true,
+        autohide: null,
       });
       return;
     }
     if(this.state.password.match(passwordRegex)===null) {
       this.setState({
-        status: "Passwords must be between 8 and 32 characters of length and only use alphanumerical characters, -, and _",
+        message: "Passwords must be between 8 and 32 characters of length and only use alphanumerical characters, -, and _",
+        alert: true,
+        autohide: null,
         password: "",
         passwordCheck: ""
       });
@@ -101,7 +111,9 @@ class SignUpPage extends Component {
     }
     if(this.state.password!==this.state.passwordCheck) {
       this.setState({
-        status: "Passwords do not match"
+        message: "Passwords do not match!",
+        alert: true,
+        autohide: 6000,
       });
       return;
     }
@@ -109,13 +121,29 @@ class SignUpPage extends Component {
     .then(()=>{
       if(this.props.users.isSuccess) {
         this.setState({
-          status: "User Successfully Created!",
+          message: "User Successfully Created!",
+          alert: true,
+          autohide: 6000,
           uname: "",
           password: "",
           passwordCheck: ""
         })
       }
+      else {
+        this.setState({
+          message: this.props.users.errMsg,
+          alert: true,
+          autohide: 6000
+        })
+      }
     })
+  }
+
+  closeAlert() {
+    this.setState({
+      alert: false,
+      message: ""
+    });
   }
 
   render() {
@@ -152,11 +180,25 @@ class SignUpPage extends Component {
             >
               Create User
             </Button>
-            <div className={classes.status}>
-              <label>{this.state.status ? this.state.status : users.errMsg}</label>
-            </div>
+            <Button
+              fullWidth
+              variant="contained"
+              className={classes.submit}
+              component={Link}
+              to={"/users"}
+            >
+              Done
+            </Button>
           </form>
         </Paper>
+        <SimpleSnackbar
+          open={this.state.alert}
+          handleClose={() => { this.closeAlert() }}
+          message={this.state.message}
+          overrideAutoHide={true}
+          autoHideDuration={this.state.autohide}
+        >
+        </SimpleSnackbar>
       </main>
     );
   }

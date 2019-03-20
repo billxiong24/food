@@ -1,7 +1,46 @@
+const local = {
+  hostname: 'https://cmdev.colab.duke.edu:8000/',
+  // hostname: 'http://localhost:8000/',
+  url: 'http://localhost:3000/',
+  https: false,
+  colab_client_id: 'code-monkeys-local',
+  colab_client_secret: 'sBzEYfj3%24g%3D%3Ds%3D9ykGvZg%40jkM%24JIAzqdatRwCZ%23cSredSCwoJB',
+  colab_redirect_uri: 'http%3A%2F%2Flocalhost%3A3000%2Flogin',
+}
+
+const dev = {
+  hostname: 'https://cmdev.colab.duke.edu:8000/',
+  url: 'https://cmdev.colab.duke.edu/',
+  https: true,
+  colab_client_id: 'code-monkeys-dev',
+  colab_client_secret: 'Lqwk%2BlPGuFElds3RWUsM%21yaCxlTcDSjfe%23i77%21bVBlzeUXwDac',
+  colab_redirect_uri: 'https%3A%2F%2Fcmdev.colab.duke.edu%2Flogin',
+}
+
+const prod = {
+  hostname: 'https://codemonkeys.colab.duke.edu:8000/',
+  url: 'https://codemonkeys.colab.duke.edu/',
+  https: true,
+  colab_client_id: 'code-monkeys-prod',
+  colab_client_secret: 'mYCevAXgB5d%23yHe38ipctjl%25AE%2AxaAk4eQdK2%233IzrDXL92k%219%0D%0A',
+  colab_redirect_uri: 'https%3A%2F%2Fcodemonkeys.colab.duke.edu%2Flogin',
+}
+
+const ritwikvm = {
+  hostname: 'http://vcm-8738.vm.duke.edu:8000/',
+  url: 'http://localhost:3000/',
+  https: false,
+  colab_client_id: 'code-monkeys-ritwik',
+  colab_client_secret: 'mYCevAXgB5d%23yHe38ipctjl%25AE%2AxaAk4eQdK2%233IzrDXL92k%219%0D%0A',
+  colab_redirect_uri: 'https%3A%2F%2Fcodemonkeys.colab.duke.edu%2Flogin',
+}
+
+const config = process.env.REACT_APP_STAGE === 'prod' ? prod :
+              (process.env.REACT_APP_STAGE === 'dev' ? dev : local);
+
 
 export default {
-  hostname: 'https://cmdev.colab.duke.edu:8000/',
-  admin: 7,
+  ...config
 }
 
 String.prototype.hashCode = function() {
@@ -47,8 +86,6 @@ export function removeFromList(item,list){
 }
 
 export function findDifferences(newlist,original){
-  console.log(newlist)
-  console.log(original)
   var originalSet = new Set();
   for(var i = 0; i < original.length; i++){
     originalSet.add(original[i].id)
@@ -78,16 +115,12 @@ export function findDifferences(newlist,original){
 }
 
 function removeListFromList(listToRemove, original){
-  console.log("REMOVEFROMLIST")
-  console.log(listToRemove)
-  console.log(original)
   var set = new Set();
   for(var i = 0; i < listToRemove.length; i++){
     set.add(listToRemove[i].id)
   }
 
   let newlist = original.filter(item => !set.has(item.id))
-  console.log(newlist)
   return newlist
 }
 export function isInteger(string){
@@ -118,15 +151,33 @@ export function isUPCNumber(string){
   return String(string).match(/^(?=.*0)[0-9]{12}$/) != null;
 }
 
-// const ing = {
-//   name:this.state.ingredientName,
-//   num:this.state.ingredientNum,
-//   vend_info:this.state.vend_info,
-//   pkg_size:this.state.packageSize,
-//   pkg_cost:this.state.costPerPackage,
-//   comments:this.state.comment,
-//   id:this.props.id
-// }
+export function getFormInsertErrors(formula) {
+    let errs = [];
+    if(!formula.name || formula.name === "") {
+        errs.push({
+            errMsg:"Must have a name",
+            id: hashcode("Must have a name")
+        });
+    }
+    return errs;
+}
+
+export function getFormUpdateErrors(formula) {
+    let errs = [];
+    if(!formula.name || formula.name === "") {
+        errs.push({
+            errMsg:"Must have a name",
+            id: hashcode("Must have a name")
+        });
+    }
+    if(formula.num === "" || !formula.num || isNaN(formula.num)) {
+        errs.push({
+            errMsg:"Must be valid num",
+            id: hashcode("Must be valid num")
+        });
+    }
+    return errs;
+}
 
 export function getIngErrors(ing){
   let errors = []
@@ -171,7 +222,15 @@ export function getIngErrors(ing){
 //   prd_line: "prod4",    
 //   comments: "commentingg"    
 // }
+export function skuCheckFormula(formula) {
+    let errors = [];
+    if(!formula) {
+        let message = "Formula is Empty"
+        errors.push({errMsg:message,id:hashcode(message)})
+    }
 
+    return errors;
+}
 export function getSkuErrors(sku){
   let errors = []
   let message;

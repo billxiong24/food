@@ -2,11 +2,14 @@ const db = require("./db");
 const squel = require("squel").useFlavour("postgres");
 const csv=require('csvtojson');
 const QueryGenerator = require("./query_generator");
+const Formatter = require('./formatter');
 
 class CRUD {
 
     constructor() {
         this.tableName = null;
+        this.headerToDB = null;
+        this.dbToHeader = null;
     }
 
     makeParamList(obj) {
@@ -65,6 +68,9 @@ class CRUD {
     
       inputArray.map(function(item) {
           var itemPropertyName = item[propertyName];    
+          if(!itemPropertyName) {
+              return;
+          }
           if (itemPropertyName in testObject) {
                 testObject[itemPropertyName].duplicate = true;
                 item.duplicate = true;
@@ -80,6 +86,7 @@ class CRUD {
     }
 
     bulkCleanData(jsonList) {
+        jsonList = this.convertHeaderToDB(jsonList);
         for(let i = 0; i < jsonList.length; i++) {
             let obj = jsonList[i];
             for(let key in obj) {
@@ -242,8 +249,48 @@ class CRUD {
         });
     }
 
+    convertHeaderToDB(jsonList) {
+        return this.changeKeys(jsonList, this.headerToDB);
+    }
+
+    reverseKeys(data) {
+        return Object.keys(data).reduce(function(obj,key){
+           obj[data[key]] = key;
+           return obj;
+        },{});
+    }
+    changeKeys(jsonList, obj) {
+        let headers = obj;
+        for(let i = 0; i < jsonList.length; i++) {
+            let obj = jsonList[i];
+            let updatedObj = {};
+            for(let key in obj) {
+                let newKey = headers[key];
+                updatedObj[newKey] = obj[key];
+            }
+            jsonList[i] = updatedObj;
+        }
+        return jsonList;
+
+    }
+    convertDBToHeader(jsonList) {
+        return this.changeKeys(jsonList, this.dbToHeader);
+    }
+
+    exportFile(jsonList, format, cb=null) {
+        console.log(format);
+        console.log(jsonList);
+        const formatter = new Formatter(format);
+        jsonList = this.convertDBToHeader(jsonList);
+        return formatter.generateFormat(jsonList);
+    }
+
 
     //abstract methods
+
+    checkExisting(dataObj) {
+        return Promise.resolve(null);
+    }
     create(dataObj) {
 
     }
@@ -267,6 +314,7 @@ class CRUD {
     duplicateObjs(jsonList) {
 
     }
+
 }
 
 module.exports = CRUD;

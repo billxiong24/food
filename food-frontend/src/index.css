@@ -16,3 +16,16 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+.ingredient_id{
+  font-size: 14;
+  font-family: 'Open Sans';
+  font-weight: 400;
+}
+.activity_popup_text{
+  font-size: 14;
+  float: 'right';
+  font-family: 'Open Sans';
+  font-weight: 400;
+  color: 'red'
+}
+

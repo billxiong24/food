@@ -42,16 +42,10 @@ class PageSelector extends Component {
     }
 
     decreaseOffset = () => {
-        console.log("PAGE SELECTOR")
-        console.log(this.props.offset)
-        console.log(this.props.limit)
         this.props.search(this.props.offset - this.props.limit)
     }
 
     increaseOffset = () => {
-        console.log("PAGE SELECTOR")
-        console.log(this.props.offset)
-        console.log(this.props.limit)
         this.props.search(this.props.offset + this.props.limit)
     }
 
@@ -80,7 +74,6 @@ class PageSelector extends Component {
                 </IconButton>
                 :
                 <IconButton 
-                    color={labels.colors.primaryColor}
                     className={classes.off}
                     aria-label="Add an alarm"
                     opacity={0.5}
@@ -93,7 +86,6 @@ class PageSelector extends Component {
             </Typography>
             { enableIncrease ?
                 <IconButton 
-                    color={labels.colors.primaryColor}
                     className={classes.button}
                     aria-label="Add an alarm"
                     onClick={this.increaseOffset}
@@ -102,7 +94,6 @@ class PageSelector extends Component {
                 </IconButton>
                 :
                 <IconButton 
-                    color={labels.colors.primaryColor}
                     className={classes.off}
                     aria-label="Add an alarm"
                     opacity={0.5}

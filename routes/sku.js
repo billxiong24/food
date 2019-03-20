@@ -3,6 +3,7 @@ const Sku = require('../app/sku');
 const Filter = require("../app/filter");
 let router = express.Router();
 const error_controller = require('../app/controller/error_controller');
+const Controller = require('../app/controller/controller');
 
 //TODO 22P02, 42703
 router.get('/search', function(req, res, next) {
@@ -15,39 +16,14 @@ router.get('/search', function(req, res, next) {
     let offset = parseInt(req.query.offset) || 0;
 
     const filter = new Filter();
-    filter.setOrderKey(orderKey).setAsc(asc).setOffset(req.query.offset).setLimit(req.query.limit);
+    filter.setOrderKey(orderKey).setAsc(asc).setOffset(offset).setLimit(limit);
 
-    if(!names) {
-        names = [];
-    }
-    else if(!Array.isArray(names)) {
-        names = [names];
-    }
-
-    if(!ingredients) {
-        ingredients = [];
-    }
-    else if(!Array.isArray(ingredients)) {
-        ingredients = [ingredients];
-    }
-
-    if(!prodlines) {
-        prodlines = [];
-    }
-    else if(!Array.isArray(prodlines)) {
-        prodlines = [prodlines];
-    }
+    names = Controller.convertParamToArray(names) 
+    ingredients = Controller.convertParamToArray(ingredients) 
+    prodlines = Controller.convertParamToArray(prodlines) 
     const sku = new Sku();
-
-    sku.search(names, ingredients, prodlines, filter) 
-    .then((result) => {
-        res.status(200).json(result.rows);
-    })
-    .catch((err) => {
-        res.status(400).json({
-            error: error_controller.getErrMsg(err)
-        });
-    });
+    const controller = new Controller();
+    controller.constructGetResponse(res, sku.search(names, ingredients, prodlines, filter));
 });
 
 router.get('/:id/ingredients', function(req, res, next) {
@@ -59,64 +35,71 @@ router.get('/:id/ingredients', function(req, res, next) {
     }
 
     const sku = new Sku();
-    sku.getIngredients(id)
-    .then((result) => {
-        res.status(200).json(result.rows);
-    })
-    .catch((err) => {
-        res.status(400).json({
-            error: error_controller.getErrMsg(err)
-        });
-    });
+    const controller = new Controller();
+    controller.constructGetResponse(res, sku.getIngredients(id));
 });
 
-//TODO 23503, 22P02, 
-router.post('/:id/ingredients', function(req, res, next) {
+router.post('/:id/manufacturing_lines', function(req, res, next) {
     let id = req.params.id;
     if(isNaN((id))) {
         return res.status(400).json({
             error: "Malformed URL."
         });
-
     }
-    if(!req.body.ingredients || req.body.ingredients.length == 0) {
+    console.log(req.body);
+    let lines = Controller.convertParamToArray(req.body.man_lines);
+    const sku = new Sku();
+    const controller = new Controller();
+    controller.constructUpdateResponse(res, sku.addManLines(id, lines));
+});
+
+router.delete('/:id/manufacturing_lines', function(req, res, next) {
+    let id = req.params.id;
+    if(isNaN((id))) {
+        return res.status(400).json({
+            error: "Malformed URL."
+        });
+    }
+
+    console.log(req.body);
+    let lines = Controller.convertParamToArray(req.body.man_lines);
+    if(lines.length === 0) {
         return res.status(200).json({
             rowCount: 0
         });
     }
+    console.log(req.body);
     const sku = new Sku();
-    sku.addIngredients(id, req.body.ingredients)
-    .then((result) => {
-        res.status(201).json({
-            rowCount: result.rowCount
-        });
-    })
-    .catch((err) => {
-        res.status(409).json({
-            error: error_controller.getErrMsg(err)
-        });
-    });
+    const controller = new Controller();
+    controller.constructDeleteResponse(res, sku.deleteManLines(id, lines));
 });
 
-//TODO 22P02, 42703 
-router.post('/', function(req, res, next) {
-    const sku = new Sku();
-    sku.create(req.body)
-    .then((result) => {
-        if(!result.rows || result.rows.length === 0) {
-            return res.status(400).json("Bad request.");
-        }
-        res.status(201).json(result.rows[0]);
-    })
-    .catch((err) => {
-        res.status(409).json({
-            error: error_controller.getErrMsg(err)
+router.get('/:id/manufacturing_lines', function(req, res, next) {
+    let id = req.params.id;
+    if(isNaN((id))) {
+        return res.status(400).json({
+            error: "Malformed URL."
         });
-    });
+    }
+
+    const sku = new Sku();
+    const controller = new Controller();
+    controller.constructGetResponse(res, sku.getManufacturingLines(id));
 });
+
+//TODO 23503, 22P02, 
+router.post('/', function(req, res, next) {
+    req.body.man_lines = Controller.convertParamToArray(req.body.man_lines);
+    console.log(req.body);
+    const sku = new Sku();
+    const controller = new Controller();
+    controller.constructPostResponse(res, sku.create(req.body));
+});
+
 
 //TODO 23505, 22P02, 42703 
 router.put('/:id', function(req, res, next) {
+    console.log(req.body);
     if(isNaN((req.params.id))) {
         return res.status(400).json({
             error: "Malformed URL."
@@ -130,17 +113,8 @@ router.put('/:id', function(req, res, next) {
     }
 
     const sku = new Sku();
-    sku.update(req.body, req.params.id)
-    .then((result) => {
-        res.status(200).json({
-            rowCount: result.rowCount
-        });
-    })
-    .catch((err) => {
-        res.status(409).json({
-            error: error_controller.getErrMsg(err)
-        });
-    });
+    const controller = new Controller();
+    controller.constructUpdateResponse(res, sku.update(req.body, req.params.id));
 });
 
 //TODO 22P02
@@ -151,49 +125,8 @@ router.delete('/:id', function(req, res, next) {
         });
     }
     const sku = new Sku();
-    sku.remove(req.params.id)
-    .then((result) => {
-        res.status(200).json({
-            rowCount: result.rowCount
-        });
-    })
-    .catch((err) => {
-        res.status(409).json({
-            error: error_controller.getErrMsg(err)
-        });
-    });
-});
-
-
-//TODO 22P02
-router.delete('/:id/ingredients', function(req, res, next) {
-    if(!req.params.id) {
-        return res.status(400).json({
-            error: "Malformed URL."
-        });
-    }
-
-    let ingredients = req.body.ingredients;
-    if(!ingredients || ingredients.length === 0) {
-        return res.status(200).json({
-            rowCount: 0
-        });
-    }
-    else if (!Array.isArray(ingredients)) {
-        ingredients = [ingredients];
-    }
-    const sku = new Sku();
-    sku.removeIngredients(req.params.id, ingredients)
-    .then((result) => {
-        res.status(200).json({
-            rowCount: result.rowCount
-        });
-    })
-    .catch((err) => {
-        res.status(409).json({
-            error: error_controller.getErrMsg(err)
-        });
-    });
+    const controller = new Controller();
+    controller.constructDeleteResponse(res, sku.remove(req.params.id));
 });
 
 module.exports = router;

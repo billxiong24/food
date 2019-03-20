@@ -7,7 +7,9 @@ import { connect } from 'react-redux';
 import TextField from '@material-ui/core/TextField';
 import ProductLineCard from './ProductLineCard';
 import Fab from '@material-ui/core/Fab';
-import { prdlineChangeLimit, prdlineNextPage, prdlinePrevPage, prdlineSearch, prdlineAddPrdline, prdlineUpdatePrdline, prdlineDeletePrdline } from '../../Redux/Actions/index'
+import { prdlineChangeLimit, prdlineNextPage, prdlinePrevPage, 
+  prdlineSearch, prdlineAddPrdline, prdlineUpdatePrdline, 
+  prdlineDeletePrdline } from '../../Redux/Actions/ActionCreators/ProductLineActionCreators'
 import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
 import back from '../../Resources/Images/baseline-navigate_before-24px.svg'
 import next from '../../Resources/Images/baseline-navigate_next-24px.svg'
@@ -15,6 +17,7 @@ import { IconButton } from '@material-ui/core';
 import common from '../../Resources/common';
 import axios from 'axios';
 import FileDownload from 'js-file-download';
+import { withCookies } from 'react-cookie';
 
 const styles = {
   ingredients_list:{
@@ -83,6 +86,7 @@ class ProductLinePage extends Component {
   }
 
   componentWillMount(){
+    this.handleQuery();
   }
 
   handleQueryChange(e){
@@ -98,7 +102,6 @@ class ProductLinePage extends Component {
   }
 
   handleQuery(){
-    console.log(this.state.query);
     this.props.prdlineSearch(this.state.query);
   }
 
@@ -176,22 +179,6 @@ class ProductLinePage extends Component {
     this.handleQuery();
   }
 
-  onExportClick = () => {
-    axios.post(common.hostname + 'manufacturing_goals/exported_file', {
-      data: this.props.productLine.productLines.map((e)=>{
-        return {
-          name: e.name,
-        }
-      }),
-      format: "csv",
-    })
-      .then((response) => {
-        FileDownload(response.data, 'product_lines.csv');
-      })
-      .catch(err => {
-        console.log(err);
-      })
-  }
 
 
   render() {
@@ -229,7 +216,6 @@ class ProductLinePage extends Component {
                 variant="extended"
                 aria-label="Delete"
                 className={classes.fab}
-                onClick={this.onExportClick}
                 disabled={productLine.productLines.length === 0}
               >
                 Export Search
@@ -244,14 +230,14 @@ class ProductLinePage extends Component {
           </DisplayButton>
           <NewProductLine
             addProductLine={(prdline) => { this.addProductLine(prdline) }}
-            user={this.props.users.id}
+            admin={this.props.cookies.admin}
             classes={classes}
           ></NewProductLine>
           <div className={classes.list_container}>
             <ItemList items={productLine.productLines}>
               <ProductLineCard
                 onEnter={(prdline) => { this.updateProductLine(prdline) }}
-                editable={this.props.users.id === common.admin}
+                editable={this.props.cookies.admin === "true"}
                 persistent={true}
                 deleteProductLine={(prdline) => { this.removeProductLine(prdline) }}
               ></ProductLineCard>
@@ -302,7 +288,7 @@ function DisplayButton(props) {
 }
 
 function NewProductLine(props) {
-  if(props.user===common.id) {
+  if(props.admin==="true") {
     return (
       <div>
         <ProductLineCard
@@ -319,10 +305,10 @@ function NewProductLine(props) {
 }
 
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
   return {
     productLine: state.productLine,
-    users: state.users
+    cookies: ownProps.cookies.cookies,
   };
 };
 
@@ -337,4 +323,4 @@ const mapDispatchToProps = {
 };
 
 
-export default withStyles(styles)(connect(mapStateToProps,mapDispatchToProps)(ProductLinePage));
+export default withStyles(styles)(withCookies(connect(mapStateToProps,mapDispatchToProps)(ProductLinePage)));

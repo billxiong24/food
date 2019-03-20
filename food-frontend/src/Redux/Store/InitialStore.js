@@ -1,16 +1,38 @@
 import labels from "../../Resources/labels";
+import { initialSchedulerStore } from "../../Components/Scheduler/DataConverter";
 
 export const InitialStore = {
   // For now, only persistent data about users is who is actually logged in if there is someone logged in
   users: {
-    uname: '',
-    id: null,
     isSuccess: false,
-    errMsg: null
+    errMsg: null,
+    keyword: "",
+    users: [],
+    current_page_number: 1,
+    total_pages: 1,
+    limit: 10,
   },
   // Persistent data concerning routing
   route: 0,
   // Persistent data concnerning ingredients view
+  formulas: {
+    filters: [],
+    items: [],
+    ingredient_names: [],
+    formula_names: [],
+    sortby: labels.formulas.sort_by.FORMULA_NAME,
+    filter_type: labels.formulas.filter_type.INGREDIENTS,
+    current_page_number: 1,
+    total_pages: 12,
+    offset:0,
+    limit:10,
+    full:false,
+    row_count:0,
+    end:false,
+    skus: [],
+    errMsg: null,
+    errors:[]
+  },
   ingredients: {
     filters: [],
     items: [],
@@ -54,7 +76,8 @@ export const InitialStore = {
     full:false,
     row_count:0,
     end:false,
-    errors:[]
+    errors:[],
+    selectedSkus:[],
   },
   // Manufacturing Goals
   manGoals: {
@@ -71,11 +94,27 @@ export const InitialStore = {
     filters: [],
     errMsg: null
   },
+
+  formula_details: {
+      made_formula: false,
+      formulaName: null,
+      formulaComment: null,
+      formulaNum: null,
+      new: false,
+      valid: false,
+      editing: false,
+      id: null,
+      ingredients:[],
+      skus: [],
+      new_ingredients: [],
+      errors:[]
+  },
   ingredient_details:{
     ingredientName:null,
     ingredientNum:null,
     packageSize:null,
     costPerPackage:null,
+    unit: null,
     comment:null,
     id:null,
     skus:[],
@@ -92,11 +131,18 @@ export const InitialStore = {
       unit_size:"45 Pomericans",
       count_per_case:"34",
       prd_line:"Campbell Home Products",
+      formula_id: null,
+      man_rate: null,
+      formula_scale: null,
       ingredients:[],
+      current_formula: null,
       comments:"Insert Funny Side Comment",
       completion:"All Good",
       id:null,
       product_lines:[],
+      manufacturing_lines: [], 
+      manline_suggestions: [],
+      formula_suggestions: [],
       ingredient_suggestions:[],
       current_ingredients:[],
       errors:[],
@@ -105,5 +151,14 @@ export const InitialStore = {
   },
   bulk_import:{
     errors:[]
+  },
+  scheduler: initialSchedulerStore,
+  manLine: {
+    manLines: [],
+    errMsg: null,
+    none: [],
+    all: [],
+    some: [],
+    values: {},
   }
 }

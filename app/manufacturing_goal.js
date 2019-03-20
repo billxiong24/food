@@ -4,11 +4,47 @@ const CRUD = require("./CRUD");
 const Sku = require('./sku');
 const Formatter = require('./formatter');
 const QueryGenerator = require("./query_generator");
+const convert = require('convert-units');
+
 
 class ManufacturingGoals extends CRUD {
     constructor() {
         super();
         this.tableName = "manufacturing_goal";
+        this.dbToHeader = {"name": "name"};
+        this.headerToDB = {"name": "name"};
+        this.unitMap = {
+            "ounce": "oz",
+            "oz": "oz",
+            "lb": "lb",
+            "pound": "lb",
+            "t": "t",
+            "ton": "ton",
+            "g": "g",
+            "gram": "g",
+            "fl-oz": "fl-oz",
+            "fluidounce": "fl-oz",
+            "pt": "pnt",
+            "pint": "pnt",
+            "qt": "qt",
+            "quart": "qt",
+            "gal": "gal",
+            "gallon": "gal",
+            "milliliter": "ml",
+            "ml": "ml",
+            "l": "l",
+            "liter": "l",
+            "count": "count",
+            "ct": "count"
+        }
+    }
+    
+    //override
+    exportFile(jsonList, format, cb=null) {
+        console.log(format);
+        console.log(jsonList);
+        const formatter = new Formatter(format);
+        return formatter.generateFormat(jsonList);
     }
 
     checkExisting(dataObj) {
@@ -17,9 +53,15 @@ class ManufacturingGoals extends CRUD {
     }
 
     create(dataObj) {
-        if(!dataObj.user_id || !dataObj.name) {
+        if(!dataObj.user_id || !dataObj.name || !dataObj.deadline) {
             return Promise.reject("Not all required fields are present");
         }
+
+        let timestamp = Date.parse(dataObj.deadline);
+        if(isNaN(timestamp)) {
+            return Promise.reject("Bad date format.");
+        }
+        dataObj.deadline = timestamp;
         let query = QueryGenerator.genInsQuery(dataObj, this.tableName).returning("*").toString();
         //logger.debug(query);
         return super.insert(query, dataObj, "This goal exists already.");
@@ -52,6 +94,7 @@ class ManufacturingGoals extends CRUD {
         }
         let query = QueryGenerator.genInsConflictQuery(skus, 'manufacturing_goal_sku',  'ON CONFLICT (mg_id, sku_id) DO UPDATE SET quantity = EXCLUDED.quantity');
         query = query.toString();
+        console.log(query);
         //logger.debug(query);
         return db.execSingleQuery(query, []);
     }
@@ -71,24 +114,48 @@ class ManufacturingGoals extends CRUD {
         return db.execSingleQuery(query, []);
     }
 
-   calculateQuantities(manufacturing_id, format='json') {
+   calculateQuantities(manufacturing_id, useUnits = true) {
+       let field = "";
+       //quantity in gallons, lbs, etc
+       if(useUnits)
+           field = "ingredients.*, formula_ingredients.unit as formula_unit, SUM((manufacturing_goal_sku.quantity * sku.formula_scale * formula_ingredients.quantity)) AS calc_res";
+       else  //number of package sizes
+           field = "ingredients.*, formula_ingredients.unit as formula_unit, SUM((manufacturing_goal_sku.quantity * sku.formula_scale * formula_ingredients.quantity/ingredients.pkg_size)) AS calc_res";
+true 
+       //TODO perform unit conversions
        let query = squel.select()
        .from("manufacturing_goal_sku")
-       .field("ingredients.*, SUM((sku_ingred.quantity * manufacturing_goal_sku.quantity)) AS calc_res")
+       .field(field)
        .join("sku", null, "sku.id = manufacturing_goal_sku.sku_id")
-       .join("sku_ingred", null, "sku.num = sku_ingred.sku_num")
-       .join("ingredients", null, "sku_ingred.ingred_num = ingredients.num")
+       .join("formula_ingredients", null, "sku.formula_id = formula_ingredients.formula_id")
+       .join("ingredients", null, "ingredients.id = formula_ingredients.ingredients_id")
        .where("mg_id = ?", manufacturing_id)
        .group("ingredients.id")
+       .group("formula_ingredients.unit")
        .toString();
-       ////logger.debug(query);
-       return db.execSingleQuery(query, []);
+       let that = this;
+       return db.execSingleQuery(query, [])
+       .then(function(res) {
+           if(useUnits)
+               return res;
+           //TODO unit conversion
+           for(let i = 0; i < res.rows.length; i++) {
+               let num = parseFloat(res.rows[i].calc_res);
+               if(!useUnits) {
+                   let conversion = null;
+                   try {
+                       conversion = convert(1).from(res.rows[i].formula_unit).to(res.rows[i].unit);
+                   }
+                   catch(err) {
+                       conversion = 1;
+                   }
+                   num *= conversion;
+               }
+               res.rows[i].calc_res = num;
+           }
+           return res;
+       })
    }
-
-    exportFile(jsonList, format) {
-        const formatter = new Formatter(format);
-        return formatter.generateFormat(jsonList);
-    }
 }
 
 

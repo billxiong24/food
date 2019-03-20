@@ -14,38 +14,64 @@ var productlineRouter = require('./routes/productline');
 var skuRouter = require('./routes/sku');
 var mgRouter = require('./routes/manufacturing_goals');
 var bulkRouter = require('./routes/bulk');
+var schedulerRouter = require('./routes/scheduler');
+var formulaRouter = require('./routes/formula');
+var mlRouter = require('./routes/manufacturing_lines');
+
+
+var { checkUserAll, checkCookie, checkAdminAll } = require('./routes/guard');
 
 var http = require('http');
 var https = require('https');
 const fs = require('fs');
 const PORT = 8000;
-
-var app = express();
-app.use(cors());
 const encrypt = process.env.HTTPS;
 const domain = process.env.DOMAIN;
+
+var app = express();
+app.use(cors({
+  credentials: true,
+  origin: function(origin, callback) {
+    if (origin == "https://" + domain || origin == 'http://localhost:3000' || origin === undefined) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }
+}));
 
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
-if(process.env.NODE_ENV !== 'test')
+//if(process.env.NODE_ENV !== 'test')
     app.use(logger('dev'));
 
 app.use(express.json());
+app.set('trust proxy', 1);
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.set('trust proxy', 1);
 app.use(session({
-  secret: 'aeriu23487gfuyjhblkkjaw53u1134eeu',
-  resave: false,
-  saveUninitialized: true,
+  secret: process.env.SESSION_SECRET,
+  store: new (require('connect-pg-simple')(session))(),
     //change this later
-  cookie: { secure: false }
+  resave: false,
+  saveUninitialized: false,
+  cookie: { secure: encrypt, maxAge: 24*60*60*1000 }
+
 }));
+
+// Check for sessions
+if(process.env.NODE_ENV !== 'test') {
+    app.use(checkCookie);
+    app.use(checkUserAll);
+    app.post('*', checkAdminAll);
+    app.put('*', checkAdminAll);
+    app.delete('*', checkAdminAll);
+}
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
@@ -54,6 +80,9 @@ app.use('/productline', productlineRouter);
 app.use('/sku', skuRouter);
 app.use('/manufacturing_goals', mgRouter);
 app.use('/bulk', bulkRouter);
+app.use('/scheduler',schedulerRouter)
+app.use('/formula', formulaRouter);
+app.use('/manufacturing_line', mlRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -26,8 +26,6 @@ class IngredientsPageSearchBar extends Component {
     }
 
     onIngredientFilterEnter = (input) => {
-        console.log(input + ":" + this.props.filter_type)
-        console.log((input + ":" + this.props.filter_type).hashCode())
         let new_filter = {
             type: this.props.filter_type,
             string: input,
@@ -63,7 +61,6 @@ class IngredientsPageSearchBar extends Component {
     }
 
     onChange = (input) => {
-        console.log(input)
         this.props.getSKUs(input)
     }
 

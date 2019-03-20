@@ -46,8 +46,6 @@ class SimpleCard extends Component {
         const { classes } = this.props;
         const bull = <span className={classes.bullet}>•</span>;
         const item = this.props.item
-        console.log("SIMPLE CARD")
-        console.log(this.props)
         return (
             <Card className={classes.card}>
             <CardActionArea

@@ -1,28 +1,11 @@
 import React, { Component } from 'react';
 import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
-import SimpleList from '../GenericComponents/ItemList';
-import ItemList from '../GenericComponents/ItemList';
-import { purple } from '@material-ui/core/colors';
-import color from '@material-ui/core/colors/cyan';
 import Card from '@material-ui/core/Card';
 import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
 import { connect } from 'react-redux';
-import DropdownButton from '../GenericComponents/DropdownButton';
-import Fab from '@material-ui/core/Fab';
-import AddIcon from '@material-ui/icons/Add';
-import Icon from '@material-ui/core/Icon';
-import DeleteIcon from '@material-ui/icons/Delete';
-import NavigationIcon from '@material-ui/icons/Navigation';
-import IconButton from '@material-ui/core/IconButton';
-import back from '../../Resources/Images/baseline-navigate_before-24px.svg'
-import next from '../../Resources/Images/baseline-navigate_next-24px.svg'
-import SimpleCard from '../GenericComponents/SimpleCard';
-import FilterItem from './FilterItem';
 import FilterList from './FilterList';
 import SKUList from './SKUList';
-import IntegrationAutosuggest from '../GenericComponents/IntegrationAutosuggest';
 import FilterDropdown from './FilterDropdown';
 import SortByDropdown from './SortByDropdown';
 import PageSelector from './PageSelector';
@@ -31,9 +14,13 @@ import { withRouter } from 'react-router-dom'
 import { skuDetSetSku, skuDetGetProductLine, skuDetSetNew, skuDetSetEditing } from '../../Redux/Actions/ActionCreators/SKUDetailsActionCreators';
 import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
 import { skuDeleteError } from '../../Redux/Actions';
+import { skuAddAllSelected, skuRemoveAllSelected } from '../../Redux/Actions/index';
 import axios from 'axios';
 import FileDownload from 'js-file-download';
 import common from '../../Resources/common';
+import { withCookies } from 'react-cookie';
+import BulkEditDialog from './BulkEditDialog';
+import { manlineGetMappings, manlineResetMapping, manlineUpdateMappings } from '../../Redux/Actions/ActionCreators/ManufacturingLineActionCreators';
 
 const styles = {
   card: {
@@ -50,7 +37,7 @@ const styles = {
   SKUs_list_container: {
     height: '100%',
     width: '73%',
-    float: 'right', 
+    float: 'right',
     marginRight: 5,
     marginLeft: 5,
     marginTop: 5,
@@ -66,7 +53,7 @@ const styles = {
     padding: 5,
     overflow: 'auto'
   },
-  filters_list:{
+  filters_list: {
     overflow: 'auto'
   },
   active_filters_container: {
@@ -115,7 +102,7 @@ const styles = {
   input: {
     display: 'none',
   },
-  autosuggest:{
+  autosuggest: {
     fontSize: 14,
     fontFamily: 'Open Sans',
     fontWeight: 300
@@ -125,61 +112,85 @@ const styles = {
     flexDirection: 'row',
     display: 'flex'
   },
-  add_ingredient:{
+  add_ingredient: {
     marginRight: 'auto'
   },
-  export_to_csv:{
+  export_to_csv: {
     marginLeft: 'auto'
   }
 };
 
 class SKUsPage extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      bulkEditDialog: false,
+    }
+  }
 
   componentWillMount() {
   }
 
-  onAddClick = () =>{
+  onAddClick = () => {
     this.props.setSKU(this.props.history)
   }
 
   onExportClick = () => {
-    console.log(this.props.items)
     axios.post(common.hostname + 'manufacturing_goals/exported_file', {
       data: this.props.items.map((sku) => ({
-        num:sku.num,
-        name:sku.name,
-        case_upc:sku.case_upc,
-        unit_upc:sku.unit_upc,
-        unit_size:sku.unit_size,
-        count_per_case:sku.count_per_case,
-        prd_line:sku.prd_line,
-        comments:sku.comments
+        id: sku.id,
+        num: sku.num,
+        name: sku.name,
+        case_upc: sku.case_upc,
+        unit_upc: sku.unit_upc,
+        unit_size: sku.unit_size,
+        count_per_case: sku.count_per_case,
+        prd_line: sku.prd_line,
+        formula_id: sku.formula_id,
+        man_rate: sku.man_rate,
+        formula_scale: sku.formula_scale,
+        comments: sku.comments
       })),
       format: "csv",
+      type: "sku"
     })
       .then((response) => {
         FileDownload(response.data, 'skus.csv');
       })
       .catch(err => {
         console.log(err);
-    })
+      })
+  }
+
+  openBulkEdit() {
+    this.props.manlineGetMappings(this.props.selected);
+    this.setState({ bulkEditDialog: true })
+  }
+
+  closeBulkEdit() {
+    this.props.manlineResetMapping();
+    this.setState({ bulkEditDialog: false })
+  }
+
+  submitBulkEdit = () => {
+    this.props.manlineUpdateMappings();
+    this.closeBulkEdit();
   }
 
 
   render() {
-    console.log(this.props)
     const { classes, dummy_SKUs } = this.props
     return (
       <div className={classes.SKUs_page_container}>
         <Card className={classes.active_filters_container}>
-        <Typography className={classes.active_filters_container_title}>
+          <Typography className={classes.active_filters_container_title}>
             Search Bar Filter Type
         </Typography>
-        <FilterDropdown></FilterDropdown>
-        <Typography className={classes.active_filters_container_title}>
+          <FilterDropdown></FilterDropdown>
+          <Typography className={classes.active_filters_container_title}>
             Sort By
           </Typography>
-              <SortByDropdown></SortByDropdown>
+          <SortByDropdown></SortByDropdown>
           <Typography className={classes.active_filters_container_title}>
             Active Filters
           </Typography>
@@ -191,23 +202,61 @@ class SKUsPage extends Component {
             <div className={classes.SKUs_search_bar}>
             </div>
             <div className={classes.other_actions}>
-            { 
-              this.props.users.id === common.admin ?
+              {
+                this.props.cookies.admin === "true" ?
+                  <Button
+                    className={classes.add_ingredient}
+                    onClick={this.onAddClick}>
+                    Add SKU
+                  </Button>
+                  :
+                  <div></div>
+              }
+              {
+                this.props.cookies.admin === "true" ?
+                  <Button
+                    className={classes.add_ingredient}
+                    onClick={() => { this.props.addAllFilter() }}
+                  >
+                    Select All
+                  </Button>
+                  :
+                  <div></div>
+              }
+              {
+                this.props.cookies.admin === "true" ?
+                  <Button
+                    className={classes.add_ingredient}
+                    onClick={() => { this.props.removeAllFilter() }}
+                  >
+                    Remove All
+                  </Button>
+                  :
+                  <div></div>
+              }
+              {
+                this.props.cookies.admin === "true" ?
+                  <Button
+                    className={classes.add_ingredient}
+                    onClick={() => { this.openBulkEdit() }}
+                  >
+                    Bulk Edit Manufacturing Line
+                  </Button>
+                  :
+                  <div></div>
+              }
+              <BulkEditDialog
+                open={this.state.bulkEditDialog}
+                close={() => { this.closeBulkEdit() }}
+                submit={this.submitBulkEdit}
+              />
               <Button
-                className={classes.add_ingredient}
-                onClick={this.onAddClick}>
-                Add SKU
-              </Button>
-              :
-              <div></div>
-            }
-            <Button
-              className={classes.export_to_csv}
-              onClick={this.onExportClick}
-            >
-              Export to CSV
+                className={classes.export_to_csv}
+                onClick={this.onExportClick}
+              >
+                Export to CSV
             </Button>
-          </div>
+            </div>
             <SKUList></SKUList>
           </div>
           <div variant="inset" className={classes.SKUs_list_divider} />
@@ -216,56 +265,70 @@ class SKUsPage extends Component {
         {
           this.props.errors.map((error, index) => (
             <SimpleSnackbar
-              open={true} 
-              handleClose={()=>{this.props.deleteError(error)}}
+              open={true}
+              handleClose={() => { this.props.deleteError(error) }}
               message={error.errMsg}
             >
             </SimpleSnackbar>
           ))
-          }
+        }
       </div>
     );
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
   return {
     dummy_SKUs: state.dummy_SKUs,
     errors: state.skus.errors,
     items: state.skus.items,
-    users: state.users
+    cookies: ownProps.cookies.cookies,
+    selected: state.skus.selectedSkus,
+    manline: state.manLine,
   };
 };
 
 const mapDispatchToProps = dispatch => {
-  return{
+  return {
     deleteError: (error) => {
       dispatch(skuDeleteError(error))
     },
     setSKU: (history) => {
       Promise.resolve(dispatch(skuDetGetProductLine())) // dispatch
-          .then(function (response) {
-            dispatch(skuDetSetSku({      
-              name: "",     
-              case_upc: null,     
-              unit_upc: null,     
-              unit_size: "",     
-              count_per_case: null,    
-              prd_line: "",    
-              comments: "",
-              id:null    
+        .then(function (response) {
+          dispatch(skuDetSetSku({
+            manufacturing_lines: [],
+            formula_id: null,
+            name: "",
+            case_upc: null,
+            unit_upc: null,
+            unit_size: "",
+            count_per_case: null,
+            prd_line: "",
+            comments: "",
+            id: null
           }))
           dispatch(skuDetSetNew(true))
           dispatch(skuDetSetEditing(true))
-          console.log("History")
-            history.push('/skus/details')
+          history.push('/skus/details')
 
           return response;
-          })
-          .then(function(response){console.log("@RESPONSE",response)})
+        })
+        .then(function (response) { console.log("@RESPONSE", response) })
+    },
+    addAllFilter: () => { dispatch(skuAddAllSelected()) },
+    removeAllFilter: () => { dispatch(skuRemoveAllSelected()) },
+    manlineGetMappings: (skus) => {
+      dispatch(manlineGetMappings(skus));
+    },
+    manlineResetMapping: () => {
+      dispatch(manlineResetMapping());
+    },
+    manlineUpdateMappings: () => {
+      dispatch(manlineUpdateMappings());
     }
   }
 }
 
 
-export default withRouter(withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(SKUsPage)));
+export default withRouter(withStyles(styles)(withCookies(connect(mapStateToProps, mapDispatchToProps)(SKUsPage))));

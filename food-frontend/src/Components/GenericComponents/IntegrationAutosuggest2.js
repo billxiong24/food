@@ -209,7 +209,6 @@ class IntegrationAutosuggest2 extends React.Component {
   };
 
   onSuggestionSelected = (event, { suggestion, suggestionValue, suggestionIndex, sectionIndex, method }) => {
-    console.log(suggestion)
     this.props.onSuggest(suggestion.label, suggestion.item);
     this.clear()
   }
@@ -229,7 +228,6 @@ class IntegrationAutosuggest2 extends React.Component {
     })
   }
   handleChange = name => (event, { newValue, method }) => {
-    console.log(this.props)
     this.setState({
       single : newValue
     });

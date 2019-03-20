@@ -13,8 +13,8 @@ import CloseIcon from '@material-ui/icons/Close';
 const styles = {
   card: {
     width: '100 %',
-    marginBottom:20,
-    marginTop:20,
+    marginBottom:10,
+    marginTop:10,
     padding: 10
   },
   bullet: {
