@@ -7,9 +7,15 @@ const SalesTracker = require('../app/sales_tracker');
 
 router.get('/search/:sku_num', function(req, res, next) {
     let years = req.query.years;
+
+    let prodlines = req.query.prodlines;
+    let customers = req.query.customers;
+
+    customers = Controller.convertParamToArray(customers);
+    prodlines = Controller.convertParamToArray(prodlines);
     let st = new SalesTracker();
     const controller = new Controller();
-    controller.constructGetResponse(res, st.search(req.params.sku_num, years));
+    controller.constructGetResponse(res, st.search(req.params.sku_num, years, prodlines, customers));
 });
 
 module.exports = router;

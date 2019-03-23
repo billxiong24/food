@@ -17,7 +17,11 @@ class SalesTracker {
         this.interval = 200;
     } 
 
-    search(skuNum, numYears) {
+    search(skuNum, numYears, prdlines, customers) {
+        //escape single quotes
+        for (var i = 0, len = customers.length; i < len; i++) {
+            customers[i] = customers[i].replace(/'/g, "''");
+        }
         let currYear = new Date().getFullYear();
         let res = [];
         let prom = Promise.resolve(null);
@@ -25,7 +29,7 @@ class SalesTracker {
         for(let i = 0; i < numYears; i++) {
             let yr = currYear - i;
             prom = prom.then(function(r) {
-                return that.fetchIfNotExist(skuNum, yr)
+                return that.fetchIfNotExist(skuNum, yr, prdlines, customers)
                 .then(function(rows) {
                     res = res.concat(rows);
                 })
@@ -39,9 +43,21 @@ class SalesTracker {
         });
     }
 
-    fetchIfNotExist(skuNum, currYear) {
+    fetchIfNotExist(skuNum, currYear, prdlines, customers) {
         let that = this;
-        return db.execSingleQuery('SELECT * FROM sales WHERE sku_num = $1 AND year = $2', [skuNum, currYear])
+        let query = squel.select()
+        .from('sales')
+        .field('sales.*')
+        .join("sku", null, "sales.sku_num = sku.num")
+        .where('sku_num = ?', skuNum)
+        .where('year = ?', currYear);
+        
+        const queryGen = new QueryGenerator(query);
+        queryGen.chainOrFilter(prdlines, "prd_line = ?")
+        .chainOrFilter(customers, "customer_name = ?")
+        const q = queryGen.getQuery().toString();
+        console.log(q);
+        return db.execSingleQuery(q, [])
         .then(function(res) {
             if(res.rows.length > 0) {
                 console.log("already exists");
@@ -49,7 +65,14 @@ class SalesTracker {
             }
             else {
                 console.log("didnt exist");
-                return that.scrapeAndInsert(skuNum, currYear).then(sleeper(that.interval));
+                //have to execute query again because pulled in a bunch of new data
+                return that.scrapeAndInsert(skuNum, currYear)
+                .then(function(rows) {
+                    return db.execSingleQuery(q, [])
+                    .then(function(res) {
+                        return res.rows;
+                    });
+                }).then(sleeper(that.interval))
             }
         });
     }
