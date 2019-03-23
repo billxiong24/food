@@ -17,6 +17,7 @@ var bulkRouter = require('./routes/bulk');
 var schedulerRouter = require('./routes/scheduler');
 var formulaRouter = require('./routes/formula');
 var mlRouter = require('./routes/manufacturing_lines');
+var salesRouter = require('./routes/sales');
 
 
 var { checkUserAll, checkCookie, checkAdminAll } = require('./routes/guard');
@@ -80,6 +81,7 @@ app.use('/productline', productlineRouter);
 app.use('/sku', skuRouter);
 app.use('/manufacturing_goals', mgRouter);
 app.use('/bulk', bulkRouter);
+app.use('/sales',salesRouter);
 app.use('/scheduler',schedulerRouter)
 app.use('/formula', formulaRouter);
 app.use('/manufacturing_line', mlRouter);
