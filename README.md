@@ -25,9 +25,28 @@ psql
 Enter your password. Update credentials in ```.env``` file.    
      
 #### Create databases   
-As user ```postgres```, Go to the root of the repository.   
+As user ```postgres```, Go to the root of the repository.
+
+##### From Scratch
 ```cd db/ && psql -f food.sql && psql -f unique.sql```    
 
+##### From backup.sql
+Open psql
+```
+psql
+```
+Create the database
+```
+CREATE DATABASE sku_mgmt;
+```
+Exit psql
+```
+\q
+```
+Run the dump
+```
+psql sku_mgmt < backup.sql
+```
 
 ### Set up Node.JS    
 From the root of the repository:    
