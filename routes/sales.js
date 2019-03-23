@@ -6,6 +6,7 @@ const Controller = require('../app/controller/controller');
 const SalesTracker = require('../app/sales_tracker');
 
 router.get('/search/:sku_num', function(req, res, next) {
+    //number of years to query for  (e.g. 10 means query for the past 10 years.
     let years = req.query.years;
 
     let prodlines = req.query.prodlines;

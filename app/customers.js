@@ -13,6 +13,10 @@ class Customer {
         return this.scrape().then(this.create); 
     }
 
+    search(name) {
+        return db.execSingleQuery("SELECT * FROM customers WHERE name = $1", [name]);
+    }
+
     create(arr) {
         let insQuery = QueryGenerator.genInsConflictQuery(arr, 'customers', 'ON CONFLICT DO NOTHING').toString();
         //console.log(insQuery);
@@ -37,4 +41,6 @@ class Customer {
         });
     }
 }
+
+module.exports = Customer;
 //new Customer().scrapeAndInsert();
