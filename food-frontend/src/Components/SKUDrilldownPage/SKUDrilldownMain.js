@@ -118,12 +118,13 @@ class SKUDrilldownMain extends Component {
     }
     const targetWeek = getISOWeek(target);
     const targetYear = getYear(target);
-    Axios.get(hostname + 'sales/search/' + this.props.sku.num, {
-      params: {
-        customers: encodeURI(this.state.customerFilter),
-        years: getYear(new Date()) - targetYear + 1
-      }
-    })
+    console.log(encodeURI(this.state.customerFilter));
+    Axios.get(hostname + 'sales/search/' + this.props.sku.num + '/?customers=' + encodeURI(this.state.customerFilter) + '&years=' + (getYear(new Date()) - targetYear + 1)
+      // params: {
+      //   customers: this.state.customerFilter,
+      //   years: getYear(new Date()) - targetYear + 1
+      // }
+    )
     .then(response => {
       // let newDetails = {};
       // response.data.forEach((e) => {
@@ -189,7 +190,7 @@ class SKUDrilldownMain extends Component {
     this.setState({
       customerFilter: e.currentTarget.value,
       suggestions: newSuggestions.slice(0,10)
-    });
+    }, () => {if (!this.state.customerFilter) this.getDetails()});
   }
 
   selectFilter = (id) => {
