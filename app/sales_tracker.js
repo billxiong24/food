@@ -18,10 +18,12 @@ class SalesTracker {
     } 
 
     total(skuNum, start) {
-      const sku_info = this.getSKUCost(skuNum);
-      console.log(sku_info);
-      const num_activities = this.getActivityCount(skuNum, start);
-      return new Promise().resolve(null).then(()=>{return {}})
+      return this.getSKUCost(skuNum)
+      .then((res) => {
+        console.log(res.rows[0]);
+        const num_activities = this.getActivityCount(skuNum, start);
+        return {}
+      })
     }
 
     getSKUCost(skuNum) {
@@ -37,10 +39,7 @@ class SalesTracker {
        .group("setup_cost")
        .group("run_cost")
        .toString();
-       db.execSingleQuery(query, [])
-       .then((res) => {
-         return res.rows[0];
-       })
+       return db.execSingleQuery(query, [])
     }
 
     getActivityCount(skuNum, start) {
