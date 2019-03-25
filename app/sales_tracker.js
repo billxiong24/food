@@ -25,10 +25,13 @@ class SalesTracker {
     getSKUCost(skuNum) {
       let query = squel.select()
        .from("sku")
-       .field("*")
+       .field("sku.man_setup_cost", "setup_cost")
+       .field("sku.man_run_cost", "run_cost")
+       .field("SUM(CEILING(sku.formula_scale * formula_ingredients.quantity/ingredients.pkg_size) * ingredients.pkg_cost)", "case_cost")
        .join("formula_ingredients", null, "sku.formula_id = formula_ingredients.formula_id")
        .join("ingredients", null, "ingredients.id = formula_ingredients.ingredients_id")
-       .where("num = ?", skuNum)
+       .where("sku.num = ?", skuNum)
+       .distinct()
        .toString();
        console.log(query);
     }
