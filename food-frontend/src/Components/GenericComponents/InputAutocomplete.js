@@ -10,6 +10,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Popper from '@material-ui/core/Popper';
 import { withStyles } from '@material-ui/core/styles';
 import { FormControl, InputLabel, Button } from '@material-ui/core';
+import Axios from 'axios';
+import common from '../../Resources/common';
 
 const suggestions = [
   { label: 'Afghanistan' },
@@ -143,17 +145,34 @@ const styles = theme => ({
 });
 
 class InputAutocomplete extends React.Component {
-  state = {
-    single: '',
-    popper: '',
-    suggestions: [],
-  };
+  
+
+  constructor(props){
+    super(props)
+    let state = {
+      single: '',
+      popper: '',
+      suggestions: [],
+    };
+    if(this.props.defaultValue !== undefined){
+      state.single = this.props.defaultValue
+      this.props.newItemCallBack(true)
+      this.props.idCallback(this.props.defaultId)
+
+    }
+    this.state = state
+
+  }
 
   handleSuggestionsFetchRequested = ({ value }) => {
-    let suggestions = this.props.suggestionsCallBack(value)
-    this.setState({
-      suggestions: suggestions,
-    });
+    Axios.put(`${common.hostname}formula/formula_autocomplete`, {
+      "prefix":value
+    }).then((res) => {
+      console.log(res.data.formulas)
+      this.setState({
+        suggestions: res.data.formulas,
+      });
+    })
   };
 
   handleSuggestionsClearRequested = () => {
@@ -164,6 +183,12 @@ class InputAutocomplete extends React.Component {
 
   handleChange = name => (event, { newValue }) => {
     this.props.newItemCallBack(this.state.suggestions.map(suggestion => suggestion.label).includes(newValue))
+    let item = this.state.suggestions.find((item) => item.label == newValue)
+    if(item === undefined){
+      this.props.idCallback(null)
+    }else{
+      this.props.idCallback(item.id)
+    }
     this.setState({
       [name]: newValue,
     });
@@ -172,7 +197,6 @@ class InputAutocomplete extends React.Component {
 
   render() {
     const { classes } = this.props;
-
     const autosuggestProps = {
       renderInputComponent,
       suggestions: this.state.suggestions,
@@ -181,7 +205,7 @@ class InputAutocomplete extends React.Component {
       getSuggestionValue,
       renderSuggestion,
     };
-
+    console.log(this.props.defaultValue)
     return (
       <form className={classes.root}>
       <FormControl margin="normal" required fullWidth>

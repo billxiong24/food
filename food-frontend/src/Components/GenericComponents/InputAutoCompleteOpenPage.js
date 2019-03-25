@@ -56,7 +56,8 @@ class InputAutocompleteOpenPage extends React.Component {
   state = {
       newItem:false,
       editDialog:false,
-      createDialog:false
+      createDialog:false,
+      name: ""
   };
 
 //   handleSuggestionsFetchRequested = ({ value }) => {
@@ -79,11 +80,10 @@ class InputAutocompleteOpenPage extends React.Component {
 
 
 getSuggestionsFromApi = (value) => {
-    let suggestions = this.props.suggestionsCallback(value).map(function(suggestion){
-        return {label:suggestion}
-    });
-    // console.log(suggestions)
+    this.props.suggestionsCallback(value).then((res) => {
+      // console.log(suggestions)
     // console.log(value)
+    let suggestions = res
     const inputValue = deburr(value.trim()).toLowerCase();
     const inputLength = inputValue.length;
     let count = 0;
@@ -111,11 +111,51 @@ getSuggestionsFromApi = (value) => {
   
           return keep;
         }); 
+    })
   }
 
- suggestionsCallback = (value) => {
-    return this.getSuggestionsFromApi(value)
-}
+  suggestionsCallback = (value) => {
+    this.props.suggestionsCallback(value).then((res) => {
+      // console.log(suggestions)
+    // console.log(value)
+    let suggestions = res
+    const inputValue = deburr(value.trim()).toLowerCase();
+    const inputLength = inputValue.length;
+    let count = 0;
+
+    // console.log(suggestions.filter(suggestion => {
+    //     const keep =
+    //       count < 5 && suggestion.label.slice(0, inputLength).toLowerCase() === inputValue;
+
+    //     if (keep) {
+    //       count += 1;
+    //     }
+
+    //     return keep;
+    //   }))
+  
+    return inputLength === 0
+      ? []
+      : suggestions.filter(suggestion => {
+          const keep =
+            count < 5 && suggestion.label.slice(0, inputLength).toLowerCase() === inputValue;
+  
+          if (keep) {
+            count += 1;
+          }
+  
+          return keep;
+        }); 
+    })
+  }
+
+//  suggestionsCallback = (value) => {
+//     this.getSuggestionsFromApi(value).then(function(res){
+//       console.log(res)
+//       return res
+//     }
+//     )
+// }
 
 
   newItemCallBack = (isNew) => {
@@ -126,6 +166,7 @@ getSuggestionsFromApi = (value) => {
 
   render() {
     const { classes } = this.props;
+    console.log(this.props)
 
     return (
         <div className={classes.container}>
@@ -133,12 +174,23 @@ getSuggestionsFromApi = (value) => {
                 id="sku_prd_line"
                 item="prod1"
                 items={["prod1","prod2","prod3"]}
-                name={"Product Line"}
-                onChange={this.props.onChange}
-                handleChange={this.props.handleChange}
+                name={this.props.name}
+                onChange={(value) => {
+                  this.setState({name: value})
+                  console.log(value)
+                  this.props.onChange(value)
+                }}
+                handleChange={(value) => {
+                  this.setState({name: value})
+                  console.log(value)
+                  this.props.handleChange(value)
+                }}
+                defaultValue={this.props.defaultValue}
                 error={this.props.error}
                 newItemCallBack={this.newItemCallBack}
-                suggestionsCallBack={this.suggestionsCallback}
+                idCallback={this.props.idCallback}
+                defaultId = {this.props.defaultId}
+                suggestionsCallback={this.suggestionsCallback}
                 className={classes.autocomplete}
             />
             {
@@ -146,29 +198,35 @@ getSuggestionsFromApi = (value) => {
                 <Button
                     color="primary"
                     className={classes.button}
-                    onClick={()=>this.setState({ editDialog: true })}
-                    >
+                    onClick={()=>{
+                        this.props.openEditPage(() => { this.setState({ editDialog: null })})
+                        .then((res) => {
+                          this.setState({editDialog: res})
+                        })
+                    }}
+                    > 
                     Edit
                 </Button>
                 :
                 <Button
                     color="primary"
                     className={classes.button}
-                    onClick={()=>this.setState({ createDialog: true })}
+                    onClick={()=>{
+                      this.props.openCreatePage(() => { this.setState({ createDialog: null })}, this.state.name)
+                      .then((res) => {
+                        this.setState({createDialog: res})
+                      })
+                  }}
                     >
                     Create
                 </Button>
 
             }
             {
-                this.state.editDialog ? this.props.openEditPage(() => {
-                    this.setState({ editDialog: false });
-                }) : null
+                this.state.editDialog
             }
             {
-                this.state.createDialog ? this.props.openCreatePage(() => {
-                    this.setState({ createDialog: false });
-                }) : null
+                this.state.createDialog
             }
             {/* <DetailView
                 open={this.state.editDialog}

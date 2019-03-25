@@ -25,6 +25,9 @@ import InputSelect from './InputSelect';
 import UnitSelect from './UnitSelect';
 import labels from '../../Resources/labels';
 import swal from 'sweetalert';
+import Axios from 'axios';
+import axios from 'axios';
+
 
 const styles = {
     container:{
@@ -38,32 +41,107 @@ class DetailView extends Component {
   constructor(props) {
     super(props);
     let state = {}
+    let that = this
+    console.log(props)
     for(var i = 0; i < this.props.children.length; i++){
         // state[this.props.children[i].id]
         //console.log(this.props.children[i].props)
         if(this.props.children[i].type.displayName.includes("WithStyles(InputSelect)")){
             state[this.props.children[i].props.id] = this.props.children[i].props.item
-            state[this.props.children[i].props.id +"_errorMsg"] = this.props.children[i].props.errorCallback(this.props.children[i].props.item)
+            // Promise.resolve(this.props.children[i].props.errorCallback(state[this.props.children[i].props.id],that.props.children[i].props.id +"_errorMsg"))
+            // .then((res) => {
+            //     const {prop, error} = res
+            //     console.log(res)
+            //     that.setState({
+            //         [prop]:error
+            //     })
+            // })
+            this.props.children[i].props.errorCallback(state[this.props.children[i].props.id], this.props.children[i].props.id +"_errorMsg", (res) => {
+                let {prop, error} = res
+                this.setState({
+                    [prop]:error
+                })
+            })
             
         }else if(this.props.children[i].type.displayName.includes("WithStyles(InputList)")){
             state[this.props.children[i].props.id] = []
-            state[this.props.children[i].props.id +"_errorMsg"] = this.props.children[i].props.errorCallback([])
+            //state[this.props.children[i].props.id +"_errorMsg"] = this.props.children[i].props.errorCallback([])
+            // Promise.resolve(this.props.children[i].props.errorCallback(state[this.props.children[i].props.id],that.props.children[i].props.id +"_errorMsg"))
+            // .then((res) => {
+            //     const {prop, error} = res
+            //     console.log(res)
+            //     that.setState({
+            //         [prop]:error
+            //     })
+            // })
+            this.props.children[i].props.errorCallback(state[this.props.children[i].props.id], this.props.children[i].props.id +"_errorMsg", (res) => {
+                let {prop, error} = res
+                this.setState({
+                    [prop]:error
+                })
+            })
 
             if(this.props.children[i].props.defaultValue !== undefined){
                 state[this.props.children[i].props.id] = this.props.children[i].props.defaultValue
-                state[this.props.children[i].props.id +"_errorMsg"] = this.props.children[i].props.errorCallback(this.props.children[i].props.defaultValue)
+                // state[this.props.children[i].props.id +"_errorMsg"] = this.props.children[i].props.errorCallback(this.props.children[i].props.defaultValue)
+            //     Promise.resolve(this.props.children[i].props.errorCallback(state[this.props.children[i].props.id],that.props.children[i].props.id +"_errorMsg"))
+            // .then((res) => {
+            //     console.log(res)
+            //     const {prop, error} = res
+            //     that.setState({
+            //         [prop]:error
+            //     })
+            // })
+                this.props.children[i].props.errorCallback(state[this.props.children[i].props.id], this.props.children[i].props.id +"_errorMsg", (res) => {
+                    let {prop, error} = res
+                    this.setState({
+                        [prop]:error
+                    })
+                })
             }
         }else if(this.props.children[i].props.defaultValue !== undefined){
             state[this.props.children[i].props.id] = this.props.children[i].props.defaultValue
-            state[this.props.children[i].props.id +"_errorMsg"] = this.props.children[i].props.errorCallback(this.props.children[i].props.defaultValue)
+            //state[this.props.children[i].props.id +"_errorMsg"] = this.props.children[i].props.errorCallback(this.props.children[i].props.defaultValue)
+            // console.log(i)
+            // console.log(this.props.children[i].props.errorCallback)
+            // Promise.resolve(this.props.children[i].props.errorCallback(state[this.props.children[i].props.id],that.props.children[i].props.id +"_errorMsg"))
+            // .then((res) => {
+            //     console.log(res)
+            //     const {prop, error} = res
+            //     that.setState({
+            //         [prop]:error
+            //     })
+            // })
+            this.props.children[i].props.errorCallback(state[this.props.children[i].props.id], this.props.children[i].props.id +"_errorMsg", (res) => {
+                let {prop, error} = res
+                this.setState({
+                    [prop]:error
+                })
+            })
         }else{
             state[this.props.children[i].props.id] = ""
-            state[this.props.children[i].props.id +"_errorMsg"] = this.props.children[i].props.errorCallback("")
+            //state[this.props.children[i].props.id +"_errorMsg"] = this.props.children[i].props.errorCallback("")
+            // Promise.resolve(this.props.children[i].props.errorCallback(state[this.props.children[i].props.id],that.props.children[i].props.id +"_errorMsg"))
+            // .then((res) => {
+            //     const {prop, error} = res
+            //     console.log(res)
+            //     that.setState({
+            //         [prop]:error
+            //     })
+            // })
+            this.props.children[i].props.errorCallback(state[this.props.children[i].props.id], this.props.children[i].props.id +"_errorMsg", (res) => {
+                let {prop, error} = res
+                this.setState({
+                    [prop]:error
+                })
+            })
         }
     }
     this.state = state
     console.log(state)
   }
+
+  
 
 
 
@@ -102,16 +180,40 @@ class DetailView extends Component {
                                  React.cloneElement(item,{
                                     handleChange: value => {
                                         console.log(value)
+                                        let that = this;
                                         this.setState({
                                             [item.props.id]: value,
-                                            [item.props.id+"_errorMsg"]: item.props.errorCallback(value)
+                                            // [item.props.id+"_errorMsg"]: item.props.errorCallback(value)
+                                        })
+                                        // item.props.errorCallback(value).then((error) => {
+                                        //     that.setState({
+                                        //         [item.props.id +"_errorMsg"]:error
+                                        //     })
+                                        // })
+                                        item.props.errorCallback(value,item.props.id +"_errorMsg", (res) => {
+                                            let {prop, error} = res
+                                            this.setState({
+                                                [prop]:error
+                                            })
                                         })
                                     },
                                     onChange: value => { 
                                         console.log(value)
+                                        let that = this;
                                         this.setState({
                                             [item.props.id]: value,
-                                            [item.props.id+"_errorMsg"]: item.props.errorCallback(value)
+                                            //[item.props.id+"_errorMsg"]: item.props.errorCallback(value)
+                                        })
+                                        // item.props.errorCallback(value).then((error) => {
+                                        //     that.setState({
+                                        //         [item.props.id +"_errorMsg"]:error
+                                        //     })
+                                        // })
+                                        item.props.errorCallback(value,item.props.id +"_errorMsg", (res) => {
+                                            let {prop, error} = res
+                                            this.setState({
+                                                [prop]:error
+                                            })
                                         })
                                     },
                                     error: this.state[item.props.id + "_errorMsg"] != null
@@ -144,16 +246,35 @@ class DetailView extends Component {
                                 React.cloneElement(item,{
                                     handleChange: event => {
                                         console.log(event.target.value)
+                                        let that = this;
                                         this.setState({
                                             [item.props.id]: event.target.value,
-                                            [item.props.id+"_errorMsg"]: item.props.errorCallback(event.target.value)
+                                            //[item.props.id+"_errorMsg"]: item.props.errorCallback(event.target.value)
+                                        })
+                                        // item.props.errorCallback(event.target.value).then((error) => {
+                                        //     that.setState({
+                                        //         [item.props.id +"_errorMsg"]:error
+                                        //     })
+                                        // })
+                                        item.props.errorCallback(event.target.value,item.props.id +"_errorMsg", (res) => {
+                                            let {prop, error} = res
+                                            this.setState({
+                                                [prop]:error
+                                            })
                                         })
                                     },
                                     onChange: event => {
                                         console.log(event.target.value)
+                                        let that = this;
                                         this.setState({
                                             [item.props.id]: event.target.value,
-                                            [item.props.id+"_errorMsg"]: item.props.errorCallback(event.target.value)
+                                            //[item.props.id+"_errorMsg"]: item.props.errorCallback(event.target.value)
+                                        })
+                                        item.props.errorCallback(event.target.value,item.props.id +"_errorMsg", (res) => {
+                                            let {prop, error} = res
+                                            this.setState({
+                                                [prop]:error
+                                            })
                                         })
                                     },
                                     error: this.state[item.props.id + "_errorMsg"] != null,
@@ -177,7 +298,12 @@ class DetailView extends Component {
                     let isError = false
                     for (var property in this.state) {
                         if (this.state.hasOwnProperty(property)) {
-                            if(!property.includes("errorMsg")){
+                            if(property.includes("pkg_size") && !property.includes("errorMsg")){
+                                console.log(property)
+                                console.log(this.state[property])
+                                item["pkg_size"] = this.state[property].split(" ")[0]
+                                item["unit"] = this.state[property].split(" ")[1]
+                            }else if(!property.includes("errorMsg")){
                                 item[property] = this.state[property]
                             }else{
                                 isError = isError || this.state[property] != null
@@ -192,7 +318,17 @@ class DetailView extends Component {
                                 icon: "error",
                             });
                         }else{
-                            this.props.submit(item)
+                            console.log(item)
+                            axios.post(this.props.url, item)
+                            .then(function (response) {
+                                this.props.submit(item)
+                            })
+                            .catch(function (error) {
+                                swal(`${error}`,{
+                                    icon: "error",
+                                });
+                            });
+
                         }
                         
                     }}

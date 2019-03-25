@@ -36,7 +36,7 @@ class Formula extends CRUD {
     }
 
     generateRandomNum(){
-        return Math.floor(Math.random() * (9999999999 - 0));
+        return Math.floor(Math.random() * (2147483647 - 0));
     }
 
     validNum(num){

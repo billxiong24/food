@@ -17,6 +17,12 @@ import Checkbox from '@material-ui/core/Checkbox';
 import UnitSelect from '../GenericComponents/UnitSelect';
 import DetailView from '../GenericComponents/DetailView';
 import swal from 'sweetalert';
+import axios from 'axios';
+import common, { defaultErrorCallback, nameErrorCallback, defaultNumErrorCallback, defaultNumErrorCallbackGenerator, defaultTextErrorCallbackGenerator } from '../../Resources/common';
+import InputAutoCompleteOpenPage from '../GenericComponents/InputAutoCompleteOpenPage';
+import InputSelect from '../GenericComponents/InputSelect';
+import InputList from '../GenericComponents/InputList';
+
 
 const styles = {
   entry: {
@@ -62,7 +68,7 @@ class SKUList extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      editDialog: false
+      editDialog: null
     }
   }
 
@@ -83,95 +89,260 @@ class SKUList extends Component {
     }
   }
 
-  suggestionsApi = (value) => {
-      let suggestions = ["Afghanistan", "Azerbijan"]
-      return suggestions
+  skuFormulaIdCallback = (value, prop, callBack) => {
+    Promise.resolve("Success")
+    .then(()=>{
+      if(value == ""){
+        return {
+          error: "Formula is Empty",
+          prop
+        }
+      }
+      if(this.state.id == null){
+        return {
+          error: "Please Create Formula",
+          prop
+        }
+      }
+      return {
+        error: null,
+        prop
+      }
+    })
+  .then(callBack)
   }
+
+  skuNumErrorCallbackGenerator = (num) => {
+    return (value, prop, callBack) => {
+        axios.put(`${common.hostname}sku/valid_num`,{num:parseInt(value)}).then((res) =>{
+          let error
+          console.log(num)
+          console.log(value)
+          if(res.data.valid || num==parseInt(value)){
+            error = null
+          }else{
+            error = "Invalid Number"
+          }
+          return {
+            prop,
+            error
+          }
+        })
+        .then(callBack)
+      }
+    }
+
+    formulaNumErrorCallbackGenerator = (num) => {
+      return (value, prop, callBack) => {
+          axios.put(`${common.hostname}formula/valid_num`,{num:parseInt(value)}).then((res) =>{
+            let error
+            console.log("hello")
+            console.log(value)
+            console.log(num)
+            if(res.data.valid || num==parseInt(value)){
+              error = null
+            }else{
+              error = "Invalid Number"
+            }
+            return {
+              prop,
+              error
+            }
+          })
+          .catch((error) => {
+            return {
+              error: "Invalid Number",
+              prop
+            }
+          })
+          .then(callBack)
+        }
+      }
+
+      formulaNumErrorCallback = (value, prop, callBack) => {
+
+            axios.put(`${common.hostname}formula/valid_num`,{num:parseInt(value)}).then((res) =>{
+              let error
+              if(res.data.valid){
+                error = null
+              }else{
+                error = "Invalid Number"
+              }
+              return {
+                prop,
+                error
+              }
+            })
+            .catch((error) => {
+              console.log("error")
+              return {
+                error: "Invalid Number",
+                prop
+              }
+            })
+            .then(callBack)
+          }
+        
+
+    caseUPCNumErrorCallbackGenerator = (case_upc) => {
+      return (value, prop, callBack) => {
+          axios.put(`${common.hostname}sku/valid_case_upc`,{case_upc:parseInt(value)}).then((res) =>{
+            let error
+            if(res.data.valid || case_upc==parseInt(value)){
+              error = null
+            }else{
+              error = "Invalid Case UPC"
+            }
+            return {
+              prop,
+              error
+            }
+          })
+          .then(callBack)
+        }
+      }
+
+      unitUPCNumErrorCallbackGenerator = (unit_upc) => {
+        return (value, prop, callBack) => {
+            axios.put(`${common.hostname}sku/valid_unit_upc`,{unit_upc:parseInt(value)}).then((res) =>{
+              let error
+              if(res.data.valid || unit_upc==parseInt(value)){
+                error = null
+              }else{
+                error = "Invalid Unit UPC"
+              }
+              return {
+                prop,
+                error
+              }
+            })
+            .then(callBack)
+          }
+        }
+
+
+
 
   onClick = (item) =>{
       this.props.setIngredient(item, this.props.history)
   }
 
-  openSKUEditPage = (sku, closeCallback) => {
-      console.log(sku)
-      // let unitItems = ["kg", "g", "grams"]
-      // let unitItem = unitItems[0]
-      // let unitValue = String(ingredient.pkg_size)
-      // for(var i = 0; i < unitItems.length; i++){
-      //     if(unitValue.endsWith(unitItems[i])){
-      //         unitItem = unitItems[i]
-      //         unitValue = unitValue.slice(0, -unitItems[i].length)
-      //         break
-      //     }
-      // }
-
-
-      return (
+  openSKUEditPage = (sku) => {
+    console.log(sku)
+    axios.get(`${common.hostname}sku/init_sku`)
+      .then(res => {
+        let init_data = res.data
+        let prod_lines = init_data.prod_lines.map(prod_line => prod_line.label)
+        axios.get(`${common.hostname}formula/${sku.formula_id}`).then((res) => {
+          let formulaName = res.data[0].name
+        let editDialog = (
           <DetailView
               open={true}
-              close={closeCallback}
+              close={() => {
+                this.setState({ editDialog: null });
+              }}
               submit={(e) => {
                   console.log(e)
                   swal({
                       icon: "success",
                   });
-                  closeCallback()
+                  this.setState({ editDialog: null });
               }}
               handleChange={() => console.log("handle change")}
               title={"Edit SKU"}
-          >
+            >
               <Input
                   id="name"
-                  error={true}
+                  rows="4"
                   name={"Name"}
-                  errorCallback={this.errorCallback}
-                  defaultValue = {sku.name}
+                  defaultValue={sku.name}
+                  errorCallback={defaultTextErrorCallbackGenerator("Invalid SKU Name")}
               />
               <Input
                   id="num"
+                  rows="4"
                   type="number"
                   name={"Number"}
-                  errorCallback={this.errorCallback}
-                  defaultValue = {sku.num}
+                  defaultValue={sku.num}
+                  errorCallback={this.skuNumErrorCallbackGenerator(sku.num)}
               />
               <Input
                   id="case_upc"
                   type="number"
                   name={"Case UPC"}
-                  errorCallback={this.errorCallback}
-                  defaultValue = {sku.case_upc}
+                  defaultValue={sku.case_upc}
+                  errorCallback={this.caseUPCNumErrorCallbackGenerator(sku.case_upc)}
               />
               <Input
                   id="unit_upc"
                   type="number"
                   name={"Unit UPC"}
-                  errorCallback={this.errorCallback}
-                  defaultValue = {sku.unit_upc}
-              />
-              
-              {/* <Input
-                  id="vend_info"
-                  rows="4"
-                  name={"Vendor Info"}
-                  errorCallback={this.errorCallback}
-                  defaultValue={ingredient.vend_info}
-              />
-              <UnitSelect
-                  id="pkg_size"
-                  unitSelect={true}
-                  name={"Package Size"}
-                  item={unitItem}
-                  items={unitItems}
-                  defaultValue={unitValue}
-                  errorCallback={this.errorCallback}
+                  defaultValue={sku.unit_upc}
+                  errorCallback={this.unitUPCNumErrorCallbackGenerator(sku.unit_upc)}
               />
               <Input
-                  id="pkg_cost"
-                  rows="4"
+                  id="unit_size"
+                  error={true}
+                  name={"Unit Size"}
+                  defaultValue={sku.unit_size}
+                  errorCallback={defaultTextErrorCallbackGenerator("Invalid Unit Size")}
+              />
+              <Input
+                  id="count_per_case"
                   type="number"
-                  name={"Package Cost"}
-                  errorCallback={this.errorCallback}
-                  defaultValue={ingredient.pkg_cost}
+                  name={"Count Per Case"}
+                  defaultValue={sku.count_per_case}
+                  errorCallback={defaultNumErrorCallbackGenerator("Count Per Case is invalid")}
+              />
+              <InputSelect
+                    id="prd_line"
+                    item={sku.prd_line}
+                    items={prod_lines}
+                    name={"Product Line"}
+                    defaultValue={sku.prod_line}
+                    errorCallback={defaultErrorCallback}
+              />
+              <InputAutoCompleteOpenPage
+                    id="formula"
+                    name={"Formula"}
+                    suggestionsCallback={this.suggestionsApi}
+                    openCreatePage={this.openCreatePage}
+                    idCallback={(id) => {
+                      console.log(id)
+                      this.setState({id:id})
+                    }}
+                    defaultValue = {formulaName}
+                    defaultId = {sku.formula_id}
+                    openEditPage={this.openEditPage}
+                    errorCallback={this.skuFormulaIdCallback}
+              />
+              <Input
+                  id="formula_scale_factor"
+                  type="number"
+                  name={"Formula Scale Factor"}
+                  defaultValue={sku.formula_scale}
+                  errorCallback={defaultNumErrorCallbackGenerator("Formula Scale Factor is invalid")}
+              />
+              <Input
+                  id="man_rate"
+                  type="number"
+                  name={"Manufacturing Rate"}
+                  defaultValue={sku.man_rate}
+                  errorCallback={defaultNumErrorCallbackGenerator("Manufacturing Rate is invalid")}
+              />
+              <Input
+                  id="man_setup_cost"
+                  type="number"
+                  name={"Manufacturing Set Up Cost"}
+                  defaultValue={sku.man_setup_cost}
+                  errorCallback={defaultNumErrorCallbackGenerator("Manufacturing Set Up Cost is invalid")}
+              />
+              <Input
+                  id="man_run_cost"
+                  type="number"
+                  name={"Manufacturing Run Cost"}
+                  defaultValue={sku.man_run_cost}
+                  errorCallback={defaultNumErrorCallbackGenerator("Manufacturing Run Cost is invalid")}
               />
               <Input
                   id="comment"
@@ -179,140 +350,151 @@ class SKUList extends Component {
                   multiline
                   type="number"
                   name={"Comment"}
-                  errorCallback={this.errorCallback}
-                  defaultValue={ingredient.comments}
-              /> */}
-              {/* <InputAutoCompleteOpenPage
-                  id="formula"
-                  name={"Formula"}
-                  suggestionsCallback={this.suggestionsApi}
-                  openCreatePage={this.openCreatePage}
-                  openEditPage={this.openEditPage}
-                  errorCallback={this.errorCallback}
+                  defaultValue={sku.comments}
+                  errorCallback={defaultErrorCallback}
               />
-              <InputSelect
-                  id="prd_line"
-                  item="prod1"
-                  items={["prod1","prod2","prod3","12"]}
-                  name={"Product Line"}
-                  errorCallback={this.errorCallback}
+            </DetailView>
+        )
+        this.setState({
+          editDialog: editDialog
+        })
+      })
+    })
+  }
+
+  suggestionsApi = (value) => {
+    return axios.get(`${common.hostname}formula/formula_autocomplete`)
+  }
+
+  openCreatePage = (closeCallBack, defaultName) => {
+    return axios.get(`${common.hostname}formula/init_formula`).then( (res) => {
+        console.log(res)
+        console.log("defaultName")
+        console.log(defaultName)
+        return (
+          <DetailView
+            open={true}
+            close={closeCallBack}
+            submit={(e) => console.log(e)}
+            handleChange={() => console.log("handle change")}
+            title={"Create Formula"}
+        >
+            <Input
+                id="name"
+                name={"Name"}
+                defaultValue = {defaultName}
+                errorCallback={defaultTextErrorCallbackGenerator("Name is invalid")}
+            />
+            <Input
+                  id="num"
+                  rows="4"
+                  type="number"
+                  name={"Number"}
+                  defaultValue={res.data.num}
+                  errorCallback={this.formulaNumErrorCallback}
               />
               <InputList
-                  id="ing_list"
-                  item="ing1"
-                  items={[
-                      {
-                          label:"ing1",
-                          id:1
-                      },
-                      {
-                          label:"ing2",
-                          id:2
-                      },
-                      {
-                          label:"ing3",
-                          id:3
-                      },
-                      {
-                          label:"ing4",
-                          id:4
-                      },
-                      {
-                          label:"ing5",
-                          id:5
-                      },
-                      {
-                          label:"ing6",
-                          id:6
-                      },
-                      {
-                          label:"ing7",
-                          id:7
-                      },
-                      {
-                          label:"ing8",
-                          id:8
-                      }
-                  ]}
-                  name={"Ingredient List"}
-                  errorCallback={this.errorCallback}
-              /> */}
-          </DetailView>
+                    id="ing_list"
+                    item={res.data.ingredients[0].label}
+                    items={res.data.ingredients}
+                    name={"Ingredient List"}
+                    errorCallback={defaultErrorCallback}
+                />
+              <Input
+                  id="comment"
+                  rows="4"
+                  multiline
+                  type="number"
+                  name={"Comment"}
+                  errorCallback={defaultErrorCallback}
+              />
+        </DetailView>
       )
-  }
-
-
-
-  openFormulaCreatePage = (closeCallBack) => {
-      return (
-          <DetailView
-              open={true}
-              close={closeCallBack}
-              submit={(e) => console.log(e)}
-              handleChange={() => console.log("handle change")}
-              name={"Ingredient Name"}
-              shortname={"Ingredient Short Name"}
-              comment={"Ingredient Comment"}
-              title={"Open"}
-          >
-              <Input
-                  id="ing_name"
-                  rows="4"
-                  name={"Name"}
-                  value={()=>console.log("hello")}
-                  errorCallback={this.errorCallback}
-
-              />
-              <Input
-                  id="ing_name"
-                  rows="4"
-                  name={"Name"}
-                  value={()=>console.log("hello")}
-                  errorCallback={this.errorCallback}
-              />
-          </DetailView>
-      )
-  }
-
-  openFormulaEditPage = (closeCallBack) => {
-      return (
-          <DetailView
-              open={true}
-              close={closeCallBack}
-              submit={(e) => console.log(e)}
-              handleChange={() => console.log("handle change")}
-              name={"Ingredient Name"}
-              shortname={"Ingredient Short Name"}
-              comment={"Ingredient Comment"}
-              title={"Edit"}
-          >
-              <Input
-                  id="ing_name"
-                  rows="4"
-                  name={"Name"}
-                  value={()=>console.log("hello")}
-                  errorCallback={this.errorCallback}
-              />
-              <Input
-                  id="ing_name"
-                  rows="4"
-                  name={"Name"}
-                  value={()=>console.log("hello")}
-                  errorCallback={this.errorCallback}
-              />
-          </DetailView>
-      )
-  }
-
-  errorCallback = (value) => {
-      value = String(value)
-      if(value.includes("12")){
-          return "Input cannot contain 12"
-      }else{
-          return null
       }
-  }
+    )
+}
 
+openEditPage = (closeCallBack) => {
+  let init_data;
+  let formula_data
+  return axios.get(`${common.hostname}formula/init_formula`)
+  .then( (res) => {
+      console.log(res)
+      init_data = res.data
+      return axios.get(`${common.hostname}formula/${this.state.id}`).then((res) => {
+        console.log(res)
+        formula_data = res.data[0]
+        return axios.get(`${common.hostname}formula/${this.state.id}/ingredients`).then((res) => {
+          console.log(res)
+          return (
+            <DetailView
+                open={true}
+                close={closeCallBack}
+                submit={(e) => console.log(e)}
+                handleChange={() => console.log("handle change")}
+                name={"Ingredient Name"}
+                shortname={"Ingredient Short Name"}
+                comment={"Ingredient Comment"}
+                title={"Open"}
+            >
+                <Input
+                    id="name"
+                    name={"Name"}
+                    defaultValue={formula_data.name}
+                    errorCallback={defaultTextErrorCallbackGenerator("Name is invalid")}
+
+                />
+                <Input
+                      id="num"
+                      rows="4"
+                      type="number"
+                      name={"Number"}
+                      defaultValue={formula_data.num}
+                      errorCallback={this.formulaNumErrorCallbackGenerator(formula_data.num)}
+                  />
+                  <InputList
+                        id="ing_list"
+                        item={init_data.ingredients[0].label}
+                        items={init_data.ingredients}
+                        list={res.data.map((item) => {
+                          return {
+                            label:item.name,
+                            quantity: item.quantity,
+                            id:item.id
+                          }
+                        })}
+                        name={"Ingredient List"}
+                        errorCallback={this.errorCallback}
+                    />
+                  <Input
+                      id="comment"
+                      rows="4"
+                      multiline
+                      type="number"
+                      name={"Comment"}
+                      defaultValue={formula_data.comment}
+                      errorCallback={this.errorCallback}
+                  />
+            </DetailView>
+        )
+      })
+    }
+  )
+}
+  )
+}
+
+
+
+errorCallback = (value) => {
+    // value = String(value)
+    // if(value.includes("12")){
+    //     return "Input cannot contain 12"
+    // }else{
+    //     return null
+    // }
+    return null
+}
 
   render() {
     const { classes, SKUs, sortby, selected } = this.props
@@ -327,10 +509,7 @@ class SKUList extends Component {
                 value="Select"
               />
               <Card className={classes.card} onClick={() => { 
-                  this.setState({
-                    editDialog: true,
-                    sku: item
-                  }) 
+                   this.openSKUEditPage(item)
                 }}>
                 <CardActionArea
                   className={classes.cardAction}
@@ -349,9 +528,7 @@ class SKUList extends Component {
           ))
         }
         {
-            this.state.editDialog ? this.openSKUEditPage(this.state.sku, () => {
-                this.setState({ editDialog: false });
-            }) : null
+            this.state.editDialog
         }
       </div>
     );

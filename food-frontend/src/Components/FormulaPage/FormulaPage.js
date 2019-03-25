@@ -33,7 +33,10 @@ import { withRouter } from 'react-router-dom'
 import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
 import axios from 'axios';
 import FileDownload from 'js-file-download';
-import common from '../../Resources/common';
+import common, { defaultErrorCallback, defaultTextErrorCallbackGenerator } from '../../Resources/common';
+import DetailView from '../GenericComponents/DetailView';
+import { Input } from '@material-ui/core';
+import InputList from '../GenericComponents/InputList';
 
 const styles = {
   card: {
@@ -135,12 +138,124 @@ const styles = {
 
 class FormulaPage extends Component {
 
+  state = {
+    createDialog: null
+  }
+
+  errorCallback = (value) => {
+    // value = String(value)
+    // if(value.includes("12")){
+    //     return "Input cannot contain 12"
+    // }else{
+    //     return null
+    // }
+    return null
+}
+
+
   componentWillMount() {
     this.props.search()
   }
 
   onAddClick = () =>{
     this.props.setFormula(this.props.history)
+  }
+
+  formulaNumErrorCallbackGenerator = (num) => {
+    return (value, prop, callBack) => {
+        axios.put(`${common.hostname}formula/valid_num`,{num:parseInt(value)}).then((res) =>{
+          let error
+          console.log("hello")
+          console.log(value)
+          console.log(num)
+          if(res.data.valid || num==parseInt(value)){
+            error = null
+          }else{
+            error = "Invalid Number"
+          }
+          return {
+            prop,
+            error
+          }
+        })
+        .catch((error) => {
+          return {
+            error: "Invalid Number",
+            prop
+          }
+        })
+        .then(callBack)
+      }
+    }
+
+    formulaNumErrorCallback = (value, prop, callBack) => {
+
+          axios.put(`${common.hostname}formula/valid_num`,{num:parseInt(value)}).then((res) =>{
+            let error
+            if(res.data.valid){
+              error = null
+            }else{
+              error = "Invalid Number"
+            }
+            return {
+              prop,
+              error
+            }
+          })
+          .catch((error) => {
+            console.log("error")
+            return {
+              error: "Invalid Number",
+              prop
+            }
+          })
+          .then(callBack)
+        }
+
+  openCreatePage = () => {
+    return axios.get(`${common.hostname}formula/init_formula`).then( (res) => {
+          let formula_data = res.data
+          let createDialog = (
+            <DetailView
+              open={true}
+              close={() => {this.setState({createDialog:null})}}
+              submit={(e) => console.log(e)}
+              handleChange={() => console.log("handle change")}
+              title={"Create Formula"}
+          >
+              <Input
+                  id="name"
+                  name={"Name"}
+                  errorCallback={defaultTextErrorCallbackGenerator("Name is invalid")}
+              />
+              <Input
+                    id="num"
+                    rows="4"
+                    type="number"
+                    name={"Number"}
+                    defaultValue={res.data.num}
+                    errorCallback={this.formulaNumErrorCallback}
+                />
+                <InputList
+                      id="ing_list"
+                      item={res.data.ingredients[0].label}
+                      items={res.data.ingredients}
+                      name={"Ingredient List"}
+                      errorCallback={defaultErrorCallback}
+                  />
+                <Input
+                    id="comment"
+                    rows="4"
+                    multiline
+                    type="number"
+                    name={"Comment"}
+                    errorCallback={defaultErrorCallback}
+                />
+          </DetailView>
+        )
+        this.setState({createDialog: createDialog})
+        }
+      )
   }
 
   onExportClick = () => {
@@ -190,7 +305,7 @@ class FormulaPage extends Component {
             { this.props.users.id === common.admin ?
                 <Button
                 className={classes.add_ingredient}
-                onClick={this.onAddClick}
+                onClick={this.openCreatePage}
               >
                 Add Formula 
               </Button>
@@ -219,6 +334,9 @@ class FormulaPage extends Component {
             >
             </SimpleSnackbar>
           ))
+          }
+          {
+            this.state.createDialog
           }
       </div>
     );

@@ -26,6 +26,8 @@ router.get('/search', function(req, res, next) {
 
 });
 
+
+
 router.get('/init_formula', function(req, res, next) {
     const formula = new Formula();
     formula.initializeFormula().then((b) => {
@@ -47,6 +49,11 @@ router.put('/valid_num', function(req, res, next) {
         })
     })
 });
+
+
+
+
+
 
 router.put('/formula_autocomplete', function(req, res, next) {
     const formula = new Formula();

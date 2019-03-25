@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 const local = {
   hostname: 'https://cmdev.colab.duke.edu:8000/',
   // hostname: 'http://localhost:8000/',
@@ -290,4 +292,147 @@ export function getSkuErrors(sku){
 
 export function createError(message){
   return {errMsg:message,id:hashcode(message)}
+}
+
+export function nameErrorCallback(value, prop, callBack){
+  console.log("hello")
+  Promise.resolve("Success")  
+    .then(()=>{
+    console.log("nameErrorCallback")
+    console.log(value)
+    if(value == ""){
+      return {
+        error: "Name cannot be empty",
+        prop
+      }
+    }else{
+      return {
+        error: null,
+        prop
+      }
+    }
+  })
+  .then(callBack)
+}
+
+export function defaultTextErrorCallbackGenerator(errorMessage){
+  return (value, prop, callBack) => {
+  Promise.resolve("Success") 
+    .then(()=>{
+      console.log(value)
+    if(value == ""){
+      return {
+        error: errorMessage,
+        prop
+      }
+    }else{
+      return {
+        error: null,
+        prop
+      }
+    }
+  })
+  .then(callBack)
+}
+}
+
+export function ingNumErrorCallback(value, prop, callBack){
+  axios.put(`${config.hostname}ingredients/valid_num`,{num:parseInt(value)}).then((res) =>{
+    let error
+    if(res.data.valid){
+      error = null
+    }else{
+      error = "Invalid Number"
+    }
+    return {
+      prop,
+      error
+    }
+  })
+  .then(callBack)
+}
+
+export function defaultNumErrorCallbackGenerator(errorMessage){
+  return (value, prop, callBack) => {
+  Promise.resolve("Success")
+  .then(()=>{
+    if(value == ""){
+      return {
+        error: errorMessage,
+        prop
+      }
+    }
+    return {
+      error: null,
+      prop
+    }
+  })
+  .then(callBack)
+}
+}
+
+export function defaultPackageSizeErrorCallback(value, prop, callBack){
+  //console.log(value)
+
+  Promise.resolve("Success")
+  .then(()=>{
+    console.log("pkg_size")
+    console.log(value)
+    if(value.split(" ").length < 2){
+      return {
+        error: "Invalid Package Size",
+        prop
+      }
+    }
+    if(value.split(" ")[0] == 0){
+      return {
+        error: "Invalid Package Size",
+        prop
+      }
+    }
+    return {
+      error: null,
+      prop
+    }
+  })
+  .then(callBack)
+  
+    // console.log(value)
+    // if(value == "asku4"){
+    //   return {
+    //     error: "No asku4",
+    //     prop
+    //   }
+    // }
+    // return {
+    //   error: null,
+    //   prop
+    // }
+  
+}
+
+export function defaultErrorCallback(value, prop, callBack){
+  //console.log(value)
+  Promise.resolve("Success")
+  .then((value)=>{
+    console.log("default")
+    return {
+      error: null,
+      prop
+    }
+  })
+  .then(callBack)
+  
+    // console.log(value)
+    // if(value == "asku4"){
+    //   return {
+    //     error: "No asku4",
+    //     prop
+    //   }
+    // }
+    // return {
+    //   error: null,
+    //   prop
+    // }
+  
 }

@@ -16,7 +16,7 @@ import { withRouter } from 'react-router-dom'
 import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
 import axios from 'axios';
 import FileDownload from 'js-file-download';
-import common from '../../Resources/common';
+import common, { defaultErrorCallback, ingNumErrorCallback, nameErrorCallback, defaultTextErrorCallbackGenerator, defaultNumErrorCallbackGenerator, defaultPackageSizeErrorCallback } from '../../Resources/common';
 import { withCookies } from 'react-cookie';
 import DetailView from '../GenericComponents/DetailView';
 import { Input } from '@material-ui/core';
@@ -142,80 +142,25 @@ class IngredientsPage extends Component {
   }
 
   errorCallback = (value) => {
-    value = String(value)
-    if(value.includes("12")){
-        return "Input cannot contain 12"
-    }else{
-        return null
-    }
+    // value = String(value)
+    // if(value.includes("12")){
+    //     return "Input cannot contain 12"
+    // }else{
+    //     return null
+    // }
+    return null
 }
 
-  openIngredientCreatePage = (closeCallback) => {
-    return (
-        <DetailView
-            open={true}
-            close={closeCallback}
-            submit={(e) => {
-                console.log(e)
-                swal({
-                    icon: "success",
-                });
-                closeCallback()
-            }}
-            handleChange={() => console.log("handle change")}
-            name={"Ingredient Name"}
-            shortname={"Ingredient Short Name"}
-            comment={"Ingredient Comment"}
-            title={"Create Ingredient"}
-
-        >
-            <Input
-                id="name"
-                rows="4"
-                error={true}
-                name={"Name"}
-                errorCallback={this.errorCallback}
-            />
-            <Input
-                id="num"
-                rows="4"
-                type="number"
-                name={"Number"}
-                errorCallback={this.errorCallback}
-            />
-            <Input
-                id="vend_info"
-                rows="4"
-                name={"Vendor Info"}
-                errorCallback={this.errorCallback}
-            />
-            <UnitSelect
-                id="pkg_size"
-                unitSelect={true}
-                name={"Package Size"}
-                item="kg"
-                items={["kg","g","grams"]}
-                errorCallback={this.errorCallback}
-            />
-            <Input
-                id="pkg_cost"
-                rows="4"
-                type="number"
-                name={"Package Cost"}
-                errorCallback={this.errorCallback}
-
-            />
-            <Input
-                id="comment"
-                rows="4"
-                multiline
-                type="number"
-                name={"Comment"}
-                errorCallback={this.errorCallback}
-            />
-        </DetailView>
-    )
-}
+  openIngredientCreatePage = () => {
+    axios.get(`${common.hostname}ingredients/init_ing`)
+      .then(res => {
+        console.log(res)
+        this.setState({
+          createDialog: true,
+          defaultNum: res.data.num
+        })
+      })
+  }
 
 
   render() {
@@ -245,8 +190,8 @@ class IngredientsPage extends Component {
             { this.props.cookies.admin === "true" ?
                 <Button
                 className={classes.add_ingredient}
-                onClick={() => {this.setState({createDialog: true})}}
-              >
+                onClick={() => {this.openIngredientCreatePage()}}
+                >
                 Add Ingredient
               </Button>
             :
@@ -270,10 +215,80 @@ class IngredientsPage extends Component {
           ))
           }
           {
+            this.state.createDialog ? 
+            <DetailView
+              open={true}
+              close={() => {
+                this.setState({ createDialog: false });
+              }}
+              submit={(e) => {
+                  console.log(e)
+                  swal({
+                      icon: "success",
+                  });
+                  this.setState({ createDialog: false });
+              }}
+              handleChange={() => console.log("handle change")}
+              name={"Ingredient Name"}
+              shortname={"Ingredient Short Name"}
+              comment={"Ingredient Comment"}
+              title={"Create Ingredient"}
+              url={`${common.hostname}ingredients/`}
+            >
+              <Input
+                  id="name"
+                  rows="4"
+                  error={true}
+                  name={"Name"}
+                  errorCallback={defaultTextErrorCallbackGenerator("Name is invalid")}
+              />
+              <Input
+                  id="num"
+                  rows="4"
+                  type="number"
+                  name={"Number"}
+                  defaultValue={this.state.defaultNum}
+                  errorCallback={ingNumErrorCallback}
+              />
+              <Input
+                  id="vend_info"
+                  rows="4"
+                  name={"Vendor Info"}
+                  errorCallback={defaultErrorCallback}
+              />
+              <UnitSelect
+                  id="pkg_size"
+                  unitSelect={true}
+                  name={"Package Size"}
+                  item="kg"
+                  items={["kg","g","grams"]}
+                  errorCallback={defaultPackageSizeErrorCallback}
+              />
+              <Input
+                  id="pkg_cost"
+                  rows="4"
+                  type="number"
+                  name={"Package Cost"}
+                  errorCallback={defaultNumErrorCallbackGenerator("Invalid Number")}
+
+              />
+              <Input
+                  id="comment"
+                  rows="4"
+                  multiline
+                  type="number"
+                  name={"Comment"}
+                  errorCallback={defaultErrorCallback}
+              />
+            </DetailView>
+            :
+            null
+          }
+          {/* {
             this.state.createDialog ? this.openIngredientCreatePage(() => {
                 this.setState({ createDialog: false });
             }) : null
-          }
+          } */}
       </div>
 
     );

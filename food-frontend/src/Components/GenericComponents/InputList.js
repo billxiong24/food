@@ -107,10 +107,13 @@ class InputList extends React.Component {
                 break
             }
         }
+        console.log(this.props.list)
+        let list = []
+        if(this.props.list !== undefined){
+            list = this.props.list
+        }
         this.state = {
-            list: [
-                
-            ],
+            list: list,
             newItem: this.props.item,
             newItemId:id,
             newQuantity: 1

@@ -21,6 +21,10 @@ import InputSelect from '../GenericComponents/InputSelect';
 import InputAutoCompleteOpenPage from '../GenericComponents/InputAutoCompleteOpenPage';
 import InputList from '../GenericComponents/InputList';
 import swal from 'sweetalert';
+import { defaultErrorCallback, nameErrorCallback, ingNumErrorCallback } from '../../Resources/common';
+import axios from 'axios';
+import common from '../../Resources/common';
+
 
 const styles = {
     card: {
@@ -77,6 +81,24 @@ class IngredientList extends Component {
 
     onClick = (item) =>{
          this.props.setIngredient(item, this.props.history)
+    }
+
+    ingNumErrorCallbackGenerator = (num) => {
+    return (value, prop, callBack) => {
+        axios.put(`${common.hostname}ingredients/valid_num`,{num:parseInt(value)}).then((res) =>{
+          let error
+          if(res.data.valid && num!=parseInt(value)){
+            error = null
+          }else{
+            error = "Invalid Number"
+          }
+          return {
+            prop,
+            error
+          }
+        })
+        .then(callBack)
+      }
     }
 
     openIngredientCreatePage = (closeCallback) => {
@@ -238,7 +260,7 @@ class IngredientList extends Component {
                     rows="4"
                     error={true}
                     name={"Name"}
-                    errorCallback={this.errorCallback}
+                    errorCallback={nameErrorCallback}
                     defaultValue = {ingredient.name}
                 />
                 <Input
@@ -246,14 +268,14 @@ class IngredientList extends Component {
                     rows="4"
                     type="number"
                     name={"Number"}
-                    errorCallback={this.errorCallback}
+                    errorCallback={ingNumErrorCallback}
                     defaultValue = {ingredient.num}
                 />
                 <Input
                     id="vend_info"
                     rows="4"
                     name={"Vendor Info"}
-                    errorCallback={this.errorCallback}
+                    errorCallback={defaultErrorCallback}
                     defaultValue={ingredient.vend_info}
                 />
                 <UnitSelect
@@ -263,14 +285,14 @@ class IngredientList extends Component {
                     item={unitItem}
                     items={unitItems}
                     defaultValue={unitValue}
-                    errorCallback={this.errorCallback}
+                    errorCallback={defaultErrorCallback}
                 />
                 <Input
                     id="pkg_cost"
                     rows="4"
                     type="number"
                     name={"Package Cost"}
-                    errorCallback={this.errorCallback}
+                    errorCallback={defaultErrorCallback}
                     defaultValue={ingredient.pkg_cost}
                 />
                 <Input
@@ -279,7 +301,7 @@ class IngredientList extends Component {
                     multiline
                     type="number"
                     name={"Comment"}
-                    errorCallback={this.errorCallback}
+                    errorCallback={defaultErrorCallback}
                     defaultValue={ingredient.comments}
                 />
                 {/* <InputAutoCompleteOpenPage
@@ -405,12 +427,13 @@ class IngredientList extends Component {
     }
 
     errorCallback = (value) => {
-        value = String(value)
-        if(value.includes("12")){
-            return "Input cannot contain 12"
-        }else{
-            return null
-        }
+        // value = String(value)
+        // if(value.includes("12")){
+        //     return "Input cannot contain 12"
+        // }else{
+        //     return null
+        // }
+        return null
     }
 
     render() {

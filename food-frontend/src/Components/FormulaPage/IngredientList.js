@@ -8,14 +8,19 @@ import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import { CardActionArea } from '@material-ui/core';
+import { CardActionArea, Input } from '@material-ui/core';
 import { routeToPage } from '../../Redux/Actions';
 import { withRouter } from 'react-router-dom'
 import { formulaDetGetSkus, formulaDetGetIngredients, formulaDetSetFormula } from '../../Redux/Actions/ActionCreators/FormulaDetailsActionCreators';
-
+import axios from 'axios';
+import common, { defaultErrorCallback, defaultTextErrorCallbackGenerator } from '../../Resources/common';
+import InputAutoCompleteOpenPage from '../GenericComponents/InputAutoCompleteOpenPage';
+import InputSelect from '../GenericComponents/InputSelect';
+import InputList from '../GenericComponents/InputList';
  
  
 import labels from '../../Resources/labels';
+import DetailView from '../GenericComponents/DetailView';
 
 const styles = {
     card: {
@@ -55,12 +60,150 @@ class IngredientList extends Component {
 
     constructor(props){
         super(props);
+        this.state = {
+            editDialog: null
+        }
     }
 
 
     componentWillMount() {
 
     }
+
+    errorCallback = (value) => {
+        // value = String(value)
+        // if(value.includes("12")){
+        //     return "Input cannot contain 12"
+        // }else{
+        //     return null
+        // }
+        return null
+    }
+
+    formulaNumErrorCallbackGenerator = (num) => {
+      return (value, prop, callBack) => {
+          axios.put(`${common.hostname}formula/valid_num`,{num:parseInt(value)}).then((res) =>{
+            let error
+            console.log("hello")
+            console.log(value)
+            console.log(num)
+            if(res.data.valid || num==parseInt(value)){
+              error = null
+            }else{
+              error = "Invalid Number"
+            }
+            return {
+              prop,
+              error
+            }
+          })
+          .catch((error) => {
+            return {
+              error: "Invalid Number",
+              prop
+            }
+          })
+          .then(callBack)
+        }
+      }
+
+      formulaNumErrorCallback = (value, prop, callBack) => {
+
+            axios.put(`${common.hostname}formula/valid_num`,{num:parseInt(value)}).then((res) =>{
+              let error
+              if(res.data.valid){
+                error = null
+              }else{
+                error = "Invalid Number"
+              }
+              return {
+                prop,
+                error
+              }
+            })
+            .catch((error) => {
+              console.log("error")
+              return {
+                error: "Invalid Number",
+                prop
+              }
+            })
+            .then(callBack)
+          }
+
+    openEditPage = (formula) => {
+        let init_data;
+        let formula_data
+        console.log(formula)
+        return axios.get(`${common.hostname}formula/init_formula`)
+        .then( (res) => {
+            console.log(res)
+            init_data = res.data
+            return axios.get(`${common.hostname}formula/${formula.id}`).then((res) => {
+              console.log(res)
+              formula_data = res.data[0]
+              return axios.get(`${common.hostname}formula/${formula.id}/ingredients`).then((res) => {
+                console.log(res)
+                let editDialog = (
+                  <DetailView
+                      open={true}
+                      close={() => {this.setState({editDialog: null})}}
+                      submit={(e) => console.log(e)}
+                      handleChange={() => console.log("handle change")}
+                      name={"Ingredient Name"}
+                      shortname={"Ingredient Short Name"}
+                      comment={"Ingredient Comment"}
+                      title={"Open"}
+                  >
+                      <Input
+                          id="name"
+                          name={"Name"}
+                          defaultValue={formula_data.name}
+                          errorCallback={defaultTextErrorCallbackGenerator("Name is invalid")}
+      
+                      />
+                      <Input
+                            id="num"
+                            rows="4"
+                            type="number"
+                            name={"Number"}
+                            defaultValue={formula_data.num}
+                            errorCallback={this.formulaNumErrorCallbackGenerator(formula_data.num)}
+                        />
+                        <InputList
+                              id="ing_list"
+                              item={init_data.ingredients[0].label}
+                              items={init_data.ingredients}
+                              list={res.data.map((item) => {
+                                return {
+                                  label:item.name,
+                                  quantity: item.quantity,
+                                  id:item.id
+                                }
+                              })}
+                              name={"Ingredient List"}
+                              errorCallback={defaultErrorCallback}
+                          />
+                        <Input
+                            id="comment"
+                            rows="4"
+                            multiline
+                            type="number"
+                            name={"Comment"}
+                            defaultValue={formula_data.comment}
+                            errorCallback={defaultErrorCallback}
+                        />
+                  </DetailView>
+              )
+              this.setState({
+                  editDialog: editDialog
+              })
+            })
+          }
+        )
+      }
+        )
+      }
 
     onClick = (item) =>{
         item.made_formula= true;
@@ -69,11 +212,16 @@ class IngredientList extends Component {
 
     render() {
         const { classes, ingredients, history, sortby } = this.props
+        console.log(ingredients)
         return (
             <div>
                 {
                 this.props.ingredients.map((item, index) => (
-                    <Card className={classes.card} key={index} onClick = {() => {this.onClick(item)}}>
+                    <Card 
+                        className={classes.card} 
+                        key={index} 
+                        onClick = {() => this.openEditPage(item)}
+                    >
                         <CardActionArea
                         className = {classes.cardAction}
                         >
@@ -88,6 +236,9 @@ class IngredientList extends Component {
                         </CardActionArea>
                     </Card>
                 ))
+                }
+                {
+                    this.state.editDialog
                 }
             </div>
 
