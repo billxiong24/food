@@ -38,9 +38,44 @@ class SalesTracker {
 
         return prom.then(function() {
             return {
-                rows: res
+                rows: that.performCalculations(res)
             };
         });
+    }
+
+    groupByKey(list, key) {
+        let result = list.reduce(function (r, a) {
+            r[a[key]] = r[a[key]] || [];
+            r[a[key]].push(a);
+            return r;
+        }, Object.create(null));
+
+        return result;
+    }
+    performCalculations(rows) {
+        //group everything by year
+        let groupedList = this.groupByKey(rows, 'year');
+        let ret = [];
+        //calculate averages per year
+        for(let key in groupedList) {
+            let list = groupedList[key];
+            let revenue = 0;
+            let numSales = 0;
+            for (let i = 0; i < list.length; i++) {
+                numSales += list[i].sales;
+                revenue += (list[i].price_per_case * list[i].sales);
+            }
+            let avgRevenue = 0;
+
+            if(numSales !== 0)
+                avgRevenue = revenue / numSales;
+            
+            let obj = JSON.parse(JSON.stringify(list[0]));
+            obj.revenue = revenue;
+            obj.avgRevenue = parseFloat(avgRevenue.toFixed(2));
+            ret.push(obj);
+        }
+        return ret;
     }
 
     fetchIfNotExist(skuNum, currYear, prdlines, customers) {
