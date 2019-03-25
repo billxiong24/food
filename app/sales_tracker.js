@@ -18,8 +18,10 @@ class SalesTracker {
     } 
 
     total(skuNum, start) {
-      let skuCost = this.getSKUCost(skuNum);
-      return {}
+      const sku_info = this.getSKUCost(skuNum);
+      console.log(sku_info);
+      const num_activities = this.getActivityCount(skuNum, start);
+      return new Promise().resolve(null).then(()=>{return {}})
     }
 
     getSKUCost(skuNum) {
@@ -35,10 +37,19 @@ class SalesTracker {
        .group("setup_cost")
        .group("run_cost")
        .toString();
-       return db.execSingleQuery(query, [])
-        .then((res) => {
-          console.log(res);
-        })
+       db.execSingleQuery(query, [])
+       .then((res) => {
+         return res.rows[0];
+       })
+    }
+
+    getActivityCount(skuNum, start) {
+      let query = squel.select()
+      .from("manufacturing_goal_sku")
+      .where("manufacturing_goal_sku.sku_id = ?", skuNum)
+      .where("manufacturing_goal_sku.start_time > ?", start)
+      .toString();
+      console.log(query);
     }
 
     search(skuNum, numYears, prdlines, customers) {
