@@ -19,4 +19,18 @@ router.get('/search/:sku_num', function(req, res, next) {
     controller.constructGetResponse(res, st.search(req.params.sku_num, years, prodlines, customers));
 });
 
+router.get('/search/aggregate/:sku_num', function(req, res, next) {
+    //number of years to query for  (e.g. 10 means query for the past 10 years.
+    let years = req.query.years;
+
+    let prodlines = req.query.prodlines;
+    let customers = req.query.customers;
+
+    customers = Controller.convertParamToArray(customers);
+    prodlines = Controller.convertParamToArray(prodlines);
+    let st = new SalesTracker();
+    const controller = new Controller();
+    controller.constructGetResponse(res, st.search(req.params.sku_num, years, prodlines, customers, true));
+});
+
 module.exports = router;

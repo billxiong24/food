@@ -17,7 +17,7 @@ class SalesTracker {
         this.interval = 200;
     } 
 
-    search(skuNum, numYears, prdlines, customers) {
+    search(skuNum, numYears, prdlines, customers, aggregate = false) {
         //escape single quotes
         for (var i = 0, len = customers.length; i < len; i++) {
             customers[i] = customers[i].replace(/'/g, "''");
@@ -38,7 +38,8 @@ class SalesTracker {
 
         return prom.then(function() {
             return {
-                rows: that.performCalculations(res)
+                //rows: that.performCalculations(res)
+                rows: aggregate ? that.performCalculations(res) : res
             };
         });
     }
