@@ -29,6 +29,12 @@ class SalesTracker {
         for(let i = 0; i < numYears; i++) {
             let yr = currYear - i;
             prom = prom.then(function(r) {
+                if(aggregate) {
+                    return that.fetchSKUByFilter(yr, prdlines, customers)
+                    .then(function(rows) {
+                        res = res.concat(rows);
+                    })
+                }
                 return that.fetchIfNotExist(skuNum, yr, prdlines, customers)
                 .then(function(rows) {
                     res = res.concat(rows);
@@ -38,9 +44,61 @@ class SalesTracker {
 
         return prom.then(function() {
             return {
-                //rows: that.performCalculations(res)
+                //rows: res
                 rows: aggregate ? that.performCalculations(res) : res
             };
+        });
+    }
+
+    fetchSKUByFilter(currYear, prdlines, customers) {
+        let that = this;
+        let query = squel.select()
+        .from('sku')
+        .field('*')
+        //.join("sku", null, "sales.sku_num = sku.num")
+        //.where('year = ?', currYear);
+        
+        const queryGen = new QueryGenerator(query);
+        queryGen.chainOrFilter(prdlines, "prd_line = ?")
+        //.chainOrFilter(customers, "customer_name = ?")
+        const q = queryGen.getQuery().toString();
+        //console.log(q);
+        return db.execSingleQuery(q, [])
+        .then(function(res) {
+            let list = [];
+            let prom = Promise.resolve(list);
+            //populate database
+            for(let i = 0; i < res.rows.length; i++) {
+                prom = prom.then(function(x) {
+                    return that.fetchIfNotExist(res.rows[i].num, currYear, prdlines, customers)
+                    .then(function(rows) {
+                        //console.log(rows);
+                        list = list.concat(rows);
+                        return list;
+                    //have to execute query again because pulled in a bunch of new data
+                    });
+                })
+            }
+
+            //filter by customer
+            prom = prom.then(function(x) {
+                let query = squel.select()
+                .from('sku')
+                .field('*')
+                .join("sales", null, "sales.sku_num = sku.num")
+                .where('year = ?', currYear);
+
+                const queryGen = new QueryGenerator(query);
+                queryGen.chainOrFilter(prdlines, "prd_line = ?")
+                .chainOrFilter(customers, "customer_name = ?")
+                const q = queryGen.getQuery().toString();
+                console.log(q);
+                return db.execSingleQuery(q, [])
+                .then(function(e) {
+                    return e.rows;
+                });
+            });
+            return prom;
         });
     }
 
@@ -53,30 +111,59 @@ class SalesTracker {
 
         return result;
     }
+
+    calculateRevAndProf(list) {
+        //console.log(list);
+        let revenue = 0;
+        let numSales = 0;
+        for (let i = 0; i < list.length; i++) {
+            numSales += list[i].sales;
+            revenue += (list[i].price_per_case * list[i].sales);
+        }
+        let avgRevenue = 0;
+
+        if(numSales !== 0)
+            avgRevenue = revenue / numSales;
+
+        let obj = JSON.parse(JSON.stringify(list[0]));
+        obj.revenue = revenue;
+        obj.avgRevenue = parseFloat(avgRevenue.toFixed(2));
+        return obj;
+    }
     performCalculations(rows) {
         //group everything by year
-        let groupedList = this.groupByKey(rows, 'year');
+        let groupedList = this.groupByKey(rows, 'prd_line');
         let ret = [];
         //calculate averages per year
-        for(let key in groupedList) {
-            let list = groupedList[key];
-            let revenue = 0;
-            let numSales = 0;
-            for (let i = 0; i < list.length; i++) {
-                numSales += list[i].sales;
-                revenue += (list[i].price_per_case * list[i].sales);
-            }
-            let avgRevenue = 0;
 
-            if(numSales !== 0)
-                avgRevenue = revenue / numSales;
-            
-            let obj = JSON.parse(JSON.stringify(list[0]));
-            obj.revenue = revenue;
-            obj.avgRevenue = parseFloat(avgRevenue.toFixed(2));
-            ret.push(obj);
+        let deepGroupList = {}; 
+        //group by sku num
+        for(let key in groupedList) {
+            let newList = this.groupByKey(groupedList[key], 'sku_num');
+            deepGroupList[key] = newList;
+
         }
-        return ret;
+
+        let deepYearGroup = {};
+        //for each produt line
+        for(let key in deepGroupList) {
+            deepYearGroup[key] = deepGroupList[key];
+            let trav = deepGroupList[key];
+            //for each sku number in the product line, group by year
+            for(let nums in trav) {
+                let newList = this.groupByKey(trav[nums], 'year');
+                deepYearGroup[key][nums] = newList;
+                for (let year in newList) {
+                    let calculations = this.calculateRevAndProf(newList[year]);
+                    deepYearGroup[key][nums][year] = calculations;
+                }
+            }
+        }
+            //let newList = this.groupByKey(deepGroupList[key], 'year');
+            //deepYearGroup[key] = newList;
+        //}
+        //return deepYearGroup;
+        return deepYearGroup;
     }
 
     fetchIfNotExist(skuNum, currYear, prdlines, customers) {
