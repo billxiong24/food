@@ -32,8 +32,13 @@ class SalesTracker {
        .join("ingredients", null, "ingredients.id = formula_ingredients.ingredients_id")
        .where("sku.num = ?", skuNum)
        .distinct()
+       .group("setup_cost")
+       .group("run_cost")
        .toString();
-       console.log(query);
+       return db.execSingleQuery(query, [])
+        .then((res) => {
+          console.log(res);
+        })
     }
 
     search(skuNum, numYears, prdlines, customers) {
