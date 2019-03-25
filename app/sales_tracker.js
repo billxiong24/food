@@ -47,7 +47,7 @@ class SalesTracker {
         let that = this;
         let query = squel.select()
         .from('sales')
-        .field('sales.*')
+        .field('sales.*, sku.*')
         .join("sku", null, "sales.sku_num = sku.num")
         .where('sku_num = ?', skuNum)
         .where('year = ?', currYear);
