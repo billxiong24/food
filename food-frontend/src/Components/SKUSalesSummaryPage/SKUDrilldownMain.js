@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import { Typography, Paper } from '@material-ui/core';
@@ -105,12 +105,11 @@ class SKUDrilldownMain extends Component {
   }
 
   getDetails = e => {
-      console.log("adfoi");
       console.log(this.state.productlineFilters);
       console.log(this.state.customerFilter);
     Axios.get(hostname + 'sales/search/aggregate', {
         params: {
-            years: 2,
+            years: 10,
             prodlines: this.state.productlineFilters, 
             customers: this.state.customerFilter
         }
@@ -215,6 +214,7 @@ class SKUDrilldownMain extends Component {
     });
   }
 
+
   render() {
     const { classes, sku } = this.props
     return (
@@ -258,34 +258,43 @@ class SKUDrilldownMain extends Component {
         </div>
         <div className={classes.contentContainer}>
           <Paper className={classes.customer_container}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Year</TableCell>
-                  <TableCell>Week Number</TableCell>
-                  <TableCell>Customer Number</TableCell>
-                  <TableCell>Customer Name</TableCell>
-                  <TableCell>Number of Sales</TableCell>
-                  <TableCell>Price per Case</TableCell>
-                  <TableCell>Revenue</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
                 {
-                  //this.state.details.map((val, index) => (
-                    //<TableRow key={index}>
-                      //<TableCell>{val.year}</TableCell>
-                      //<TableCell>{val.week}</TableCell>
-                      //<TableCell>{val.customer_num}</TableCell>
-                      //<TableCell>{val.customer_name}</TableCell>
-                      //<TableCell>{val.sales}</TableCell>
-                      //<TableCell>{parseInt(val.price_per_case).toFixed(2)}</TableCell>
-                      //<TableCell>{(parseInt(val.sales) * parseInt(val.price_per_case)).toFixed(2)}</TableCell>
-                    //</TableRow>
-                  //))
+                    Object.keys(this.state.details).map((prodline, index) => {
+                        return <Table key={index}>
+                              <TableHead>
+                                <TableRow>
+                                  <TableCell>{prodline}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                  <TableCell>SKU No.</TableCell>
+                                  <TableCell>Year</TableCell>
+                                  <TableCell>Revenue</TableCell>
+                                  <TableCell>Average Revenue</TableCell>
+                                </TableRow>
+                              </TableHead>
+                                <TableBody>
+                            {
+                                Object.keys(this.state.details[prodline]).map((sku_num, index) => {
+                                        return <Fragment>
+                                        {
+                                        Object.keys(this.state.details[prodline][sku_num]).map((year, index) => {
+                                            
+                                            return <TableRow key = {index}>
+                                                <TableCell>{sku_num}</TableCell>
+                                                <TableCell>{year}</TableCell>
+                                                <TableCell>{this.state.details[prodline][sku_num][year].revenue}</TableCell>
+                                                <TableCell>{this.state.details[prodline][sku_num][year].avgRevenue}</TableCell>
+                                                </TableRow>
+                                        })
+
+                                        }
+                                    </Fragment>
+                                })
+                            }
+                                </TableBody>
+                        </Table>
+                    })
                 }
-              </TableBody>
-            </Table>
           </Paper>
         </div>
         <SimpleSnackbar
