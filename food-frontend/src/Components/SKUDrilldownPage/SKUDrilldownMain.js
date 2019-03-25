@@ -30,7 +30,8 @@ const styles = {
     marginTop: "1%"
   },
   contentContainer: {
-    marginTop: "2%"
+    marginTop: "2%",
+    marginBottom: "2%"
   },
   timespanLabel: {
     display:"inline",
@@ -144,7 +145,7 @@ class SKUDrilldownMain extends Component {
       this.setState({
         details: response.data.filter((el) => {
           return !(el.year === targetYear && el.week < targetWeek)
-        }).sort((a,b) => {return a.name.localeCompare(b.name)})
+        }).sort((a,b) => {return a.customer_name.localeCompare(b.customer_name)})
       })
     })
     .catch(err=>{
@@ -285,7 +286,7 @@ class SKUDrilldownMain extends Component {
             </form>
           </div>
         </div>
-        <div className={classes.content}>
+        <div className={classes.contentContainer}>
           <Paper className={classes.customer_container}>
             <Table>
               <TableHead>
@@ -308,8 +309,8 @@ class SKUDrilldownMain extends Component {
                       <TableCell>{val.customer_num}</TableCell>
                       <TableCell>{val.customer_name}</TableCell>
                       <TableCell>{val.sales}</TableCell>
-                      <TableCell>{val.price_per_case.toFixed(2)}</TableCell>
-                      <TableCell>{(val.sales * val.price_per_case).toFixed(2)}</TableCell>
+                      <TableCell>{parseInt(val.price_per_case).toFixed(2)}</TableCell>
+                      <TableCell>{(parseInt(val.sales) * parseInt(val.price_per_case)).toFixed(2)}</TableCell>
                     </TableRow>
                   ))
                 }

@@ -92,7 +92,6 @@ class Autocomplete extends Component {
           placeholder={placeholder}
           list={"suggestions-"+id}
           name={id}
-          onFocus={()=>{console.log("here")}}
         />
         <datalist id={"suggestions-"+id} className={classes.datalist}>
           {suggestions.map(suggestion => {
