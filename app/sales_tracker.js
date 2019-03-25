@@ -17,6 +17,22 @@ class SalesTracker {
         this.interval = 200;
     } 
 
+    total(skuNum, start) {
+      let skuCost = this.getSKUCost(skuNum);
+      return {}
+    }
+
+    getSKUCost(skuNum) {
+      let query = squel.select()
+       .from("sku")
+       .field("*")
+       .join("formula_ingredients", null, "sku.formula_id = formula_ingredients.formula_id")
+       .join("ingredients", null, "ingredients.id = formula_ingredients.ingredients_id")
+       .where("num = ?", skuNum)
+       .toString();
+       console.log(query);
+    }
+
     search(skuNum, numYears, prdlines, customers) {
         //escape single quotes
         for (var i = 0, len = customers.length; i < len; i++) {
