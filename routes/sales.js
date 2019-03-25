@@ -22,6 +22,8 @@ router.get('/search/:sku_num', function(req, res, next) {
 router.get('/total/:sku_num', function(req, res, next) {
     let start = req.query.start;
 
+    console.log("here");
+
     let st = new SalesTracker();
     const controller = new Controller();
     controller.constructGetResponse(res, st.total(req.params.sku_num, start));
