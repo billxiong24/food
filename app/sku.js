@@ -27,7 +27,9 @@ class SKU extends CRUD {
             "ML Shortnames": "shortname", 
             "Formula factor": "formula_scale",
             "Rate": "man_rate",
-            "SkuID": "id"
+            "SkuID": "id",
+            "Mfg run cost": "man_run_cost",
+            "Mfg setup cost": "man_setup_cost"
         };
         this.dbToHeader = this.reverseKeys(this.headerToDB);
     }
@@ -333,12 +335,24 @@ class SKU extends CRUD {
             });
         });
     }
+
+    cleanAdditionalData(rows) {
+        for (let i = 0; i < rows.length; i++) {
+            let regex = /^\s*\$?\s*([+-]?\d*\.?\d+)\D*$/;
+            let runMatch = regex.exec(rows[i]["man_run_cost"]);
+            let setupMatch = regex.exec(rows[i]["man_setup_cost"]);
+
+            rows[i]["man_run_cost"] = runMatch[1];
+            rows[i]["man_setup_cost"] = setupMatch[1];
+        }
+    }
     bulkImport(csv_str, cb) {
         let table = this.tableName;
         let that = this;
         csv().fromString(csv_str)
         .then(function(rows) {
             that.bulkCleanData(rows);
+            that.cleanAdditionalData(rows);
             return rows;
         })
         .then(function(rows) {
@@ -401,6 +415,7 @@ class SKU extends CRUD {
                                 return true;
                             })
                             .then(function(res) {
+                                console.log("rows[i]");
                                 console.log(rows[i]);
                                 let shortnames = (rows[i].shortname) ? rows[i].shortname.split(/[ ,]+/) : [];
                                 if(shortnames.length === 1 && shortnames[0].length === 0)
