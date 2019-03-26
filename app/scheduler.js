@@ -146,11 +146,17 @@ class Scheduler extends CRUD {
         `
         return db.execSingleQuery(query, [])
         .then(function(res){
+            sku_map = {}
+            ing_map = {}
+            form_map = {}
+            act_map = {}
+            form_ing_map ={}
             res.rows.forEach(function(row){
                 console.log(row)
                 let ingredient = {}
                 let formula = {}
                 let activity = {}
+                let sku = {}
                 for (var property in row) {
                     if (row.hasOwnProperty(property)) {
                         if(property.includes("activity_")){
@@ -159,14 +165,27 @@ class Scheduler extends CRUD {
                             formula[property.replace("formula_", "")] = row[property]
                         }else if(property.includes("ingredients_")){
                             ingredient[property.replace("ingredients_", "")] = row[property]
+                        }else if(property.includes("sku_")){
+                            ingredient[property.replace("ingredients_", "")] = row[property]
                         }
                     }
                 }
-                console.log(ingredient)
-                console.log(formula)
-                console.log(activity)
+                // console.log(ingredient)
+                // console.log(formula)
+                // console.log(activity)
+                // console.log(sku)
+                if(!act_map.hasOwnProperty(sku.id)){ 
+                    act_map[sku.id] = {...activity,...sku}
+                    act_map[sku.id].formula = formula
+                    act_map[sku.id].formula.ingredients = []
+                }
+                act_map[sku.id].formula.ingredients.push(ingredient)
             })
-            return []
+            activities = []
+            for (var property in act_map){
+                activities.push(act_map[property])
+            }
+            return activities
         })
     }
 

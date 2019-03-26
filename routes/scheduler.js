@@ -365,9 +365,9 @@ router.put('/get_report', function(req, res, next){
     let start_time = req.body.start_time
     let end_time = req.body.end_time
     let scheduler = new Scheduler()
-    scheduler.get_report(id,start_time,end_time).then((success) => {
+    scheduler.get_report(id,start_time,end_time).then((activities) => {
         res.status(200).json({
-
+            activities
         })
     })
 })
