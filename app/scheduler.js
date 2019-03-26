@@ -148,6 +148,23 @@ class Scheduler extends CRUD {
         .then(function(res){
             res.rows.forEach(function(row){
                 console.log(row)
+                let ingredient = {}
+                let formula = {}
+                let activity = {}
+                for (var property in row) {
+                    if (row.hasOwnProperty(property)) {
+                        if(property.includes("activity")){
+                            activity[property.replace("activity", "")] = row.property
+                        }else if(property.includes("formula")){
+                            formula[property.replace("formula", "")] = row.property
+                        }else if(property.includes("ingredients")){
+                            ingredient[property.replace("ingredients", "")] = row.property
+                        }
+                    }
+                }
+                console.log(ingredient)
+                console.log(formula)
+                console.log(activity)
             })
             return []
         })
