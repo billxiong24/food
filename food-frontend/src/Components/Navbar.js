@@ -72,7 +72,16 @@ class Navbar extends React.Component {
         initValue = 7;
         break;
       case '/logout':
+        initValue = 15;
+        break;
+      case '/scheduler':
         initValue = 8;
+        break;
+      case '/sales/aggregate':
+        initValue = 9;
+        break;
+      case '/sales/skusearch':
+        initValue = 10;
         break;
       default:
         initValue = 0;
@@ -109,9 +118,10 @@ class Navbar extends React.Component {
             <Tab value={5} label="Bulk Import/Export" component={Link} to={'/bulk'} />
             <Tab value={6} className={cookies.admin === 'true' ? '' : classes.hidden} label="Manage Users" component={Link} to={'/users'} />
             <Tab value={7} className={cookies.admin === 'true' ? '' : classes.hidden} label="Manufacturing Lines" component={Link} to={'/manufacturing_lines'} />
-            <Tab value={8} className={cookies.user ? '' : classes.hidden} label="Log Out" component={Link} to={'/logout'} />
-            <Tab value={9} label="Scheduler" component={Link} to={'/scheduler'} />         
-            <Tab value={10} label="Sales Summary" component={Link} to={'/sales/aggregate'} />         
+            <Tab value={8} label="Scheduler" component={Link} to={'/scheduler'} />         
+            <Tab value={9} label="Sales Summary" component={Link} to={'/sales/aggregate'} />
+            <Tab value={10} label="SKU Sales" component={Link} to={'/sales/skusearch'} />
+            <Tab value={15} className={cookies.user ? '' : classes.hidden} label="Log Out" component={Link} to={'/logout'} />      
           </Tabs>
         </AppBar>
       </div>

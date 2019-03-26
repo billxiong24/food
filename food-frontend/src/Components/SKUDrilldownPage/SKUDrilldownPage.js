@@ -33,7 +33,7 @@ class SKUDrilldownPage extends Component {
   componentWillMount() {
     Axios.get(hostname + 'sku/search', {
       params: {
-        names: this.props.match.params.sku_name
+        names: this.props.match.params.sku_num
       }
     })
       .then(response => {

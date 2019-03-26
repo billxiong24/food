@@ -9,12 +9,14 @@ import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
-import { subDays, subWeeks, subMonths, subYears, getISOWeek, getYear } from 'date-fns';
+import { format, setISOWeek, setYear, subDays, subWeeks, subMonths, subYears, getISOWeek, getYear } from 'date-fns';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import SKUDrilldownGraph from './SKUDrilldownGraph';
+import FileDownload from 'js-file-download';
 
 const hostname = common.hostname;
 
@@ -49,11 +51,15 @@ const styles = {
   customer_container: {
     textAlign:'center',
     marginTop: '2%',
+    padding: 20
   },
   customer_title: {
     textAlign:'left',
     paddingTop: 20,
     paddingLeft: 20,
+  },
+  export_button: {
+    marginTop: '2%'
   }
 };
 
@@ -89,7 +95,8 @@ class SKUDrilldownMain extends Component {
       message:"",
       alert:false,
       autohide:null,
-      details: []
+      details: [],
+      filtered: false
     }
   }
 
@@ -118,12 +125,12 @@ class SKUDrilldownMain extends Component {
     }
     const targetWeek = getISOWeek(target);
     const targetYear = getYear(target);
-    Axios.get(hostname + 'sales/search/' + this.props.sku.num, {
-      params: {
-        customers: encodeURI(this.state.customerFilter),
-        years: getYear(new Date()) - targetYear + 1
-      }
-    })
+    Axios.get(hostname + 'sales/search/' + this.props.sku.num + '/?customers=' + encodeURI(this.state.customerFilter) + '&years=' + (getYear(new Date()) - targetYear + 1)
+      // params: {
+      //   customers: this.state.customerFilter,
+      //   years: getYear(new Date()) - targetYear + 1
+      // }
+    )
     .then(response => {
       // let newDetails = {};
       // response.data.forEach((e) => {
@@ -142,10 +149,12 @@ class SKUDrilldownMain extends Component {
       // this.setState({
       //   details: newDetails
       // })
+      let filtered = this.state.customerFilter ? true : false;
       this.setState({
         details: response.data.filter((el) => {
           return !(el.year === targetYear && el.week < targetWeek)
-        }).sort((a,b) => {return a.customer_name.localeCompare(b.customer_name)})
+        }).sort((a,b) => {return a.customer_name.localeCompare(b.customer_name)}),
+        filtered: filtered
       })
     })
     .catch(err=>{
@@ -188,8 +197,9 @@ class SKUDrilldownMain extends Component {
     }
     this.setState({
       customerFilter: e.currentTarget.value,
-      suggestions: newSuggestions.slice(0,10)
-    });
+      suggestions: newSuggestions.slice(0,10),
+      filtered: false
+    }, () => {if (!this.state.customerFilter) this.getDetails()});
   }
 
   selectFilter = (id) => {
@@ -226,6 +236,20 @@ class SKUDrilldownMain extends Component {
     this.getDetails();
   }
 
+  exportCalculations() {
+    Axios.post(common.hostname + 'manufacturing_goals/exported_file', {
+      data: this.state.details,
+      format: "csv",
+        type: "mangoal"
+    })
+      .then((response) => {
+        FileDownload(response.data, this.props.sku.name + '_sales.csv');
+      })
+      .catch(err => {
+        console.log(err);
+      })
+  }
+
   closeAlert() {
     this.setState({
       alert: false,
@@ -237,7 +261,7 @@ class SKUDrilldownMain extends Component {
     const { classes, sku } = this.props
     return (
       <div>
-        <Typography variant="h3" gutterBottom>Sales Detail for {sku.name}</Typography>
+        <Typography variant="h3" gutterBottom>Sales Detail for {sku.name}: {sku.unit_size} * {sku.count_per_case} ({sku.num})</Typography>
         <div className={classes.filterContainer}>
           <div className={classes.customerFilterContainer}>
             <Typography variant="h6">Filter by Customer</Typography>
@@ -288,6 +312,30 @@ class SKUDrilldownMain extends Component {
         </div>
         <div className={classes.contentContainer}>
           <Paper className={classes.customer_container}>
+            <Typography variant="h3">Graph</Typography>
+            {
+              this.state.filtered && <SKUDrilldownGraph data={this.state.details.reduce((obj, val) => {
+                console.log(this.state.details);
+                return {
+                  ...obj,
+                  [format(setYear(setISOWeek(new Date(), val.week), val.year), "YYYY-MM-DD")]: (parseInt(val.sales) * parseInt(val.price_per_case))
+                };
+              }, {}
+              )}></SKUDrilldownGraph>
+            }
+            {
+              !this.state.filtered && <Typography variant="h6">Specify a Customer above to see revenue graph</Typography>
+            }
+          </Paper>
+          <Paper className={classes.customer_container}>
+            <div>
+              <Typography variant="h3">Sales</Typography>
+              <Button 
+                className={classes.export_button} 
+                onClick={()=>{this.exportCalculations()}}
+                variant="contained"
+              >Export as CSV</Button>
+            </div>
             <Table>
               <TableHead>
                 <TableRow>
