@@ -174,7 +174,7 @@ class Scheduler extends CRUD {
                 console.log(formula)
                 console.log(activity)
                 console.log(sku)
-                act_key = String(sku.id) + " " + String(activity.mg_id) 
+                let act_key = String(sku.id) + " " + String(activity.mg_id) 
                 if(!act_map.hasOwnProperty(act_key)){ 
                     act_map[act_key] = {...activity,...sku}
                     act_map[act_key].formula = formula
