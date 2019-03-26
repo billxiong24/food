@@ -15,6 +15,10 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import axios from 'axios';
+import FileDownload from 'js-file-download';
+
+import { Link } from 'react-router-dom';
 
 const hostname = common.hostname;
 
@@ -206,6 +210,41 @@ class SKUDrilldownMain extends Component {
   };
 
 
+    exportCSV = (e) => {
+        let customer = this.state.customerFilter;
+        let list = [];
+        Object.keys(this.state.details).map((prodline, index) => {
+            Object.keys(this.state.details[prodline]).map((sku_num, index) => {
+                Object.keys(this.state.details[prodline][sku_num]).map((year, index) => {
+                    let obj = {
+                        "Product Line": prodline,
+                        "SKU#": sku_num,
+                        "Year": year,
+                        "Revenue": this.state.details[prodline][sku_num][year].revenue, 
+                        "Average Revenue": this.state.details[prodline][sku_num][year].avgRevenue
+                    }
+                    if(customer) {
+                        obj['Customer'] = customer;
+                    }
+
+                    list.push(obj);
+                })
+            })
+        });
+        axios.post(common.hostname + 'manufacturing_goals/exported_file', {
+            data: list,
+            format: "csv",
+            type: "sales_summary"
+        })
+            .then((response) => {
+                FileDownload(response.data, 'sales_summary.csv');
+            })
+            .catch(err => {
+                console.log(err);
+            })
+    }
+
+
 
   closeAlert() {
     this.setState({
@@ -252,9 +291,12 @@ class SKUDrilldownMain extends Component {
         </div>
           </div>
                 <Button onClick={this.getDetails}>
-                    Generate Data 
+        Generate Data
                 </Button>
           
+                <Button onClick={this.exportCSV}>
+        Export CSV
+                </Button>
         </div>
         <div className={classes.contentContainer}>
           <Paper className={classes.customer_container}>
@@ -263,7 +305,7 @@ class SKUDrilldownMain extends Component {
                         return <Table key={index}>
                               <TableHead>
                                 <TableRow>
-                                  <TableCell>{prodline}</TableCell>
+                                  <TableCell><h3>{prodline}</h3></TableCell>
                                 </TableRow>
                                 <TableRow>
                                   <TableCell>SKU No.</TableCell>
@@ -284,6 +326,13 @@ class SKUDrilldownMain extends Component {
                                                 <TableCell>{year}</TableCell>
                                                 <TableCell>{this.state.details[prodline][sku_num][year].revenue}</TableCell>
                                                 <TableCell>{this.state.details[prodline][sku_num][year].avgRevenue}</TableCell>
+                                                <TableCell>
+                                                <Button
+                                            variant="contained"
+                                            component={Link}
+                                            to={'/sales/skus/' + sku_num}
+                                                >See Drilldown</Button>
+                                                </TableCell>
                                                 </TableRow>
                                         })
 

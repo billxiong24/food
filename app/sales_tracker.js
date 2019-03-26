@@ -7,6 +7,7 @@ const rp = require('request-promise');
 const cheerio = require('cheerio');
 const getYear = require('date-fns/get_year');
 const getISOWeek = require('date-fns/get_iso_week');
+const Formatter = require('./formatter');
 
 function sleeper(ms) {
     return function(x) {
@@ -19,6 +20,12 @@ class SalesTracker {
     constructor() {
         this.interval = 200;
     } 
+
+    exportFile(jsonList, format, cb=null) {
+        console.log("EXPORTING BABY");
+        const formatter = new Formatter(format);
+        return formatter.generateFormat(jsonList);
+    }
 
     // total(skuNum, start) {
     //   return this.getSKUCost(skuNum)
@@ -138,7 +145,7 @@ class SalesTracker {
                 queryGen.chainOrFilter(prdlines, "prd_line = ?")
                 .chainOrFilter(customers, "customer_name = ?")
                 const q = queryGen.getQuery().toString();
-                console.log(q);
+                console.log("CUSTOMER QUERY: " + q);
                 return db.execSingleQuery(q, [])
                 .then(function(e) {
                     return e.rows;

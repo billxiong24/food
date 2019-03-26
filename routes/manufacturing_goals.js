@@ -8,6 +8,7 @@ const SKU = require('../app/sku');
 const Ingredient = require('../app/ingredient');
 const SKUIngred = require("../app/sku_ingred");
 const ProdLine = require("../app/productline");
+const SalesTracker = require("../app/sales_tracker");
 
 function getCRUD(type) {
     let crud = null;
@@ -29,6 +30,9 @@ function getCRUD(type) {
     }
     else if(type == 'mangoal') {
         crud = new ManufacturingGoals();
+    }
+    else if(type == 'sales_summary') {
+        crud = new SalesTracker();
     }
     else {
         return null;
