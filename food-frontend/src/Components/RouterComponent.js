@@ -25,6 +25,7 @@ import { withCookies } from 'react-cookie';
 import PrivacyPage from './PrivacyPage/PrivacyPage';
 import UserAdminPage from './UserAdminPage/UserAdminPage';
 import ManufacturingLinesPage from './ManufacturingLinesPage/ManufacturingLinesPage';
+import ManufacturingScheduleReportPage from './ManufacturingScheduleReportPage/ManufacturingScheduleReportPage';
 
 const styles = {
 
@@ -67,6 +68,7 @@ class RouterComponent extends Component {
               block={!manGoals.activeGoal.id} altPath={landingPage} />
             <PrivateRoute exact={true} path="/manufacturing_lines" component={ManufacturingLinesPage}
               block={cookies.admin === 'false'} altPath={landingPage}/>
+            <PrivateRoute exact={true} path="/manufacturing_report" component={ManufacturingScheduleReportPage}/>
             <Redirect from="/*" to={landingPage} />
           </Switch>
         </div>

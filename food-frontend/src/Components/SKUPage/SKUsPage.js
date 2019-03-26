@@ -630,7 +630,9 @@ errorCallback = (value) => {
                 this.props.cookies.admin === "true" ?
                   <Button
                     className={classes.add_ingredient}
-                    onClick={this.openSKUCreatePage}>
+                    onClick={this.openSKUCreatePage}
+                    variant="contained"
+                    >
                     Add SKU
                   </Button>
                   :
@@ -641,6 +643,7 @@ errorCallback = (value) => {
                   <Button
                     className={classes.add_ingredient}
                     onClick={() => { this.props.addAllFilter() }}
+                    variant="contained"
                   >
                     Select All
                   </Button>
@@ -652,8 +655,9 @@ errorCallback = (value) => {
                   <Button
                     className={classes.add_ingredient}
                     onClick={() => { this.props.removeAllFilter() }}
+                    variant="contained"
                   >
-                    Remove All
+                    Unselect All
                   </Button>
                   :
                   <div></div>
@@ -663,6 +667,7 @@ errorCallback = (value) => {
                   <Button
                     className={classes.add_ingredient}
                     onClick={() => { this.openBulkEdit() }}
+                    variant="contained"
                   >
                     Bulk Edit Manufacturing Line
                   </Button>
@@ -677,6 +682,7 @@ errorCallback = (value) => {
               <Button
                 className={classes.export_to_csv}
                 onClick={this.onExportClick}
+                variant="contained"
               >
                 Export to CSV
             </Button>
