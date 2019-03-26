@@ -145,6 +145,9 @@ class IngredientList extends Component {
               formula_data = res.data[0]
               return axios.get(`${common.hostname}formula/${formula.id}/ingredients`).then((res) => {
                 //console.log(res)
+                let ings = res.data.map(ing => {
+                  return ing.id
+                })
                 let editDialog = (
                   <DetailView
                       open={true}
@@ -176,6 +179,9 @@ class IngredientList extends Component {
                             }else{
                                 //console.log(item)
                                 //console.log(item.ingredients)
+                                if(!Array.isArray(item.ingredients)){
+                                  item.ingredients = [] 
+                                }
                                 let ingredientso = item.ingredients.map(ing => {
                                   return {
                                   ingredients_id:ing.id,
@@ -184,7 +190,6 @@ class IngredientList extends Component {
                                 }
                               })
                               //console.log(ingredients)
-                                //console.log(item)
                                 let that = this
                                 const {ingredients, ...new_formula_data} = item
                                 new_formula_data.num = parseInt(new_formula_data.num)
@@ -192,7 +197,12 @@ class IngredientList extends Component {
                                 axios.put(`${common.hostname}formula/${formula.id}`, new_formula_data)
                                 .then(function (response) {
                                     //that.props.submit(item)
-                                    axios.post(`${common.hostname}formula/${formula.id}/ingredients`, {ingredients:ingredientso})
+                                    console.log(ings)
+                                    axios.delete(`${common.hostname}formula/${formula.id}/ingredients`, {ingredients:ings})
+                                    .then(function(response){
+                                      console.log(response)
+                                      console.log(ingredientso)
+                                      axios.post(`${common.hostname}formula/${formula.id}/ingredients`, {ingredients:ingredientso})
                                       .then(function (response) {
                                           //console.log(response)
                                           swal({
@@ -207,6 +217,13 @@ class IngredientList extends Component {
                                               icon: "error",
                                           });
                                       });
+                                    })
+                                    .catch(function(error){
+                                      swal(`${"Error on Delete"}`,{
+                                        icon: "error",
+                                      });
+                                    })
+
                                       
                                           
                                 })

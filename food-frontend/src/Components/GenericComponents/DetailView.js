@@ -96,12 +96,12 @@ class DetailView extends Component {
             //         [prop]:error
             //     })
             // })
-            this.props.children[i].props.errorCallback(state[this.props.children[i].props.id], this.props.children[i].props.id +"_errorMsg", (res) => {
-                let {prop, error} = res
-                this.setState({
-                    [prop]:error
-                })
-            })
+            // this.props.children[i].props.errorCallback(state[this.props.children[i].props.id], this.props.children[i].props.id +"_errorMsg", (res) => {
+            //     let {prop, error} = res
+            //     this.setState({
+            //         [prop]:error
+            //     })
+            // })
         }else if(this.props.children[i].type.displayName.includes("WithStyles(InputList)")){
             state[this.props.children[i].props.id] = []
             //state[this.props.children[i].props.id +"_errorMsg"] = this.props.children[i].props.errorCallback([])

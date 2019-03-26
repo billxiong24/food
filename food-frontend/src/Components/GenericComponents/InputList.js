@@ -219,7 +219,13 @@ class InputList extends React.Component {
                                 className={classes.icon_button_2}
                                 onClick={() => {
                                     let list = removeFromList(item,this.state.list)
-                                    this.props.handleChange(list)
+                                    console.log(list)
+                                    if(list.length == 0){
+                                        this.props.handleChange("h")
+                                    }else{
+                                        this.props.handleChange(list)
+                                    }
+                                    
                                     this.setState({
                                         list:list
                                     })
