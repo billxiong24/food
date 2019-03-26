@@ -15,7 +15,6 @@ import DetailView from '../GenericComponents/DetailView';
 import UnitSelect from '../GenericComponents/UnitSelect';
 import InputSelect from '../GenericComponents/InputSelect';
 import InputAutoCompleteOpenPage from '../GenericComponents/InputAutoCompleteOpenPage';
-import { resolveAny } from 'dns';
 import { resolve } from 'path';
 
 const styles = theme => ({
