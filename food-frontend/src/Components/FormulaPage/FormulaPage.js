@@ -37,6 +37,7 @@ import common, { defaultErrorCallback, defaultTextErrorCallbackGenerator } from 
 import DetailView from '../GenericComponents/DetailView';
 import { Input } from '@material-ui/core';
 import InputList from '../GenericComponents/InputList';
+import swal from 'sweetalert';
 
 const styles = {
   card: {
@@ -219,25 +220,92 @@ class FormulaPage extends Component {
             <DetailView
               open={true}
               close={() => {this.setState({createDialog:null})}}
-              submit={(e) => console.log(e)}
+              onSubmit={(form_data) => {
+              let item = {}
+              let isError = false
+              for (var property in form_data) {
+                  if (form_data.hasOwnProperty(property)) {
+                      if(property.includes("pkg_size") && !property.includes("errorMsg")){
+                          // console.log(property)
+                          // console.log(this.state[property])
+                          item["pkg_size"] = form_data[property].split(" ")[0]
+                          item["unit"] = form_data[property].split(" ")[1]
+                      }else if(!property.includes("errorMsg")){
+                          item[property] = form_data[property]
+                      }else{
+                          isError = isError || form_data[property] != null
+                      }
+                  }
+                  // if (this.state.hasOwnProperty(property)) {
+                  //     // console.log(String(property).contains(""))
+                  // }
+              }
+                  if(isError){
+                      swal(`There are unresolved errors`,{
+                          icon: "error",
+                      });
+                  }else{
+                      console.log(item.ingredients)
+                      let ingredientso = item.ingredients.map(ing => {
+                        return {
+                        ingredients_id:ing.id,
+                        quantity: ing.quantity,
+                        unit: "kg"
+                      }
+                    })
+                    console.log(ingredients)
+                      console.log(item)
+                      let that = this
+                      const {ingredients, ...new_formula_data} = item
+                      new_formula_data.num = parseInt(new_formula_data.num)
+                      console.log(ingredients)
+                      axios.post(`${common.hostname}formula/`, new_formula_data)
+                      .then(function (response) {
+                          //that.props.submit(item)
+                          axios.post(`${common.hostname}formula/${response.data.id}/ingredients`, {ingredients:ingredientso})
+                            .then(function (response) {
+                                console.log(response)
+                                swal({
+                                    icon: "success",
+                                });
+                                that.setState({createDialog:null})
+                                that.props.search()
+                                
+                            })
+                            .catch(function (error) {
+                                swal(`${error}`,{
+                                    icon: "error",
+                                });
+                            });
+                                
+                      })
+                      .catch(function (error) {
+                          swal(`${error}`,{
+                              icon: "error",
+                          });
+                      });
+                    
+                  }
+                  
+              }}
               handleChange={() => console.log("handle change")}
               title={"Create Formula"}
           >
               <Input
                   id="name"
-                  name={"Name"}
+                  name={"Name *"}
                   errorCallback={defaultTextErrorCallbackGenerator("Name is invalid")}
               />
               <Input
                     id="num"
                     rows="4"
                     type="number"
-                    name={"Number"}
+                    name={"Number *"}
                     defaultValue={res.data.num}
                     errorCallback={this.formulaNumErrorCallback}
                 />
                 <InputList
-                      id="ing_list"
+                      id="ingredients"
                       item={res.data.ingredients[0].label}
                       items={res.data.ingredients}
                       name={"Ingredient List"}

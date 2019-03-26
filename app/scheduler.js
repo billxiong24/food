@@ -81,6 +81,78 @@ class Scheduler extends CRUD {
         })
     }
 
+    get_report(id, raw_start_time, raw_end_time){
+        var that = this;
+        let query = `
+        SELECT
+            mg_id as activity_mg_id,
+            sku_id,
+            case_quantity as activity_case_quantity,
+            start_time as activity_start_time,
+            end_time as activity_end_time,
+            man_line_id as activity_man_line_id,
+            sku_name,
+            sku_num,
+            sku_case_upc,
+            sku_unit_upc,
+            sku_unit_size,
+            sku_count_per_case,
+            sku_prd_line,
+            form_id,
+            sku_formula_scale,
+            sku_man_rate,
+            sku_man_setup_cost,
+            sku_man_run_cost,
+            formula_id,
+            ingredients_id,
+            quantity as ingredients_quantity,
+            bar.unit as ingredients_unit,
+            formula.name as formula_name,
+            formula.num as formula_num,
+            ingredients.name as ingredients_name,
+            ingredients.num as ingredients_num,
+            vend_info as ingredients_vend_info,
+            pkg_cost as ingredients_pkg_cost,
+            pkg_size as ingredients_pkg_size
+        FROM (
+            SELECT * FROM (
+                SELECT 
+                    mg_id,
+                    sku_id,
+                    quantity as case_quantity,
+                    start_time,
+                    end_time,
+                    man_line_id,
+                    name as sku_name, 
+                    num as sku_num,
+                    case_upc as sku_case_upc,
+                    unit_upc as sku_unit_upc,
+                    unit_size as sku_unit_size,
+                    count_per_case as sku_count_per_case,
+                    prd_line as sku_prd_line,
+                    formula_id as form_id,
+                    formula_scale as sku_formula_scale,
+                    man_rate as sku_man_rate,
+                    man_setup_cost as sku_man_setup_cost,
+                    man_run_cost as sku_man_run_cost
+                FROM manufacturing_goal_sku 
+                    INNER JOIN sku ON manufacturing_goal_sku.sku_id = sku.id 
+                    WHERE man_line_id = ${id} and((start_time > ${raw_start_time} and start_time < ${raw_end_time}) or (end_time > ${raw_start_time} and end_time < ${raw_end_time}) or (start_time < ${raw_start_time} and end_time > ${raw_end_time}))
+                ) AS foo 
+                INNER JOIN formula_ingredients on foo.form_id = formula_ingredients.formula_id
+            ) AS bar 
+        INNER JOIN formula ON formula.id = bar.form_id
+        INNER JOIN ingredients ON bar.ingredients_id = ingredients.id
+        `
+        return db.execSingleQuery(query, [])
+        .then(function(res){
+            res.rows.forEach(function(row){
+                console.log(row)
+            })
+            return []
+        })
+    }
+
     get_filtered_goals(filter, filter_type_index){
         var that = this;
         let filtered_goals = []

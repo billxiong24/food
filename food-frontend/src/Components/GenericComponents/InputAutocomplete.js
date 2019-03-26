@@ -165,10 +165,21 @@ class InputAutocomplete extends React.Component {
   }
 
   handleSuggestionsFetchRequested = ({ value }) => {
+    console.log("handleSuggestionsFetchRequested")
     Axios.put(`${common.hostname}formula/formula_autocomplete`, {
       "prefix":value
     }).then((res) => {
       console.log(res.data.formulas)
+      this.props.newItemCallBack(this.state.suggestions.map(suggestion => suggestion.label).includes(value))
+      let item = res.data.formulas.find((item) => item.label == value)
+      if(item === undefined){
+        this.props.idCallback(null)
+        this.props.handleChange(null)
+      }else{
+        this.props.idCallback(item.id)
+        this.props.handleChange(item.id)
+      }
+      
       this.setState({
         suggestions: res.data.formulas,
       });
@@ -182,17 +193,17 @@ class InputAutocomplete extends React.Component {
   };
 
   handleChange = name => (event, { newValue }) => {
-    this.props.newItemCallBack(this.state.suggestions.map(suggestion => suggestion.label).includes(newValue))
-    let item = this.state.suggestions.find((item) => item.label == newValue)
-    if(item === undefined){
-      this.props.idCallback(null)
-    }else{
-      this.props.idCallback(item.id)
-    }
+    // this.props.newItemCallBack(this.state.suggestions.map(suggestion => suggestion.label).includes(newValue))
+    // let item = this.state.suggestions.find((item) => item.label == newValue)
+    // if(item === undefined){
+    //   this.props.idCallback(null)
+    // }else{
+    //   this.props.idCallback(item.id)
+    // }
     this.setState({
       [name]: newValue,
     });
-    this.props.handleChange(newValue)
+    //this.props.handleChange(newValue)
   };
 
   render() {
@@ -205,7 +216,7 @@ class InputAutocomplete extends React.Component {
       getSuggestionValue,
       renderSuggestion,
     };
-    console.log(this.props.defaultValue)
+    // console.log(this.props.defaultValue)
     return (
       <form className={classes.root}>
       <FormControl margin="normal" required fullWidth>

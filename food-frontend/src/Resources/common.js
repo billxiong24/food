@@ -295,11 +295,11 @@ export function createError(message){
 }
 
 export function nameErrorCallback(value, prop, callBack){
-  console.log("hello")
+  // console.log("hello")
   Promise.resolve("Success")  
     .then(()=>{
-    console.log("nameErrorCallback")
-    console.log(value)
+    // console.log("nameErrorCallback")
+    // console.log(value)
     if(value == ""){
       return {
         error: "Name cannot be empty",
@@ -319,7 +319,7 @@ export function defaultTextErrorCallbackGenerator(errorMessage){
   return (value, prop, callBack) => {
   Promise.resolve("Success") 
     .then(()=>{
-      console.log(value)
+      // console.log(value)
     if(value == ""){
       return {
         error: errorMessage,
@@ -372,12 +372,12 @@ export function defaultNumErrorCallbackGenerator(errorMessage){
 }
 
 export function defaultPackageSizeErrorCallback(value, prop, callBack){
-  //console.log(value)
+  //// console.log(value)
 
   Promise.resolve("Success")
   .then(()=>{
-    console.log("pkg_size")
-    console.log(value)
+    // console.log("pkg_size")
+    // console.log(value)
     if(value.split(" ").length < 2){
       return {
         error: "Invalid Package Size",
@@ -397,7 +397,7 @@ export function defaultPackageSizeErrorCallback(value, prop, callBack){
   })
   .then(callBack)
   
-    // console.log(value)
+    // // console.log(value)
     // if(value == "asku4"){
     //   return {
     //     error: "No asku4",
@@ -412,10 +412,10 @@ export function defaultPackageSizeErrorCallback(value, prop, callBack){
 }
 
 export function defaultErrorCallback(value, prop, callBack){
-  //console.log(value)
+  //// console.log(value)
   Promise.resolve("Success")
   .then((value)=>{
-    console.log("default")
+    // console.log("default")
     return {
       error: null,
       prop
@@ -423,7 +423,7 @@ export function defaultErrorCallback(value, prop, callBack){
   })
   .then(callBack)
   
-    // console.log(value)
+    // // console.log(value)
     // if(value == "asku4"){
     //   return {
     //     error: "No asku4",

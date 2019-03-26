@@ -13,7 +13,7 @@ import SKUsPageSearchBar from './SKUsPageSearchBar';
 import { withRouter } from 'react-router-dom'
 import { skuDetSetSku, skuDetGetProductLine, skuDetSetNew, skuDetSetEditing } from '../../Redux/Actions/ActionCreators/SKUDetailsActionCreators';
 import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
-import { skuDeleteError } from '../../Redux/Actions';
+import { skuDeleteError, skuSearch } from '../../Redux/Actions';
 import { skuAddAllSelected, skuRemoveAllSelected } from '../../Redux/Actions/index';
 import axios from 'axios';
 import FileDownload from 'js-file-download';
@@ -164,7 +164,7 @@ class SKUsPage extends Component {
         FileDownload(response.data, 'skus.csv');
       })
       .catch(err => {
-        console.log(err);
+        // console.log(err);
       })
   }
 
@@ -186,7 +186,7 @@ class SKUsPage extends Component {
   openSKUCreatePage = () => {
     axios.get(`${common.hostname}sku/init_sku`)
       .then(res => {
-        console.log(res)
+        // console.log(res)
         this.setState({
           createDialog: true,
           defaultNum: res.data.num,
@@ -205,15 +205,80 @@ class SKUsPage extends Component {
 
   openCreatePage = (closeCallBack, defaultName) => {
     return axios.get(`${common.hostname}formula/init_formula`).then( (res) => {
-        console.log(res)
-        console.log("defaultName")
-        console.log(defaultName)
+        // console.log(res)
+        // console.log("defaultName")
+        // console.log(defaultName)
         return (
           <DetailView
             open={true}
             close={closeCallBack}
-            submit={(e) => console.log(e)}
-            handleChange={() => console.log("handle change")}
+            onSubmit={(form_data) => {
+              let item = {}
+              let isError = false
+              for (var property in form_data) {
+                  if (form_data.hasOwnProperty(property)) {
+                      if(property.includes("pkg_size") && !property.includes("errorMsg")){
+                          // console.log(property)
+                          // console.log(this.state[property])
+                          item["pkg_size"] = form_data[property].split(" ")[0]
+                          item["unit"] = form_data[property].split(" ")[1]
+                      }else if(!property.includes("errorMsg")){
+                          item[property] = form_data[property]
+                      }else{
+                          isError = isError || form_data[property] != null
+                      }
+                  }
+                  // if (this.state.hasOwnProperty(property)) {
+                  //     // console.log(String(property).contains(""))
+                  // }
+              }
+                  if(isError){
+                      swal(`There are unresolved errors`,{
+                          icon: "error",
+                      });
+                  }else{
+                      console.log(item.ingredients)
+                      let ingredientso = item.ingredients.map(ing => {
+                        return {
+                        ingredients_id:ing.id,
+                        quantity: ing.quantity,
+                        unit: "kg"
+                      }
+                    })
+                    console.log(ingredients)
+                      console.log(item)
+                      let that = this
+                      const {ingredients, ...new_formula_data} = item
+                      new_formula_data.num = parseInt(new_formula_data.num)
+                      console.log(ingredients)
+                      axios.post(`${common.hostname}formula/`, new_formula_data)
+                      .then(function (response) {
+                          //that.props.submit(item)
+                          axios.post(`${common.hostname}formula/${response.data.id}/ingredients`, {ingredients:ingredientso})
+                            .then(function (response) {
+                                console.log(response)
+                                swal({
+                                    icon: "success",
+                                });
+                                closeCallBack()
+                                
+                            })
+                            .catch(function (error) {
+                                swal(`${error}`,{
+                                    icon: "error",
+                                });
+                            });
+                                
+                      })
+                      .catch(function (error) {
+                          swal(`${error}`,{
+                              icon: "error",
+                          });
+                      });
+                    
+                  }
+                  
+              }}
             title={"Create Formula"}
         >
             <Input
@@ -231,7 +296,7 @@ class SKUsPage extends Component {
                   errorCallback={this.formulaNumErrorCallback}
               />
               <InputList
-                    id="ing_list"
+                    id="ingredients"
                     item={res.data.ingredients[0].label}
                     items={res.data.ingredients}
                     name={"Ingredient List"}
@@ -254,62 +319,145 @@ class SKUsPage extends Component {
 openEditPage = (closeCallBack) => {
   let init_data;
   let formula_data
+  let formula
   return axios.get(`${common.hostname}formula/init_formula`)
   .then( (res) => {
       console.log(res)
       init_data = res.data
       return axios.get(`${common.hostname}formula/${this.state.id}`).then((res) => {
         console.log(res)
-      formula_data = res.data[0]
-      return (
-        <DetailView
-            open={true}
-            close={closeCallBack}
-            submit={(e) => console.log(e)}
-            handleChange={() => console.log("handle change")}
-            name={"Ingredient Name"}
-            shortname={"Ingredient Short Name"}
-            comment={"Ingredient Comment"}
-            title={"Open"}
-        >
-            <Input
-                id="name"
-                name={"Name"}
-                defaultValue={formula_data.name}
-                errorCallback={defaultTextErrorCallbackGenerator("Name is invalid")}
+        formula_data = res.data[0]
+        formula = formula_data
+        return axios.get(`${common.hostname}formula/${this.state.id}/ingredients`).then((res) => {
+          console.log(res)
+          return (
+            <DetailView
+                open={true}
+                close={closeCallBack}
+                onSubmit={(form_data) => {
+                  let item = {}
+                  let isError = false
+                  for (var property in form_data) {
+                      if (form_data.hasOwnProperty(property)) {
+                          if(property.includes("pkg_size") && !property.includes("errorMsg")){
+                              // console.log(property)
+                              // console.log(this.state[property])
+                              item["pkg_size"] = form_data[property].split(" ")[0]
+                              item["unit"] = form_data[property].split(" ")[1]
+                          }else if(!property.includes("errorMsg")){
+                              item[property] = form_data[property]
+                          }else{
+                              isError = isError || form_data[property] != null
+                          }
+                      }
+                      // if (this.state.hasOwnProperty(property)) {
+                      //     // console.log(String(property).contains(""))
+                      // }
+                  }
+                      if(isError){
+                          swal(`There are unresolved errors`,{
+                              icon: "error",
+                          });
+                      }else{
+                          console.log(item)
+                          console.log(item.ingredients)
+                          let ingredientso = item.ingredients.map(ing => {
+                            return {
+                            ingredients_id:ing.id,
+                            quantity: ing.quantity,
+                            unit: "kg"
+                          }
+                        })
+                        console.log(ingredientso)
+                          console.log(item)
+                          let that = this
+                          const {ingredients, ...new_formula_data} = item
+                          new_formula_data.num = parseInt(new_formula_data.num)
+                          console.log(ingredients)
+                          axios.put(`${common.hostname}formula/${formula.id}`, new_formula_data)
+                          .then(function (response) {
+                              //that.props.submit(item)
+                              axios.post(`${common.hostname}formula/${formula.id}/ingredients`, {ingredients:ingredientso})
+                                .then(function (response) {
+                                    console.log(response)
+                                    swal({
+                                        icon: "success",
+                                    });
+                                    closeCallBack()
+                                    
+                                    
+                                })
+                                .catch(function (error) {
+                                    swal(`${error}`,{
+                                        icon: "error",
+                                    });
+                                });
+                                
+                                    
+                          })
+                          .catch(function (error) {
+                              swal(`${error}`,{
+                                  icon: "error",
+                              });
+                          });
+                        
+                      }
+                      
+                  }}
+                handleChange={() => console.log("handle change")}
+                name={"Ingredient Name"}
+                shortname={"Ingredient Short Name"}
+                comment={"Ingredient Comment"}
+                title={"Open"}
+            >
+                <Input
+                    id="name"
+                    name={"Name"}
+                    defaultValue={formula_data.name}
+                    errorCallback={defaultTextErrorCallbackGenerator("Name is invalid")}
 
-            />
-            <Input
-                  id="num"
-                  rows="4"
-                  type="number"
-                  name={"Number"}
-                  defaultValue={formula_data.num}
-                  errorCallback={this.formulaNumErrorCallbackGenerator(formula_data.num)}
-              />
-              <InputList
-                    id="ing_list"
-                    item={init_data.ingredients[0].label}
-                    items={init_data.ingredients}
-                    name={"Ingredient List"}
-                    errorCallback={defaultErrorCallback}
                 />
-              <Input
-                  id="comment"
-                  rows="4"
-                  multiline
-                  type="number"
-                  name={"Comment"}
-                  defaultValue={formula_data.comment}
-                  errorCallback={defaultErrorCallback}
-              />
-        </DetailView>
-    )
+                <Input
+                      id="num"
+                      rows="4"
+                      type="number"
+                      name={"Number"}
+                      defaultValue={formula_data.num}
+                      errorCallback={this.formulaNumErrorCallbackGenerator(formula_data.num)}
+                  />
+                  <InputList
+                        id="ingredients"
+                        item={init_data.ingredients[0].label}
+                        items={init_data.ingredients}
+                        list={res.data.map((item) => {
+                          return {
+                            label:item.name,
+                            quantity: item.quantity,
+                            id:item.id
+                          }
+                        })}
+                        name={"Ingredient List"}
+                        errorCallback={this.errorCallback}
+                    />
+                  <Input
+                      id="comment"
+                      rows="4"
+                      multiline
+                      type="number"
+                      name={"Comment"}
+                      defaultValue={formula_data.comment}
+                      errorCallback={this.errorCallback}
+                  />
+            </DetailView>
+        )
+      })
     }
-      )
+  )
 }
   )
 }
+
+
 
 skuNumErrorCallback = (value, prop, callBack) => {
       axios.put(`${common.hostname}sku/valid_num`,{num:parseInt(value)}).then((res) =>{
@@ -330,8 +478,8 @@ skuNumErrorCallback = (value, prop, callBack) => {
   caseUPCNumErrorCallback = (value, prop, callBack) => {
   
         axios.put(`${common.hostname}sku/valid_case_upc`,{case_upc:parseInt(value)}).then((res) =>{
-          console.log(parseInt(value))
-          console.log(res)
+          // console.log(parseInt(value))
+          // console.log(res)
           let error
           if(res.data.valid){
             error = null
@@ -349,8 +497,8 @@ skuNumErrorCallback = (value, prop, callBack) => {
 
   unitUPCNumErrorCallback = (value, prop, callBack) => {
         axios.put(`${common.hostname}sku/valid_unit_upc`,{unit_upc:parseInt(value)}).then((res) =>{
-          console.log(parseInt(value))
-          console.log(res)
+          // console.log(parseInt(value))
+          // console.log(res)
           let error
           if(res.data.valid){
             error = null
@@ -392,9 +540,9 @@ skuNumErrorCallback = (value, prop, callBack) => {
       return (value, prop, callBack) => {
           axios.put(`${common.hostname}formula/valid_num`,{num:parseInt(value)}).then((res) =>{
             let error
-            console.log("hello")
-            console.log(value)
-            console.log(num)
+            // console.log("hello")
+            // console.log(value)
+            // console.log(num)
             if(res.data.valid || num==parseInt(value)){
               error = null
             }else{
@@ -430,7 +578,7 @@ skuNumErrorCallback = (value, prop, callBack) => {
               }
             })
             .catch((error) => {
-              console.log("error")
+              // console.log("error")
               return {
                 error: "Invalid Number",
                 prop
@@ -454,7 +602,7 @@ errorCallback = (value) => {
 
 
   render(){
-    //console.log(defaultErrorCallback)
+    //// console.log(defaultErrorCallback)
     const { classes, dummy_SKUs } = this.props
     return (
       <div className={classes.SKUs_page_container}>
@@ -555,15 +703,56 @@ errorCallback = (value) => {
               close={() => {
                 this.setState({ createDialog: false });
               }}
-              submit={(e) => {
-                  console.log(e)
-                  swal({
-                      icon: "success",
-                  });
-                  this.setState({ createDialog: false });
-              }}
-              handleChange={() => console.log("handle change")}
+              onSubmit={(form_data) => {
+                let item = {}
+                let isError = false
+                for (var property in form_data) {
+                    if (form_data.hasOwnProperty(property)) {
+                        if(property.includes("pkg_size") && !property.includes("errorMsg")){
+                            // console.log(property)
+                            // console.log(this.state[property])
+                            item["pkg_size"] = form_data[property].split(" ")[0]
+                            item["unit"] = form_data[property].split(" ")[1]
+                        }else if(!property.includes("errorMsg")){
+                            item[property] = form_data[property]
+                        }else{
+                            isError = isError || form_data[property] != null
+                        }
+                    }
+                    // if (this.state.hasOwnProperty(property)) {
+                    //     // console.log(String(property).contains(""))
+                    // }
+                }
+                    if(isError){
+                        swal(`There are unresolved errors`,{
+                            icon: "error",
+                        });
+                    }else{
+                        console.log(item)
+                        let that = this
+                        // const {ing_list, ...new_formula_data} = item
+                        // new_formula_data.num = parseInt(new_formula_data.num)
+                        // console.log(new_formula_data)
+                        axios.post(`${common.hostname}sku/`, item)
+                        .then(function (response) {
+                            //that.props.submit(item)
+                            swal({
+                                icon: "success",
+                            });
+                            that.setState({createDialog:false})
+                            that.props.search()
+                        })
+                        .catch(function (error) {
+                            swal(`${error}`,{
+                                icon: "error",
+                            });
+                        });
+                      
+                    }
+                    
+                }}
               title={"Create SKU"}
+              // url={`${common.hostname}sku/`}
             >
               <Input
                   id="name"
@@ -613,7 +802,7 @@ errorCallback = (value) => {
                     errorCallback={defaultErrorCallback}
               />
               <Input
-                  id="comment"
+                  id="comments"
                   rows="4"
                   multiline
                   type="number"
@@ -621,19 +810,19 @@ errorCallback = (value) => {
                   errorCallback={defaultErrorCallback}
               />
               <InputAutoCompleteOpenPage
-                    id="formula"
+                    id="formula_id"
                     name={"Formula"}
                     suggestionsCallback={this.suggestionsApi}
                     openCreatePage={this.openCreatePage}
                     idCallback={(id) => {
-                      console.log(id)
+                      // console.log(id)
                       this.setState({id:id})
                     }}
                     openEditPage={this.openEditPage}
                     errorCallback={this.skuFormulaIdCallback}
               />
               <Input
-                  id="formula_scale_factor"
+                  id="formula_scale"
                   type="number"
                   name={"Formula Scale Factor"}
                   errorCallback={defaultNumErrorCallbackGenerator("Formula Scale Factor is invalid")}
@@ -704,7 +893,7 @@ const mapDispatchToProps = dispatch => {
 
           return response;
         })
-        .then(function (response) { console.log("@RESPONSE", response) })
+        .then(function (response) {  })
     },
     addAllFilter: () => { dispatch(skuAddAllSelected()) },
     removeAllFilter: () => { dispatch(skuRemoveAllSelected()) },
@@ -716,6 +905,9 @@ const mapDispatchToProps = dispatch => {
     },
     manlineUpdateMappings: () => {
       dispatch(manlineUpdateMappings());
+    },
+    search: () => {
+      dispatch(skuSearch())
     }
   }
 }

@@ -221,32 +221,74 @@ class IngredientsPage extends Component {
               close={() => {
                 this.setState({ createDialog: false });
               }}
-              submit={(e) => {
-                  console.log(e)
-                  swal({
-                      icon: "success",
-                  });
-                  this.setState({ createDialog: false });
-              }}
+              onSubmit={(form_data) => {
+                let item = {}
+                let isError = false
+                for (var property in form_data) {
+                    if (form_data.hasOwnProperty(property)) {
+                        if(property.includes("pkg_size") && !property.includes("errorMsg")){
+                            // console.log(property)
+                            // console.log(this.state[property])
+                            item["pkg_size"] = form_data[property].split(" ")[0]
+                            item["unit"] = form_data[property].split(" ")[1]
+                        }else if(!property.includes("errorMsg")){
+                            item[property] = form_data[property]
+                        }else{
+                            isError = isError || form_data[property] != null
+                        }
+                    }
+                    // if (this.state.hasOwnProperty(property)) {
+                    //     // console.log(String(property).contains(""))
+                    // }
+                }
+                    if(isError){
+                        swal(`There are unresolved errors`,{
+                            icon: "error",
+                        });
+                    }else{
+                        console.log(item)
+                        let that = this
+                        // const {ing_list, ...new_formula_data} = item
+                        // new_formula_data.num = parseInt(new_formula_data.num)
+                        // console.log(new_formula_data)
+                        axios.post(`${common.hostname}ingredients/`, item)
+                        .then(function (response) {
+                            //that.props.submit(item)
+                            swal({
+                                icon: "success",
+                            });
+                            that.setState({createDialog:false})
+                            that.props.search()
+                            
+                        })
+                        .catch(function (error) {
+                            swal(`${error}`,{
+                                icon: "error",
+                            });
+                        });
+                      
+                    }
+                    
+                }}
               handleChange={() => console.log("handle change")}
               name={"Ingredient Name"}
               shortname={"Ingredient Short Name"}
               comment={"Ingredient Comment"}
               title={"Create Ingredient"}
-              url={`${common.hostname}ingredients/`}
+              // url={`${common.hostname}ingredients/`}
             >
               <Input
                   id="name"
                   rows="4"
                   error={true}
-                  name={"Name"}
+                  name={"Name *"}
                   errorCallback={defaultTextErrorCallbackGenerator("Name is invalid")}
               />
               <Input
                   id="num"
                   rows="4"
                   type="number"
-                  name={"Number"}
+                  name={"Number *"}
                   defaultValue={this.state.defaultNum}
                   errorCallback={ingNumErrorCallback}
               />
@@ -273,7 +315,7 @@ class IngredientsPage extends Component {
 
               />
               <Input
-                  id="comment"
+                  id="comments"
                   rows="4"
                   multiline
                   type="number"

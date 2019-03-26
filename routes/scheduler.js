@@ -360,6 +360,18 @@ router.put('/filtered_goals', function (req, res, next) {
     }) 
 });
 
+router.put('/get_report', function(req, res, next){
+    let id = req.body.id
+    let start_time = req.body.start_time
+    let end_time = req.body.end_time
+    let scheduler = new Scheduler()
+    scheduler.get_report(id,start_time,end_time).then((success) => {
+        res.status(200).json({
+
+        })
+    })
+})
+
 router.put('/schedule', function (req, res, next) {
     let id = req.body.id;
     let start_time = req.body.start_time
@@ -428,6 +440,8 @@ router.get('/goals', function (req, res, next) {
         })
     }) 
 });
+
+
 
 
 

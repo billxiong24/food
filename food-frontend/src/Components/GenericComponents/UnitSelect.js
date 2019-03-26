@@ -35,8 +35,11 @@ const styles = theme => ({
   }
 });
 
-class InputSelect extends React.Component {
+class UnitSelect extends React.Component {
+
+  
   state = {
+    number: this.props.defaultValue,
     unit: this.props.item
   };
 
@@ -102,8 +105,8 @@ class InputSelect extends React.Component {
   }
 }
 
-InputSelect.propTypes = {
+UnitSelect.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(InputSelect);
+export default withStyles(styles)(UnitSelect);

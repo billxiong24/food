@@ -42,16 +42,17 @@ class DetailView extends Component {
     super(props);
     let state = {}
     let that = this
-    console.log(props)
+    
     for(var i = 0; i < this.props.children.length; i++){
+        console.log(this.props.children[i].type.displayName)
         // state[this.props.children[i].id]
-        //console.log(this.props.children[i].props)
+        //// console.log(this.props.children[i].props)
         if(this.props.children[i].type.displayName.includes("WithStyles(InputSelect)")){
             state[this.props.children[i].props.id] = this.props.children[i].props.item
             // Promise.resolve(this.props.children[i].props.errorCallback(state[this.props.children[i].props.id],that.props.children[i].props.id +"_errorMsg"))
             // .then((res) => {
             //     const {prop, error} = res
-            //     console.log(res)
+            //     // console.log(res)
             //     that.setState({
             //         [prop]:error
             //     })
@@ -63,13 +64,51 @@ class DetailView extends Component {
                 })
             })
             
+        }else if(this.props.children[i].type.displayName.includes("InputAutoCompleteOpenPage")){
+            state[this.props.children[i].props.id] = this.props.children[i].props.defaultId
+            console.log(this.props.children[i].props.id)
+            console.log(state[this.props.children[i].props.id])
+            //state[this.props.children[i].props.id +"_errorMsg"] = this.props.children[i].props.errorCallback([])
+            // Promise.resolve(this.props.children[i].props.errorCallback(state[this.props.children[i].props.id],that.props.children[i].props.id +"_errorMsg"))
+            // .then((res) => {
+            //     const {prop, error} = res
+            //     // console.log(res)
+            //     that.setState({
+            //         [prop]:error
+            //     })
+            // })
+            this.props.children[i].props.errorCallback(state[this.props.children[i].props.id], this.props.children[i].props.id +"_errorMsg", (res) => {
+                let {prop, error} = res
+                this.setState({
+                    [prop]:error
+                })
+            })
+        }else if(this.props.children[i].type.displayName.includes("InputList")){
+            state[this.props.children[i].props.id] = this.props.children[i].props.list
+            console.log(this.props.children[i].props.id)
+            console.log(state[this.props.children[i].props.id])
+            //state[this.props.children[i].props.id +"_errorMsg"] = this.props.children[i].props.errorCallback([])
+            // Promise.resolve(this.props.children[i].props.errorCallback(state[this.props.children[i].props.id],that.props.children[i].props.id +"_errorMsg"))
+            // .then((res) => {
+            //     const {prop, error} = res
+            //     // console.log(res)
+            //     that.setState({
+            //         [prop]:error
+            //     })
+            // })
+            this.props.children[i].props.errorCallback(state[this.props.children[i].props.id], this.props.children[i].props.id +"_errorMsg", (res) => {
+                let {prop, error} = res
+                this.setState({
+                    [prop]:error
+                })
+            })
         }else if(this.props.children[i].type.displayName.includes("WithStyles(InputList)")){
             state[this.props.children[i].props.id] = []
             //state[this.props.children[i].props.id +"_errorMsg"] = this.props.children[i].props.errorCallback([])
             // Promise.resolve(this.props.children[i].props.errorCallback(state[this.props.children[i].props.id],that.props.children[i].props.id +"_errorMsg"))
             // .then((res) => {
             //     const {prop, error} = res
-            //     console.log(res)
+            //     // console.log(res)
             //     that.setState({
             //         [prop]:error
             //     })
@@ -86,7 +125,47 @@ class DetailView extends Component {
                 // state[this.props.children[i].props.id +"_errorMsg"] = this.props.children[i].props.errorCallback(this.props.children[i].props.defaultValue)
             //     Promise.resolve(this.props.children[i].props.errorCallback(state[this.props.children[i].props.id],that.props.children[i].props.id +"_errorMsg"))
             // .then((res) => {
-            //     console.log(res)
+            //     // console.log(res)
+            //     const {prop, error} = res
+            //     that.setState({
+            //         [prop]:error
+            //     })
+            // })
+                this.props.children[i].props.errorCallback(state[this.props.children[i].props.id], this.props.children[i].props.id +"_errorMsg", (res) => {
+                    let {prop, error} = res
+                    this.setState({
+                        [prop]:error
+                    })
+                })
+            }
+        }else if(this.props.children[i].type.displayName.includes("UnitSelect")){
+            state[this.props.children[i].props.id] = this.props.children[i].props.item
+            console.log("UnitSelect")
+            console.log(state[this.props.children[i].props.id])
+            //state[this.props.children[i].props.id +"_errorMsg"] = this.props.children[i].props.errorCallback([])
+            // Promise.resolve(this.props.children[i].props.errorCallback(state[this.props.children[i].props.id],that.props.children[i].props.id +"_errorMsg"))
+            // .then((res) => {
+            //     const {prop, error} = res
+            //     // console.log(res)
+            //     that.setState({
+            //         [prop]:error
+            //     })
+            // })
+            this.props.children[i].props.errorCallback(state[this.props.children[i].props.id], this.props.children[i].props.id +"_errorMsg", (res) => {
+                let {prop, error} = res
+                this.setState({
+                    [prop]:error
+                })
+            })
+
+            if(this.props.children[i].props.defaultValue !== undefined){
+                state[this.props.children[i].props.id] = this.props.children[i].props.defaultValue + " " + this.props.children[i].props.item
+                console.log("UnitSelect")
+                console.log(state[this.props.children[i].props.id])
+                // state[this.props.children[i].props.id +"_errorMsg"] = this.props.children[i].props.errorCallback(this.props.children[i].props.defaultValue)
+            //     Promise.resolve(this.props.children[i].props.errorCallback(state[this.props.children[i].props.id],that.props.children[i].props.id +"_errorMsg"))
+            // .then((res) => {
+            //     // console.log(res)
             //     const {prop, error} = res
             //     that.setState({
             //         [prop]:error
@@ -102,11 +181,11 @@ class DetailView extends Component {
         }else if(this.props.children[i].props.defaultValue !== undefined){
             state[this.props.children[i].props.id] = this.props.children[i].props.defaultValue
             //state[this.props.children[i].props.id +"_errorMsg"] = this.props.children[i].props.errorCallback(this.props.children[i].props.defaultValue)
-            // console.log(i)
-            // console.log(this.props.children[i].props.errorCallback)
+            // // console.log(i)
+            // // console.log(this.props.children[i].props.errorCallback)
             // Promise.resolve(this.props.children[i].props.errorCallback(state[this.props.children[i].props.id],that.props.children[i].props.id +"_errorMsg"))
             // .then((res) => {
-            //     console.log(res)
+            //     // console.log(res)
             //     const {prop, error} = res
             //     that.setState({
             //         [prop]:error
@@ -124,7 +203,7 @@ class DetailView extends Component {
             // Promise.resolve(this.props.children[i].props.errorCallback(state[this.props.children[i].props.id],that.props.children[i].props.id +"_errorMsg"))
             // .then((res) => {
             //     const {prop, error} = res
-            //     console.log(res)
+            //     // console.log(res)
             //     that.setState({
             //         [prop]:error
             //     })
@@ -159,7 +238,7 @@ class DetailView extends Component {
         >
           <DialogTitle id="form-dialog-title">{this.props.title}</DialogTitle>
           <DialogContent>
-            <form className={classes.form} onSubmit={(e) => { this.props.submit(e) }}>
+            <form className={classes.form} onSubmit={(e) => { this.props.submit(this.state) }}>
               <DialogContentText>
                 Please Review and Edit any of the Following Fields:
              </DialogContentText>
@@ -233,7 +312,7 @@ class DetailView extends Component {
                                     null
                             }
                         
-                        <FormControl margin="normal" required fullWidth> 
+                        <FormControl margin="normal" fullWidth> 
                             
                             <InputLabel 
                                 htmlFor={item.props.id}
@@ -292,46 +371,7 @@ class DetailView extends Component {
                     </Button>
                 <Button
                   color="primary"
-                  // type="submit"
-                  onClick={()=> {
-                    let item = {}
-                    let isError = false
-                    for (var property in this.state) {
-                        if (this.state.hasOwnProperty(property)) {
-                            if(property.includes("pkg_size") && !property.includes("errorMsg")){
-                                console.log(property)
-                                console.log(this.state[property])
-                                item["pkg_size"] = this.state[property].split(" ")[0]
-                                item["unit"] = this.state[property].split(" ")[1]
-                            }else if(!property.includes("errorMsg")){
-                                item[property] = this.state[property]
-                            }else{
-                                isError = isError || this.state[property] != null
-                            }
-                        }
-                        // if (this.state.hasOwnProperty(property)) {
-                        //     console.log(String(property).contains(""))
-                        // }
-                    }
-                        if(isError){
-                            swal(`There are unresolved errors`,{
-                                icon: "error",
-                            });
-                        }else{
-                            console.log(item)
-                            axios.post(this.props.url, item)
-                            .then(function (response) {
-                                this.props.submit(item)
-                            })
-                            .catch(function (error) {
-                                swal(`${error}`,{
-                                    icon: "error",
-                                });
-                            });
-
-                        }
-                        
-                    }}
+                  onClick={() => {this.props.onSubmit(this.state)}}
                 >
                   Update
                     </Button>

@@ -9,7 +9,7 @@ import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { CardActionArea, Input } from '@material-ui/core';
-import { routeToPage, skuAddSelected, skuRemoveSelected } from '../../Redux/Actions';
+import { routeToPage, skuAddSelected, skuRemoveSelected, skuSearch } from '../../Redux/Actions';
 import { withRouter } from 'react-router-dom'
 import { skuDetGetManLines, skuDetGetFormula, skuDetSetSku, skuDetGetIng, skuDetGetProductLine } from '../../Redux/Actions/ActionCreators/SKUDetailsActionCreators';
 import labels from '../../Resources/labels';
@@ -241,13 +241,55 @@ class SKUList extends Component {
               close={() => {
                 this.setState({ editDialog: null });
               }}
-              submit={(e) => {
-                  console.log(e)
-                  swal({
-                      icon: "success",
-                  });
-                  this.setState({ editDialog: null });
-              }}
+              onSubmit={(form_data) => {
+                let item = {}
+                let isError = false
+                for (var property in form_data) {
+                    if (form_data.hasOwnProperty(property)) {
+                        if(property.includes("pkg_size") && !property.includes("errorMsg")){
+                            // console.log(property)
+                            // console.log(this.state[property])
+                            item["pkg_size"] = form_data[property].split(" ")[0]
+                            item["unit"] = form_data[property].split(" ")[1]
+                        }else if(!property.includes("errorMsg")){
+                            item[property] = form_data[property]
+                        }else{
+                            isError = isError || form_data[property] != null
+                        }
+                    }
+                    // if (this.state.hasOwnProperty(property)) {
+                    //     // console.log(String(property).contains(""))
+                    // }
+                }
+                    if(isError){
+                        swal(`There are unresolved errors`,{
+                            icon: "error",
+                        });
+                    }else{
+                        console.log(item)
+                        let that = this
+                        // const {ing_list, ...new_formula_data} = item
+                        // new_formula_data.num = parseInt(new_formula_data.num)
+                        // console.log(new_formula_data)
+                        axios.put(`${common.hostname}sku/${sku.id}`, item)
+                        .then(function (response) {
+                            //that.props.submit(item)
+                            swal({
+                                icon: "success",
+                            });
+                            that.setState({editDialog:null})
+                            that.props.search()
+                            
+                        })
+                        .catch(function (error) {
+                            swal(`${error}`,{
+                                icon: "error",
+                            });
+                        });
+                      
+                    }
+                    
+                }}
               handleChange={() => console.log("handle change")}
               title={"Edit SKU"}
             >
@@ -303,7 +345,7 @@ class SKUList extends Component {
                     errorCallback={defaultErrorCallback}
               />
               <InputAutoCompleteOpenPage
-                    id="formula"
+                    id="formula_id"
                     name={"Formula"}
                     suggestionsCallback={this.suggestionsApi}
                     openCreatePage={this.openCreatePage}
@@ -317,7 +359,7 @@ class SKUList extends Component {
                     errorCallback={this.skuFormulaIdCallback}
               />
               <Input
-                  id="formula_scale_factor"
+                  id="formula_scale"
                   type="number"
                   name={"Formula Scale Factor"}
                   defaultValue={sku.formula_scale}
@@ -345,7 +387,7 @@ class SKUList extends Component {
                   errorCallback={defaultNumErrorCallbackGenerator("Manufacturing Run Cost is invalid")}
               />
               <Input
-                  id="comment"
+                  id="comments"
                   rows="4"
                   multiline
                   type="number"
@@ -375,7 +417,73 @@ class SKUList extends Component {
           <DetailView
             open={true}
             close={closeCallBack}
-            submit={(e) => console.log(e)}
+            onSubmit={(form_data) => {
+              let item = {}
+              let isError = false
+              for (var property in form_data) {
+                  if (form_data.hasOwnProperty(property)) {
+                      if(property.includes("pkg_size") && !property.includes("errorMsg")){
+                          // console.log(property)
+                          // console.log(this.state[property])
+                          item["pkg_size"] = form_data[property].split(" ")[0]
+                          item["unit"] = form_data[property].split(" ")[1]
+                      }else if(!property.includes("errorMsg")){
+                          item[property] = form_data[property]
+                      }else{
+                          isError = isError || form_data[property] != null
+                      }
+                  }
+                  // if (this.state.hasOwnProperty(property)) {
+                  //     // console.log(String(property).contains(""))
+                  // }
+              }
+                  if(isError){
+                      swal(`There are unresolved errors`,{
+                          icon: "error",
+                      });
+                  }else{
+                      console.log(item.ingredients)
+                      let ingredientso = item.ingredients.map(ing => {
+                        return {
+                        ingredients_id:ing.id,
+                        quantity: ing.quantity,
+                        unit: "kg"
+                      }
+                    })
+                    console.log(ingredients)
+                      console.log(item)
+                      let that = this
+                      const {ingredients, ...new_formula_data} = item
+                      new_formula_data.num = parseInt(new_formula_data.num)
+                      console.log(ingredients)
+                      axios.post(`${common.hostname}formula/`, new_formula_data)
+                      .then(function (response) {
+                          //that.props.submit(item)
+                          axios.post(`${common.hostname}formula/${response.data.id}/ingredients`, {ingredients:ingredientso})
+                            .then(function (response) {
+                                console.log(response)
+                                swal({
+                                    icon: "success",
+                                });
+                                closeCallBack()
+                                
+                            })
+                            .catch(function (error) {
+                                swal(`${error}`,{
+                                    icon: "error",
+                                });
+                            });
+                                
+                      })
+                      .catch(function (error) {
+                          swal(`${error}`,{
+                              icon: "error",
+                          });
+                      });
+                    
+                  }
+                  
+              }}
             handleChange={() => console.log("handle change")}
             title={"Create Formula"}
         >
@@ -394,7 +502,7 @@ class SKUList extends Component {
                   errorCallback={this.formulaNumErrorCallback}
               />
               <InputList
-                    id="ing_list"
+                    id="ingredients"
                     item={res.data.ingredients[0].label}
                     items={res.data.ingredients}
                     name={"Ingredient List"}
@@ -417,6 +525,7 @@ class SKUList extends Component {
 openEditPage = (closeCallBack) => {
   let init_data;
   let formula_data
+  let formula
   return axios.get(`${common.hostname}formula/init_formula`)
   .then( (res) => {
       console.log(res)
@@ -424,13 +533,83 @@ openEditPage = (closeCallBack) => {
       return axios.get(`${common.hostname}formula/${this.state.id}`).then((res) => {
         console.log(res)
         formula_data = res.data[0]
+        formula = formula_data
         return axios.get(`${common.hostname}formula/${this.state.id}/ingredients`).then((res) => {
           console.log(res)
           return (
             <DetailView
                 open={true}
                 close={closeCallBack}
-                submit={(e) => console.log(e)}
+                onSubmit={(form_data) => {
+                  let item = {}
+                  let isError = false
+                  for (var property in form_data) {
+                      if (form_data.hasOwnProperty(property)) {
+                          if(property.includes("pkg_size") && !property.includes("errorMsg")){
+                              // console.log(property)
+                              // console.log(this.state[property])
+                              item["pkg_size"] = form_data[property].split(" ")[0]
+                              item["unit"] = form_data[property].split(" ")[1]
+                          }else if(!property.includes("errorMsg")){
+                              item[property] = form_data[property]
+                          }else{
+                              isError = isError || form_data[property] != null
+                          }
+                      }
+                      // if (this.state.hasOwnProperty(property)) {
+                      //     // console.log(String(property).contains(""))
+                      // }
+                  }
+                      if(isError){
+                          swal(`There are unresolved errors`,{
+                              icon: "error",
+                          });
+                      }else{
+                          console.log(item)
+                          console.log(item.ingredients)
+                          let ingredientso = item.ingredients.map(ing => {
+                            return {
+                            ingredients_id:ing.id,
+                            quantity: ing.quantity,
+                            unit: "kg"
+                          }
+                        })
+                        console.log(ingredients)
+                          console.log(item)
+                          let that = this
+                          const {ingredients, ...new_formula_data} = item
+                          new_formula_data.num = parseInt(new_formula_data.num)
+                          console.log(ingredients)
+                          axios.put(`${common.hostname}formula/${formula.id}`, new_formula_data)
+                          .then(function (response) {
+                              //that.props.submit(item)
+                              axios.post(`${common.hostname}formula/${formula.id}/ingredients`, {ingredients:ingredientso})
+                                .then(function (response) {
+                                    console.log(response)
+                                    swal({
+                                        icon: "success",
+                                    });
+                                    closeCallBack()
+                                    
+                                    
+                                })
+                                .catch(function (error) {
+                                    swal(`${error}`,{
+                                        icon: "error",
+                                    });
+                                });
+                                
+                                    
+                          })
+                          .catch(function (error) {
+                              swal(`${error}`,{
+                                  icon: "error",
+                              });
+                          });
+                        
+                      }
+                      
+                  }}
                 handleChange={() => console.log("handle change")}
                 name={"Ingredient Name"}
                 shortname={"Ingredient Short Name"}
@@ -453,7 +632,7 @@ openEditPage = (closeCallBack) => {
                       errorCallback={this.formulaNumErrorCallbackGenerator(formula_data.num)}
                   />
                   <InputList
-                        id="ing_list"
+                        id="ingredients"
                         item={init_data.ingredients[0].label}
                         items={init_data.ingredients}
                         list={res.data.map((item) => {
@@ -570,6 +749,9 @@ const mapDispatchToProps = (dispatch,ownProps) => {
         },
         removeSelected: (sku) => {
           dispatch(skuRemoveSelected(sku));
+        },
+        search: () => {
+          dispatch(skuSearch())
         }
     };
 };

@@ -81,14 +81,14 @@ class InputAutocompleteOpenPage extends React.Component {
 
 getSuggestionsFromApi = (value) => {
     this.props.suggestionsCallback(value).then((res) => {
-      // console.log(suggestions)
-    // console.log(value)
+      // // console.log(suggestions)
+    // // console.log(value)
     let suggestions = res
     const inputValue = deburr(value.trim()).toLowerCase();
     const inputLength = inputValue.length;
     let count = 0;
 
-    // console.log(suggestions.filter(suggestion => {
+    // // console.log(suggestions.filter(suggestion => {
     //     const keep =
     //       count < 5 && suggestion.label.slice(0, inputLength).toLowerCase() === inputValue;
 
@@ -116,14 +116,14 @@ getSuggestionsFromApi = (value) => {
 
   suggestionsCallback = (value) => {
     this.props.suggestionsCallback(value).then((res) => {
-      // console.log(suggestions)
-    // console.log(value)
+      // // console.log(suggestions)
+    // // console.log(value)
     let suggestions = res
     const inputValue = deburr(value.trim()).toLowerCase();
     const inputLength = inputValue.length;
     let count = 0;
 
-    // console.log(suggestions.filter(suggestion => {
+    // // console.log(suggestions.filter(suggestion => {
     //     const keep =
     //       count < 5 && suggestion.label.slice(0, inputLength).toLowerCase() === inputValue;
 
@@ -151,7 +151,7 @@ getSuggestionsFromApi = (value) => {
 
 //  suggestionsCallback = (value) => {
 //     this.getSuggestionsFromApi(value).then(function(res){
-//       console.log(res)
+//       // console.log(res)
 //       return res
 //     }
 //     )
@@ -166,7 +166,7 @@ getSuggestionsFromApi = (value) => {
 
   render() {
     const { classes } = this.props;
-    console.log(this.props)
+    // console.log(this.props)
 
     return (
         <div className={classes.container}>
@@ -177,24 +177,26 @@ getSuggestionsFromApi = (value) => {
                 name={this.props.name}
                 onChange={(value) => {
                   this.setState({name: value})
-                  console.log(value)
                   this.props.onChange(value)
                 }}
                 handleChange={(value) => {
                   this.setState({name: value})
-                  console.log(value)
-                  this.props.handleChange(value)
+                  
                 }}
                 defaultValue={this.props.defaultValue}
                 error={this.props.error}
                 newItemCallBack={this.newItemCallBack}
-                idCallback={this.props.idCallback}
+                idCallback={(id) => {
+                    this.props.handleChange(id)
+                    this.props.idCallback(id)
+                  }
+                }
                 defaultId = {this.props.defaultId}
                 suggestionsCallback={this.suggestionsCallback}
                 className={classes.autocomplete}
             />
             {
-                this.state.newItem ?
+                this.state.name ?
                 <Button
                     color="primary"
                     className={classes.button}
@@ -233,8 +235,8 @@ getSuggestionsFromApi = (value) => {
                 close={() => {
                     this.setState({ editDialog: false });
                     }}
-                submit={(e) => console.log(e)}
-                handleChange={() => console.log("handle change")}
+                submit={(e) => // console.log(e)}
+                handleChange={() => // console.log("handle change")}
                 name={"Ingredient Name"}
                 shortname={"Ingredient Short Name"}
                 comment={"Ingredient Comment"}
@@ -244,20 +246,20 @@ getSuggestionsFromApi = (value) => {
                     id="ing_name"
                     rows="4"
                     name={"Name"}
-                    value={()=>console.log("hello")}
+                    value={()=>// console.log("hello")}
                 />
                 <Input
                     id="ing_number"
                     rows="4"
                     type="number"
                     name={"Number"}
-                    value={()=>console.log("hello")}
+                    value={()=>// console.log("hello")}
                 />
                 <Input
                     id="ing_vend_info"
                     rows="4"
                     name={"Vendor Info"}
-                    value={()=>console.log("hello")}
+                    value={()=>// console.log("hello")}
                 />
                 <UnitSelect
                     id="ing_pkg_size"
@@ -271,7 +273,7 @@ getSuggestionsFromApi = (value) => {
                     rows="4"
                     type="number"
                     name={"Package Cost"}
-                    value={()=>console.log("hello")}
+                    value={()=>// console.log("hello")}
                 />
                 <Input
                     id="ing_pkg_cost"
@@ -279,7 +281,7 @@ getSuggestionsFromApi = (value) => {
                     multiline
                     type="number"
                     name={"Comment"}
-                    value={()=>console.log("hello")}
+                    value={()=>// console.log("hello")}
                 />
                 <InputAutoCompleteOpenPage
                     id="sku_prd_line"

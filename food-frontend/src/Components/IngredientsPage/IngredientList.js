@@ -9,7 +9,7 @@ import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { CardActionArea, Input, TextField } from '@material-ui/core';
-import { routeToPage } from '../../Redux/Actions';
+import { routeToPage, ingSearch } from '../../Redux/Actions';
 import { withRouter } from 'react-router-dom'
 import { ingDetSetIng, ingDetGetSkus } from '../../Redux/Actions/ActionCreators/IngredientDetailsActionCreators';
 import labels from '../../Resources/labels';
@@ -223,18 +223,41 @@ class IngredientList extends Component {
         )
     }
 
+    ingNumErrorCallbackGenerator = (num) => {
+        return (value, prop, callBack) => {
+            axios.put(`${common.hostname}ingredients/valid_num`,{num:parseInt(value)}).then((res) =>{
+              let error
+              console.log(num)
+              console.log(value)
+              if(res.data.valid || num==parseInt(value)){
+                error = null
+              }else{
+                error = "Invalid Number"
+              }
+              return {
+                prop,
+                error
+              }
+            })
+            .then(callBack)
+          }
+        }
+
     openIngredientEditPage = (ingredient, closeCallback) => {
         console.log(ingredient)
-        let unitItems = ["kg", "g", "grams"]
-        let unitItem = unitItems[0]
+        let unitItems = ["kg", "g", "grams","lb"]
+        let unitItem = ingredient.unit
         let unitValue = String(ingredient.pkg_size)
-        for(var i = 0; i < unitItems.length; i++){
-            if(unitValue.endsWith(unitItems[i])){
-                unitItem = unitItems[i]
-                unitValue = unitValue.slice(0, -unitItems[i].length)
-                break
-            }
-        }
+        console.log(unitItem)
+        console.log(unitItems)
+        console.log(unitValue)
+        // for(var i = 0; i < unitItems.length; i++){
+        //     if(unitValue.endsWith(unitItems[i])){
+        //         unitItem = unitItems[i]
+        //         unitValue = unitValue.slice(0, -unitItems[i].length)
+        //         break
+        //     }
+        // }
 
 
         console.log(ingredient)
@@ -242,17 +265,58 @@ class IngredientList extends Component {
             <DetailView
                 open={true}
                 close={closeCallback}
-                submit={(e) => {
-                    console.log(e)
-                    swal({
-                        icon: "success",
-                    });
-                    closeCallback()
-                }}
+                onSubmit={(form_data) => {
+                    let item = {}
+                    let isError = false
+                    for (var property in form_data) {
+                        if (form_data.hasOwnProperty(property)) {
+                            if(property.includes("pkg_size") && !property.includes("errorMsg")){
+                                // console.log(property)
+                                // console.log(this.state[property])
+                                item["pkg_size"] = form_data[property].split(" ")[0]
+                                item["unit"] = form_data[property].split(" ")[1]
+                            }else if(!property.includes("errorMsg")){
+                                item[property] = form_data[property]
+                            }else{
+                                isError = isError || form_data[property] != null
+                            }
+                        }
+                        // if (this.state.hasOwnProperty(property)) {
+                        //     // console.log(String(property).contains(""))
+                        // }
+                    }
+                        if(isError){
+                            swal(`There are unresolved errors`,{
+                                icon: "error",
+                            });
+                        }else{
+                            console.log(item)
+                            let that = this
+                            let ing = ingredient
+                            // const {ing_list, ...new_formula_data} = item
+                            // new_formula_data.num = parseInt(new_formula_data.num)
+                            // console.log(new_formula_data)
+                            axios.put(`${common.hostname}ingredients/${ing.id}`, item)
+                            .then(function (response) {
+                                //that.props.submit(item)
+                                swal({
+                                    icon: "success",
+                                });
+                                that.setState({editDialog:false})
+                                that.props.search()
+                                
+                            })
+                            .catch(function (error) {
+                                swal(`${error}`,{
+                                    icon: "error",
+                                });
+                            });
+                          
+                        }
+                        
+                    }}
                 handleChange={() => console.log("handle change")}
                 name={"Ingredient Name"}
-                shortname={"Ingredient Short Name"}
-                comment={"Ingredient Comment"}
                 title={"Edit Ingredient"}
             >
                 <Input
@@ -268,7 +332,7 @@ class IngredientList extends Component {
                     rows="4"
                     type="number"
                     name={"Number"}
-                    errorCallback={ingNumErrorCallback}
+                    errorCallback={this.ingNumErrorCallbackGenerator(ingredient.num)}
                     defaultValue = {ingredient.num}
                 />
                 <Input
@@ -296,7 +360,7 @@ class IngredientList extends Component {
                     defaultValue={ingredient.pkg_cost}
                 />
                 <Input
-                    id="comment"
+                    id="comments"
                     rows="4"
                     multiline
                     type="number"
@@ -304,127 +368,14 @@ class IngredientList extends Component {
                     errorCallback={defaultErrorCallback}
                     defaultValue={ingredient.comments}
                 />
-                {/* <InputAutoCompleteOpenPage
-                    id="formula"
-                    name={"Formula"}
-                    suggestionsCallback={this.suggestionsApi}
-                    openCreatePage={this.openCreatePage}
-                    openEditPage={this.openEditPage}
-                    errorCallback={this.errorCallback}
-                />
-                <InputSelect
-                    id="prd_line"
-                    item="prod1"
-                    items={["prod1","prod2","prod3","12"]}
-                    name={"Product Line"}
-                    errorCallback={this.errorCallback}
-                />
-                <InputList
-                    id="ing_list"
-                    item="ing1"
-                    items={[
-                        {
-                            label:"ing1",
-                            id:1
-                        },
-                        {
-                            label:"ing2",
-                            id:2
-                        },
-                        {
-                            label:"ing3",
-                            id:3
-                        },
-                        {
-                            label:"ing4",
-                            id:4
-                        },
-                        {
-                            label:"ing5",
-                            id:5
-                        },
-                        {
-                            label:"ing6",
-                            id:6
-                        },
-                        {
-                            label:"ing7",
-                            id:7
-                        },
-                        {
-                            label:"ing8",
-                            id:8
-                        }
-                    ]}
-                    name={"Ingredient List"}
-                    errorCallback={this.errorCallback}
-                /> */}
             </DetailView>
         )
     }
 
 
 
-    openCreatePage = (closeCallBack) => {
-        return (
-            <DetailView
-                open={true}
-                close={closeCallBack}
-                submit={(e) => console.log(e)}
-                handleChange={() => console.log("handle change")}
-                name={"Ingredient Name"}
-                shortname={"Ingredient Short Name"}
-                comment={"Ingredient Comment"}
-                title={"Open"}
-            >
-                <Input
-                    id="ing_name"
-                    rows="4"
-                    name={"Name"}
-                    value={()=>console.log("hello")}
-                    errorCallback={this.errorCallback}
+    
 
-                />
-                <Input
-                    id="ing_name"
-                    rows="4"
-                    name={"Name"}
-                    value={()=>console.log("hello")}
-                    errorCallback={this.errorCallback}
-                />
-            </DetailView>
-        )
-    }
-
-    openEditPage = (closeCallBack) => {
-        return (
-            <DetailView
-                open={true}
-                close={closeCallBack}
-                submit={(e) => console.log(e)}
-                handleChange={() => console.log("handle change")}
-                name={"Ingredient Name"}
-                shortname={"Ingredient Short Name"}
-                comment={"Ingredient Comment"}
-                title={"Edit"}
-            >
-                <Input
-                    id="ing_name"
-                    rows="4"
-                    name={"Name"}
-                    value={()=>console.log("hello")}
-                    errorCallback={this.errorCallback}
-                />
-                <Input
-                    id="ing_name"
-                    rows="4"
-                    name={"Name"}
-                    value={()=>console.log("hello")}
-                    errorCallback={this.errorCallback}
-                />
-            </DetailView>
-        )
-    }
 
     errorCallback = (value) => {
         // value = String(value)
@@ -469,12 +420,6 @@ class IngredientList extends Component {
                         this.setState({ editDialog: false });
                     }) : null
                 }
-                {
-                    this.state.createDialog ? this.openIngredientCreatePage(() => {
-                        this.setState({ createDialog: false });
-                    }) : null
-                }
-
             </div>
 
         );
@@ -494,6 +439,9 @@ const mapDispatchToProps = dispatch => {
             dispatch(ingDetSetIng(ing))
             dispatch(ingDetGetSkus(ing.id))
             history.push('/ingredients/details')
+        },
+        search: () => {
+            dispatch(ingSearch())
         }
     };
 };  

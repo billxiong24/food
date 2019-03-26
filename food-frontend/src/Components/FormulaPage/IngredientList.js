@@ -9,7 +9,7 @@ import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { CardActionArea, Input } from '@material-ui/core';
-import { routeToPage } from '../../Redux/Actions';
+import { routeToPage, formulaSearch } from '../../Redux/Actions';
 import { withRouter } from 'react-router-dom'
 import { formulaDetGetSkus, formulaDetGetIngredients, formulaDetSetFormula } from '../../Redux/Actions/ActionCreators/FormulaDetailsActionCreators';
 import axios from 'axios';
@@ -21,6 +21,7 @@ import InputList from '../GenericComponents/InputList';
  
 import labels from '../../Resources/labels';
 import DetailView from '../GenericComponents/DetailView';
+import swal from 'sweetalert';
 
 const styles = {
     card: {
@@ -148,7 +149,76 @@ class IngredientList extends Component {
                   <DetailView
                       open={true}
                       close={() => {this.setState({editDialog: null})}}
-                      submit={(e) => console.log(e)}
+                      onSubmit={(form_data) => {
+                        let item = {}
+                        let isError = false
+                        for (var property in form_data) {
+                            if (form_data.hasOwnProperty(property)) {
+                                if(property.includes("pkg_size") && !property.includes("errorMsg")){
+                                    // console.log(property)
+                                    // console.log(this.state[property])
+                                    item["pkg_size"] = form_data[property].split(" ")[0]
+                                    item["unit"] = form_data[property].split(" ")[1]
+                                }else if(!property.includes("errorMsg")){
+                                    item[property] = form_data[property]
+                                }else{
+                                    isError = isError || form_data[property] != null
+                                }
+                            }
+                            // if (this.state.hasOwnProperty(property)) {
+                            //     // console.log(String(property).contains(""))
+                            // }
+                        }
+                            if(isError){
+                                swal(`There are unresolved errors`,{
+                                    icon: "error",
+                                });
+                            }else{
+                                console.log(item)
+                                console.log(item.ingredients)
+                                let ingredientso = item.ingredients.map(ing => {
+                                  return {
+                                  ingredients_id:ing.id,
+                                  quantity: ing.quantity,
+                                  unit: "kg"
+                                }
+                              })
+                              console.log(ingredients)
+                                console.log(item)
+                                let that = this
+                                const {ingredients, ...new_formula_data} = item
+                                new_formula_data.num = parseInt(new_formula_data.num)
+                                console.log(ingredients)
+                                axios.put(`${common.hostname}formula/${formula.id}`, new_formula_data)
+                                .then(function (response) {
+                                    //that.props.submit(item)
+                                    axios.post(`${common.hostname}formula/${formula.id}/ingredients`, {ingredients:ingredientso})
+                                      .then(function (response) {
+                                          console.log(response)
+                                          swal({
+                                              icon: "success",
+                                          });
+                                          that.setState({editDialog:null})
+                                          that.props.search()
+                                          
+                                      })
+                                      .catch(function (error) {
+                                          swal(`${error}`,{
+                                              icon: "error",
+                                          });
+                                      });
+                                      
+                                          
+                                })
+                                .catch(function (error) {
+                                    swal(`${error}`,{
+                                        icon: "error",
+                                    });
+                                });
+                              
+                            }
+                            
+                        }}
                       handleChange={() => console.log("handle change")}
                       name={"Ingredient Name"}
                       shortname={"Ingredient Short Name"}
@@ -171,7 +241,7 @@ class IngredientList extends Component {
                             errorCallback={this.formulaNumErrorCallbackGenerator(formula_data.num)}
                         />
                         <InputList
-                              id="ing_list"
+                              id="ingredients"
                               item={init_data.ingredients[0].label}
                               items={init_data.ingredients}
                               list={res.data.map((item) => {
@@ -260,6 +330,9 @@ const mapDispatchToProps = dispatch => {
             dispatch(formulaDetGetIngredients(formula.id))
             dispatch(formulaDetGetSkus(formula.id))
             history.push('/formula/details')
+        },
+        search: () => {
+          dispatch(formulaSearch())
         }
     };
 };  
