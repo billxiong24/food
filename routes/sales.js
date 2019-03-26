@@ -19,12 +19,12 @@ router.get('/search/:sku_num', function(req, res, next) {
     controller.constructGetResponse(res, st.search(req.params.sku_num, years, prodlines, customers));
 });
 
-router.get('/total/:sku_num', function(req, res, next) {
-    let start = req.query.start;
+// router.get('/total/:sku_num', function(req, res, next) {
+//     let start = req.query.start;
 
-    let st = new SalesTracker();
-    const controller = new Controller();
-    controller.constructGetResponse(res, st.total(req.params.sku_num, start));
-});
+//     let st = new SalesTracker();
+//     const controller = new Controller();
+//     controller.constructGetResponse(res, st.total(req.params.sku_num, start));
+// });
 
 module.exports = router;

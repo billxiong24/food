@@ -5,6 +5,9 @@ const QueryGenerator = require("./query_generator");
 const Filter = require("./filter");;
 const rp = require('request-promise');
 const cheerio = require('cheerio');
+const getYear = require('date-fns/get_year');
+const getISOWeek = require('date-fns/get_iso_week');
+
 function sleeper(ms) {
     return function(x) {
         return new Promise(resolve => setTimeout(() => resolve(x), ms));
@@ -17,20 +20,28 @@ class SalesTracker {
         this.interval = 200;
     } 
 
-    total(skuNum, start) {
-      return this.getSKUCost(skuNum)
-      .then((res) => {
-        console.log(res.rows[0]);
-        const num_activities = this.getActivityCount(skuNum, start);
-        return {}
-      })
-    }
+    // total(skuNum, start) {
+    //   return this.getSKUCost(skuNum)
+    //   .then((sku_info) => {
+    //     let { setup_cost, run_cost, case_cost, man_rate } = sku_info.rows[0];
+    //     this.getActivityCount(skuNum, start)
+    //     .then((activities) => {
+    //       // TODO use an actual history of activities
+    //       // let average_run_size = activities[0].sum / activities[0].count
+    //       let average_run_size = 10 * man_rate;
+    //       let year = getYear(new Date(start));
+    //       let week = getISOWeek(new Date(start));
+    //       return {}
+    //     })
+    //   })
+    // }
 
     getSKUCost(skuNum) {
       let query = squel.select()
        .from("sku")
        .field("sku.man_setup_cost", "setup_cost")
        .field("sku.man_run_cost", "run_cost")
+       .field("sku.man_rate", "man_rate")
        .field("SUM(CEILING(sku.formula_scale * formula_ingredients.quantity/ingredients.pkg_size) * ingredients.pkg_cost)", "case_cost")
        .join("formula_ingredients", null, "sku.formula_id = formula_ingredients.formula_id")
        .join("ingredients", null, "ingredients.id = formula_ingredients.ingredients_id")
@@ -38,6 +49,7 @@ class SalesTracker {
        .distinct()
        .group("setup_cost")
        .group("run_cost")
+       .group("man_rate")
        .toString();
        return db.execSingleQuery(query, [])
     }
@@ -48,7 +60,7 @@ class SalesTracker {
       .where("manufacturing_goal_sku.sku_id = ?", skuNum)
       .where("manufacturing_goal_sku.start_time > ?", start)
       .toString();
-      console.log(query);
+      return db.execSingleQuery(query, [])
     }
 
     search(skuNum, numYears, prdlines, customers) {
