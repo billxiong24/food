@@ -153,12 +153,12 @@ class Scheduler extends CRUD {
                 let activity = {}
                 for (var property in row) {
                     if (row.hasOwnProperty(property)) {
-                        if(property.includes("activity")){
-                            activity[property.replace("activity", "")] = row.property
-                        }else if(property.includes("formula")){
-                            formula[property.replace("formula", "")] = row.property
-                        }else if(property.includes("ingredients")){
-                            ingredient[property.replace("ingredients", "")] = row.property
+                        if(property.includes("activity_")){
+                            activity[property.replace("activity_", "")] = row[property]
+                        }else if(property.includes("formula_")){
+                            formula[property.replace("formula_", "")] = row[property]
+                        }else if(property.includes("ingredients_")){
+                            ingredient[property.replace("ingredients_", "")] = row[property]
                         }
                     }
                 }
