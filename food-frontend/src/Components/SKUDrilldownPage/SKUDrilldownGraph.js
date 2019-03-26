@@ -41,9 +41,18 @@ class SKUDrilldownGraph extends Component {
 
   render() {
     const { classes } = this.props;
+    console.log(this.props.data);
     return (
       <div className={classes.chart_container}>
-        <LineChart data={this.props.data} />
+        <LineChart 
+          data={this.props.data}
+          xtitle="Date"
+          ytitle="Revenue ($)"
+          curve={false}
+          prefix="$"
+          thousands=","
+          messages={{empty: "No Sales in this Timespan"}}
+        />
       </div>
     );
   }
