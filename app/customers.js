@@ -14,7 +14,15 @@ class Customer {
     }
 
     search(name) {
-        return db.execSingleQuery("SELECT * FROM customers WHERE name = $1", [name]);
+        let q = null;
+        if(name && name.length > 0) {
+            q = "SELECT * FROM customers WHERE name = $1";
+            return db.execSingleQuery(q, [name]);
+        }
+        else {
+            q = "SELECT * FROM customers";
+            return db.execSingleQuery(q, []);
+        }
     }
 
     create(arr) {
