@@ -181,7 +181,7 @@ class Scheduler extends CRUD {
                 }
                 act_map[sku.id].formula.ingredients.push(ingredient)
             })
-            activities = []
+            let activities = []
             for (var property in act_map){
                 activities.push(act_map[property])
             }
