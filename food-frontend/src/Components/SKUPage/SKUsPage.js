@@ -864,7 +864,6 @@ errorCallback = (value) => {
   }
 }
 
-
 const mapStateToProps = (state, ownProps) => {
   return {
     dummy_SKUs: state.dummy_SKUs,

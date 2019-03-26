@@ -25,9 +25,28 @@ psql
 Enter your password. Update credentials in ```.env``` file.    
      
 #### Create databases   
-As user ```postgres```, Go to the root of the repository.   
+As user ```postgres```, Go to the root of the repository.
+
+##### From Scratch
 ```cd db/ && psql -f food.sql && psql -f unique.sql```    
 
+##### From backup.sql
+Open psql
+```
+psql
+```
+Create the database
+```
+CREATE DATABASE sku_mgmt;
+```
+Exit psql
+```
+\q
+```
+Run the dump
+```
+psql sku_mgmt < backup.sql
+```
 
 ### Set up Node.JS    
 From the root of the repository:    
@@ -54,7 +73,13 @@ sudo apt-get install certbot
 sudo node ca/app.js   
 sudo certbot certonly --webroot -w ca/ -d <YOUR DOMAIN NAME HERE>   
 ```   
-Follow prompts.    
+Follow prompts.   
+
+### Register Duke Colab WebApp for NetID Authentication
+Follow the tutorial here to register a webapp with Duke Colab:
+[Tutorial](https://documentation.colab.duke.edu/guides/apidocs.html)
+You can set privacy link to  https://\<YOUR DOMAIN NAME HERE>/privacy
+Take note of your secret and id for later. 
 
 ### Set Environment Information
 Create .env in root folder of repository
@@ -66,14 +91,19 @@ PGDATABASE='sku_mgmt'
 PGPORT=5432
 HTTPS='true'
 DOMAIN='<YOUR DOMAIN NAME HERE>'
+SESSION_SECRET='<YOUR SECRETE HERE>'
 ```
 
 Navigate to food/food-frontend/src/Resources/common.js
-Edit file so that at the top:
+Edit the prod profile so that:
 ```
-export default {
-  hostname: '<https://<YOUR DOMAIN NAME>/',
-  admin: 7,
+const prod = {
+hostname: 'https://<YOUR DOMAIN NAME HERE>:8000/',
+url: 'https://<YOUR DOMAIN NAME HERE>/',
+https: true,
+colab_client_id: '<YOUR COLAB CLIENT ID>',
+colab_client_secret: '<YOUR COLAB SECRET HERE>',
+colab_redirect_uri: 'https%3A%2F%2F<YOUR DOMAIN NAME HERE>%2Flogin',
 }
 ```
 
@@ -102,7 +132,92 @@ In the ```.env``` file, set ```HTTPS='false'```, to disable HTTPS.
 After that, run ```npm start```. There will be a server on ```localhost:8000```.
 To start the React Server, ```cd food-frontend/ && npm start```. A browser tab should appear.   
 
-    
+## Schemas
+
+## formula
+Schema for formulas
+
+|id | name | comment | num |
+|---|---|---|---|
+|[PK] integer | charvar (32) | text | integer |
+
+## formula_ingredients
+Schema for formula to ingredient relations
+
+formula_id | ingredients_id | quantity | unit
+---|---|---|---|
+integer | integer | integer | weights_t
+
+## ingredients
+Schema for ingredients
+
+name | num | vend_info | pkg_cost | comments | id | pkg_size | unit
+---|---|---|---|---|---|---|---|
+text | integer | text | numeric | text | [PK] integer | integer | weights_t
+
+## manufacturing_goal
+Schema for manufacturing goals
+
+id | name | user_id | deadline | enabled
+---|---|---|---|---|
+[PK] integer | text | integer | bigint | boolean
+
+## manufacturing_goal_sku
+Schema for manufacturing goal to SKU relations
+
+mg_id | sku_id | quantity | start_time | end_time | man_line_id
+---|---|---|---|---|---
+[PK] integer | [PK] integer | numeric | bigint | bigint | integer
+
+## manufacturing_line
+Schema for manufacturing lines
+
+id | name | shortname | comment
+---|---|---|---
+[PK] integer | charvar (32) | charvar (5) | text
+
+## manufacturing_line_sku
+Schema for manufacturing line to SKU relations
+
+sku_id | manufacturing_line_id
+---|---
+[PK] integer | [PK] integer
+
+## productline
+Schema for product lines
+
+name | id
+---|---
+text | [PK] integer
+
+## session
+Schema for logged in session tokens
+
+sid | sess | expire
+---|---|---
+[PK] charvar | json | timestamp without time zone
+
+## sku
+Schema for SKUs
+
+name | num | case_upc | unit_upc | unit_size | counter_per_case | prd_line | comments | id | formula_id | formula_scale | man_rate
+---|---|---|---|---|---|---|---|---|---|---|---|
+charvar (32) | integer | bigint | bigint | text | integer | text | text | [PK] integer | integer | numeric | numeric
+
+## sku_ingred
+Schema for SKU to ingredient relations
+
+sku_num | ingred_num | quantity
+---|---|---|
+[PK] integer | [PK] integer | numeric
+
+## users
+Schema for users
+
+|uname | id | password | admin|
+|-------|-------|------|-----|
+|charvar (32) | [PK] integer | charvar (60) | boolean
+
 ## API documentation      
 ## SKUS      
     
