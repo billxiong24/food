@@ -506,7 +506,7 @@ class SKUList extends Component {
                     item={res.data.ingredients[0].label}
                     items={res.data.ingredients}
                     name={"Ingredient List"}
-                    errorCallback={defaultErrorCallback}
+                    errorCallback={defaultNumErrorCallbackGenerator("Invalid Quantity")}
                 />
               <Input
                   id="comment"
@@ -614,7 +614,7 @@ openEditPage = (closeCallBack) => {
                 name={"Ingredient Name"}
                 shortname={"Ingredient Short Name"}
                 comment={"Ingredient Comment"}
-                title={"Open"}
+                title={"Edit Formula"}
             >
                 <Input
                     id="name"
@@ -643,7 +643,7 @@ openEditPage = (closeCallBack) => {
                           }
                         })}
                         name={"Ingredient List"}
-                        errorCallback={this.errorCallback}
+                        errorCallback={defaultNumErrorCallbackGenerator("Invalid Quantity")}
                     />
                   <Input
                       id="comment"
@@ -652,7 +652,7 @@ openEditPage = (closeCallBack) => {
                       type="number"
                       name={"Comment"}
                       defaultValue={formula_data.comment}
-                      errorCallback={this.errorCallback}
+                      errorCallback={defaultErrorCallback}
                   />
             </DetailView>
         )

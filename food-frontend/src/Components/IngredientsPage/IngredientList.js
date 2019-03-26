@@ -107,13 +107,13 @@ class IngredientList extends Component {
                 open={true}
                 close={closeCallback}
                 submit={(e) => {
-                    console.log(e)
+                    //console.log(e)
                     swal({
                         icon: "success",
                     });
                     closeCallback()
                 }}
-                handleChange={() => console.log("handle change")}
+                //handleChange={() => console.log("handle change")}
                 name={"Ingredient Name"}
                 shortname={"Ingredient Short Name"}
                 comment={"Ingredient Comment"}
@@ -227,8 +227,8 @@ class IngredientList extends Component {
         return (value, prop, callBack) => {
             axios.put(`${common.hostname}ingredients/valid_num`,{num:parseInt(value)}).then((res) =>{
               let error
-              console.log(num)
-              console.log(value)
+              //console.log(num)
+              //console.log(value)
               if(res.data.valid || num==parseInt(value)){
                 error = null
               }else{
@@ -244,13 +244,13 @@ class IngredientList extends Component {
         }
 
     openIngredientEditPage = (ingredient, closeCallback) => {
-        console.log(ingredient)
+        //console.log(ingredient)
         let unitItems = ["kg", "g", "grams","lb"]
         let unitItem = ingredient.unit
         let unitValue = String(ingredient.pkg_size)
-        console.log(unitItem)
-        console.log(unitItems)
-        console.log(unitValue)
+        //console.log(unitItem)
+        //console.log(unitItems)
+        //console.log(unitValue)
         // for(var i = 0; i < unitItems.length; i++){
         //     if(unitValue.endsWith(unitItems[i])){
         //         unitItem = unitItems[i]
@@ -260,7 +260,7 @@ class IngredientList extends Component {
         // }
 
 
-        console.log(ingredient)
+        // console.log(ingredient)
         return (
             <DetailView
                 open={true}
@@ -290,7 +290,7 @@ class IngredientList extends Component {
                                 icon: "error",
                             });
                         }else{
-                            console.log(item)
+                            // console.log(item)
                             let that = this
                             let ing = ingredient
                             // const {ing_list, ...new_formula_data} = item
@@ -315,7 +315,7 @@ class IngredientList extends Component {
                         }
                         
                     }}
-                handleChange={() => console.log("handle change")}
+                // handleChange={() => console.log("handle change")}
                 name={"Ingredient Name"}
                 title={"Edit Ingredient"}
             >

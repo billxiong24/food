@@ -112,7 +112,7 @@ class LoginPage extends Component {
   }
 
   render() {
-    const { classes, users, cookies } = this.props;
+    const { classes, cookies } = this.props;
     if (cookies.user) {
       return <Redirect to='/manufacturing_goals'/>
     }

@@ -108,7 +108,7 @@ class IngredientDetailViewPage extends Component {
         }
         
         let errors = getIngErrors(ing);
-        if(errors.length == 0){
+        if(errors.length === 0){
             this.props.update(ing) // dispatch
         }else{
             for (var i = 0; i < errors.length; i++) {

@@ -33,7 +33,7 @@ import { withRouter } from 'react-router-dom'
 import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
 import axios from 'axios';
 import FileDownload from 'js-file-download';
-import common, { defaultErrorCallback, defaultTextErrorCallbackGenerator } from '../../Resources/common';
+import common, { defaultErrorCallback, defaultTextErrorCallbackGenerator, defaultNumErrorCallbackGenerator } from '../../Resources/common';
 import DetailView from '../GenericComponents/DetailView';
 import { Input } from '@material-ui/core';
 import InputList from '../GenericComponents/InputList';
@@ -309,7 +309,7 @@ class FormulaPage extends Component {
                       item={res.data.ingredients[0].label}
                       items={res.data.ingredients}
                       name={"Ingredient List"}
-                      errorCallback={defaultErrorCallback}
+                      errorCallback={defaultNumErrorCallbackGenerator("Invalid Quantity")}
                   />
                 <Input
                     id="comment"

@@ -15,6 +15,8 @@ import DetailView from '../GenericComponents/DetailView';
 import UnitSelect from '../GenericComponents/UnitSelect';
 import InputSelect from '../GenericComponents/InputSelect';
 import InputAutoCompleteOpenPage from '../GenericComponents/InputAutoCompleteOpenPage';
+import { resolveAny } from 'dns';
+import { resolve } from 'path';
 
 const styles = theme => ({
   root: {
@@ -53,12 +55,16 @@ const styles = theme => ({
 });
 
 class InputAutocompleteOpenPage extends React.Component {
-  state = {
+
+  constructor(props){
+    super(props)
+    this.state = {
       newItem:false,
       editDialog:false,
       createDialog:false,
-      name: ""
-  };
+      name: this.props.defaultValue
+    };
+  }
 
 //   handleSuggestionsFetchRequested = ({ value }) => {
 //     this.setState({
@@ -183,6 +189,12 @@ getSuggestionsFromApi = (value) => {
                   this.setState({name: value})
                   
                 }}
+                handleChangerino={(value) => {
+                  this.setState({namerino: value})
+                  if(this.props.handleChangerino){
+                    this.props.handleChangerino(value)
+                  }
+                }}
                 defaultValue={this.props.defaultValue}
                 error={this.props.error}
                 newItemCallBack={this.newItemCallBack}
@@ -211,10 +223,9 @@ getSuggestionsFromApi = (value) => {
                 </Button>
                 :
                 <Button
-                    color="primary"
                     className={classes.button}
                     onClick={()=>{
-                      this.props.openCreatePage(() => { this.setState({ createDialog: null })}, this.state.name)
+                      this.props.openCreatePage(() => { this.setState({ createDialog: null })}, this.state.namerino)
                       .then((res) => {
                         this.setState({createDialog: res})
                       })

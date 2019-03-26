@@ -6,7 +6,7 @@ import {store} from "../../../index";
 
 const hostname = common.hostname;
 axios.defaults.withCredentials = true;
-console.log(hostname)
+// console.log(hostname)
 
 // User Log Out
 export const userLogout = () => {
@@ -84,7 +84,7 @@ export const userCreateAttempt = (dataObj) => {
 
 // User Authentication
 export const userLoginAttempt = (dataObj) => {
-  console.log(hostname + 'users/')
+  // console.log(hostname + 'users/')
   return (dispatch) => {
     return axios.post(hostname + 'users/', {
       uname: dataObj.uname,

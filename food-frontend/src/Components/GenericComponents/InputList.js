@@ -19,6 +19,7 @@ import clear_icon from '../../Resources/Images/blue_clear.svg'
 import add_icon from '../../Resources/Images/add.svg'
 import { throws } from 'assert';
 import { removeFromList, addToList } from '../../Resources/common';
+import swal from 'sweetalert';
 
 
 
@@ -160,6 +161,7 @@ class InputList extends React.Component {
                         type="number"
                         min="1"
                         error={this.props.error}
+
                         defaultValue={this.state.newQuantity}
                         onChange={(event)=>{
                             console.log(event.target.value)
@@ -171,6 +173,12 @@ class InputList extends React.Component {
                 <IconButton 
                     className={classes.icon_button}
                     onClick={() => {
+                        if(this.props.error){
+                            swal(`${"Invalid Quantity"}`,{
+                                icon: "error",
+                            });
+                            return
+                        }
                         let list = addToList({label:this.state.newItem, id: this.state.newItemId, quantity:this.state.newQuantity},this.state.list)
                         this.props.handleChange(list)
                         this.setState({

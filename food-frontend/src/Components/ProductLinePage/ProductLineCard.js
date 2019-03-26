@@ -112,7 +112,7 @@ class ProductLineCard extends Component {
 
     render(){
         const { classes } = this.props;
-        const bull = <span className={classes.bullet}>•</span>;
+        // const bull = <span className={classes.bullet}>•</span>;
         const item = this.props.item
         // console.log(this.props)
         return (
