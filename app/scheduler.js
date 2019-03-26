@@ -170,10 +170,10 @@ class Scheduler extends CRUD {
                         }
                     }
                 }
-                // console.log(ingredient)
-                // console.log(formula)
-                // console.log(activity)
-                // console.log(sku)
+                console.log(ingredient)
+                console.log(formula)
+                console.log(activity)
+                console.log(sku)
                 if(!act_map.hasOwnProperty(sku.id)){ 
                     act_map[sku.id] = {...activity,...sku}
                     act_map[sku.id].formula = formula
