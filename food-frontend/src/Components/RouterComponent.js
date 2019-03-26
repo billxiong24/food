@@ -27,6 +27,7 @@ import UserAdminPage from './UserAdminPage/UserAdminPage';
 import ManufacturingLinesPage from './ManufacturingLinesPage/ManufacturingLinesPage';
 import SKUDrilldownPage from './SKUDrilldownPage/SKUDrilldownPage';
 import SKUSalesSummaryPage from './SKUSalesSummaryPage/SKUDrilldownPage';
+import SKUDrilldownSearch from './SKUDrilldownPage/SKUDrilldownSearch';
 
 const styles = {
 
@@ -70,7 +71,8 @@ class RouterComponent extends Component {
             <PrivateRoute exact={true} path="/manufacturing_lines" component={ManufacturingLinesPage}
               block={cookies.admin === 'false'} altPath={landingPage}/>
             <PrivateRoute exact={true} path="/sales/aggregate" component={SKUSalesSummaryPage}/>
-            <PrivateRoute exact={true} path="/sales/skus/:sku_name/:sku_num" component={SKUDrilldownPage}/>
+            <PrivateRoute exact={true} path="/sales/skus/:sku_num" component={SKUDrilldownPage}/>
+            <PrivateRoute exact={true} path="/sales/skusearch" component={SKUDrilldownSearch}/>
             <Redirect from="/*" to={landingPage} />
           </Switch>
         </div>

@@ -52,8 +52,10 @@ class LogoutPage extends Component {
   }
 
   logOutUser() {
-    this.props.userLogout();
-    this.props.routeToPage(0);
+    this.props.userLogout().then(()=>{
+      this.props.routeToPage(0);
+      window.location.reload();
+    });
   }
 
   render() {
