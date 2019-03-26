@@ -9,12 +9,13 @@ import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
-import { subDays, subWeeks, subMonths, subYears, getISOWeek, getYear } from 'date-fns';
+import { format, setISOWeek, setYear, subDays, subWeeks, subMonths, subYears, getISOWeek, getYear } from 'date-fns';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import SKUDrilldownGraph from './SKUDrilldownGraph';
 
 const hostname = common.hostname;
 
@@ -49,6 +50,7 @@ const styles = {
   customer_container: {
     textAlign:'center',
     marginTop: '2%',
+    padding: 20
   },
   customer_title: {
     textAlign:'left',
@@ -289,6 +291,17 @@ class SKUDrilldownMain extends Component {
         </div>
         <div className={classes.contentContainer}>
           <Paper className={classes.customer_container}>
+            <Typography variant="h3">Graph</Typography>
+            {/* {
+              this.state.details && <SKUDrilldownGraph data={this.state.details.map((val) => {
+                return {
+                  [format(setYear(setISOWeek(new Date(), val.week), val.year),"YYYY-MM-DD")]:(parseInt(val.sales) * parseInt(val.price_per_case))
+                }
+              })}></SKUDrilldownGraph>
+            } */}
+          </Paper>
+          <Paper className={classes.customer_container}>
+            <Typography variant="h3">Sales</Typography>
             <Table>
               <TableHead>
                 <TableRow>
