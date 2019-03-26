@@ -159,14 +159,14 @@ class Scheduler extends CRUD {
                 let sku = {}
                 for (var property in row) {
                     if (row.hasOwnProperty(property)) {
-                        if(property.includes("activity_")){
+                        if(property.startsWith("activity_")){
                             activity[property.replace("activity_", "")] = row[property]
-                        }else if(property.includes("formula_")){
+                        }else if(property.startsWith("formula_")){
                             formula[property.replace("formula_", "")] = row[property]
-                        }else if(property.includes("ingredients_")){
+                        }else if(property.startsWith("ingredients_")){
                             ingredient[property.replace("ingredients_", "")] = row[property]
-                        }else if(property.includes("sku_")){
-                            ingredient[property.replace("ingredients_", "")] = row[property]
+                        }else if(property.startsWith("sku_")){
+                            sku[property.replace("sku_", "")] = row[property]
                         }
                     }
                 }
