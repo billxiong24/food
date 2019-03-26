@@ -352,11 +352,20 @@ export function ingNumErrorCallback(value, prop, callBack){
   .then(callBack)
 }
 
+
 export function defaultNumErrorCallbackGenerator(errorMessage){
   return (value, prop, callBack) => {
   Promise.resolve("Success")
   .then(()=>{
     if(value == ""){
+      return {
+        error: errorMessage,
+        prop
+      }
+    }
+    console.log("defaultNum")
+    console.log(value)
+    if(parseInt(value) < 1){
       return {
         error: errorMessage,
         prop

@@ -7,9 +7,8 @@ import parse from 'autosuggest-highlight/parse';
 import TextField from '@material-ui/core/TextField';
 import Paper from '@material-ui/core/Paper';
 import MenuItem from '@material-ui/core/MenuItem';
-import Popper from '@material-ui/core/Popper';
 import { withStyles } from '@material-ui/core/styles';
-import { FormControl, InputLabel, Button } from '@material-ui/core';
+import { FormControl } from '@material-ui/core';
 import Axios from 'axios';
 import common from '../../Resources/common';
 
@@ -94,24 +93,24 @@ function renderSuggestion(suggestion, { query, isHighlighted }) {
 }
 
 
-function getSuggestions(value) {
-  const inputValue = deburr(value.trim()).toLowerCase();
-  const inputLength = inputValue.length;
-  let count = 0;
+// function getSuggestions(value) {
+//   const inputValue = deburr(value.trim()).toLowerCase();
+//   const inputLength = inputValue.length;
+//   let count = 0;
 
-  return inputLength === 0
-    ? []
-    : suggestions.filter(suggestion => {
-        const keep =
-          count < 5 && suggestion.label.slice(0, inputLength).toLowerCase() === inputValue;
+//   return inputLength === 0
+//     ? []
+//     : suggestions.filter(suggestion => {
+//         const keep =
+//           count < 5 && suggestion.label.slice(0, inputLength).toLowerCase() === inputValue;
 
-        if (keep) {
-          count += 1;
-        }
+//         if (keep) {
+//           count += 1;
+//         }
 
-        return keep;
-      });
-}
+//         return keep;
+//       });
+// }
 
 function getSuggestionValue(suggestion) {
   return suggestion.label;
@@ -166,6 +165,7 @@ class InputAutocomplete extends React.Component {
 
   handleSuggestionsFetchRequested = ({ value }) => {
     console.log("handleSuggestionsFetchRequested")
+    this.props.handleChangerino(value)
     Axios.put(`${common.hostname}formula/formula_autocomplete`, {
       "prefix":value
     }).then((res) => {

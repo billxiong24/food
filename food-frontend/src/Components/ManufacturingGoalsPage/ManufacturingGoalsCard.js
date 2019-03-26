@@ -105,7 +105,7 @@ class ManufacturingGoalsCard extends Component {
 
     render(){
         const { classes } = this.props;
-        const bull = <span className={classes.bullet}>•</span>;
+        //const bull = <span className={classes.bullet}>•</span>;
         const item = this.props.item
         return (
           <Card className={classes.card + ' ' + (this.props.editable ? '' : classes.clickable)} 

@@ -13,7 +13,7 @@ import { routeToPage, formulaSearch } from '../../Redux/Actions';
 import { withRouter } from 'react-router-dom'
 import { formulaDetGetSkus, formulaDetGetIngredients, formulaDetSetFormula } from '../../Redux/Actions/ActionCreators/FormulaDetailsActionCreators';
 import axios from 'axios';
-import common, { defaultErrorCallback, defaultTextErrorCallbackGenerator } from '../../Resources/common';
+import common, { defaultErrorCallback, defaultTextErrorCallbackGenerator, defaultNumErrorCallbackGenerator } from '../../Resources/common';
 import InputAutoCompleteOpenPage from '../GenericComponents/InputAutoCompleteOpenPage';
 import InputSelect from '../GenericComponents/InputSelect';
 import InputList from '../GenericComponents/InputList';
@@ -135,16 +135,16 @@ class IngredientList extends Component {
     openEditPage = (formula) => {
         let init_data;
         let formula_data
-        console.log(formula)
+        //console.log(formula)
         return axios.get(`${common.hostname}formula/init_formula`)
         .then( (res) => {
-            console.log(res)
+            //console.log(res)
             init_data = res.data
             return axios.get(`${common.hostname}formula/${formula.id}`).then((res) => {
-              console.log(res)
+              //console.log(res)
               formula_data = res.data[0]
               return axios.get(`${common.hostname}formula/${formula.id}/ingredients`).then((res) => {
-                console.log(res)
+                //console.log(res)
                 let editDialog = (
                   <DetailView
                       open={true}
@@ -174,8 +174,8 @@ class IngredientList extends Component {
                                     icon: "error",
                                 });
                             }else{
-                                console.log(item)
-                                console.log(item.ingredients)
+                                //console.log(item)
+                                //console.log(item.ingredients)
                                 let ingredientso = item.ingredients.map(ing => {
                                   return {
                                   ingredients_id:ing.id,
@@ -183,18 +183,18 @@ class IngredientList extends Component {
                                   unit: "kg"
                                 }
                               })
-                              console.log(ingredients)
-                                console.log(item)
+                              //console.log(ingredients)
+                                //console.log(item)
                                 let that = this
                                 const {ingredients, ...new_formula_data} = item
                                 new_formula_data.num = parseInt(new_formula_data.num)
-                                console.log(ingredients)
+                                //console.log(ingredients)
                                 axios.put(`${common.hostname}formula/${formula.id}`, new_formula_data)
                                 .then(function (response) {
                                     //that.props.submit(item)
                                     axios.post(`${common.hostname}formula/${formula.id}/ingredients`, {ingredients:ingredientso})
                                       .then(function (response) {
-                                          console.log(response)
+                                          //console.log(response)
                                           swal({
                                               icon: "success",
                                           });
@@ -219,11 +219,11 @@ class IngredientList extends Component {
                             }
                             
                         }}
-                      handleChange={() => console.log("handle change")}
+                      //handleChange={() => console.log("handle change")}
                       name={"Ingredient Name"}
                       shortname={"Ingredient Short Name"}
                       comment={"Ingredient Comment"}
-                      title={"Open"}
+                      title={"Edit Formula"}
                   >
                       <Input
                           id="name"
@@ -252,7 +252,7 @@ class IngredientList extends Component {
                                 }
                               })}
                               name={"Ingredient List"}
-                              errorCallback={defaultErrorCallback}
+                              errorCallback={defaultNumErrorCallbackGenerator("Invalid Quantity")}
                           />
                         <Input
                             id="comment"
@@ -282,7 +282,7 @@ class IngredientList extends Component {
 
     render() {
         const { classes, ingredients, history, sortby } = this.props
-        console.log(ingredients)
+        //console.log(ingredients)
         return (
             <div>
                 {
