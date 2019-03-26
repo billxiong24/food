@@ -146,11 +146,11 @@ class Scheduler extends CRUD {
         `
         return db.execSingleQuery(query, [])
         .then(function(res){
-            sku_map = {}
-            ing_map = {}
-            form_map = {}
-            act_map = {}
-            form_ing_map ={}
+            let sku_map = {}
+            let ing_map = {}
+            let form_map = {}
+            let act_map = {}
+            let form_ing_map ={}
             res.rows.forEach(function(row){
                 console.log(row)
                 let ingredient = {}
