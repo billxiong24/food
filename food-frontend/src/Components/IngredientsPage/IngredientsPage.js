@@ -280,6 +280,7 @@ class IngredientsPage extends Component {
               <Input
                   id="name"
                   rows="4"
+                  displayName="Input"
                   error={true}
                   name={"Name *"}
                   errorCallback={defaultTextErrorCallbackGenerator("Name is invalid")}
@@ -288,6 +289,7 @@ class IngredientsPage extends Component {
                   id="num"
                   rows="4"
                   type="number"
+                  displayName="Input"
                   name={"Number *"}
                   defaultValue={this.state.defaultNum}
                   errorCallback={ingNumErrorCallback}
@@ -295,11 +297,13 @@ class IngredientsPage extends Component {
               <Input
                   id="vend_info"
                   rows="4"
+                  displayName="Input"
                   name={"Vendor Info"}
                   errorCallback={defaultErrorCallback}
               />
               <UnitSelect
                   id="pkg_size"
+                  displayName="UnitSelect"
                   unitSelect={true}
                   name={"Package Size"}
                   item="kg"
@@ -309,6 +313,7 @@ class IngredientsPage extends Component {
               <Input
                   id="pkg_cost"
                   rows="4"
+                  displayName="Input"
                   type="number"
                   name={"Package Cost"}
                   errorCallback={defaultNumErrorCallbackGenerator("Invalid Number")}
@@ -318,6 +323,7 @@ class IngredientsPage extends Component {
                   id="comments"
                   rows="4"
                   multiline
+                  displayName="Input"
                   type="number"
                   name={"Comment"}
                   errorCallback={defaultErrorCallback}

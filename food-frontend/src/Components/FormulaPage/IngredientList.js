@@ -198,7 +198,9 @@ class IngredientList extends Component {
                                 .then(function (response) {
                                     //that.props.submit(item)
                                     console.log(ings)
-                                    axios.delete(`${common.hostname}formula/${formula.id}/ingredients`, {ingredients:ings})
+                                    console.log(JSON.stringify({ingredients:ings}))
+                                    console.log(`${common.hostname}formula/${formula.id}/ingredients`)
+                                    axios.delete(`${common.hostname}formula/${formula.id}/ingredients`,{data: {ingredients:ings}})
                                     .then(function(response){
                                       console.log(response)
                                       console.log(ingredientso)
@@ -245,6 +247,7 @@ class IngredientList extends Component {
                       <Input
                           id="name"
                           name={"Name"}
+                          displayName="Input"
                           defaultValue={formula_data.name}
                           errorCallback={defaultTextErrorCallbackGenerator("Name is invalid")}
       
@@ -253,6 +256,7 @@ class IngredientList extends Component {
                             id="num"
                             rows="4"
                             type="number"
+                            displayName="Input"
                             name={"Number"}
                             defaultValue={formula_data.num}
                             errorCallback={this.formulaNumErrorCallbackGenerator(formula_data.num)}
@@ -268,6 +272,7 @@ class IngredientList extends Component {
                                   id:item.id
                                 }
                               })}
+                              displayName="InputList"
                               name={"Ingredient List"}
                               errorCallback={defaultNumErrorCallbackGenerator("Invalid Quantity")}
                           />
@@ -277,6 +282,7 @@ class IngredientList extends Component {
                             multiline
                             type="number"
                             name={"Comment"}
+                            displayName="Input"
                             defaultValue={formula_data.comment}
                             errorCallback={defaultErrorCallback}
                         />

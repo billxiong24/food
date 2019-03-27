@@ -44,10 +44,10 @@ class DetailView extends Component {
     let that = this
     
     for(var i = 0; i < this.props.children.length; i++){
-        console.log(this.props.children[i].type.displayName)
+        console.log(this.props.children[i].props.displayName)
         // state[this.props.children[i].id]
         //// console.log(this.props.children[i].props)
-        if(this.props.children[i].type.displayName.includes("WithStyles(InputSelect)")){
+        if(this.props.children[i].props.displayName.includes("InputSelect")){
             state[this.props.children[i].props.id] = this.props.children[i].props.item
             // Promise.resolve(this.props.children[i].props.errorCallback(state[this.props.children[i].props.id],that.props.children[i].props.id +"_errorMsg"))
             // .then((res) => {
@@ -64,7 +64,7 @@ class DetailView extends Component {
                 })
             })
             
-        }else if(this.props.children[i].type.displayName.includes("InputAutoCompleteOpenPage")){
+        }else if(this.props.children[i].props.displayName.includes("InputAutoCompleteOpenPage")){
             state[this.props.children[i].props.id] = this.props.children[i].props.defaultId
             console.log(this.props.children[i].props.id)
             console.log(state[this.props.children[i].props.id])
@@ -83,7 +83,7 @@ class DetailView extends Component {
                     [prop]:error
                 })
             })
-        }else if(this.props.children[i].type.displayName.includes("InputList")){
+        }else if(this.props.children[i].props.displayName.includes("InputList")){
             state[this.props.children[i].props.id] = this.props.children[i].props.list
             console.log(this.props.children[i].props.id)
             console.log(state[this.props.children[i].props.id])
@@ -102,7 +102,7 @@ class DetailView extends Component {
             //         [prop]:error
             //     })
             // })
-        }else if(this.props.children[i].type.displayName.includes("WithStyles(InputList)")){
+        }else if(this.props.children[i].props.displayName.includes("InputList")){
             state[this.props.children[i].props.id] = []
             //state[this.props.children[i].props.id +"_errorMsg"] = this.props.children[i].props.errorCallback([])
             // Promise.resolve(this.props.children[i].props.errorCallback(state[this.props.children[i].props.id],that.props.children[i].props.id +"_errorMsg"))
@@ -138,7 +138,7 @@ class DetailView extends Component {
                     })
                 })
             }
-        }else if(this.props.children[i].type.displayName.includes("UnitSelect")){
+        }else if(this.props.children[i].props.displayName.includes("UnitSelect")){
             state[this.props.children[i].props.id] = this.props.children[i].props.item
             console.log("UnitSelect")
             console.log(state[this.props.children[i].props.id])
@@ -244,7 +244,7 @@ class DetailView extends Component {
              </DialogContentText>
              {
                 this.props.children.map((item, index) => {
-                    if(!item.type.displayName.includes("WithStyles(Input)")){
+                    if(item.props.displayName != "Input"){
                         return (
                         <div key={item.props.id}>
                             {

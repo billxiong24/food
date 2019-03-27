@@ -245,6 +245,9 @@ class FormulaPage extends Component {
                           icon: "error",
                       });
                   }else{
+                    if(!Array.isArray(item.ingredients)){
+                      item.ingredients = [] 
+                    }
                       console.log(item.ingredients)
                       let ingredientso = item.ingredients.map(ing => {
                         return {
@@ -294,6 +297,7 @@ class FormulaPage extends Component {
               <Input
                   id="name"
                   name={"Name *"}
+                  displayName="Input"
                   errorCallback={defaultTextErrorCallbackGenerator("Name is invalid")}
               />
               <Input
@@ -301,11 +305,13 @@ class FormulaPage extends Component {
                     rows="4"
                     type="number"
                     name={"Number *"}
+                    displayName="Input"
                     defaultValue={res.data.num}
                     errorCallback={this.formulaNumErrorCallback}
                 />
                 <InputList
                       id="ingredients"
+                      displayName="InputList"
                       item={res.data.ingredients[0].label}
                       items={res.data.ingredients}
                       name={"Ingredient List"}
@@ -315,6 +321,7 @@ class FormulaPage extends Component {
                     id="comment"
                     rows="4"
                     multiline
+                    displayName="Input"
                     type="number"
                     name={"Comment"}
                     errorCallback={defaultErrorCallback}

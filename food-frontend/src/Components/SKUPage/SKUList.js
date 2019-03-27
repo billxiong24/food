@@ -297,6 +297,7 @@ class SKUList extends Component {
                   id="name"
                   rows="4"
                   name={"Name"}
+                  displayName="Input"
                   defaultValue={sku.name}
                   errorCallback={defaultTextErrorCallbackGenerator("Invalid SKU Name")}
               />
@@ -305,6 +306,7 @@ class SKUList extends Component {
                   rows="4"
                   type="number"
                   name={"Number"}
+                  displayName="Input"
                   defaultValue={sku.num}
                   errorCallback={this.skuNumErrorCallbackGenerator(sku.num)}
               />
@@ -312,6 +314,7 @@ class SKUList extends Component {
                   id="case_upc"
                   type="number"
                   name={"Case UPC"}
+                  displayName="Input"
                   defaultValue={sku.case_upc}
                   errorCallback={this.caseUPCNumErrorCallbackGenerator(sku.case_upc)}
               />
@@ -319,6 +322,7 @@ class SKUList extends Component {
                   id="unit_upc"
                   type="number"
                   name={"Unit UPC"}
+                  displayName="Input"
                   defaultValue={sku.unit_upc}
                   errorCallback={this.unitUPCNumErrorCallbackGenerator(sku.unit_upc)}
               />
@@ -326,6 +330,7 @@ class SKUList extends Component {
                   id="unit_size"
                   error={true}
                   name={"Unit Size"}
+                  displayName="Input"
                   defaultValue={sku.unit_size}
                   errorCallback={defaultTextErrorCallbackGenerator("Invalid Unit Size")}
               />
@@ -333,6 +338,7 @@ class SKUList extends Component {
                   id="count_per_case"
                   type="number"
                   name={"Count Per Case"}
+                  displayName="Input"
                   defaultValue={sku.count_per_case}
                   errorCallback={defaultNumErrorCallbackGenerator("Count Per Case is invalid")}
               />
@@ -341,6 +347,7 @@ class SKUList extends Component {
                     item={sku.prd_line}
                     items={prod_lines}
                     name={"Product Line"}
+                    displayName="InputSelect"
                     defaultValue={sku.prod_line}
                     errorCallback={defaultErrorCallback}
               />
@@ -353,6 +360,7 @@ class SKUList extends Component {
                       console.log(id)
                       this.setState({id:id})
                     }}
+                    displayName="InputAutoCompleteOpenPage"
                     defaultValue = {formulaName}
                     defaultId = {sku.formula_id}
                     openEditPage={this.openEditPage}
@@ -361,6 +369,7 @@ class SKUList extends Component {
               <Input
                   id="formula_scale"
                   type="number"
+                  displayName="Input"
                   name={"Formula Scale Factor"}
                   defaultValue={sku.formula_scale}
                   errorCallback={defaultNumErrorCallbackGenerator("Formula Scale Factor is invalid")}
@@ -368,6 +377,7 @@ class SKUList extends Component {
               <Input
                   id="man_rate"
                   type="number"
+                  displayName="Input"
                   name={"Manufacturing Rate"}
                   defaultValue={sku.man_rate}
                   errorCallback={defaultNumErrorCallbackGenerator("Manufacturing Rate is invalid")}
@@ -375,6 +385,7 @@ class SKUList extends Component {
               <Input
                   id="man_setup_cost"
                   type="number"
+                  displayName="Input"
                   name={"Manufacturing Set Up Cost"}
                   defaultValue={sku.man_setup_cost}
                   errorCallback={defaultNumErrorCallbackGenerator("Manufacturing Set Up Cost is invalid")}
@@ -382,6 +393,7 @@ class SKUList extends Component {
               <Input
                   id="man_run_cost"
                   type="number"
+                  displayName="Input"
                   name={"Manufacturing Run Cost"}
                   defaultValue={sku.man_run_cost}
                   errorCallback={defaultNumErrorCallbackGenerator("Manufacturing Run Cost is invalid")}
@@ -389,6 +401,7 @@ class SKUList extends Component {
               <Input
                   id="comments"
                   rows="4"
+                  displayName="Input"
                   multiline
                   type="number"
                   name={"Comment"}
@@ -442,6 +455,9 @@ class SKUList extends Component {
                           icon: "error",
                       });
                   }else{
+                    if(!Array.isArray(item.ingredients)){
+                      item.ingredients = [] 
+                    }
                       console.log(item.ingredients)
                       let ingredientso = item.ingredients.map(ing => {
                         return {
@@ -490,6 +506,7 @@ class SKUList extends Component {
             <Input
                 id="name"
                 name={"Name"}
+                displayName="Input"
                 defaultValue = {defaultName}
                 errorCallback={defaultTextErrorCallbackGenerator("Name is invalid")}
             />
@@ -497,6 +514,7 @@ class SKUList extends Component {
                   id="num"
                   rows="4"
                   type="number"
+                  displayName="Input"
                   name={"Number"}
                   defaultValue={res.data.num}
                   errorCallback={this.formulaNumErrorCallback}
@@ -506,12 +524,14 @@ class SKUList extends Component {
                     item={res.data.ingredients[0].label}
                     items={res.data.ingredients}
                     name={"Ingredient List"}
+                    displayName="InputList"
                     errorCallback={defaultNumErrorCallbackGenerator("Invalid Quantity")}
                 />
               <Input
                   id="comment"
                   rows="4"
                   multiline
+                  displayName="Input"
                   type="number"
                   name={"Comment"}
                   errorCallback={defaultErrorCallback}
@@ -536,6 +556,9 @@ openEditPage = (closeCallBack) => {
         formula = formula_data
         return axios.get(`${common.hostname}formula/${this.state.id}/ingredients`).then((res) => {
           console.log(res)
+          let ings = res.data.map(ing => {
+            return ing.id
+          })
           return (
             <DetailView
                 open={true}
@@ -565,8 +588,11 @@ openEditPage = (closeCallBack) => {
                               icon: "error",
                           });
                       }else{
-                          console.log(item)
-                          console.log(item.ingredients)
+                          //console.log(item)
+                          //console.log(item.ingredients)
+                          if(!Array.isArray(item.ingredients)){
+                            item.ingredients = [] 
+                          }
                           let ingredientso = item.ingredients.map(ing => {
                             return {
                             ingredients_id:ing.id,
@@ -574,23 +600,29 @@ openEditPage = (closeCallBack) => {
                             unit: "kg"
                           }
                         })
-                        console.log(ingredients)
-                          console.log(item)
+                        //console.log(ingredients)
                           let that = this
                           const {ingredients, ...new_formula_data} = item
                           new_formula_data.num = parseInt(new_formula_data.num)
-                          console.log(ingredients)
+                          //console.log(ingredients)
                           axios.put(`${common.hostname}formula/${formula.id}`, new_formula_data)
                           .then(function (response) {
                               //that.props.submit(item)
-                              axios.post(`${common.hostname}formula/${formula.id}/ingredients`, {ingredients:ingredientso})
+                              console.log(ings)
+                              console.log(JSON.stringify({ingredients:ings}))
+                              console.log(`${common.hostname}formula/${formula.id}/ingredients`)
+                              axios.delete(`${common.hostname}formula/${formula.id}/ingredients`,{data: {ingredients:ings}})
+                              .then(function(response){
+                                console.log(response)
+                                console.log(ingredientso)
+                                axios.post(`${common.hostname}formula/${formula.id}/ingredients`, {ingredients:ingredientso})
                                 .then(function (response) {
-                                    console.log(response)
+                                    //console.log(response)
                                     swal({
                                         icon: "success",
                                     });
-                                    closeCallBack()
-                                    
+                                    // that.setState({editDialog:null})
+                                    that.props.search()
                                     
                                 })
                                 .catch(function (error) {
@@ -598,6 +630,13 @@ openEditPage = (closeCallBack) => {
                                         icon: "error",
                                     });
                                 });
+                              })
+                              .catch(function(error){
+                                swal(`${"Error on Delete"}`,{
+                                  icon: "error",
+                                });
+                              })
+
                                 
                                     
                           })
@@ -619,6 +658,7 @@ openEditPage = (closeCallBack) => {
                 <Input
                     id="name"
                     name={"Name"}
+                    displayName="Input"
                     defaultValue={formula_data.name}
                     errorCallback={defaultTextErrorCallbackGenerator("Name is invalid")}
 
@@ -628,6 +668,7 @@ openEditPage = (closeCallBack) => {
                       rows="4"
                       type="number"
                       name={"Number"}
+                      displayName="Input"
                       defaultValue={formula_data.num}
                       errorCallback={this.formulaNumErrorCallbackGenerator(formula_data.num)}
                   />
@@ -642,6 +683,7 @@ openEditPage = (closeCallBack) => {
                             id:item.id
                           }
                         })}
+                        displayName="InputList"
                         name={"Ingredient List"}
                         errorCallback={defaultNumErrorCallbackGenerator("Invalid Quantity")}
                     />
@@ -651,6 +693,7 @@ openEditPage = (closeCallBack) => {
                       multiline
                       type="number"
                       name={"Comment"}
+                      displayName="Input"
                       defaultValue={formula_data.comment}
                       errorCallback={defaultErrorCallback}
                   />

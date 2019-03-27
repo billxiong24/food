@@ -101,6 +101,30 @@ class IngredientList extends Component {
       }
     }
 
+    dependencyChange = () =>{
+        const ing = {
+          name:this.state.ingredientName,
+          num:this.state.ingredientNum,
+          vend_info:this.state.vend_info,
+          pkg_size:this.state.packageSize,
+          pkg_cost:this.state.costPerPackage,
+          comments:this.state.comment,
+          id:this.props.id,
+          skus:this.props.skus
+      }
+        if(this.state.checked) {
+          this.props.removeIngFromReport(ing)
+          this.setState({
+            checked: false,
+          })
+        } else {
+          this.props.addIngToReport(ing)
+          this.setState({
+            checked: true,
+          });
+        }
+      }
+
     openIngredientCreatePage = (closeCallback) => {
         return (
             <DetailView
@@ -125,6 +149,7 @@ class IngredientList extends Component {
                     rows="4"
                     error={true}
                     name={"Name"}
+                    displayName="Input"
                     errorCallback={this.errorCallback}
                 />
                 <Input
@@ -132,12 +157,14 @@ class IngredientList extends Component {
                     rows="4"
                     type="number"
                     name={"Number"}
+                    displayName="Input"
                     errorCallback={this.errorCallback}
                 />
                 <Input
                     id="vend_info"
                     rows="4"
                     name={"Vendor Info"}
+                    displayName="Input"
                     errorCallback={this.errorCallback}
                 />
                 <UnitSelect
@@ -146,12 +173,14 @@ class IngredientList extends Component {
                     name={"Package Size"}
                     item="kg"
                     items={["kg","g","grams"]}
+                    displayName="UnitSelect"
                     errorCallback={this.errorCallback}
                 />
                 <Input
                     id="pkg_cost"
                     rows="4"
                     type="number"
+                    displayName="Input"
                     name={"Package Cost"}
                     errorCallback={this.errorCallback}
 
@@ -160,6 +189,7 @@ class IngredientList extends Component {
                     id="comment"
                     rows="4"
                     multiline
+                    displayName="Input"
                     type="number"
                     name={"Comment"}
                     errorCallback={this.errorCallback}
@@ -167,6 +197,7 @@ class IngredientList extends Component {
                 <InputAutoCompleteOpenPage
                     id="formula"
                     name={"Formula"}
+                    displayName="InputAutoCompleteOpenPage"
                     suggestionsCallback={this.suggestionsApi}
                     openCreatePage={this.openCreatePage}
                     openEditPage={this.openEditPage}
@@ -175,6 +206,7 @@ class IngredientList extends Component {
                 <InputSelect
                     id="prd_line"
                     item="prod1"
+                    displayName="InputSelect"
                     items={["prod1","prod2","prod3","12"]}
                     name={"Product Line"}
                     errorCallback={this.errorCallback}
@@ -182,6 +214,7 @@ class IngredientList extends Component {
                 <InputList
                     id="ing_list"
                     item="ing1"
+                    displayName="InputList"
                     items={[
                         {
                             label:"ing1",
@@ -324,6 +357,7 @@ class IngredientList extends Component {
                     rows="4"
                     error={true}
                     name={"Name"}
+                    displayName="Input"
                     errorCallback={nameErrorCallback}
                     defaultValue = {ingredient.name}
                 />
@@ -332,6 +366,7 @@ class IngredientList extends Component {
                     rows="4"
                     type="number"
                     name={"Number"}
+                    displayName="Input"
                     errorCallback={this.ingNumErrorCallbackGenerator(ingredient.num)}
                     defaultValue = {ingredient.num}
                 />
@@ -339,6 +374,7 @@ class IngredientList extends Component {
                     id="vend_info"
                     rows="4"
                     name={"Vendor Info"}
+                    displayName="Input"
                     errorCallback={defaultErrorCallback}
                     defaultValue={ingredient.vend_info}
                 />
@@ -347,6 +383,7 @@ class IngredientList extends Component {
                     unitSelect={true}
                     name={"Package Size"}
                     item={unitItem}
+                    displayName="UnitSelect"
                     items={unitItems}
                     defaultValue={unitValue}
                     errorCallback={defaultErrorCallback}
@@ -355,6 +392,7 @@ class IngredientList extends Component {
                     id="pkg_cost"
                     rows="4"
                     type="number"
+                    displayName="Input"
                     name={"Package Cost"}
                     errorCallback={defaultErrorCallback}
                     defaultValue={ingredient.pkg_cost}
@@ -364,6 +402,7 @@ class IngredientList extends Component {
                     rows="4"
                     multiline
                     type="number"
+                    displayName="Input"
                     name={"Comment"}
                     errorCallback={defaultErrorCallback}
                     defaultValue={ingredient.comments}
