@@ -373,12 +373,16 @@ class DetailView extends Component {
                 <Button onClick={this.props.close} color="primary">
                   Cancel
                     </Button>
-                <Button
+                    { readOnly ?
+                     null
+                     :
+                     <Button
                   color="primary"
                   onClick={() => {this.props.onSubmit(this.state)}}
                 >
-                  Update
+                  Save
                     </Button>
+                    }
               </DialogActions>
             </form>
           </DialogContent>

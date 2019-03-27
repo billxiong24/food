@@ -143,6 +143,8 @@ class InputList extends React.Component {
 
     return (
         <div className={classes.super_container}>
+            { !this.props.disabled 
+            ?
             <div className={classes.container}>
                 <div className={classes.input_container}>
                     <InputSelect
@@ -190,6 +192,19 @@ class InputList extends React.Component {
                     <img src={add_icon} />
                 </IconButton>
             </div>
+            :
+            null
+            }
+            {
+                this.props.disabled 
+                ?
+                <InputLabel 
+                    htmlFor="age-simple"
+                    error={this.props.error}
+                >{"Ingredient List" + " *"}</InputLabel>
+                :
+                null
+            }
             {
                 this.state.list.map(item => (
                     <div 
@@ -215,6 +230,7 @@ class InputList extends React.Component {
                         </div>
                         
                         {/* </div> */}
+                        {!this.props.disabled ?
                             <IconButton 
                                 className={classes.icon_button_2}
                                 onClick={() => {
@@ -235,6 +251,9 @@ class InputList extends React.Component {
                             >
                                 <img src={clear_icon} />
                             </IconButton>
+                            :
+                            null
+                            }
                     </div>
                 ))
             }
