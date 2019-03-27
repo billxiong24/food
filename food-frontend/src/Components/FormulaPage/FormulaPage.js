@@ -307,7 +307,7 @@ class FormulaPage extends Component {
                     name={"Number *"}
                     displayName="Input"
                     defaultValue={res.data.num}
-                    errorCallback={this.formulaNumErrorCallback}
+                    errorCallback={defaultErrorCallback}
                 />
                 <InputList
                       id="ingredients"

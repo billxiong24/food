@@ -227,6 +227,8 @@ class DetailView extends Component {
 
 
   render() {
+    console.log(this.props)
+    let readOnly = this.props.cookies.cookies.admin != "true"
     const { classes } = this.props;
     return (
       <div>
@@ -276,6 +278,7 @@ class DetailView extends Component {
                                             })
                                         })
                                     },
+                                    disabled: readOnly,
                                     onChange: value => { 
                                         console.log(value)
                                         let that = this;
@@ -342,6 +345,7 @@ class DetailView extends Component {
                                             })
                                         })
                                     },
+                                    disabled: readOnly,
                                     onChange: event => {
                                         console.log(event.target.value)
                                         let that = this;
@@ -384,4 +388,4 @@ class DetailView extends Component {
   }
 }
 
-export default withStyles(styles)(DetailView);
+export default withStyles(styles)(withCookies(DetailView));

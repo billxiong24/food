@@ -21,7 +21,7 @@ import InputSelect from '../GenericComponents/InputSelect';
 import InputAutoCompleteOpenPage from '../GenericComponents/InputAutoCompleteOpenPage';
 import InputList from '../GenericComponents/InputList';
 import swal from 'sweetalert';
-import { defaultErrorCallback, nameErrorCallback, ingNumErrorCallback } from '../../Resources/common';
+import { defaultErrorCallback, nameErrorCallback, ingNumErrorCallback, defaultNumErrorCallbackGenerator } from '../../Resources/common';
 import axios from 'axios';
 import common from '../../Resources/common';
 
@@ -394,7 +394,7 @@ class IngredientList extends Component {
                     type="number"
                     displayName="Input"
                     name={"Package Cost"}
-                    errorCallback={defaultErrorCallback}
+                    errorCallback={defaultNumErrorCallbackGenerator("Invalid Package Cost")}
                     defaultValue={ingredient.pkg_cost}
                 />
                 <Input

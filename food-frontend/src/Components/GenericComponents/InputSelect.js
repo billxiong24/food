@@ -68,6 +68,7 @@ class InputSelect extends React.Component {
             MenuProps={MenuProps}
             value={this.state.input}
             onChange={this.handleChange}
+            disabled={this.props.disabled}
             inputProps={{
               name: 'input',
               id: 'age-simple',

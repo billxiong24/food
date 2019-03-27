@@ -229,6 +229,7 @@ class InputAutocomplete extends React.Component {
             value: this.state.single,
             onChange: this.handleChange('single'),
             error: this.props.error,
+            disabled:this.props.disabled,
             InputLabelProps: {
               shrink: true,
               error: this.props.error

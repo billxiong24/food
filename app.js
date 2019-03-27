@@ -71,7 +71,7 @@ if(process.env.NODE_ENV !== 'test') {
     app.use(checkCookie);
     app.use(checkUserAll);
     app.post('*', checkAdminAll);
-    app.put('*', checkAdminAll);
+    app.put('*', checkUserAll);
     app.delete('*', checkAdminAll);
 }
 

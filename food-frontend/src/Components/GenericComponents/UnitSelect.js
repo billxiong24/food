@@ -78,6 +78,7 @@ class UnitSelect extends React.Component {
                 rows="4"
                 type="number"
                 name={"Name"}
+                disabled = {this.props.disabled}
                 error={this.props.error}
                 onChange={this.handleNumberChange}
                 defaultValue={this.props.defaultValue}
@@ -88,6 +89,7 @@ class UnitSelect extends React.Component {
           <Select
             value={this.state.unit}
             onChange={this.handleUnitChange}
+            disabled={this.props.disabled}
             inputProps={{
               name: 'unit',
               id: 'unit',

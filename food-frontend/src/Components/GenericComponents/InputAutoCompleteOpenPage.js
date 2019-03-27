@@ -202,38 +202,45 @@ getSuggestionsFromApi = (value) => {
                     this.props.idCallback(id)
                   }
                 }
+                disabled= {this.props.disabled}
                 defaultId = {this.props.defaultId}
                 suggestionsCallback={this.suggestionsCallback}
                 className={classes.autocomplete}
             />
             {
-                this.state.name ?
-                <Button
-                    color="primary"
-                    className={classes.button}
-                    onClick={()=>{
-                        this.props.openEditPage(() => { this.setState({ editDialog: null })})
+              !this.props.disabled ?
+              
+                  this.state.name ?
+                  <Button
+                      color="primary"
+                      className={classes.button}
+                      onClick={()=>{
+                          this.props.openEditPage(() => { this.setState({ editDialog: null })})
+                          .then((res) => {
+                            this.setState({editDialog: res})
+                          })
+                      }}
+                      > 
+                      Edit
+                  </Button>
+                  :
+                  <Button
+                      className={classes.button}
+                      onClick={()=>{
+                        this.props.openCreatePage(() => { this.setState({ createDialog: null })}, this.state.namerino)
                         .then((res) => {
-                          this.setState({editDialog: res})
+                          this.setState({createDialog: res})
                         })
                     }}
-                    > 
-                    Edit
-                </Button>
-                :
-                <Button
-                    className={classes.button}
-                    onClick={()=>{
-                      this.props.openCreatePage(() => { this.setState({ createDialog: null })}, this.state.namerino)
-                      .then((res) => {
-                        this.setState({createDialog: res})
-                      })
-                  }}
-                    >
-                    Create
-                </Button>
-
+                      >
+                      Create
+                  </Button>
+                  
+              
+              :
+              null
             }
+            
             {
                 this.state.editDialog
             }
