@@ -42,12 +42,14 @@ class DetailView extends Component {
     super(props);
     let state = {}
     let that = this
-    
+    console.log(props)
     for(var i = 0; i < this.props.children.length; i++){
         console.log(this.props.children[i].props.displayName)
         // state[this.props.children[i].id]
         //// console.log(this.props.children[i].props)
-        if(this.props.children[i].props.displayName.includes("InputSelect")){
+        if(this.props.children[i].props.displayName.includes("SKUInput")){
+
+        }else if(this.props.children[i].props.displayName.includes("InputSelect")){
             state[this.props.children[i].props.id] = this.props.children[i].props.item
             // Promise.resolve(this.props.children[i].props.errorCallback(state[this.props.children[i].props.id],that.props.children[i].props.id +"_errorMsg"))
             // .then((res) => {

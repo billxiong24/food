@@ -8,8 +8,8 @@ import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import { CardActionArea, Input, TextField } from '@material-ui/core';
-import { routeToPage, ingSearch } from '../../Redux/Actions';
+import { CardActionArea, Input, TextField, Checkbox } from '@material-ui/core';
+import { routeToPage, ingSearch, ingAddDependency, ingRemoveDependency } from '../../Redux/Actions';
 import { withRouter } from 'react-router-dom'
 import { ingDetSetIng, ingDetGetSkus } from '../../Redux/Actions/ActionCreators/IngredientDetailsActionCreators';
 import labels from '../../Resources/labels';
@@ -24,13 +24,15 @@ import swal from 'sweetalert';
 import { defaultErrorCallback, nameErrorCallback, ingNumErrorCallback, defaultNumErrorCallbackGenerator } from '../../Resources/common';
 import axios from 'axios';
 import common from '../../Resources/common';
+import SKUInput from '../GenericComponents/SKUInput';
 
 
 const styles = {
     card: {
-        width: '100 %',
-        marginBottom:20,
-        marginTop:20,
+        display:'flex',
+        flexGrow: '8',
+        marginBottom: 10,
+        marginTop: 10,
       },
       cardAction:{
         padding:10
@@ -56,6 +58,11 @@ const styles = {
       },
       button:{
           width:'100%'
+      },
+      entry: {
+        width: '100%',
+        display:'flex',
+        flexDirection:'row',
       }
 
 };
@@ -65,7 +72,7 @@ class IngredientList extends Component {
     constructor(props){
         super(props);
         this.state = {
-            editDialog: false
+            editDialog: null
         }
     }
 
@@ -294,125 +301,142 @@ class IngredientList extends Component {
 
 
         // console.log(ingredient)
-        return (
-            <DetailView
-                open={true}
-                close={closeCallback}
-                onSubmit={(form_data) => {
-                    let item = {}
-                    let isError = false
-                    for (var property in form_data) {
-                        if (form_data.hasOwnProperty(property)) {
-                            if(property.includes("pkg_size") && !property.includes("errorMsg")){
-                                // console.log(property)
-                                // console.log(this.state[property])
-                                item["pkg_size"] = form_data[property].split(" ")[0]
-                                item["unit"] = form_data[property].split(" ")[1]
-                            }else if(!property.includes("errorMsg")){
-                                item[property] = form_data[property]
-                            }else{
-                                isError = isError || form_data[property] != null
+        axios.get(`${common.hostname}ingredients/${ingredient.id}/skus`)
+        .then((response) => {
+            console.log(response)
+            let pic = (
+                <DetailView
+                    open={true}
+                    close={closeCallback}
+                    onSubmit={(form_data) => {
+                        let item = {}
+                        let isError = false
+                        for (var property in form_data) {
+                            if (form_data.hasOwnProperty(property)) {
+                                if(property.includes("pkg_size") && !property.includes("errorMsg")){
+                                    // console.log(property)
+                                    // console.log(this.state[property])
+                                    item["pkg_size"] = form_data[property].split(" ")[0]
+                                    item["unit"] = form_data[property].split(" ")[1]
+                                }else if(!property.includes("errorMsg")){
+                                    item[property] = form_data[property]
+                                }else{
+                                    isError = isError || form_data[property] != null
+                                }
                             }
+                            // if (this.state.hasOwnProperty(property)) {
+                            //     // console.log(String(property).contains(""))
+                            // }
                         }
-                        // if (this.state.hasOwnProperty(property)) {
-                        //     // console.log(String(property).contains(""))
-                        // }
-                    }
-                        if(isError){
-                            swal(`There are unresolved errors`,{
-                                icon: "error",
-                            });
-                        }else{
-                            // console.log(item)
-                            let that = this
-                            let ing = ingredient
-                            // const {ing_list, ...new_formula_data} = item
-                            // new_formula_data.num = parseInt(new_formula_data.num)
-                            // console.log(new_formula_data)
-                            axios.put(`${common.hostname}ingredients/${ing.id}`, item)
-                            .then(function (response) {
-                                //that.props.submit(item)
-                                swal({
-                                    icon: "success",
-                                });
-                                that.setState({editDialog:false})
-                                that.props.search()
-                                
-                            })
-                            .catch(function (error) {
-                                swal(`${error}`,{
+                            if(isError){
+                                swal(`There are unresolved errors`,{
                                     icon: "error",
                                 });
-                            });
-                          
-                        }
-                        
-                    }}
-                // handleChange={() => console.log("handle change")}
-                name={"Ingredient Name"}
-                title={"Edit Ingredient"}
-            >
-                <Input
-                    id="name"
-                    rows="4"
-                    error={true}
-                    name={"Name"}
-                    displayName="Input"
-                    errorCallback={nameErrorCallback}
-                    defaultValue = {ingredient.name}
-                />
-                <Input
-                    id="num"
-                    rows="4"
-                    type="number"
-                    name={"Number"}
-                    displayName="Input"
-                    errorCallback={this.ingNumErrorCallbackGenerator(ingredient.num)}
-                    defaultValue = {ingredient.num}
-                />
-                <Input
-                    id="vend_info"
-                    rows="4"
-                    name={"Vendor Info"}
-                    displayName="Input"
-                    errorCallback={defaultErrorCallback}
-                    defaultValue={ingredient.vend_info}
-                />
-                <UnitSelect
-                    id="pkg_size"
-                    unitSelect={true}
-                    name={"Package Size"}
-                    item={unitItem}
-                    displayName="UnitSelect"
-                    items={unitItems}
-                    defaultValue={unitValue}
-                    errorCallback={defaultErrorCallback}
-                />
-                <Input
-                    id="pkg_cost"
-                    rows="4"
-                    type="number"
-                    displayName="Input"
-                    name={"Package Cost"}
-                    errorCallback={defaultNumErrorCallbackGenerator("Invalid Package Cost")}
-                    defaultValue={ingredient.pkg_cost}
-                />
-                <Input
-                    id="comments"
-                    rows="4"
-                    multiline
-                    type="number"
-                    displayName="Input"
-                    name={"Comment"}
-                    errorCallback={defaultErrorCallback}
-                    defaultValue={ingredient.comments}
-                />
-            </DetailView>
-        )
+                            }else{
+                                // console.log(item)
+                                let that = this
+                                let ing = ingredient
+                                // const {ing_list, ...new_formula_data} = item
+                                // new_formula_data.num = parseInt(new_formula_data.num)
+                                // console.log(new_formula_data)
+                                axios.put(`${common.hostname}ingredients/${ing.id}`, item)
+                                .then(function (response) {
+                                    //that.props.submit(item)
+                                    swal({
+                                        icon: "success",
+                                    });
+                                    that.setState({editDialog:false})
+                                    that.props.search()
+                                    
+                                })
+                                .catch(function (error) {
+                                    swal(`${error}`,{
+                                        icon: "error",
+                                    });
+                                });
+                              
+                            }
+                            
+                        }}
+                    // handleChange={() => console.log("handle change")}
+                    name={"Ingredient Name"}
+                    title={"Edit Ingredient"}
+                >
+                    <Input
+                        id="name"
+                        rows="4"
+                        error={true}
+                        name={"Name"}
+                        displayName="Input"
+                        errorCallback={nameErrorCallback}
+                        defaultValue = {ingredient.name}
+                    />
+                    <Input
+                        id="num"
+                        rows="4"
+                        type="number"
+                        name={"Number"}
+                        displayName="Input"
+                        errorCallback={this.ingNumErrorCallbackGenerator(ingredient.num)}
+                        defaultValue = {ingredient.num}
+                    />
+                    <Input
+                        id="vend_info"
+                        rows="4"
+                        name={"Vendor Info"}
+                        displayName="Input"
+                        errorCallback={defaultErrorCallback}
+                        defaultValue={ingredient.vend_info}
+                    />
+                    <UnitSelect
+                        id="pkg_size"
+                        unitSelect={true}
+                        name={"Package Size"}
+                        item={unitItem}
+                        displayName="UnitSelect"
+                        items={unitItems}
+                        defaultValue={unitValue}
+                        errorCallback={defaultErrorCallback}
+                    />
+                    <Input
+                        id="pkg_cost"
+                        rows="4"
+                        type="number"
+                        displayName="Input"
+                        name={"Package Cost"}
+                        errorCallback={defaultNumErrorCallbackGenerator("Invalid Package Cost")}
+                        defaultValue={ingredient.pkg_cost}
+                    />
+                    <Input
+                        id="comments"
+                        rows="4"
+                        multiline
+                        type="number"
+                        displayName="Input"
+                        name={"Comment"}
+                        errorCallback={defaultErrorCallback}
+                        defaultValue={ingredient.comments}
+                    />
+                    <SKUInput
+                        id ="sku_errorMsg"
+                        displayName="SKUInput"
+                        data={response.data}
+                        name={"SKU List"}
+                    />
+                </DetailView>
+            )
+            this.setState({editDialog: pic})
+        })
+        
     }
 
 
-
+    open = (item) => {
+        this.openIngredientEditPage(item, () => {
+            this.setState({ editDialog: null });
+        })
+        
+    }
     
 
 
@@ -428,16 +452,31 @@ class IngredientList extends Component {
 
     render() {
         const { classes, ingredients, history, sortby } = this.props
+        console.log(this.props.dependency)
         
         return (
             <div>
                 {
                 this.props.ingredients.map((item, index) => (
+                    <div key={index} className={classes.entry}>
+                    <Checkbox
+                        checked={this.props.dependency.map(a => a.id).includes(item.id)}
+                        onChange={() => {
+                            axios.get(`${common.hostname}ingredients/${item.id}/skus`)
+                            .then((response) => {
+                                item.skus = response.data
+                                if(this.props.dependency.map(a => a.id).includes(item.id)){
+                                    this.props.removeIngFromReport(item)
+                                }else{
+                                    this.props.addIngToReport(item)
+                                }
+                                
+                            })
+                        }}
+                        value="Select"
+                    />
                     <Card className={classes.card} key={index} onClick = {() => {
-                        this.setState({
-                            editDialog: true,
-                            ingredient:item
-                        })
+                       this.open(item)
                     }}>
                         <CardActionArea
                         className = {classes.cardAction}
@@ -452,12 +491,11 @@ class IngredientList extends Component {
                         </CardContent>
                         </CardActionArea>
                     </Card>
+                    </div>
                 ))
                 }
                 {
-                    this.state.editDialog ? this.openIngredientEditPage(this.state.ingredient, () => {
-                        this.setState({ editDialog: false });
-                    }) : null
+                    this.state.editDialog
                 }
             </div>
 
@@ -468,7 +506,8 @@ class IngredientList extends Component {
 const mapStateToProps = state => {
     return {
         ingredients: state.ingredients.items,
-        sortby: state.ingredients.sortby
+        sortby: state.ingredients.sortby,
+        dependency: state.ingredients.ingDependency,
     };
 };
 
@@ -481,6 +520,12 @@ const mapDispatchToProps = dispatch => {
         },
         search: () => {
             dispatch(ingSearch())
+        },
+        addIngToReport: ing => {
+            dispatch(ingAddDependency(ing))
+        },
+        removeIngFromReport: ing => {
+            dispatch(ingRemoveDependency(ing))
         }
     };
 };  

@@ -38,6 +38,7 @@ import DetailView from '../GenericComponents/DetailView';
 import { Input } from '@material-ui/core';
 import InputList from '../GenericComponents/InputList';
 import swal from 'sweetalert';
+import { withCookies } from 'react-cookie';
 
 const styles = {
   card: {
@@ -354,6 +355,8 @@ class FormulaPage extends Component {
 
 
   render() {
+    console.log(this.props)
+    let disabled = this.props.cookies.cookies.admin == "false"
     const { classes } = this.props
     return (
       <div className={classes.ingredients_page_container}>
@@ -377,7 +380,7 @@ class FormulaPage extends Component {
             <div className={classes.ingredients_search_bar}>
           </div>
           <div className={classes.other_actions}>
-            { this.props.users.id === common.admin ?
+            { !disabled ?
                 <Button
                 className={classes.add_ingredient}
                 onClick={this.openCreatePage}
@@ -451,4 +454,4 @@ const mapDispatchToProps = dispatch => {
 }
 
 
-export default withRouter(withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(FormulaPage)));
+export default withRouter(withStyles(styles)(withCookies(connect(mapStateToProps, mapDispatchToProps)(FormulaPage))));

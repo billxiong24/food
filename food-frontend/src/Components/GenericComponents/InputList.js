@@ -94,6 +94,10 @@ const styles = theme => ({
     opacity: 0.5,
     marginTop: "auto",
     marginLeft: "auto"
+},
+d:{
+    marginTop:10,
+    marginBottom:10
 }
 });
 
@@ -198,7 +202,8 @@ class InputList extends React.Component {
             {
                 this.props.disabled 
                 ?
-                <InputLabel 
+                <InputLabel
+                    className={classes.d}
                     htmlFor="age-simple"
                     error={this.props.error}
                 >{"Ingredient List" + " *"}</InputLabel>
