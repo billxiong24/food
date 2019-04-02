@@ -1,0 +1,109 @@
+SELECT sales.*, sku.* FROM sales INNER JOIN sku ON (sales.sku_num = sku.num) WHERE (sku_num = 1234) AND (year = 2019)
+already exists
+SELECT sales.*, sku.* FROM sales INNER JOIN sku ON (sales.sku_num = sku.num) WHERE (sku_num = 5727) AND (year = 2019)
+already exists
+SELECT sales.*, sku.* FROM sales INNER JOIN sku ON (sales.sku_num = sku.num) WHERE (sku_num = 55) AND (year = 2019)
+already exists
+SELECT sales.*, sku.* FROM sales INNER JOIN sku ON (sales.sku_num = sku.num) WHERE (sku_num = 21) AND (year = 2019)
+already exists
+SELECT sales.*, sku.* FROM sales INNER JOIN sku ON (sales.sku_num = sku.num) WHERE (sku_num = 22) AND (year = 2019)
+already exists
+SELECT sales.*, sku.* FROM sales INNER JOIN sku ON (sales.sku_num = sku.num) WHERE (sku_num = 23) AND (year = 2019)
+already exists
+SELECT sales.*, sku.* FROM sales INNER JOIN sku ON (sales.sku_num = sku.num) WHERE (sku_num = 4) AND (year = 2019)
+already exists
+SELECT sales.*, sku.* FROM sales INNER JOIN sku ON (sales.sku_num = sku.num) WHERE (sku_num = 24) AND (year = 2019)
+already exists
+SELECT sales.*, sku.* FROM sales INNER JOIN sku ON (sales.sku_num = sku.num) WHERE (sku_num = 25) AND (year = 2019)
+already exists
+SELECT sales.*, sku.* FROM sales INNER JOIN sku ON (sales.sku_num = sku.num) WHERE (sku_num = 26) AND (year = 2019)
+already exists
+SELECT sales.*, sku.* FROM sales INNER JOIN sku ON (sales.sku_num = sku.num) WHERE (sku_num = 27) AND (year = 2019)
+already exists
+SELECT sales.*, sku.* FROM sales INNER JOIN sku ON (sales.sku_num = sku.num) WHERE (sku_num = 28) AND (year = 2019)
+already exists
+SELECT sales.*, sku.* FROM sales INNER JOIN sku ON (sales.sku_num = sku.num) WHERE (sku_num = 1) AND (year = 2019)
+already exists
+SELECT sales.*, sku.* FROM sales INNER JOIN sku ON (sales.sku_num = sku.num) WHERE (sku_num = 2) AND (year = 2019)
+already exists
+SELECT sales.*, sku.* FROM sales INNER JOIN sku ON (sales.sku_num = sku.num) WHERE (sku_num = 3) AND (year = 2019)
+already exists
+SELECT sales.*, sku.* FROM sales INNER JOIN sku ON (sales.sku_num = sku.num) WHERE (sku_num = 5) AND (year = 2019)
+already exists
+SELECT sales.*, sku.* FROM sales INNER JOIN sku ON (sales.sku_num = sku.num) WHERE (sku_num = 123) AND (year = 2019)
+already exists
+SELECT sales.*, sku.* FROM sales INNER JOIN sku ON (sales.sku_num = sku.num) WHERE (sku_num = 7) AND (year = 2019)
+already exists
+SELECT sales.*, sku.* FROM sales INNER JOIN sku ON (sales.sku_num = sku.num) WHERE (sku_num = 8) AND (year = 2019)
+already exists
+SELECT sales.*, sku.* FROM sales INNER JOIN sku ON (sales.sku_num = sku.num) WHERE (sku_num = 9) AND (year = 2019)
+already exists
+SELECT sales.*, sku.* FROM sales INNER JOIN sku ON (sales.sku_num = sku.num) WHERE (sku_num = 12) AND (year = 2019)
+already exists
+SELECT sales.*, sku.* FROM sales INNER JOIN sku ON (sales.sku_num = sku.num) WHERE (sku_num = 11) AND (year = 2019)
+already exists
+SELECT sales.*, sku.* FROM sales INNER JOIN sku ON (sales.sku_num = sku.num) WHERE (sku_num = 13) AND (year = 2019)
+already exists
+SELECT sales.*, sku.* FROM sales INNER JOIN sku ON (sales.sku_num = sku.num) WHERE (sku_num = 15) AND (year = 2019)
+already exists
+SELECT sales.*, sku.* FROM sales INNER JOIN sku ON (sales.sku_num = sku.num) WHERE (sku_num = 16) AND (year = 2019)
+already exists
+SELECT sales.*, sku.* FROM sales INNER JOIN sku ON (sales.sku_num = sku.num) WHERE (sku_num = 14) AND (year = 2019)
+already exists
+SELECT sales.*, sku.* FROM sales INNER JOIN sku ON (sales.sku_num = sku.num) WHERE (sku_num = 55543) AND (year = 2019)
+already exists
+SELECT sales.*, sku.* FROM sales INNER JOIN sku ON (sales.sku_num = sku.num) WHERE (sku_num = 17) AND (year = 2019)
+already exists
+SELECT sales.*, sku.* FROM sales INNER JOIN sku ON (sales.sku_num = sku.num) WHERE (sku_num = 18) AND (year = 2019)
+already exists
+SELECT sales.*, sku.* FROM sales INNER JOIN sku ON (sales.sku_num = sku.num) WHERE (sku_num = 253) AND (year = 2019)
+already exists
+SELECT sales.*, sku.* FROM sales INNER JOIN sku ON (sales.sku_num = sku.num) WHERE (sku_num = 1001) AND (year = 2019)
+already exists
+SELECT sales.*, sku.* FROM sales INNER JOIN sku ON (sales.sku_num = sku.num) WHERE (sku_num = 55353333) AND (year = 2019)
+didnt exist
+SELECT sales.*, sku.* FROM sales INNER JOIN sku ON (sales.sku_num = sku.num) WHERE (sku_num = 64654644) AND (year = 2019)
+didnt exist
+SELECT sales.*, sku.* FROM sales INNER JOIN sku ON (sales.sku_num = sku.num) WHERE (sku_num = 82646) AND (year = 2019)
+didnt exist
+SELECT sales.*, sku.* FROM sales INNER JOIN sku ON (sales.sku_num = sku.num) WHERE (sku_num = 757) AND (year = 2019)
+didnt exist
+CUSTOMER QUERY: SELECT * FROM sku INNER JOIN sales ON (sales.sku_num = sku.num) WHERE (year = 2019)
+{ prod69: 
+   { '1': { '2019': [Object] },
+     '2': { '2019': [Object] },
+     '3': { '2019': [Object] },
+     '4': { '2019': [Object] },
+     '5': { '2019': [Object] },
+     '24': { '2019': [Object] },
+     '25': { '2019': [Object] },
+     '26': { '2019': [Object] },
+     '27': { '2019': [Object] },
+     '28': { '2019': [Object] },
+     '55': { '2019': [Object] },
+     '123': { '2019': [Object] },
+     '1234': { '2019': [Object] },
+     '55543': { '2019': [Object] },
+     '64654644': { '2019': [Object] } },
+  prod4: 
+   { '7': { '2019': [Object] },
+     '8': { '2019': [Object] },
+     '9': { '2019': [Object] },
+     '11': { '2019': [Object] },
+     '12': { '2019': [Object] },
+     '13': { '2019': [Object] },
+     '14': { '2019': [Object] },
+     '15': { '2019': [Object] },
+     '16': { '2019': [Object] },
+     '17': { '2019': [Object] },
+     '18': { '2019': [Object] },
+     '253': { '2019': [Object] },
+     '82646': { '2019': [Object] },
+     '55353333': { '2019': [Object] } },
+  prod51: 
+   { '21': { '2019': [Object] },
+     '22': { '2019': [Object] },
+     '23': { '2019': [Object] },
+     '757': { '2019': [Object] },
+     '1001': { '2019': [Object] },
+     '5727': { '2019': [Object] } } }

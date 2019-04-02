@@ -9,6 +9,7 @@ const Ingredient = require('../app/ingredient');
 const SKUIngred = require("../app/sku_ingred");
 const ProdLine = require("../app/productline");
 const SalesTracker = require("../app/sales_tracker");
+const Filter = require("../app/filter");
 
 function getCRUD(type) {
     let crud = null;
@@ -56,6 +57,17 @@ const checkUser = (req, res, next) => {
 
 const checkTokenUser = process.env.NODE_ENV === 'test' ? (req, res, next) => { next(); } : checkUser;
 
+router.get('/fetch', function(req, res, next) {
+    let orderKey = req.query.orderKey;
+    let asc = (!req.query.asc) || req.query.asc == "1"; 
+    const filter = new Filter();
+    filter.setOrderKey(orderKey).setAsc(asc);
+
+    const mg = new ManufacturingGoals();
+    const controller = new Controller();
+    controller.constructGetResponse(res, mg.fetch(filter));
+
+});
 router.get('/', function(req, res, next) {
     if(!req.query.user_id || isNaN(req.query.user_id)) {
         return res.status(400).json({

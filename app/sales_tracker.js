@@ -8,6 +8,8 @@ const cheerio = require('cheerio');
 const getYear = require('date-fns/get_year');
 const getISOWeek = require('date-fns/get_iso_week');
 const Formatter = require('./formatter');
+const weekNum = require('current-week-number');
+
 
 function sleeper(ms) {
     return function(x) {
@@ -26,22 +28,6 @@ class SalesTracker {
         const formatter = new Formatter(format);
         return formatter.generateFormat(jsonList);
     }
-
-    // total(skuNum, start) {
-    //   return this.getSKUCost(skuNum)
-    //   .then((sku_info) => {
-    //     let { setup_cost, run_cost, case_cost, man_rate } = sku_info.rows[0];
-    //     this.getActivityCount(skuNum, start)
-    //     .then((activities) => {
-    //       // TODO use an actual history of activities
-    //       // let average_run_size = activities[0].sum / activities[0].count
-    //       let average_run_size = 10 * man_rate;
-    //       let year = getYear(new Date(start));
-    //       let week = getISOWeek(new Date(start));
-    //       return {}
-    //     })
-    //   })
-    // }
 
     getSKUCost(skuNum) {
       let query = squel.select()
@@ -70,12 +56,54 @@ class SalesTracker {
       return db.execSingleQuery(query, [])
     }
 
-    search(skuNum, numYears, prdlines, customers, aggregate = false) {
+    searchTimeSpan(skuNum, fromDate, toDate) {
+
+        let yr = new Date(toDate).getFullYear();
+
+        //some weeks numbers are 53
+        fromDate = weekNum(fromDate) % 52;
+        toDate = weekNum(toDate) % 52;
+        console.log("weeks" + fromDate + " " + toDate);
+
+        let that = this;
+        return this.search(skuNum, 4, [], [], false, yr)
+        .then(function(res) {
+            let newList = that.groupByKey(res.rows, 'year');
+            let slicedList = {};
+            for(let year in newList) {
+                let fromInd = newList[year].length - 1;
+                let toInd = newList[year].length - 1;
+                //find out which dates to start from
+                for(let i = 0; i < newList[year].length; i++) {
+                    if(newList[year][i].week >= fromDate) {
+                        fromInd = i;
+                        break;
+                    }
+                }
+
+                for(let i = 0; i < newList[year].length; i++) {
+                    if(newList[year][i].week > toDate) {
+                        toInd = i - 1;
+                        break;
+                    }
+                }
+                slicedList[year] = newList[year].slice(fromInd, toInd + 1);
+                slicedList[year] = that.calculateRevAndProf(slicedList[year]);
+
+            }
+
+            return {
+                rows: slicedList
+            };
+        });
+    }
+
+    search(skuNum, numYears, prdlines, customers, aggregate = false, currYear = new Date().getFullYear()) {
         //escape single quotes
         for (var i = 0, len = customers.length; i < len; i++) {
             customers[i] = customers[i].replace(/'/g, "''");
         }
-        let currYear = new Date().getFullYear();
+        //let currYear = new Date().getFullYear();
         let res = [];
         let prom = Promise.resolve(null);
         let that = this;
@@ -113,7 +141,9 @@ class SalesTracker {
         
         const queryGen = new QueryGenerator(query);
         queryGen.chainOrFilter(prdlines, "prd_line = ?")
-        //.chainOrFilter(customers, "customer_name = ?")
+        //.chainOrFilter(customers, "customer_name = ?") second-round pick out of Duke, power forward Carlos Boozer was both an NBA All-Star and gold medal Olympian for the United States. He was a tremendous low-post scorer for the Utah Jazz and Chicago Bulls and averaged a double-double in five different seasons.
+        //
+        //
         const q = queryGen.getQuery().toString();
         //console.log(q);
         return db.execSingleQuery(q, [])
@@ -196,6 +226,7 @@ class SalesTracker {
             deepGroupList[key] = newList;
 
         }
+        //console.log(deepGroupList);
 
         let deepYearGroup = {};
         //for each produt line
@@ -214,7 +245,6 @@ class SalesTracker {
         }
             //let newList = this.groupByKey(deepGroupList[key], 'year');
             //deepYearGroup[key] = newList;
-        //}
         //return deepYearGroup;
         return deepYearGroup;
     }
@@ -291,9 +321,6 @@ class SalesTracker {
 }
 
 module.exports = SalesTracker;
-//new SalesTracker().search(24, 2)
-//.then(function(rows) {
-    //console.log(rows.rows);
-//});
+//new SalesTracker().searchTimeSpan(24, 2, 3);
 
 //new SalesTracker().scrapeAndInsert(4, 2014);

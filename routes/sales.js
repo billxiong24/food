@@ -6,6 +6,16 @@ const Controller = require('../app/controller/controller');
 const SalesTracker = require('../app/sales_tracker');
 
 
+router.get('/search/timespan', function(req, res, next) {
+    let skuNum = req.query.sku_num;
+    let fromDate = req.query.fromDate;
+    let toDate = req.query.toDate;
+
+    let st = new SalesTracker();
+    const controller = new Controller();
+    controller.constructGetResponse(res, st.searchTimeSpan(skuNum, fromDate, toDate));
+});
+
 router.get('/search/aggregate', function(req, res, next) {
     //number of years to query for  (e.g. 10 means query for the past 10 years.
     let years = req.query.years;

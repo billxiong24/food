@@ -1,10 +1,10 @@
-const db = require("./db");
-const squel = require("squel").useFlavour("postgres");
+const db = require("./db"); const squel = require("squel").useFlavour("postgres");
 const CRUD = require("./CRUD");
 const Sku = require('./sku');
 const Formatter = require('./formatter');
 const QueryGenerator = require("./query_generator");
 const convert = require('convert-units');
+const Filter = require('./filter');
 
 
 class ManufacturingGoals extends CRUD {
@@ -73,6 +73,16 @@ class ManufacturingGoals extends CRUD {
 
     remove(id) {
         return db.execSingleQuery("DELETE FROM " + this.tableName + " WHERE id = $1", [id]);
+    }
+
+    fetch(filter) {
+        let q = squel.select()
+        .from(this.tableName)
+        .field("*");
+        const queryGen = new QueryGenerator(q);
+        let queryStr = filter.applyFilter(queryGen.getQuery()).toString();
+        console.log(queryStr);
+        return db.execSingleQuery(q, []);
     }
 
     search(user_id) {
