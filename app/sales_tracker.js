@@ -17,6 +17,30 @@ function sleeper(ms) {
     };
 }
 
+function standardDeviation(values){
+  var avg = average(values);
+  
+  var squareDiffs = values.map(function(value){
+      var diff = value - avg;
+      var sqrDiff = diff * diff;
+      return sqrDiff;
+    });
+  
+  var avgSquareDiff = average(squareDiffs);
+
+  var stdDev = Math.sqrt(avgSquareDiff);
+  return stdDev;
+}
+
+function average(data){
+  var sum = data.reduce(function(sum, value){
+      return sum + value;
+    }, 0);
+
+  var avg = sum / data.length;
+  return avg;
+}
+
 class SalesTracker {
 
     constructor() {
@@ -63,7 +87,6 @@ class SalesTracker {
         //some weeks numbers are 53
         fromDate = weekNum(fromDate) % 52;
         toDate = weekNum(toDate) % 52;
-        console.log("weeks" + fromDate + " " + toDate);
 
         let that = this;
         return this.search(skuNum, 4, [], [], false, yr)
@@ -88,12 +111,29 @@ class SalesTracker {
                     }
                 }
                 slicedList[year] = newList[year].slice(fromInd, toInd + 1);
-                slicedList[year] = that.calculateRevAndProf(slicedList[year]);
-
+                //slicedList[year] = that.calculateRevAndProf(slicedList[year]);
+                let numSales = 0;
+                for (let i = 0; i < slicedList[year].length; i++) {
+                    numSales += slicedList[year][i].sales;
+                }
+                slicedList[year] = JSON.parse(JSON.stringify(slicedList[year][0]));
+                slicedList[year].numSales = numSales;
             }
 
+            let avg = 0;
+            let sales = [];
+            for(let year in slicedList) {
+                avg += slicedList[year].numSales;
+                sales.push(slicedList[year].numSales);
+            }
+
+            let len = Object.keys(slicedList).length;
+            avg = len > 0 ? avg / len : 0;
+            slicedList.average = avg;
+            slicedList.stddev = standardDeviation(sales);
+
             return {
-                rows: slicedList
+                rows: slicedList 
             };
         });
     }
@@ -211,6 +251,7 @@ class SalesTracker {
         let obj = JSON.parse(JSON.stringify(list[0]));
         obj.revenue = revenue;
         obj.avgRevenue = parseFloat(avgRevenue.toFixed(2));
+        
         return obj;
     }
     performCalculations(rows) {
