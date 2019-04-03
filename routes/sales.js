@@ -5,6 +5,9 @@ const error_controller = require('../app/controller/error_controller');
 const Controller = require('../app/controller/controller');
 const SalesTracker = require('../app/sales_tracker');
 
+const { fork } = require('child_process');
+
+
 
 router.get('/search/timespan', function(req, res, next) {
     let skuNum = req.query.sku_num;
@@ -25,9 +28,18 @@ router.get('/search/aggregate', function(req, res, next) {
 
     customers = Controller.convertParamToArray(customers);
     prodlines = Controller.convertParamToArray(prodlines);
-    let st = new SalesTracker();
     const controller = new Controller();
-    controller.constructGetResponse(res, st.search(null, years, prodlines, customers, true));
+
+    const process = fork('./routes/sales_script.js');
+    process.send({
+        prodlines: prodlines,
+        years: years,
+        customers: customers
+    });
+    process.on('message', (message) => {
+        res.json(message.rows);
+    });
+    //controller.constructGetResponse(res, st.search(null, years, prodlines, customers, true));
 });
 
 router.get('/search/:sku_num', function(req, res, next) {
