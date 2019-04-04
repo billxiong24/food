@@ -52,6 +52,8 @@ class ManufacturingGoals extends CRUD {
         return db.execSingleQuery(query, [dataObj.user_id, dataObj.name]);
     }
 
+
+
     create(dataObj) {
         if(!dataObj.user_id || !dataObj.name || !dataObj.deadline) {
             return Promise.reject("Not all required fields are present");
@@ -78,12 +80,15 @@ class ManufacturingGoals extends CRUD {
     fetch(filter) {
         let q = squel.select()
         .from(this.tableName)
-        .field("*");
+        .field("manufacturing_goal.*, users.uname")
+        .join("users", null, "users.id = user_id")
         const queryGen = new QueryGenerator(q);
         let queryStr = filter.applyFilter(queryGen.getQuery()).toString();
         console.log(queryStr);
-        return db.execSingleQuery(q, []);
+        return db.execSingleQuery(queryStr, []);
     }
+
+    
 
     search(user_id) {
         let query = "SELECT * FROM " + this.tableName + " WHERE user_id=$1";

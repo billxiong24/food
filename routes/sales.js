@@ -8,7 +8,6 @@ const SalesTracker = require('../app/sales_tracker');
 const { fork } = require('child_process');
 
 
-
 router.get('/search/timespan', function(req, res, next) {
     let skuNum = req.query.sku_num;
     let fromDate = req.query.fromDate;
