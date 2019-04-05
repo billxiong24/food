@@ -305,6 +305,8 @@ class ManufacturingGoalsPage extends Component {
   };
 
   getAllGoals = () => {
+      console.log("GETTING ALL GOALS");
+      console.log(this.state.orderKey);
     return axios.get(common.hostname + 'manufacturing_goals/fetch', {
         params: {
             orderKey: this.state.orderKey
@@ -332,7 +334,11 @@ class ManufacturingGoalsPage extends Component {
   setTitleOrderKey = e => {
       this.setState({
           orderKey: "name"
-      })
+      },
+          () => {
+            this.getAllGoals();
+          }
+      )
   }
 
     changeEnabled = (goal_id, enabled) => {
@@ -357,13 +363,20 @@ class ManufacturingGoalsPage extends Component {
   setAuthorOrderKey = e => {
       this.setState({
           orderKey: "uname"
-      })
+      },() => {
+            this.getAllGoals();
+          }
+      )
+      //this.getAllGoals();
   }
 
   setEditOrderKey = e => {
       this.setState({
           orderKey: "last_edit"
-      })
+      },() => {
+            this.getAllGoals();
+          }
+      )
   }
 
   selectSku = skuNum => {
