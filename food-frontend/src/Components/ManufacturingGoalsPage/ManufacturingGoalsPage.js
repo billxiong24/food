@@ -28,6 +28,11 @@ import SkuAutocomplete from './SkuAutocomplete';
 import Autocomplete from './Autocomplete';
 import ManufacturingGoalsNewDialog from './ManufacturingGoalsNewDialog';
 import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
 let date = require('date-and-time');
 
 const styles = {
@@ -186,6 +191,10 @@ class ManufacturingGoalsPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      orderKey: "",
+      currViewGoals: [],
+      enabledGoalsMap: {},
+      viewGoals: false,
       alert: false,
       message: '',
       suggestions: [],
@@ -295,6 +304,68 @@ class ManufacturingGoalsPage extends Component {
     return this.props.mangoalSearchSkus({ name: e.currentTarget.value }, this.props.manGoals.filters);
   };
 
+  getAllGoals = () => {
+    return axios.get(common.hostname + 'manufacturing_goals/fetch', {
+        params: {
+            orderKey: this.state.orderKey
+        }
+    })
+      .then((response) => {
+          let obj = {};
+          for(let i = 0; i < response.data.length; i++) {
+              obj[response.data[i].id] = response.data[i].enabled;
+          }
+          this.setState({
+              enabledGoalsMap: obj
+          })
+          this.setState({
+              currViewGoals: response.data
+          })
+      })
+      .catch(err => {
+        console.log(err);
+      })
+
+  }
+
+
+  setTitleOrderKey = e => {
+      this.setState({
+          orderKey: "name"
+      })
+  }
+
+    changeEnabled = (goal_id, enabled) => {
+        console.log(enabled);
+        return axios.put(common.hostname + 'manufacturing_goals/' + goal_id, {
+            enabled: enabled
+        })
+        .then((response) => {
+            let obj = JSON.parse(JSON.stringify(this.state.enabledGoalsMap));
+            obj[goal_id] = enabled;
+            this.setState({
+                enabledGoalsMap: obj
+            })
+            console.log(this.state.enabledGoalsMap);
+        })
+        .catch(err => {
+            console.log(err);
+        })
+    }
+
+
+  setAuthorOrderKey = e => {
+      this.setState({
+          orderKey: "uname"
+      })
+  }
+
+  setEditOrderKey = e => {
+      this.setState({
+          orderKey: "last_edit"
+      })
+  }
+
   selectSku = skuNum => {
     this.setState({
       sku: skuNum,
@@ -372,6 +443,7 @@ class ManufacturingGoalsPage extends Component {
       });
   }
 
+
   closeAlert() {
     this.setState({
       alert: false,
@@ -379,6 +451,12 @@ class ManufacturingGoalsPage extends Component {
     });
   }
 
+  handleOpenGoals = () => {
+    this.setState({
+        viewGoals: true
+    });
+    this.getAllGoals();
+  }
   handleClickNewOpen = () => {
     this.setState({ newDialog: true });
   };
@@ -386,6 +464,8 @@ class ManufacturingGoalsPage extends Component {
   handleNewClose = () => {
     this.setState({ newDialog: false });
   };
+
+
 
   exportManGoal() {
     return axios.post(common.hostname + 'manufacturing_goals/exported_file', {
@@ -419,6 +499,12 @@ class ManufacturingGoalsPage extends Component {
             {this.props.cookies.user}'s Manufacturing Goals
           </Typography>
           <div>
+            <Button
+              variant="contained"
+              onClick={this.handleOpenGoals}
+            >
+                See Manufacturing Goals
+            </Button>
             <Button
               variant="contained"
               onClick={this.handleClickNewOpen}
@@ -478,6 +564,30 @@ class ManufacturingGoalsPage extends Component {
             </Fab>
           </div>
           <div variant="inset" className={classes.divider} />
+            <div className={this.state.viewGoals ? "test" : classes.hidden}>
+            <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell><Button onClick={this.setTitleOrderKey}> Goal name </Button></TableCell>
+                      <TableCell><Button onClick={this.setAuthorOrderKey}> Author </Button></TableCell>
+                      <TableCell><Button onClick={this.setEditOrderKey}> Last Edit</Button></TableCell>
+                      <TableCell>Enable/Disable</TableCell>
+                    </TableRow>
+                  </TableHead>
+                    <TableBody>
+        {
+                        this.state.currViewGoals.map((goal) => {
+                            return <TableRow>
+                              <TableCell> { goal.name } </TableCell>
+                              <TableCell> { goal.uname } </TableCell>
+                              <TableCell> { goal.last_edit } </TableCell>
+                              <TableCell> <Button onClick={() => this.changeEnabled(goal.id, !this.state.enabledGoalsMap[goal.id])}> { this.state.enabledGoalsMap[goal.id] ? "Disable" : "Enable" } </Button> </TableCell>
+                            </TableRow>
+                        })
+        }
+                    </TableBody>
+            </Table>
+            </div>
           <div className={(manGoals.activeGoal.id ? classes.man_goal_content_container : classes.hidden)}>
             <div className={classes.sku_search_container}>
               <div className={classes.man_goal_content_add}>
