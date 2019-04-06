@@ -27,6 +27,7 @@ import { withCookies } from 'react-cookie';
 import SkuAutocomplete from './SkuAutocomplete';
 import Autocomplete from './Autocomplete';
 import ManufacturingGoalsNewDialog from './ManufacturingGoalsNewDialog';
+import ManufacturingGoalsSalesDetails from './ManufacturingGoalsSalesDetails';
 import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -191,6 +192,9 @@ class ManufacturingGoalsPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      viewSales: false, 
+      salesData: {},  
+      aggregateSalesData: {}, 
       orderKey: "",
       currViewGoals: [],
       enabledGoalsMap: {},
@@ -331,6 +335,35 @@ class ManufacturingGoalsPage extends Component {
   }
 
 
+    fetchSalesProjection = e => {
+        console.log("sku num " + this.state.sku);
+        return axios.get(common.hostname + 'sales/search/timespan', {
+            params: {
+                sku_num: this.state.sku,
+                fromDate: '2-02-2019', 
+                toDate:  '3-24-2019' 
+            }
+        })
+            .then((response) => {
+                let agData = {
+                    average: response.data.average,
+                    stddev: response.data.stddev
+                };
+                delete response.data.average;
+                delete response.data.stddev;
+                console.log(agData);
+
+                this.setState({
+                    salesData: response.data, 
+                    aggregateSalesData: agData
+                });
+            })
+            .catch(err => {
+                console.log(err);
+            })
+
+    }
+
   setTitleOrderKey = e => {
       this.setState({
           orderKey: "name"
@@ -465,10 +498,26 @@ class ManufacturingGoalsPage extends Component {
   }
 
   handleOpenGoals = () => {
+      let bool = this.state.viewGoals;
     this.setState({
-        viewGoals: true
+        viewGoals: !bool
     });
     this.getAllGoals();
+  }
+
+  handleSalesOpen = () => {
+      this.fetchSalesProjection()
+      .then((d) => {
+          this.setState({
+              viewSales: true
+          });
+      })
+  }
+
+  handleSalesClose = () => {
+      this.setState({
+          viewSales: false
+      });
   }
   handleClickNewOpen = () => {
     this.setState({ newDialog: true });
@@ -647,6 +696,15 @@ class ManufacturingGoalsPage extends Component {
                   </Autocomplete>
                   <FormHelperText>Select Product Lines to Filter By</FormHelperText>
                 </FormControl>
+                <Button onClick = {this.handleSalesOpen} >
+                    View Sales Projection
+                </Button>
+            <ManufacturingGoalsSalesDetails
+              open={this.state.viewSales}
+              close={this.handleSalesClose}
+              data={this.state.salesData}
+              aggregateData={this.state.aggregateSalesData}
+            />
                 <div className={classes.active_filter_container}>
                   {manGoals.filters.map((prdline) => (
                     <Chip

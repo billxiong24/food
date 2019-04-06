@@ -16,6 +16,12 @@ function sleeper(ms) {
         return new Promise(resolve => setTimeout(() => resolve(x), ms));
     };
 }
+function sortByKey(array, key) {
+    return array.sort(function(a, b) {
+        var x = a[key]; var y = b[key];
+        return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+    });
+}
 
 function standardDeviation(values){
   var avg = average(values);
@@ -94,6 +100,7 @@ class SalesTracker {
             let newList = that.groupByKey(res.rows, 'year');
             let slicedList = {};
             for(let year in newList) {
+                newList[year] = sortByKey(newList[year], 'week');
                 let fromInd = newList[year].length - 1;
                 let toInd = newList[year].length - 1;
                 //find out which dates to start from
@@ -110,7 +117,9 @@ class SalesTracker {
                         break;
                     }
                 }
+                console.log(toInd);
                 slicedList[year] = newList[year].slice(fromInd, toInd + 1);
+                //console.log(slicedList[year]);
                 //slicedList[year] = that.calculateRevAndProf(slicedList[year]);
                 let numSales = 0;
                 for (let i = 0; i < slicedList[year].length; i++) {

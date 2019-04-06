@@ -25,6 +25,7 @@
     "react-big-scheduler": "^0.2.6",
     "react-chartkick": "^0.3.0",
     "react-cookie": "^3.0.8",
+    "react-copy-to-clipboard": "^5.0.1",
     "react-dom": "^16.7.0",
     "react-fontawesome": "^1.6.1",
     "react-gantt-timeline": "https://github.com/guiqui/react-timeline-gantt/tarball/master",
