@@ -58,7 +58,7 @@ class CRUD {
         }
         q = q.where(primaryKeyName + "='" + oldPrimaryKey+"'");
         q = q.toString();
-        //logger.debug(q);
+        console.log(q);
         return db.execSingleQuery(q, []);
     }
 

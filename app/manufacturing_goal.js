@@ -70,6 +70,7 @@ class ManufacturingGoals extends CRUD {
     }
 
     update(dataObj, id) {
+        dataObj.last_edit = 'NOW()';
         return super.change(dataObj, id, "id");
     }
 
@@ -111,7 +112,13 @@ class ManufacturingGoals extends CRUD {
         query = query.toString();
         console.log(query);
         //logger.debug(query);
-        return db.execSingleQuery(query, []);
+        return db.execSingleQuery(query, [])
+        .then(function(res) {
+            return db.execSingleQuery("UPDATE manufacturing_goal SET last_edit = NOW() WHERE id = $1", [manufacturing_id])
+            .then(function(x) {
+                return res;
+            })
+        });
     }
 
     removeSkus(manufacturing_id, sku_ids) {
@@ -126,7 +133,14 @@ class ManufacturingGoals extends CRUD {
         .where(
             expr
         ).toString();
-        return db.execSingleQuery(query, []);
+
+        return db.execSingleQuery(query, [])
+        .then(function(res) {
+            return db.execSingleQuery("UPDATE manufacturing_goal SET last_edit = NOW() WHERE id = $1", [manufacturing_id])
+            .then(function(x) {
+                return res;
+            })
+        });
     }
 
    calculateQuantities(manufacturing_id, useUnits = true) {
