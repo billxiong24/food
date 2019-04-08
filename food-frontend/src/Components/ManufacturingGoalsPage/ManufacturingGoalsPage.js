@@ -28,6 +28,7 @@ import SkuAutocomplete from './SkuAutocomplete';
 import Autocomplete from './Autocomplete';
 import ManufacturingGoalsNewDialog from './ManufacturingGoalsNewDialog';
 import ManufacturingGoalsSalesDetails from './ManufacturingGoalsSalesDetails';
+
 import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -192,6 +193,8 @@ class ManufacturingGoalsPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      fromDate: date.format(new Date(), 'YYYY-MM-DD'),
+      toDate: date.format(new Date(), 'YYYY-MM-DD'),
       viewSales: false, 
       salesData: {},  
       aggregateSalesData: {}, 
@@ -336,12 +339,13 @@ class ManufacturingGoalsPage extends Component {
 
 
     fetchSalesProjection = e => {
-        console.log("sku num " + this.state.sku);
+        console.log(this.state.fromDate);
+        console.log(this.state.toDate);
         return axios.get(common.hostname + 'sales/search/timespan', {
             params: {
                 sku_num: this.state.sku,
-                fromDate: '2-02-2019', 
-                toDate:  '3-24-2019' 
+                fromDate: this.state.fromDate, 
+                toDate:  this.state.toDate 
             }
         })
             .then((response) => {
@@ -503,6 +507,10 @@ class ManufacturingGoalsPage extends Component {
         viewGoals: !bool
     });
     this.getAllGoals();
+  }
+
+  handleSetSalesViewRange = name => event => { 
+      console.log(event.target.value);
   }
 
   handleSalesOpen = () => {
@@ -699,6 +707,32 @@ class ManufacturingGoalsPage extends Component {
                 <Button onClick = {this.handleSalesOpen} >
                     View Sales Projection
                 </Button>
+        <div>
+                <TextField
+                  id="date"
+                  label="View Sales Report From"
+                  type="date"
+                  value={this.props.date}
+                  className={classes.textField}
+                  onChange={this.handleChange('fromDate')}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+</div>
+        <div>
+                <TextField
+                  id="date"
+                  label="View Sales Report To"
+                  type="date"
+                  value={this.props.date}
+                  className={classes.textField}
+                  onChange={this.handleChange('toDate')}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+</div>
             <ManufacturingGoalsSalesDetails
               open={this.state.viewSales}
               close={this.handleSalesClose}

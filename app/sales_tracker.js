@@ -117,7 +117,6 @@ class SalesTracker {
                         break;
                     }
                 }
-                console.log(toInd);
                 slicedList[year] = newList[year].slice(fromInd, toInd + 1);
                 //console.log(slicedList[year]);
                 //slicedList[year] = that.calculateRevAndProf(slicedList[year]);
@@ -126,6 +125,7 @@ class SalesTracker {
                     numSales += slicedList[year][i].sales;
                 }
                 slicedList[year] = JSON.parse(JSON.stringify(slicedList[year][0]));
+                console.log(year + " " + numSales);
                 slicedList[year].numSales = numSales;
             }
 

@@ -53,7 +53,7 @@ class ManufacturingGoalsSalesDetails extends Component {
                     return <TableRow>
                         <TableCell> {year} </TableCell>
                         <TableCell> { this.props.data[year].sku_num } </TableCell>
-                        <TableCell> { this.props.data[year].sales } </TableCell>
+                        <TableCell> { this.props.data[year].numSales } </TableCell>
                         </TableRow>
                 })
             }
