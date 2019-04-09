@@ -112,7 +112,8 @@ class Users extends CRUD {
       }
       result = result[0];
       delete result.password;
-      return getPlantsManagedBy(result.id).then((lines) => {
+      console.log('here');
+      getPlantsManagedBy(result.id).then((lines) => {
         lines = lines.rows;
         console.log(lines);
         if (!lines) {
