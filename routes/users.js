@@ -194,4 +194,13 @@ router.delete('/:id', checkAdmin, function(req, res, next) {
     })
 });
 
+function logUserInAndSetToken(req, user) {
+  req.session.user = user.uname;
+  req.session.admin = user.admin;
+  req.session.user_id = user.id;
+  req.core_read = user.uname ? true : false;
+  req.core_write = (user.prod_mgr || user.admin);
+  req.sales_read = (user.analyst || user.prod_mgr || user.bus_mgr)
+}
+
 module.exports = router;

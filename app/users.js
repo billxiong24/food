@@ -68,13 +68,17 @@ class Users extends CRUD {
       names = QueryGenerator.transformQueryArr(names);
       let query = squel.select()
       .from(this.tableName)
+      .join("plant_mgr", null, this.tableName + '.id = plant_mgr.user_id')
       .field("*, COUNT(*) OVER() as row_count");
 
       const queryGen = new QueryGenerator(query);
       queryGen.chainAndFilter(names, "uname LIKE ?");
       let queryStr = filter.applyFilter(queryGen.getQuery()).toString();
       //logger.debug(queryStr);
-      return db.execSingleQuery(queryStr, []);
+      return db.execSingleQuery(queryStr, [])
+        .then((result) => {
+          console.log(result);
+        });
   }
 
     getUser(dataObj) {
