@@ -67,11 +67,6 @@ class Users extends CRUD {
               manlines: lines
             }
           })
-          // return {
-          //   uname: result.uname,
-          //   admin: result.admin,
-          //   id: result.id
-          // };
         }
         else
           return Promise.reject("Incorrect Password");
@@ -119,7 +114,8 @@ class Users extends CRUD {
           return result;
         }
         lines = lines.reduce((ret, cur) => {
-          return ret.push(cur.manline_id);
+          ret.push(cur.manline_id);
+          return ret;
         }, []);
         return {
           ...result,

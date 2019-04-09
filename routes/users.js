@@ -55,7 +55,7 @@ router.post('/', function(req, res, next) {
 
     users.verify(req.body)
     .then((result) => {
-        console.log(result);
+        logUserInAndSetToken(req, result);
         res.status(200).json(result);
     })
     .catch((err) => {
@@ -196,7 +196,7 @@ function logUserInAndSetToken(req, user) {
   req.session.user_id = user.id;
   req.core_read = user.uname ? true : false;
   req.core_write = (user.prod_mgr || user.admin);
-  req.sales_read = (user.analyst || user.prod_mgr || user.bus_mgr)
+  req.sales_read = (user.analyst || user.prod_mgr || user.bus_mgr);
 }
 
 module.exports = router;
