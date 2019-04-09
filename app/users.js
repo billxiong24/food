@@ -115,7 +115,7 @@ class Users extends CRUD {
       this.getPlantsManagedBy(result.id).then((lines) => {
         lines = lines.rows;
         console.log(lines);
-        if (!lines) {
+        if (lines.length === 0) {
           return result;
         }
         lines = lines.reduce((ret, cur) => {
