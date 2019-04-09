@@ -53,7 +53,7 @@ class Users extends CRUD {
       return bcrypt.compare(dataObj.password, result.password).then((res) => {
         if (res) {
           delete result.password;
-          return getPlantsManagedBy(result.id).then((lines) => {
+          return this.getPlantsManagedBy(result.id).then((lines) => {
             lines = lines.rows;
             if (!lines) {
               return result;
