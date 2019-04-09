@@ -77,7 +77,7 @@ class Users extends CRUD {
       //logger.debug(queryStr);
       return db.execSingleQuery(queryStr, [])
         .then((result) => {
-          console.log(result);
+          console.log(result.rows);
         });
   }
 
