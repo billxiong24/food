@@ -116,6 +116,7 @@ class Users extends CRUD {
         lines = lines.rows;
         console.log(lines);
         if (lines.length === 0) {
+          console.log('here');
           return result;
         }
         lines = lines.reduce((ret, cur) => {
