@@ -78,9 +78,7 @@ router.post('/netid', function(req, res, next) {
 
   users.getUser(req.body)
   .then((result) => {
-    req.session.user = result.uname;
-    req.session.admin = result.admin;
-    req.session.user_id = result.id;
+    logUserInAndSetToken(req, result);
     res.status(200).json(result);
   })
   .catch((err) => {
@@ -88,9 +86,7 @@ router.post('/netid', function(req, res, next) {
       .then(() => {
         users.getUser(req.body)
         .then((user) => {
-          req.session.user = user.uname;
-          req.session.admin = user.admin;
-          req.session.user_id = user.id;
+          logUserInAndSetToken(req, user);
           res.status(201).json(user);
         })
       })
@@ -196,7 +192,14 @@ function logUserInAndSetToken(req, user) {
   req.session.user_id = user.id;
   req.session.core_read = user.uname ? true : false;
   req.session.core_write = (user.prod_mgr || user.admin);
-  req.session.sales_read = (user.analyst || user.prod_mgr || user.bus_mgr);
+  req.session.sales_read = (user.analyst || user.prod_mgr || user.bus_mgr || user.manlines.length > 0 || user.admin);
+  req.session.sales_write = (user.prod_mgr || user.admin);
+  req.session.goals_read = (user.analyst || user.prod_mgr || user.bus_mgr || user.manlines.length > 0 || user.admin);
+  req.session.goals_write = (user.bus_mgr || user.admin);
+  req.session.schedule_read = (user.analyst || user.prod_mgr || user.bus_mgr || user.manlines.length > 0 || user.admin);
+  req.session.schedule_write = user.manlines;
+  req.session.user_read = user.admin;
+  req.session.user_write = user.admin;
 }
 
 module.exports = router;
