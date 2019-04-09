@@ -111,6 +111,7 @@ class Users extends CRUD {
         return Promise.reject("User Doesn't Exist");
       }
       result = result[0];
+      return result;
       delete result.password;
       return getPlantsManagedBy(result.id).then((lines) => {
         lines = lines.rows;
