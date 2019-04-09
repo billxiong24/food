@@ -105,7 +105,7 @@ class Users extends CRUD {
     }
 
     let query = "SELECT * FROM " + this.tableName + " WHERE uname=$1";
-    db.execSingleQuery(query, [dataObj.uname]).then((result) => {
+    return db.execSingleQuery(query, [dataObj.uname]).then((result) => {
       result = result.rows;
       if (result.length != 1) {
         return Promise.reject("User Doesn't Exist");
