@@ -96,6 +96,7 @@ class Users extends CRUD {
       .from("plant_mgr")
       .where("user_id = ?", id)
       .toString();
+    console.log(query);
     return db.execSingleQuery(query, []);
   }
 
@@ -112,7 +113,6 @@ class Users extends CRUD {
       }
       result = result[0];
       delete result.password;
-      console.log('here');
       getPlantsManagedBy(result.id).then((lines) => {
         lines = lines.rows;
         console.log(lines);
