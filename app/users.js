@@ -59,6 +59,7 @@ class Users extends CRUD {
               return result;
             }
             lines = lines.reduce((ret, cur) => {
+              console.log(cur);
               return ret.push(cur.manline_id);
             }, []);
             return {
