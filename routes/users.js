@@ -55,7 +55,7 @@ router.post('/', function(req, res, next) {
 
     users.verify(req.body)
     .then((result) => {
-        logUserInAndSetToken(req, result);
+        result = logUserInAndSetToken(req, result);
         res.status(200).json(result);
     })
     .catch((err) => {
@@ -78,7 +78,7 @@ router.post('/netid', function(req, res, next) {
 
   users.getUser(req.body)
   .then((result) => {
-    logUserInAndSetToken(req, result);
+    result = logUserInAndSetToken(req, result);
     res.status(200).json(result);
   })
   .catch((err) => {
@@ -86,7 +86,7 @@ router.post('/netid', function(req, res, next) {
       .then(() => {
         users.getUser(req.body)
         .then((user) => {
-          logUserInAndSetToken(req, user);
+          user = logUserInAndSetToken(req, user);
           res.status(201).json(user);
         })
       })
@@ -191,15 +191,26 @@ function logUserInAndSetToken(req, user) {
   req.session.admin = user.admin;
   req.session.user_id = user.id;
   req.session.core_read = user.uname ? true : false;
+  user.core_read = req.session.core_read;
   req.session.core_write = (user.prod_mgr || user.admin);
+  user.core_write = req.session.core_write;
   req.session.sales_read = (user.analyst || user.prod_mgr || user.bus_mgr || user.manlines.length > 0 || user.admin);
+  user.sales_read = req.session.sales_read;
   req.session.sales_write = (user.prod_mgr || user.admin);
+  user.sales_write = req.session.sales_write;
   req.session.goals_read = (user.analyst || user.prod_mgr || user.bus_mgr || user.manlines.length > 0 || user.admin);
+  user.goals_read = req.session.goals_read;
   req.session.goals_write = (user.bus_mgr || user.admin);
+  user.goals_write = req.session.goals_write;
   req.session.schedule_read = (user.analyst || user.prod_mgr || user.bus_mgr || user.manlines.length > 0 || user.admin);
+  user.schedule_read = req.session.schedule_read;
   req.session.schedule_write = user.manlines;
+  user.schedule_write = req.session.schedule_write;
   req.session.user_read = user.admin;
+  user.user_read = req.session.user_read;
   req.session.user_write = user.admin;
+  user.user_write = req.session.user_write;
+  return user;
 }
 
 module.exports = router;
