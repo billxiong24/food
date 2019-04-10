@@ -11,7 +11,7 @@ const upload = multer({
     storage: multer.memoryStorage()
 }).single('csvfile')
 
-
+const { checkCoreWrite } = require('./guard');
 
 function getCRUD(type) {
     let crud = null;
@@ -37,7 +37,7 @@ function getCRUD(type) {
 
 }
 
-router.post('/bulk_import', function(req, res, next) {
+router.post('/bulk_import', checkCoreWrite, function(req, res, next) {
 
     upload(req, res, function(err) {
         if (err instanceof multer.MulterError) {
@@ -58,7 +58,7 @@ router.post('/bulk_import', function(req, res, next) {
     });
 
 });
-router.post('/accept_bulk_import', function(req, res, next) {
+router.post('/accept_bulk_import', checkCoreWrite, function(req, res, next) {
     let crud = getCRUD(req.body.type);
     if(!crud) {
         return res.status(400).json({

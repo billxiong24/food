@@ -6,7 +6,9 @@ const error_controller = require('../app/controller/error_controller');
 const Controller = require('../app/controller/controller');
 const ManufacturingLine = require('../app/manufacturing_line');
 
-router.get('/search', function(req, res, next) {
+const { checkCoreRead, checkCoreWrite } = require('./guard');
+
+router.get('/search', checkCoreRead, function(req, res, next) {
     let name = req.query.name || "";
     let orderKey = req.query.orderKey;
     let asc = (!req.query.asc) || req.query.asc == "1"; 
@@ -21,7 +23,7 @@ router.get('/search', function(req, res, next) {
     controller.constructGetResponse(res, ml.search(name, filter));
 });
 
-router.get('/:id/skus', function(req, res, next) {
+router.get('/:id/skus', checkCoreRead, function(req, res, next) {
     if(isNaN((req.params.id))) {
         return res.status(400).json({
             error: "Malformed URL."
@@ -33,7 +35,7 @@ router.get('/:id/skus', function(req, res, next) {
     controller.constructGetResponse(res, ml.getSkus(req.params.id));
 });
 
-router.get('/sku_mapping', function(req, res, next) {
+router.get('/sku_mapping', checkCoreRead, function(req, res, next) {
     let skus = Controller.convertParamToArray(req.query.skus);
     const ml = new ManufacturingLine();
     ml.getSKUMapping(skus).then((result) => {
@@ -46,20 +48,20 @@ router.get('/sku_mapping', function(req, res, next) {
     });
 });
 
-router.put('/sku_mapping', function(req, res, next) {
+router.put('/sku_mapping', checkCoreWrite, function(req, res, next) {
     let skus = Controller.convertParamToArray(req.body.skus);
     const ml = new ManufacturingLine();
     const controller = new Controller();
     controller.constructUpdateResponse(res, ml.remapSkus(skus, req.body.all, req.body.none), false);
 });
 
-router.post('/', function(req, res, next) {
+router.post('/', checkCoreWrite, function(req, res, next) {
     const ml = new ManufacturingLine();
     const controller = new Controller();
     controller.constructPostResponse(res, ml.create(req.body));
 });
 
-router.post('/:id/skus', function(req, res, next) {
+router.post('/:id/skus', checkCoreWrite, function(req, res, next) {
     if(!req.body.skus || req.body.skus.length == 0) {
         return res.status(400).json({
             rowCount: 0
@@ -71,7 +73,7 @@ router.post('/:id/skus', function(req, res, next) {
     controller.constructRowCountPostResponse(res, ml.addSkus(req.params.id, skus));
 });
 
-router.put('/:id', function(req, res, next) {
+router.put('/:id', checkCoreWrite, function(req, res, next) {
     if(isNaN((req.params.id))) {
         return res.status(400).json({
             error: "Malformed URL."
@@ -90,7 +92,7 @@ router.put('/:id', function(req, res, next) {
 });
 
 
-router.delete('/:id', function(req, res, next) {
+router.delete('/:id', checkCoreWrite, function(req, res, next) {
     if(isNaN((req.params.id))) {
         return res.status(400).json({
             error: "Malformed URL."

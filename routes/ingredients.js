@@ -5,7 +5,7 @@ const Filter = require("../app/filter");
 const error_controller = require('../app/controller/error_controller');
 const Controller = require('../app/controller/controller');
 
-var { checkCoreRead, checkCoreWrite } = require('./guard');
+const { checkCoreRead, checkCoreWrite } = require('./guard');
 
 
 //TODO 22P02

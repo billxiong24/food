@@ -4,7 +4,7 @@ const router = express.Router();
 const Filter = require('../app/filter');
 const error_controller = require('../app/controller/error_controller');
 
-var { checkUserRead, checkUserWrite } = require('./guard');
+const { checkUserRead, checkUserWrite } = require('./guard');
 
 router.get('/logout', function(req, res, next) {
   if(req.session.user && req.sessionID) {
