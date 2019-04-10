@@ -21,7 +21,7 @@ import InputSelect from '../GenericComponents/InputSelect';
 import InputAutoCompleteOpenPage from '../GenericComponents/InputAutoCompleteOpenPage';
 import InputList from '../GenericComponents/InputList';
 import swal from 'sweetalert';
-import { defaultErrorCallback, nameErrorCallback, ingNumErrorCallback, defaultNumErrorCallbackGenerator } from '../../Resources/common';
+import { defaultErrorCallback, nameErrorCallback, ingNumErrorCallback, defaultNumErrorCallbackGenerator, defaultPackageSizeErrorCallback } from '../../Resources/common';
 import axios from 'axios';
 import common from '../../Resources/common';
 import SKUInput from '../GenericComponents/SKUInput';
@@ -268,10 +268,14 @@ class IngredientList extends Component {
             axios.put(`${common.hostname}ingredients/valid_num`,{num:parseInt(value)}).then((res) =>{
               let error
               //console.log(num)
-              //console.log(value)
+              console.log(value)
+              
               if(res.data.valid || num==parseInt(value)){
                 error = null
               }else{
+                error = "Invalid Number"
+              }
+              if(value == ""){
                 error = "Invalid Number"
               }
               return {
@@ -396,7 +400,7 @@ class IngredientList extends Component {
                         displayName="UnitSelect"
                         items={unitItems}
                         defaultValue={unitValue}
-                        errorCallback={defaultErrorCallback}
+                        errorCallback={defaultPackageSizeErrorCallback}
                     />
                     <Input
                         id="pkg_cost"

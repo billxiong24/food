@@ -27,7 +27,14 @@ import { withCookies } from 'react-cookie';
 import SkuAutocomplete from './SkuAutocomplete';
 import Autocomplete from './Autocomplete';
 import ManufacturingGoalsNewDialog from './ManufacturingGoalsNewDialog';
+import ManufacturingGoalsSalesDetails from './ManufacturingGoalsSalesDetails';
+
 import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
 let date = require('date-and-time');
 
 const styles = {
@@ -186,6 +193,15 @@ class ManufacturingGoalsPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      fromDate: date.format(new Date(), 'YYYY-MM-DD'),
+      toDate: date.format(new Date(), 'YYYY-MM-DD'),
+      viewSales: false, 
+      salesData: {},  
+      aggregateSalesData: {}, 
+      orderKey: "",
+      currViewGoals: [],
+      enabledGoalsMap: {},
+      viewGoals: false,
       alert: false,
       message: '',
       suggestions: [],
@@ -295,6 +311,111 @@ class ManufacturingGoalsPage extends Component {
     return this.props.mangoalSearchSkus({ name: e.currentTarget.value }, this.props.manGoals.filters);
   };
 
+  getAllGoals = () => {
+      console.log("GETTING ALL GOALS");
+      console.log(this.state.orderKey);
+    return axios.get(common.hostname + 'manufacturing_goals/fetch', {
+        params: {
+            orderKey: this.state.orderKey
+        }
+    })
+      .then((response) => {
+          let obj = {};
+          for(let i = 0; i < response.data.length; i++) {
+              obj[response.data[i].id] = response.data[i].enabled;
+          }
+          this.setState({
+              enabledGoalsMap: obj
+          })
+          this.setState({
+              currViewGoals: response.data
+          })
+      })
+      .catch(err => {
+        console.log(err);
+      })
+
+  }
+
+
+    fetchSalesProjection = e => {
+        console.log(this.state.fromDate);
+        console.log(this.state.toDate);
+        return axios.get(common.hostname + 'sales/search/timespan', {
+            params: {
+                sku_num: this.state.sku,
+                fromDate: this.state.fromDate, 
+                toDate:  this.state.toDate 
+            }
+        })
+            .then((response) => {
+                let agData = {
+                    average: response.data.average,
+                    stddev: response.data.stddev
+                };
+                delete response.data.average;
+                delete response.data.stddev;
+                console.log(agData);
+
+                this.setState({
+                    salesData: response.data, 
+                    aggregateSalesData: agData
+                });
+            })
+            .catch(err => {
+                console.log(err);
+            })
+
+    }
+
+  setTitleOrderKey = e => {
+      this.setState({
+          orderKey: "name"
+      },
+          () => {
+            this.getAllGoals();
+          }
+      )
+  }
+
+    changeEnabled = (goal_id, enabled) => {
+        console.log(enabled);
+        return axios.put(common.hostname + 'manufacturing_goals/' + goal_id, {
+            enabled: enabled
+        })
+        .then((response) => {
+            let obj = JSON.parse(JSON.stringify(this.state.enabledGoalsMap));
+            obj[goal_id] = enabled;
+            this.setState({
+                enabledGoalsMap: obj
+            })
+            console.log(this.state.enabledGoalsMap);
+        })
+        .catch(err => {
+            console.log(err);
+        })
+    }
+
+
+  setAuthorOrderKey = e => {
+      this.setState({
+          orderKey: "uname"
+      },() => {
+            this.getAllGoals();
+          }
+      )
+      //this.getAllGoals();
+  }
+
+  setEditOrderKey = e => {
+      this.setState({
+          orderKey: "last_edit"
+      },() => {
+            this.getAllGoals();
+          }
+      )
+  }
+
   selectSku = skuNum => {
     this.setState({
       sku: skuNum,
@@ -310,7 +431,7 @@ class ManufacturingGoalsPage extends Component {
 
   addSku() {
     let sku = {
-      sku_id: this.state.sku,
+      sku_id: this.props.manGoals.skus.filter((sku) => { return sku.num == this.state.sku })[0].id,
       quantity: this.state.quantity,
     }
     this.props.mangaolUpdateMangoalSkus(
@@ -372,6 +493,7 @@ class ManufacturingGoalsPage extends Component {
       });
   }
 
+
   closeAlert() {
     this.setState({
       alert: false,
@@ -379,6 +501,32 @@ class ManufacturingGoalsPage extends Component {
     });
   }
 
+  handleOpenGoals = () => {
+      let bool = this.state.viewGoals;
+    this.setState({
+        viewGoals: !bool
+    });
+    this.getAllGoals();
+  }
+
+  handleSetSalesViewRange = name => event => { 
+      console.log(event.target.value);
+  }
+
+  handleSalesOpen = () => {
+      this.fetchSalesProjection()
+      .then((d) => {
+          this.setState({
+              viewSales: true
+          });
+      })
+  }
+
+  handleSalesClose = () => {
+      this.setState({
+          viewSales: false
+      });
+  }
   handleClickNewOpen = () => {
     this.setState({ newDialog: true });
   };
@@ -386,6 +534,8 @@ class ManufacturingGoalsPage extends Component {
   handleNewClose = () => {
     this.setState({ newDialog: false });
   };
+
+
 
   exportManGoal() {
     return axios.post(common.hostname + 'manufacturing_goals/exported_file', {
@@ -419,6 +569,12 @@ class ManufacturingGoalsPage extends Component {
             {this.props.cookies.user}'s Manufacturing Goals
           </Typography>
           <div>
+            <Button
+              variant="contained"
+              onClick={this.handleOpenGoals}
+            >
+                See Manufacturing Goals
+            </Button>
             <Button
               variant="contained"
               onClick={this.handleClickNewOpen}
@@ -478,6 +634,30 @@ class ManufacturingGoalsPage extends Component {
             </Fab>
           </div>
           <div variant="inset" className={classes.divider} />
+            <div className={this.state.viewGoals ? "test" : classes.hidden}>
+            <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell><Button onClick={this.setTitleOrderKey}> Goal name </Button></TableCell>
+                      <TableCell><Button onClick={this.setAuthorOrderKey}> Author </Button></TableCell>
+                      <TableCell><Button onClick={this.setEditOrderKey}> Last Edit</Button></TableCell>
+                      <TableCell>Enable/Disable</TableCell>
+                    </TableRow>
+                  </TableHead>
+                    <TableBody>
+        {
+                        this.state.currViewGoals.map((goal) => {
+                            return <TableRow>
+                              <TableCell> { goal.name } </TableCell>
+                              <TableCell> { goal.uname } </TableCell>
+                              <TableCell> { goal.last_edit } </TableCell>
+                              <TableCell> <Button onClick={() => this.changeEnabled(goal.id, !this.state.enabledGoalsMap[goal.id])}> { this.state.enabledGoalsMap[goal.id] ? "Disable" : "Enable" } </Button> </TableCell>
+                            </TableRow>
+                        })
+        }
+                    </TableBody>
+            </Table>
+            </div>
           <div className={(manGoals.activeGoal.id ? classes.man_goal_content_container : classes.hidden)}>
             <div className={classes.sku_search_container}>
               <div className={classes.man_goal_content_add}>
@@ -524,6 +704,41 @@ class ManufacturingGoalsPage extends Component {
                   </Autocomplete>
                   <FormHelperText>Select Product Lines to Filter By</FormHelperText>
                 </FormControl>
+                <Button onClick = {this.handleSalesOpen} >
+                    View Sales Projection
+                </Button>
+        <div>
+                <TextField
+                  id="date"
+                  label="View Sales Report From"
+                  type="date"
+                  value={this.props.date}
+                  className={classes.textField}
+                  onChange={this.handleChange('fromDate')}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+</div>
+        <div>
+                <TextField
+                  id="date"
+                  label="View Sales Report To"
+                  type="date"
+                  value={this.props.date}
+                  className={classes.textField}
+                  onChange={this.handleChange('toDate')}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+</div>
+            <ManufacturingGoalsSalesDetails
+              open={this.state.viewSales}
+              close={this.handleSalesClose}
+              data={this.state.salesData}
+              aggregateData={this.state.aggregateSalesData}
+            />
                 <div className={classes.active_filter_container}>
                   {manGoals.filters.map((prdline) => (
                     <Chip

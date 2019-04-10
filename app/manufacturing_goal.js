@@ -1,10 +1,10 @@
-const db = require("./db");
-const squel = require("squel").useFlavour("postgres");
+const db = require("./db"); const squel = require("squel").useFlavour("postgres");
 const CRUD = require("./CRUD");
 const Sku = require('./sku');
 const Formatter = require('./formatter');
 const QueryGenerator = require("./query_generator");
 const convert = require('convert-units');
+const Filter = require('./filter');
 
 
 class ManufacturingGoals extends CRUD {
@@ -52,6 +52,8 @@ class ManufacturingGoals extends CRUD {
         return db.execSingleQuery(query, [dataObj.user_id, dataObj.name]);
     }
 
+
+
     create(dataObj) {
         if(!dataObj.user_id || !dataObj.name || !dataObj.deadline) {
             return Promise.reject("Not all required fields are present");
@@ -68,12 +70,26 @@ class ManufacturingGoals extends CRUD {
     }
 
     update(dataObj, id) {
+        dataObj.last_edit = 'NOW()';
         return super.change(dataObj, id, "id");
     }
 
     remove(id) {
         return db.execSingleQuery("DELETE FROM " + this.tableName + " WHERE id = $1", [id]);
     }
+
+    fetch(filter) {
+        let q = squel.select()
+        .from(this.tableName)
+        .field("manufacturing_goal.*, users.uname")
+        .join("users", null, "users.id = user_id")
+        const queryGen = new QueryGenerator(q);
+        let queryStr = filter.applyFilter(queryGen.getQuery()).toString();
+        console.log(queryStr);
+        return db.execSingleQuery(queryStr, []);
+    }
+
+    
 
     search(user_id) {
         let query = "SELECT * FROM " + this.tableName + " WHERE user_id=$1";
@@ -96,7 +112,13 @@ class ManufacturingGoals extends CRUD {
         query = query.toString();
         console.log(query);
         //logger.debug(query);
-        return db.execSingleQuery(query, []);
+        return db.execSingleQuery(query, [])
+        .then(function(res) {
+            return db.execSingleQuery("UPDATE manufacturing_goal SET last_edit = NOW() WHERE id = $1", [manufacturing_id])
+            .then(function(x) {
+                return res;
+            })
+        });
     }
 
     removeSkus(manufacturing_id, sku_ids) {
@@ -111,7 +133,14 @@ class ManufacturingGoals extends CRUD {
         .where(
             expr
         ).toString();
-        return db.execSingleQuery(query, []);
+
+        return db.execSingleQuery(query, [])
+        .then(function(res) {
+            return db.execSingleQuery("UPDATE manufacturing_goal SET last_edit = NOW() WHERE id = $1", [manufacturing_id])
+            .then(function(x) {
+                return res;
+            })
+        });
     }
 
    calculateQuantities(manufacturing_id, useUnits = true) {
