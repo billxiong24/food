@@ -110,7 +110,7 @@ class Users extends CRUD {
       delete result.password;
       return this.getPlantsManagedBy(result.id).then((lines) => {
         lines = lines.rows;
-        if (lines.length === 0) {
+        if (!lines) {
           return result;
         }
         lines = lines.reduce((ret, cur) => {

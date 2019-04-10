@@ -83,7 +83,6 @@ router.post('/netid', function(req, res, next) {
     res.status(200).json(result);
   })
   .catch((err) => {
-    console.log(err);
     users.create(req.body)
       .then(() => {
         users.getUser(req.body)
