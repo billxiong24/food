@@ -5,9 +5,11 @@ const Filter = require("../app/filter");
 const error_controller = require('../app/controller/error_controller');
 const Controller = require('../app/controller/controller');
 
+const { checkCoreRead, checkCoreWrite } = require('./guard');
+
 
 //TODO 22P02
-router.get('/search', function(req, res, next) {
+router.get('/search', checkCoreRead, function(req, res, next) {
     let names = req.query.names;
     let list = req.query.skus;
     let orderKey = req.query.orderKey;
@@ -26,7 +28,7 @@ router.get('/search', function(req, res, next) {
     controller.constructGetResponse(res, ing.search(names, list, filter));
 });
 
-router.put('/valid_num', function(req, res, next) {
+router.put('/valid_num', checkCoreRead, function(req, res, next) {
     const ing = new Ingredient();
     let num = req.body.num
     ing.validNum(num).then((valid) => {
@@ -36,7 +38,7 @@ router.put('/valid_num', function(req, res, next) {
     })
 });
 
-router.get('/init_ing', function(req, res, next) {
+router.get('/init_ing', checkCoreRead, function(req, res, next) {
     const ing = new Ingredient();
     // scheduler.get_goal_usernames(filter).then((goal_user_names) => {
     //     res.status(200).json({
@@ -53,13 +55,13 @@ router.get('/init_ing', function(req, res, next) {
     // })
 });
 
-router.post('/', function(req, res, next) {
+router.post('/', checkCoreWrite, function(req, res, next) {
     const ing = new Ingredient();
     const controller = new Controller();
     controller.constructPostResponse(res, ing.create(req.body));
 });
 
-router.get('/:id/skus', function(req, res, next) {
+router.get('/:id/skus', checkCoreRead, function(req, res, next) {
     let id = req.params.id;
     if(isNaN((id))) {
         return res.status(400).json({
@@ -72,7 +74,7 @@ router.get('/:id/skus', function(req, res, next) {
     controller.constructGetResponse(res, ing.getSkus(id));
 });
 
-router.put('/:id', function(req, res, next) {
+router.put('/:id', checkCoreWrite, function(req, res, next) {
     let id = req.params.id;
     if(isNaN((id))) {
         return res.status(400).json({
@@ -92,7 +94,7 @@ router.put('/:id', function(req, res, next) {
 
 
 
-router.delete('/:id', function(req, res, next) {
+router.delete('/:id', checkCoreWrite, function(req, res, next) {
     let id = req.params.id;
     if(isNaN((id))) {
         return res.status(400).json({

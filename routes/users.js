@@ -1,9 +1,10 @@
 const express = require('express');
 const Users = require('../app/users');
 const router = express.Router();
-var { checkAdmin } = require('./guard');
 const Filter = require('../app/filter');
 const error_controller = require('../app/controller/error_controller');
+
+const { checkUserRead, checkUserWrite } = require('./guard');
 
 router.get('/logout', function(req, res, next) {
   if(req.session.user && req.sessionID) {
@@ -14,7 +15,7 @@ router.get('/logout', function(req, res, next) {
   }
 });
 
-router.get('/search', checkAdmin, function (req, res, next) {
+router.get('/search', checkUserRead, function (req, res, next) {
   let names = req.query.names;
   const users = new Users();
   let orderKey = req.query.orderKey;
@@ -55,11 +56,7 @@ router.post('/', function(req, res, next) {
 
     users.verify(req.body)
     .then((result) => {
-        console.log("SETTING SESSION");
-        req.session.user = result.uname;
-        req.session.admin = result.admin;
-        req.session.user_id = result.id;
-        console.log(req.session);
+        result = logUserInAndSetToken(req, result);
         res.status(200).json(result);
     })
     .catch((err) => {
@@ -82,9 +79,7 @@ router.post('/netid', function(req, res, next) {
 
   users.getUser(req.body)
   .then((result) => {
-    req.session.user = result.uname;
-    req.session.admin = result.admin;
-    req.session.user_id = result.id;
+    result = logUserInAndSetToken(req, result);
     res.status(200).json(result);
   })
   .catch((err) => {
@@ -92,9 +87,7 @@ router.post('/netid', function(req, res, next) {
       .then(() => {
         users.getUser(req.body)
         .then((user) => {
-          req.session.user = user.uname;
-          req.session.admin = user.admin;
-          req.session.user_id = user.id;
+          user = logUserInAndSetToken(req, user);
           res.status(201).json(user);
         })
       })
@@ -106,7 +99,7 @@ router.post('/netid', function(req, res, next) {
   })
 });
 
-router.put('/create', checkAdmin, function(req, res, next) {
+router.put('/create', checkUserWrite, function(req, res, next) {
     if(!req.body.password) {
         return res.status(400).send({
             error: "Must include password parameter in PUT request."
@@ -132,7 +125,7 @@ router.put('/create', checkAdmin, function(req, res, next) {
     });
 });
 
-router.put('/update/:id', checkAdmin, function(req, res, next) {
+router.put('/update/:id', checkUserWrite, function(req, res, next) {
   let id = req.params.id;
   if (isNaN((id))) {
     return res.status(400).json({
@@ -168,7 +161,7 @@ router.put('/update/:id', checkAdmin, function(req, res, next) {
     });
 });
 
-router.delete('/:id', checkAdmin, function(req, res, next) {
+router.delete('/:id', checkUserWrite, function(req, res, next) {
     const users = new Users();
     let id = req.params.id;
     if(isNaN((id))) {
@@ -193,5 +186,32 @@ router.delete('/:id', checkAdmin, function(req, res, next) {
         })
     })
 });
+
+function logUserInAndSetToken(req, user) {
+  req.session.user = user.uname;
+  req.session.admin = user.admin;
+  req.session.user_id = user.id;
+  req.session.core_read = user.uname ? true : false;
+  user.core_read = req.session.core_read;
+  req.session.core_write = (user.prod_mgr || user.admin);
+  user.core_write = req.session.core_write;
+  req.session.sales_read = (user.analyst || user.prod_mgr || user.bus_mgr || user.manlines.length > 0 || user.admin);
+  user.sales_read = req.session.sales_read;
+  req.session.sales_write = (user.prod_mgr || user.admin);
+  user.sales_write = req.session.sales_write;
+  req.session.goals_read = (user.analyst || user.prod_mgr || user.bus_mgr || user.manlines.length > 0 || user.admin);
+  user.goals_read = req.session.goals_read;
+  req.session.goals_write = (user.bus_mgr || user.admin);
+  user.goals_write = req.session.goals_write;
+  req.session.schedule_read = (user.analyst || user.prod_mgr || user.bus_mgr || user.manlines.length > 0 || user.admin);
+  user.schedule_read = req.session.schedule_read;
+  req.session.schedule_write = user.manlines;
+  user.schedule_write = req.session.schedule_write;
+  req.session.user_read = user.admin;
+  user.user_read = req.session.user_read;
+  req.session.user_write = user.admin;
+  user.user_write = req.session.user_write;
+  return user;
+}
 
 module.exports = router;

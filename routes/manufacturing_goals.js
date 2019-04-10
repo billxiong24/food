@@ -11,6 +11,8 @@ const ProdLine = require("../app/productline");
 const SalesTracker = require("../app/sales_tracker");
 const Filter = require("../app/filter");
 
+const { checkGoalsRead, checkGoalsWrite } = require('./guard');
+
 function getCRUD(type) {
     let crud = null;
     if(type === "sku") {
@@ -43,21 +45,7 @@ function getCRUD(type) {
 
 }
 
-const checkUser = (req, res, next) => {
-  let userID = parseInt(req.body.user_id);
-  if(userID !== req.session.user_id && req.session.admin === "false") {
-    res.status(401).json({
-      error: "You are not authorized to edit this manufacturing goal"
-    });
-  }
-  else {
-    next();
-  }
-}
-
-const checkTokenUser = process.env.NODE_ENV === 'test' ? (req, res, next) => { next(); } : checkUser;
-
-router.get('/fetch', function(req, res, next) {
+router.get('/fetch', checkGoalsRead, function(req, res, next) {
     let orderKey = req.query.orderKey;
     let asc = (!req.query.asc) || req.query.asc == "1"; 
     const filter = new Filter();
@@ -68,7 +56,7 @@ router.get('/fetch', function(req, res, next) {
     controller.constructGetResponse(res, mg.fetch(filter));
 
 });
-router.get('/', function(req, res, next) {
+router.get('/', checkGoalsRead, function(req, res, next) {
     if(!req.query.user_id || isNaN(req.query.user_id)) {
         return res.status(400).json({
             error: "Malformed URL."
@@ -92,7 +80,7 @@ router.get('/scheduler/man_lines', function(req, res, next) {
 });
 
 
-router.get('/:id/skus', function(req, res, next) {
+router.get('/:id/skus', checkGoalsRead, function(req, res, next) {
     let id = req.params.id;
     if(isNaN((id))) {
         return res.status(400).json({
@@ -104,7 +92,7 @@ router.get('/:id/skus', function(req, res, next) {
     controller.constructGetResponse(res, mg.getSkus(req.params.id));
 });
 
-router.post('/:id/skus', checkTokenUser, function(req, res, next) {
+router.post('/:id/skus', checkGoalsWrite, function(req, res, next) {
     let id = req.params.id;
     if(isNaN((id))) {
         return res.status(400).json({
@@ -123,7 +111,7 @@ router.post('/:id/skus', checkTokenUser, function(req, res, next) {
     controller.constructRowCountPostResponse(res, mg.addSkus(req.params.id, req.body.skus));
 });
 
-router.delete('/:id/skus', checkTokenUser, function(req, res, next) {
+router.delete('/:id/skus', checkGoalsWrite, function(req, res, next) {
     let id = req.params.id;
     if(isNaN((id))) {
         return res.status(400).json({
@@ -135,7 +123,7 @@ router.delete('/:id/skus', checkTokenUser, function(req, res, next) {
     controller.constructDeleteResponse(res, mg.removeSkus(req.params.id, req.body.skus));
 });
 
-router.get('/:id/calculations', function(req, res, next) {
+router.get('/:id/calculations', checkGoalsRead, function(req, res, next) {
     let useUnits = (req.query.units) ? true : false;
     let id = req.params.id;
     if(isNaN((id))) {
@@ -148,7 +136,7 @@ router.get('/:id/calculations', function(req, res, next) {
     controller.constructGetResponse(res, mg.calculateQuantities(req.params.id, useUnits));
 });
 
-router.post('/exported_file', checkTokenUser, function(req, res, next) {
+router.post('/exported_file', checkGoalsRead, function(req, res, next) {
     let format = (req.body.format) ? req.body.format : "csv";
     let jsonList = req.body.data;
 
@@ -181,13 +169,13 @@ router.post('/exported_file', checkTokenUser, function(req, res, next) {
     res.status(200).send(csv);
 });
 
-router.post('/', checkTokenUser, function(req, res, next) {
+router.post('/', checkGoalsWrite, function(req, res, next) {
     const mg = new ManufacturingGoals();
     const controller = new Controller();
     controller.constructPostResponse(res, mg.create(req.body));
 });
 
-router.put('/:id', function(req, res, next) {
+router.put('/:id', checkGoalsWrite, function(req, res, next) {
     let id = req.params.id;
     if(isNaN((id))) {
         return res.status(400).json({
@@ -199,7 +187,7 @@ router.put('/:id', function(req, res, next) {
     controller.constructUpdateResponse(res, mg.update(req.body, req.params.id));
 });
 
-router.delete('/:id', checkTokenUser, function(req, res, next) {
+router.delete('/:id', checkGoalsWrite, function(req, res, next) {
     let id = req.params.id;
     if(isNaN((id))) {
         return res.status(400).json({

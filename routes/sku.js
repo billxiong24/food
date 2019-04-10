@@ -5,8 +5,10 @@ let router = express.Router();
 const error_controller = require('../app/controller/error_controller');
 const Controller = require('../app/controller/controller');
 
+const { checkCoreRead, checkCoreWrite } = require('./guard');
+
 //TODO 22P02, 42703
-router.get('/search', function(req, res, next) {
+router.get('/search', checkCoreRead, function(req, res, next) {
     let names = req.query.names;
     let ingredients = req.query.ingredients;
     let prodlines = req.query.prodlines;
@@ -26,7 +28,7 @@ router.get('/search', function(req, res, next) {
     controller.constructGetResponse(res, sku.search(names, ingredients, prodlines, filter));
 });
 
-router.put('/valid_num', function(req, res, next) {
+router.put('/valid_num', checkCoreRead, function(req, res, next) {
     const sku = new Sku();
     let num = req.body.num
     sku.validNum(num).then((valid) => {
@@ -36,7 +38,7 @@ router.put('/valid_num', function(req, res, next) {
     })
 });
 
-router.put('/valid_case_upc', function(req, res, next) {
+router.put('/valid_case_upc', checkCoreRead, function(req, res, next) {
     const sku = new Sku();
     let case_upc = req.body.case_upc
     sku.validCaseUPC(case_upc).then((valid) => {
@@ -46,7 +48,7 @@ router.put('/valid_case_upc', function(req, res, next) {
     })
 });
 
-router.put('/valid_unit_upc', function(req, res, next) {
+router.put('/valid_unit_upc', checkCoreRead, function(req, res, next) {
     const sku = new Sku();
     let unit_upc = req.body.unit_upc
     sku.validUnitUPC(unit_upc).then((valid) => {
@@ -56,7 +58,7 @@ router.put('/valid_unit_upc', function(req, res, next) {
     })
 });
 
-router.get('/init_sku', function(req, res, next) {
+router.get('/init_sku', checkCoreRead, function(req, res, next) {
     const sku = new Sku();
     sku.initializeSKU().then((b) => {
         res.status(200).json(b)
@@ -110,7 +112,7 @@ router.get('/init_sku', function(req, res, next) {
     // })
 });
 
-router.get('/:id/ingredients', function(req, res, next) {
+router.get('/:id/ingredients', checkCoreRead, function(req, res, next) {
     let id = req.params.id;
     if(isNaN((id))) {
         return res.status(400).json({
@@ -123,7 +125,7 @@ router.get('/:id/ingredients', function(req, res, next) {
     controller.constructGetResponse(res, sku.getIngredients(id));
 });
 
-router.post('/:id/manufacturing_lines', function(req, res, next) {
+router.post('/:id/manufacturing_lines', checkCoreWrite, function(req, res, next) {
     let id = req.params.id;
     if(isNaN((id))) {
         return res.status(400).json({
@@ -137,7 +139,7 @@ router.post('/:id/manufacturing_lines', function(req, res, next) {
     controller.constructUpdateResponse(res, sku.addManLines(id, lines));
 });
 
-router.delete('/:id/manufacturing_lines', function(req, res, next) {
+router.delete('/:id/manufacturing_lines', checkCoreWrite, function(req, res, next) {
     let id = req.params.id;
     if(isNaN((id))) {
         return res.status(400).json({
@@ -158,7 +160,7 @@ router.delete('/:id/manufacturing_lines', function(req, res, next) {
     controller.constructDeleteResponse(res, sku.deleteManLines(id, lines));
 });
 
-router.get('/:id/manufacturing_lines', function(req, res, next) {
+router.get('/:id/manufacturing_lines', checkCoreRead, function(req, res, next) {
     let id = req.params.id;
     if(isNaN((id))) {
         return res.status(400).json({
@@ -172,7 +174,7 @@ router.get('/:id/manufacturing_lines', function(req, res, next) {
 });
 
 //TODO 23503, 22P02, 
-router.post('/', function(req, res, next) {
+router.post('/', checkCoreWrite, function(req, res, next) {
     req.body.man_lines = Controller.convertParamToArray(req.body.man_lines);
     console.log(req.body);
     const sku = new Sku();
@@ -182,7 +184,7 @@ router.post('/', function(req, res, next) {
 
 
 //TODO 23505, 22P02, 42703 
-router.put('/:id', function(req, res, next) {
+router.put('/:id', checkCoreWrite, function(req, res, next) {
     console.log(req.body);
     if(isNaN((req.params.id))) {
         return res.status(400).json({
@@ -202,7 +204,7 @@ router.put('/:id', function(req, res, next) {
 });
 
 //TODO 22P02
-router.delete('/:id', function(req, res, next) {
+router.delete('/:id', checkCoreWrite, function(req, res, next) {
     if(isNaN((req.params.id))) {
         return res.status(400).json({
             error: "Malformed URL."

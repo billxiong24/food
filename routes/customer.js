@@ -5,7 +5,9 @@ const error_controller = require('../app/controller/error_controller');
 const Controller = require('../app/controller/controller');
 const Customer = require('../app/customers');
 
-router.get('/search', function(req, res, next) {
+const { checkSalesRead } = require('./guard');
+
+router.get('/search', checkSalesRead, function(req, res, next) {
     let name = req.query.name;
 
     const controller = new Controller();

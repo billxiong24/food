@@ -6,8 +6,9 @@ const error_controller = require('../app/controller/error_controller');
 const Formula = require('../app/formula');
 const Controller = require('../app/controller/controller');
 
+const { checkCoreRead, checkCoreWrite } = require('./guard');
 
-router.get('/search', function(req, res, next) {
+router.get('/search', checkCoreRead, function(req, res, next) {
     let names = req.query.names;
     let ingredients = req.query.ingredients;
     let orderKey = req.query.orderKey;
@@ -34,13 +35,13 @@ router.get('/init_formula', function(req, res, next) {
         res.status(200).json(b)
     })
 });
-router.get('/:id', function(req, res, next) {
+router.get('/:id', checkCoreRead, function(req, res, next) {
     const formula = new Formula();
     const controller = new Controller();
     controller.constructGetResponse(res, formula.read(req.params.id));
 });
 
-router.put('/valid_num', function(req, res, next) {
+router.put('/valid_num', checkCoreRead, function(req, res, next) {
     const formula = new Formula();
     let num = req.body.num
     formula.validNum(num).then((valid) => {
@@ -55,7 +56,7 @@ router.put('/valid_num', function(req, res, next) {
 
 
 
-router.put('/formula_autocomplete', function(req, res, next) {
+router.put('/formula_autocomplete', checkCoreRead, function(req, res, next) {
     const formula = new Formula();
     let prefix = req.body.prefix
     formula.formulaAutocomplete(prefix).then((list) => {
@@ -65,7 +66,7 @@ router.put('/formula_autocomplete', function(req, res, next) {
     })
 });
 
-router.get('/:id/ingredients', function(req, res, next) {
+router.get('/:id/ingredients', checkCoreRead, function(req, res, next) {
     let id = req.params.id;
     if(isNaN((id))) {
         return res.status(400).json({
@@ -78,7 +79,7 @@ router.get('/:id/ingredients', function(req, res, next) {
     controller.constructGetResponse(res, formula.getIngredients(id));
 });
 
-router.get('/:id/skus', function(req, res, next) {
+router.get('/:id/skus', checkCoreRead, function(req, res, next) {
     let id = req.params.id;
     if(isNaN((id))) {
         return res.status(400).json({
@@ -91,13 +92,13 @@ router.get('/:id/skus', function(req, res, next) {
     controller.constructGetResponse(res, formula.getSkus(id));
 });
 
-router.post('/', function(req, res, next) {
+router.post('/', checkCoreWrite, function(req, res, next) {
     const formula = new Formula();
     const controller = new Controller();
     controller.constructPostResponse(res, formula.create(req.body));
 });
 
-router.post('/:id/ingredients', function(req, res, next) {
+router.post('/:id/ingredients', checkCoreWrite, function(req, res, next) {
     let id = req.params.id;
     if(isNaN((id))) {
         return res.status(400).json({
@@ -115,7 +116,7 @@ router.post('/:id/ingredients', function(req, res, next) {
     controller.constructRowCountPostResponse(res, formula.addIngredients(id, req.body.ingredients));
 });
 
-router.put('/:id', function(req, res, next) {
+router.put('/:id', checkCoreWrite, function(req, res, next) {
     console.log(req.body);
     if(isNaN((req.params.id))) {
         return res.status(400).json({
@@ -134,7 +135,7 @@ router.put('/:id', function(req, res, next) {
     controller.constructUpdateResponse(res, formula.update(req.body, req.params.id));
 });
 
-router.delete('/:id/ingredients', function(req, res, next) {
+router.delete('/:id/ingredients', checkCoreWrite, function(req, res, next) {
     if(!req.params.id) {
         return res.status(400).json({
             error: "Malformed URL."
@@ -153,7 +154,7 @@ router.delete('/:id/ingredients', function(req, res, next) {
     controller.constructDeleteResponse(res, formula.removeIngredients(req.params.id, ingredients));
 });
 
-router.delete('/:id', function(req, res, next) {
+router.delete('/:id', checkCoreWrite, function(req, res, next) {
     if(isNaN((req.params.id))) {
         return res.status(400).json({
             error: "Malformed URL."
