@@ -1,9 +1,10 @@
 const express = require('express');
 const Users = require('../app/users');
 const router = express.Router();
-var { checkAdmin } = require('./guard');
 const Filter = require('../app/filter');
 const error_controller = require('../app/controller/error_controller');
+
+var { checkUserRead, checkUserWrite } = require('./routes/guard');
 
 router.get('/logout', function(req, res, next) {
   if(req.session.user && req.sessionID) {
@@ -14,7 +15,7 @@ router.get('/logout', function(req, res, next) {
   }
 });
 
-router.get('/search', checkAdmin, function (req, res, next) {
+router.get('/search', checkUserRead, function (req, res, next) {
   let names = req.query.names;
   const users = new Users();
   let orderKey = req.query.orderKey;
@@ -98,7 +99,7 @@ router.post('/netid', function(req, res, next) {
   })
 });
 
-router.put('/create', checkAdmin, function(req, res, next) {
+router.put('/create', checkUserWrite, function(req, res, next) {
     if(!req.body.password) {
         return res.status(400).send({
             error: "Must include password parameter in PUT request."
@@ -124,7 +125,7 @@ router.put('/create', checkAdmin, function(req, res, next) {
     });
 });
 
-router.put('/update/:id', checkAdmin, function(req, res, next) {
+router.put('/update/:id', checkUserWrite, function(req, res, next) {
   let id = req.params.id;
   if (isNaN((id))) {
     return res.status(400).json({
@@ -160,7 +161,7 @@ router.put('/update/:id', checkAdmin, function(req, res, next) {
     });
 });
 
-router.delete('/:id', checkAdmin, function(req, res, next) {
+router.delete('/:id', checkUserWrite, function(req, res, next) {
     const users = new Users();
     let id = req.params.id;
     if(isNaN((id))) {

@@ -21,7 +21,7 @@ var salesRouter = require('./routes/sales');
 var customerRouter = require('./routes/customer');
 
 
-var { checkUserAll, checkCookie, checkAdminAll } = require('./routes/guard');
+var { checkUserWithWhitelist, checkCookie } = require('./routes/guard');
 
 var http = require('http');
 var https = require('https');
@@ -69,10 +69,7 @@ app.use(session({
 // Check for sessions
 if(process.env.NODE_ENV !== 'test') {
     app.use(checkCookie);
-    app.use(checkUserAll);
-    app.post('*', checkAdminAll);
-    app.put('*', checkUserAll);
-    app.delete('*', checkAdminAll);
+    app.use(checkUserWithWhitelist);
 }
 
 app.use('/', indexRouter);
