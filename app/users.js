@@ -90,7 +90,7 @@ class Users extends CRUD {
         return;
       }
       console.log(result.map((user) => {
-        this.getPlantsManagedBy(user.id).then((lines) => {
+        return this.getPlantsManagedBy(user.id).then((lines) => {
           lines = lines.rows;
           if (!lines) {
             return user;
