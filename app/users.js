@@ -89,7 +89,7 @@ class Users extends CRUD {
       if (!result) {
         return;
       }
-      console.log(result.map((user) => {
+      var promises = result.map((user) => {
         return this.getPlantsManagedBy(user.id).then((lines) => {
           lines = lines.rows;
           if (!lines) {
@@ -104,23 +104,10 @@ class Users extends CRUD {
             manlines: lines
           }
         });
-      }));
-      return result.map((user) => {
-        this.getPlantsManagedBy(user.id).then((lines) => {
-          lines = lines.rows;
-          if (!lines) {
-            return user;
-          }
-          lines = lines.reduce((ret, cur) => {
-            ret.push(cur.manline_id);
-            return ret;
-          }, []);
-          return {
-            ...user,
-            manlines: lines
-          }
-        });
       });
+      return Promise.all(promises).then((results) => {
+        return results;
+      })
     });
   }
 
