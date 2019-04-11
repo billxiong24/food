@@ -18,6 +18,7 @@ import axios from 'axios';
 import common from '../../Resources/common';
 import { withCookies } from 'react-cookie';
 import SimpleSnackbar from '../GenericComponents/SimpleSnackbar';
+import { landingPage } from '../RouterComponent';
 
 const styles = theme => ({
   main: {
@@ -114,7 +115,8 @@ class LoginPage extends Component {
   render() {
     const { classes, cookies } = this.props;
     if (cookies.user) {
-      return <Redirect to='/manufacturing_goals'/>
+      console.log(landingPage);
+      return <Redirect to={landingPage}/>
     }
 
     return (

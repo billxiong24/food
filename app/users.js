@@ -84,7 +84,28 @@ class Users extends CRUD {
     queryGen.chainAndFilter(names, "uname LIKE ?");
     let queryStr = filter.applyFilter(queryGen.getQuery()).toString();
     //logger.debug(queryStr);
-    return db.execSingleQuery(queryStr, []);
+    return db.execSingleQuery(queryStr, []).then((result) => {
+      result = result.rows;
+      if (!result) {
+        return;
+      }
+      return result.map((user) => {
+        this.getPlantsManagedBy(user.id).then((lines) => {
+          lines = lines.rows;
+          if (!lines) {
+            return user;
+          }
+          lines = lines.reduce((ret, cur) => {
+            ret.push(cur.manline_id);
+            return ret;
+          }, []);
+          return {
+            ...user,
+            manlines: lines
+          }
+        });
+      });
+    });
   }
 
   getPlantsManagedBy(id) {

@@ -97,7 +97,7 @@ class UserCard extends Component {
         // console.log(this.props)
         return (
           <Card className={classes.card}>
-            <CardContent className={classes.content}>
+            <CardContent onClick={() => {this.props.selectToEdit(item)}} className={classes.content}>
               <Typography className={classes.user_name} color="textSecondary" gutterBottom>
                 {item.uname}
               </Typography>
