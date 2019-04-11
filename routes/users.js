@@ -35,7 +35,7 @@ router.get('/search', checkUserRead, function (req, res, next) {
 
   users.search(names, filter)
     .then((result) => {
-      res.status(200).json(result.rows);
+      res.status(200).json(result);
     })
     .catch((err) => {
       res.status(400).json({
