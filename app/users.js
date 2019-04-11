@@ -99,6 +99,8 @@ class Users extends CRUD {
             ret.push(cur.manline_id);
             return ret;
           }, []);
+          console.log(user);
+          console.log(lines);
           return {
             ...user,
             manlines: lines
