@@ -463,6 +463,19 @@ class Scheduler extends CRUD {
             }
             return filtered_goals
         })
+        .then(function(res){
+            // return db.execSingleQuery(ingredientQuery, [])
+            //     .then(function(res){
+            //     console.log(res.rows)
+            //     ingredients = res.rows.map(item => {
+            //         return {
+            //             label: item.name,
+            //             id: item.id
+            //         }
+            //     })
+            // })
+            return res
+        })
     }
 
     get_man_lines(){

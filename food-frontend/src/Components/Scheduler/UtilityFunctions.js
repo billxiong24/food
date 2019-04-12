@@ -2,6 +2,7 @@ import moment from 'moment'
 
 export function getActivities(goals){
     var activities_map = {}
+    var activities_list = []
     for(var i = 0; i < goals.length; i++){
       let {activities, ...goal} = goals[i]
       for(var j = 0; j < activities.length; j++){
@@ -16,16 +17,41 @@ export function getActivities(goals){
         }else{
             activities_map[activity.num].goals.push(goal)
         }
+        //let act = {
+        activities_list.push({
+          ...activity,
+          goals:[goal],
+          completion_time:Math.ceil(activity.cases_needed/activity.mfg_rate)
+        })
       }
     }
-    var activities = []
-    for (var num in activities_map) {
-      if (activities_map.hasOwnProperty(num)) {
-          activities.push(activities_map[num])
-      }
-    }
-    return activities
+    
+    // for (var num in activities_map) {
+    //   if (activities_map.hasOwnProperty(num)) {
+    //       activities.push(activities_map[num])
+    //   }
+    // }
+    return activities_list
   }
+
+  // export function getActivities(goals){
+  //   var activities = []
+  //     for(var i = 0; i < goals.length; i++){
+  //       let {activities, ...goal} = goals[i]
+  //       for(var j = 0; j < activities.length; j++){
+  //         let activity = activities[j]
+  //         activity.name = `${activity.name}:${activity.unit_size}*${activity.count_per_case} (${activity.num})`
+  //         activities.push({
+  //           ...activity,
+  //           goals:[goal],
+  //           completion_time:Math.ceil(activity.cases_needed/activity.mfg_rate)
+  //         })
+  //       }
+  //     }
+  //     console.log("poooopoo")
+  //     console.log(activities)
+  //     return activities
+  //   }
 
   export function isScheduled(activity){
     return activity.start_time != null && activity.end_time != null && activity.man_line_num != null

@@ -196,6 +196,7 @@ class OverlapCheck extends Component{
                                conflictOccurred={this.conflictOccurred}
                                eventItemPopoverTemplateResolver={this.eventItemPopoverTemplateResolver}
                                eventItemTemplateResolver={this.eventItemTemplateResolver}
+                               slotItemTemplateResolver={this.slotItemTemplateResolver}
                     />
                 </div>
             </div>
@@ -477,6 +478,15 @@ class OverlapCheck extends Component{
                 </Row>
             </div>
         );
+    }
+
+    slotItemTemplateResolver = (schedulerData, slot, slotClickedFunc, width, clsName) => {
+        console.log(slot)
+        return (
+            <div>
+                HElLO
+            </div>
+        )
     }
 
     unschedule_activity = (item) => {

@@ -395,7 +395,7 @@ class UnscheduledActivitiesList extends Component {
                                 className={classes.ingredient_id}
 
                             >
-                                {item.name}
+                                {item.goals[0].name + "-" + item.name}
                             </div>
                             <Divider></Divider>
                         </ListItem>
