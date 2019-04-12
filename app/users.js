@@ -196,6 +196,7 @@ class Users extends CRUD {
               .from("plant_mgr")
               .where("user_id=" + dataObj.id)
               .toString();
+              console.log(deletePlantOwnership);
             return db.execSingleQuery(deletePlantOwnership, [])
               .then((res) => {
                 let rowsToInsert = manlines.map((manline) => {
