@@ -205,6 +205,7 @@ class Users extends CRUD {
                     manline_id: manline
                   };
                 });
+                console.log(rowsToInsert);
                 let insertPlantOwnership = squel.insert()
                   .into("plant_mgr")
                   .setFields(rowsToInsert)
