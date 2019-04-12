@@ -442,6 +442,10 @@ class Scheduler extends CRUD {
         .then(function(res){
             let goals_id_map = {}
             let goals = []
+            let potential_man_lines = []
+            if(typeof(sku_man_line_map[row.sku_id]) === "undefined"){
+                potential_man_lines = sku_man_line_map[row.sku_id]
+            }
             res.rows.forEach(function(row){
                 let activity = {
                     "name": row.sku_name,
@@ -457,7 +461,7 @@ class Scheduler extends CRUD {
                     "start_time": that.get_date_string(row.start_time),
                     "end_time": that.get_date_string(row.end_time),
                     "man_line_num": that.get_zero_null(row.shortname),
-                    "potential_man_lines": sku_man_line_map[row.sku_id]
+                    "potential_man_lines": potential_man_lines
                 }
                 let goal = {
                     "name": row.mg_name,
