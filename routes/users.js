@@ -85,7 +85,7 @@ router.post('/netid', function (req, res, next) {
     .then((response) => {
       let netid = "netid_" + response.data.netid;
       let userInfo = {};
-      userInfo.netid = netid;
+      userInfo.uname = netid;
 
       const users = new Users();
 
@@ -96,6 +96,7 @@ router.post('/netid', function (req, res, next) {
         })
         .catch((err) => {
           userInfo.password = netid;
+          console.log(userInfo);
           users.create(userInfo)
             .then(() => {
               users.getUser(userInfo)
