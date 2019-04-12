@@ -419,6 +419,7 @@ class Scheduler extends CRUD {
         ) AS foo
         INNER JOIN users ON foo.user_id = users.id
         `
+        let temp_res
         return db.execSingleQuery(query, [])
         .then(function(res){
             let goals_id_map = {}
@@ -464,17 +465,18 @@ class Scheduler extends CRUD {
             return filtered_goals
         })
         .then(function(res){
-            // return db.execSingleQuery(ingredientQuery, [])
-            //     .then(function(res){
-            //     console.log(res.rows)
-            //     ingredients = res.rows.map(item => {
-            //         return {
-            //             label: item.name,
-            //             id: item.id
-            //         }
-            //     })
-            // })
-            return res
+            temp_res = res
+            return db.execSingleQuery("select * from manufacturing_line_sku", [])
+                .then(function(res){
+                console.log(res.rows)
+                // ingredients = res.rows.map(item => {
+                //     return {
+                //         label: item.name,
+                //         id: item.id
+                //     }
+                // })
+                return temp_res
+            })
         })
     }
 
