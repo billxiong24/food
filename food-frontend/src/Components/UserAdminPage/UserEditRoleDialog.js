@@ -44,16 +44,44 @@ class UserEditRoleDialog extends Component {
     super(props);
     this.state={
       manlines:[],
+      analyst: false,
+      prod_mgr: false,
+      bus_mgr: false,
+      plant_mgr: [],
+      admin: false,
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if(this.props.user.id !== prevProps.user.id) {
+      const user = this.props.user;
+      this.setState({
+        analyst: user.analyst,
+        prod_mgr: user.prod_mgr,
+        bus_mgr: user.bus_mgr,
+        plant_mgr: user.manlines,
+        admin: user.admin
+      })
     }
   }
   
   handleChange = name => event => {
-    this.setState({ [name]: event.target.checked });
+    this.setState({
+      [name]: event.target.checked
+    })
   };
 
   handleManlineChange = id => event => {
-
-  }
+    var new_plant = this.state.plant_mgr.slice();
+    if(new_plant.indexOf(id) >= 0) {
+      new_plant.splice(new_plant.indexOf(id), 1);
+    } else {
+      new_plant.push(id);
+    }
+    this.setState({
+      plant_mgr: new_plant
+    })
+  };
 
   componentWillMount() {
     Axios.get(hostname + 'manufacturing_line/search', {
@@ -88,25 +116,25 @@ class UserEditRoleDialog extends Component {
                   <FormGroup>
                     <FormControlLabel
                       control={
-                        <Checkbox checked={user.analyst} onChange={this.handleChange('gilad')} value="Analyst" />
+                        <Checkbox checked={this.state.analyst} onChange={this.handleChange('analyst')} value="Analyst" />
                       }
                       label="Analyst"
                     />
                     <FormControlLabel
                       control={
-                        <Checkbox checked={user.prod_mgr} onChange={this.handleChange('jason')} value="Product Manager" />
+                        <Checkbox checked={this.state.prod_mgr} onChange={this.handleChange('prod_mgr')} value="Product Manager" />
                       }
                       label="Product Manager"
                     />
                     <FormControlLabel
                       control={
-                        <Checkbox checked={user.bus_mgr} onChange={this.handleChange('jason')} value="Product Manager" />
+                        <Checkbox checked={this.state.bus_mgr} onChange={this.handleChange('bus_mgr')} value="Product Manager" />
                       }
                       label="Business Manager"
                     />
                     <FormControlLabel
                       control={
-                        <Checkbox checked={user.admin} onChange={this.handleChange('jason')} value="Administrator" />
+                        <Checkbox checked={this.state.admin} onChange={this.handleChange('admin')} value="Administrator" />
                       }
                       label="Administrator"
                     />
@@ -123,7 +151,7 @@ class UserEditRoleDialog extends Component {
                         key={manline.id}
                         control={
                           <Checkbox 
-                            checked={user.manlines ? user.manlines.filter((num) => {
+                            checked={this.state.plant_mgr ? this.state.plant_mgr.filter((num) => {
                               return manline.id === num
                             }).length > 0 : false}
                             onChange={this.handleManlineChange(manline.id)}
@@ -142,7 +170,7 @@ class UserEditRoleDialog extends Component {
               Cancel
             </Button>
             <Button onClick={this.props.handleSubmit} color="primary" autoFocus>
-              Continue
+              Update
             </Button>
           </DialogActions>
         </Dialog>
