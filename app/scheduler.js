@@ -445,7 +445,7 @@ class Scheduler extends CRUD {
             
             res.rows.forEach(function(row){
                 let potential_man_lines = []
-                if(typeof(sku_man_line_map[row.sku_id]) === "undefined"){
+                if(typeof(sku_man_line_map[row.sku_id]) !== "undefined"){
                     potential_man_lines = sku_man_line_map[row.sku_id]
                 }
                 let activity = {
