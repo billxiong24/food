@@ -16,7 +16,8 @@ export const userLogout = () => {
         removeCookies();
         dispatch({
           type: user_actions.USER_LOG_OUT
-        })
+        }, window.location.reload()
+        );
       })
       .catch((err) => {
         if (err.response.status == 304) {

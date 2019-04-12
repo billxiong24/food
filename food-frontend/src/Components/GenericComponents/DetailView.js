@@ -230,7 +230,7 @@ class DetailView extends Component {
 
   render() {
     console.log(this.props)
-    let readOnly = this.props.cookies.cookies.admin != "true"
+    let readOnly = this.props.cookies.cookies.core_write != "true"
     const { classes } = this.props;
     return (
       <div>

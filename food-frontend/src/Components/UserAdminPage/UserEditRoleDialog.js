@@ -20,6 +20,7 @@ import Axios from 'axios';
 
 import common from '../../Resources/common';
 import { Typography } from '@material-ui/core';
+import { userUpdate } from '../../Redux/Actions/ActionCreators/UserActionCreators';
 
 const hostname = common.hostname;
 
@@ -84,22 +85,20 @@ class UserEditRoleDialog extends Component {
   };
 
   updateUser() {
-    Axios.put(hostname + 'users/update/' + this.props.user.id, {
-      data: {
-        id: this.props.user.id,
-        analyst: this.state.analyst,
-        prod_mgr: this.state.prod_mgr,
-        bus_mgr: this.state.bus_mgr,
-        manlines: this.state.plant_mgr,
-        admin: this.state.admin
-      }
-    })
-    .then((res) => {
+    let user = {
+      id: this.props.user.id,
+      analyst: this.state.analyst,
+      prod_mgr: this.state.prod_mgr,
+      bus_mgr: this.state.bus_mgr,
+      manlines: this.state.plant_mgr,
+      admin: this.state.admin
+    };
+    this.props.update(user);
+    if(!this.props.users.errMsg) {
       this.props.handleClose();
-    })
-    .catch((err) => {
-      this.props.handleError("Error updating user roles: " + err.response);
-    })
+      console.log('here');
+      this.props.alert("User Successfully Updated!")
+    }
   }
 
   componentWillMount() {
@@ -129,8 +128,8 @@ class UserEditRoleDialog extends Component {
           <DialogContent>
             <div className={classes.check_container}>
               <div>
-                <Typography variant="h6">Assign Roles</Typography>
-                <FormControl component="fieldset" className={classes.formControl}>
+                <Typography variant="h6">Assigned Roles</Typography>
+                <FormControl disabled={user.uname === "admin" || user.uname === cookies.user } component="fieldset" className={classes.formControl}>
                   <FormGroup>
                     <FormControlLabel
                       control={
@@ -162,7 +161,7 @@ class UserEditRoleDialog extends Component {
 
               <div className={classes.plant_div_container}>
                 <Typography variant="h6">Plant Manager for:</Typography>
-                <FormControl component="fieldset" className={classes.plant_container}>
+                <FormControl disabled={user.uname === "admin" || user.uname === cookies.user } component="fieldset" className={classes.plant_container}>
                   <FormGroup>
                     {this.state.manlines.map((manline) => (
                       <FormControlLabel
@@ -199,12 +198,14 @@ class UserEditRoleDialog extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    cookies: ownProps.cookies.cookies
+    cookies: ownProps.cookies.cookies,
+    users: state.users
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
+    update: userUpdate,
   };
 };
 

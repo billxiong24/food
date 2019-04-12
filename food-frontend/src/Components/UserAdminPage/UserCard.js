@@ -101,25 +101,12 @@ class UserCard extends Component {
               <Typography className={classes.user_name} color="textSecondary" gutterBottom>
                 {item.uname}
               </Typography>
-              <div className={classes.admin_switch}>
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={this.props.item.admin}
-                      onChange={() => { this.props.handleToggle(this.props.item) }}
-                      color="primary"
-                      disabled={item.uname === "admin" || item.uname === this.props.currentUser}
-                    />
-                  }
-                  label="Admin"
-                />
-              </div>
               <IconButton
                 key="close"
                 aria-label="Close"
                 color="inherit"
                 className={classes.button + ' ' + classes.close_button}
-                onClick={(e) => { this.props.delete(item) }}
+                onClick={(e) => { e.stopPropagation(); this.props.delete(item) }}
                 disabled={item.uname === "admin" || item.uname === this.props.currentUser }
               >
                 <CloseIcon />

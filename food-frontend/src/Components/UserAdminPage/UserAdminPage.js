@@ -140,6 +140,7 @@ class UserAdminPage extends Component {
   }
 
   deleteUser(user) {
+    
     Axios.get(common.hostname + 'manufacturing_goals/', {
       params: {
         user_id: user.id
@@ -237,7 +238,7 @@ class UserAdminPage extends Component {
     this.handleQuery();
   }
 
-  throwError(err) {
+  alert(err) {
     this.setState({
       alert: true,
       message: err
@@ -336,7 +337,7 @@ class UserAdminPage extends Component {
           user={this.state.userToEdit}
           open={this.state.editDialog}
           handleClose={this.handleEditClose}
-          handleError={(e) => {this.throwError(e)}}
+          alert={(e) => {this.alert(e)}}
         />
       </div>
     );

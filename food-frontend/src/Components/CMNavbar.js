@@ -42,6 +42,12 @@ const styles = theme => ({
     display: "flex",
     alignItems: "center",
     justifyContent: "center"
+  },
+  userDisplay: {
+    color: '#ffc61b',
+    fontFamily: 'Open Sans',
+    fontSize: '14px',
+    marginRight: 10
   }
 });
 
@@ -91,6 +97,7 @@ class CMNavbar extends React.Component {
               <Nav.Link className={cookies.user_write === 'true' ? '' : classes.hidden} as={Link} to={'/users'}>Manage Users</Nav.Link>
             </Nav>
             <Nav>
+              <Nav.Item as={Typography} variant="overline" className={cookies.user ? classes.userDisplay : classes.hidden}>{cookies.user}</Nav.Item>
               <Nav.Link className={cookies.user ? '' : classes.hidden} as={Link} to={'/logout'}>Log Out</Nav.Link>
               <Nav.Link className={!cookies.user ? '' : classes.hidden} as={Link} to={'/login'}>Log In</Nav.Link>
             </Nav>
