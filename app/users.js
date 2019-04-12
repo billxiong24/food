@@ -158,66 +158,43 @@ class Users extends CRUD {
         hashedDataObj.password = hash;
         return super.change(hashedDataObj, oldPrimaryKey, "id")
           .then((res) => {
-            if (!manlines) {
-              return res;
-            } else {
-              let deletePlantOwnership = squel.delete()
-                .from("plant_mgr")
-                .where("user_id=" + dataObj.id)
-                .toString();
-              return db.execSingleQuery(deletePlantOwnership, [])
-                .then((res) => {
-                  let rowsToInsert = manlines.map((manline) => {
-                    return {
-                      user_id: dataObj.id,
-                      manline_id: manline
-                    };
-                  });
-                  let insertPlantOwnership = squel.insert()
-                    .into("plant_mgr")
-                    .setFields(rowsToInsert)
-                    .toString();
-                  return db.execSingleQuery(insertPlantOwnership, [])
-                    .then((inserts) => {
-                      inserts.rowCount += res.rowCount;
-                      return inserts;
-                    });
-                })
-            }
+            return this.updatePlantManager(hashedDataObj, manlines, res);
           });
       });
     } else {
       return super.change(dataObj, oldPrimaryKey, "id")
         .then((res) => {
-          if (!manlines) {
-            return res;
-          } else {
-            let deletePlantOwnership = squel.delete()
-              .from("plant_mgr")
-              .where("user_id=" + dataObj.id)
-              .toString();
-            return db.execSingleQuery(deletePlantOwnership, [])
-              .then((res) => {
-                let rowsToInsert = manlines.map((manline) => {
-                  return {
-                    user_id: dataObj.id,
-                    manline_id: manline
-                  };
-                });
-                console.log(rowsToInsert);
-                let insertPlantOwnership = squel.insert()
-                  .into("plant_mgr")
-                  .setFieldsRows(rowsToInsert)
-                  .toString();
-                console.log(insertPlantOwnership);
-                return db.execSingleQuery(insertPlantOwnership, [])
-                  .then((inserts) => {
-                    inserts.rowCount += res.rowCount;
-                    return inserts;
-                  });
-              })
-          }
+          return this.updatePlantManager(dataObj, manlines, res);
         });
+    }
+  }
+
+  updatePlantManager(dataObj, manlines, res) {
+    if (!manlines) {
+      return res;
+    } else {
+      let deletePlantOwnership = squel.delete()
+        .from("plant_mgr")
+        .where("user_id=" + dataObj.id)
+        .toString();
+      return db.execSingleQuery(deletePlantOwnership, [])
+        .then((rowsDeleted) => {
+          let rowsToInsert = manlines.map((manline) => {
+            return {
+              user_id: dataObj.id,
+              manline_id: manline
+            };
+          });
+          let insertPlantOwnership = squel.insert()
+            .into("plant_mgr")
+            .setFieldsRows(rowsToInsert)
+            .toString();
+          return db.execSingleQuery(insertPlantOwnership, [])
+            .then((inserts) => {
+              inserts.rowCount += res.rowCount + rowsDeleted.rowCount;
+              return inserts;
+            });
+        })
     }
   }
 
