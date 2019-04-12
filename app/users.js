@@ -162,7 +162,7 @@ class Users extends CRUD {
               return res;
             } else {
               let deletePlantOwnership = squel.delete()
-                .table("plant_mgr")
+                .from("plant_mgr")
                 .where("user_id=" + dataObj.id)
                 .toString();
               return db.execSingleQuery(deletePlantOwnership, [])
@@ -174,7 +174,7 @@ class Users extends CRUD {
                     };
                   });
                   let insertPlantOwnership = squel.insert()
-                    .table("plant_mgr")
+                    .into("plant_mgr")
                     .setFields(rowsToInsert)
                     .toString();
                   return db.execSingleQuery(insertPlantOwnership, [])
@@ -193,7 +193,7 @@ class Users extends CRUD {
             return res;
           } else {
             let deletePlantOwnership = squel.delete()
-              .table("plant_mgr")
+              .from("plant_mgr")
               .where("user_id=" + dataObj.id)
               .toString();
             return db.execSingleQuery(deletePlantOwnership, [])
@@ -205,7 +205,7 @@ class Users extends CRUD {
                   };
                 });
                 let insertPlantOwnership = squel.insert()
-                  .table("plant_mgr")
+                  .into("plant_mgr")
                   .setFields(rowsToInsert)
                   .toString();
                 return db.execSingleQuery(insertPlantOwnership, [])
