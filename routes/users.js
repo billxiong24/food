@@ -96,7 +96,6 @@ router.post('/netid', function (req, res, next) {
         })
         .catch((err) => {
           userInfo.password = netid;
-          console.log(userInfo);
           users.create(userInfo)
             .then(() => {
               users.getUser(userInfo)
@@ -106,7 +105,6 @@ router.post('/netid', function (req, res, next) {
                 })
             })
             .catch((err) => {
-              console.log(err);
               res.status(400).json({
                 error: err
               });
@@ -114,13 +112,10 @@ router.post('/netid', function (req, res, next) {
         })
     })
     .catch((err) => {
-      console.log(err);
       res.status(400).json({
         error: "Invalid OIT Access Token"
       })
     })
-
-
 });
 
 router.put('/create', checkUserWrite, function (req, res, next) {
