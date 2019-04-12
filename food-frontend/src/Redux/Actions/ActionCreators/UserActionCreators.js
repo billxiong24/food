@@ -126,7 +126,7 @@ export const userLoginAttempt = (dataObj) => {
 // NetID log in
 export const userNetIdLogin = (token) => {
   return (dispatch) => {
-    return axios.post(hostname + 'users/netid', {token: token})
+    return axios.post(hostname + 'users/netid', token)
       .then((response) => {
         setCookies(response.data);
         dispatch({

@@ -79,12 +79,11 @@ router.post('/netid', function (req, res, next) {
   axios.get('https://api.colab.duke.edu/identity/v1/', {
     headers: {
       'x-api-key': process.env.COLAB_CLIENT_ID,
-      'Authorization': `Bearer ${req.body.token}`
+      'Authorization': `Bearer ${req.body.access_token}`
     },
     withCredentials: false,
   })
     .then((response) => {
-      console.log(response);
       let netid = "netid_" + response.data.netid;
       userInfo.netid = netid;
 
