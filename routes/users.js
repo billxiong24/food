@@ -6,7 +6,7 @@ const error_controller = require('../app/controller/error_controller');
 
 const { checkUserRead, checkUserWrite } = require('./guard');
 
-import common from '../food-frontend/src/Resources/common'
+import common from '../food-frontend/src/Resources/common';
 
 router.get('/logout', function(req, res, next) {
   if(req.session.user && req.sessionID) {
