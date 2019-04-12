@@ -186,7 +186,7 @@ class Users extends CRUD {
             };
           });
           if(rowsToInsert.length === 0) {
-            rowsDeleted += res.rowCount;
+            rowsDeleted.rowCount += res.rowCount;
             return rowsDeleted;
           } else {
             let insertPlantOwnership = squel.insert()

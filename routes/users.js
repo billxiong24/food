@@ -150,7 +150,6 @@ router.put('/update/:id', checkUserWrite, function(req, res, next) {
 
   users.update(req.body, req.params.id)
     .then((result) => {
-      console.log(result);
       res.status(200).json({
         rowCount: result.rowCount
       });
