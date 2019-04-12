@@ -4,10 +4,11 @@ const router = express.Router();
 const Filter = require('../app/filter');
 const error_controller = require('../app/controller/error_controller');
 
+const axios = require('axios');
 const { checkUserRead, checkUserWrite } = require('./guard');
 
-router.get('/logout', function(req, res, next) {
-  if(req.session.user && req.sessionID) {
+router.get('/logout', function (req, res, next) {
+  if (req.session.user && req.sessionID) {
     req.session.destroy();
     res.status(200).send();
   } else {
@@ -45,25 +46,29 @@ router.get('/search', checkUserRead, function (req, res, next) {
 });
 
 // Verify User password
-router.post('/', function(req, res, next) {
-    if(!req.body.uname || !req.body.password) {
-      return res.status(400).send({
-          error: "Must include username(uname) and password in POST request"
-      });
-    }
+router.post('/', function (req, res, next) {
+  if (!req.body.uname || !req.body.password) {
+    return res.status(400).send({
+      error: "Must include username(uname) and password in POST request"
+    });
+  }
 
-    const users = new Users();
+  const users = new Users();
 
-    users.verify(req.body)
+  users.verify(req.body)
     .then((result) => {
-        result = logUserInAndSetToken(req, result);
-        res.status(200).json(result);
+      result = logUserInAndSetToken(req, result);
+      res.status(200).json(result);
     })
     .catch((err) => {
-        res.status(400).json({
-            error: err
-        });
+      res.status(400).json({
+        error: err
+      });
     });
+});
+
+router.get('/netid_login', (req, res, next) => {
+
 });
 
 router.get('/netid', (req, res, next) => {
@@ -73,73 +78,85 @@ router.get('/netid', (req, res, next) => {
     "&response_type=token&state=1234&scope=basic")
 });
 
-router.post('/netid', function(req, res, next) {
-  if(!req.body.uname || req.body.uname.search(/^[a-zA-Z]{2,3}[0-9]+$/i) < 0) {
-    return res.status(400).send({
-      error: "Must include valid netid"
+router.post('/netid', function (req, res, next) {
+  axios.get('https://api.colab.duke.edu/identity/v1/', {
+    headers: {
+      'x-api-key': process.env.COLAB_CLIENT_ID,
+      'Authorization': `Bearer ${req.body.token}`
+    },
+    withCredentials: false,
+  })
+    .then((response) => {
+      let netid = "netid_" + response.data.netid;
+      userInfo.netid = netid;
+
+      const users = new Users();
+
+      users.getUser(userInfo)
+        .then((result) => {
+          result = logUserInAndSetToken(req, result);
+          res.status(200).json(result);
+        })
+        .catch((err) => {
+          userInfo.password = netid;
+          users.create(userInfo)
+            .then(() => {
+              users.getUser(userInfo)
+                .then((user) => {
+                  user = logUserInAndSetToken(req, user);
+                  res.status(201).json(user);
+                })
+            })
+            .catch((err) => {
+              res.status(400).json({
+                error: err
+              });
+            })
+        })
     })
+    .catch((err) => {
+      res.status(400).json({
+        error: "Invalid OIT Access Token"
+      })
+    })
+
+
+});
+
+router.put('/create', checkUserWrite, function (req, res, next) {
+  if (!req.body.password) {
+    return res.status(400).send({
+      error: "Must include password parameter in PUT request."
+    });
   }
 
-  req.body.uname = "netid_" + req.body.uname;
+  if (req.body.uname.search(/netid/i) >= 0) {
+    return res.status(400).send({
+      error: "Username must not include the phrase 'netid'."
+    });
+  }
 
   const users = new Users();
 
-  users.getUser(req.body)
-  .then((result) => {
-    result = logUserInAndSetToken(req, result);
-    res.status(200).json(result);
-  })
-  .catch((err) => {
-    users.create(req.body)
-      .then(() => {
-        users.getUser(req.body)
-        .then((user) => {
-          user = logUserInAndSetToken(req, user);
-          res.status(201).json(user);
-        })
-      })
-      .catch((err) => {
-        res.status(400).json({
-            error: err
-        });
-      })
-  })
-});
-
-router.put('/create', checkUserWrite, function(req, res, next) {
-    if(!req.body.password) {
-        return res.status(400).send({
-            error: "Must include password parameter in PUT request."
-        });
-    }
-
-    if(req.body.uname.search(/netid/i) >= 0) {
-      return res.status(400).send({
-        error: "Username must not include the phrase 'netid'."
-      });
-    }
-
-    const users = new Users();
-
-    users.create(req.body)
+  users.create(req.body)
     .then((result) => {
-        res.status(201).json({});
+      res.status(201).json({});
     })
     .catch((err) => {
-        res.status(409).json({
-            error: err
-        });
+      res.status(409).json({
+        error: err
+      });
     });
 });
 
-router.put('/update/:id', checkUserWrite, function(req, res, next) {
+router.put('/update/:id', checkUserWrite, function (req, res, next) {
   let id = req.params.id;
   if (isNaN((id))) {
     return res.status(400).json({
       error: "Malformed URL."
     });
   }
-  if(id == 7) {
+  if (id == 7) {
     return res.status(401).json({
       error: "You are not authorized to do this."
     })
@@ -147,9 +164,9 @@ router.put('/update/:id', checkUserWrite, function(req, res, next) {
 
   let val = req.body.admin;
 
-  if(typeof val === "string") {
-    if(val.toLocaleLowerCase === 'true') val = true;
-    else if(val.toLocaleLowerCase === 'false') val = false;
+  if (typeof val === "string") {
+    if (val.toLocaleLowerCase === 'true') val = true;
+    else if (val.toLocaleLowerCase === 'false') val = false;
   }
   req.body.admin = val;
 
@@ -170,29 +187,29 @@ router.put('/update/:id', checkUserWrite, function(req, res, next) {
     });
 });
 
-router.delete('/:id', checkUserWrite, function(req, res, next) {
-    const users = new Users();
-    let id = req.params.id;
-    if(isNaN((id))) {
-        return res.status(400).json({
-            error: "Malformed URL."
-        });
-    }
-    
-    if(id == 7) {
-      return res.status(401).json({
-        error: "You are not authorized to do this."
-      })
-    }
+router.delete('/:id', checkUserWrite, function (req, res, next) {
+  const users = new Users();
+  let id = req.params.id;
+  if (isNaN((id))) {
+    return res.status(400).json({
+      error: "Malformed URL."
+    });
+  }
 
-    users.remove(req.params.id)
+  if (id == 7) {
+    return res.status(401).json({
+      error: "You are not authorized to do this."
+    })
+  }
+
+  users.remove(req.params.id)
     .then((result) => {
-        res.status(200).json({});
+      res.status(200).json({});
     })
     .catch((err) => {
-        res.status(409).json({
-            error: err
-        })
+      res.status(409).json({
+        error: err
+      })
     })
 });
 

@@ -124,9 +124,9 @@ export const userLoginAttempt = (dataObj) => {
 }
 
 // NetID log in
-export const userNetIdLogin = (user) => {
+export const userNetIdLogin = (token) => {
   return (dispatch) => {
-    return axios.post(hostname + 'users/netid', user)
+    return axios.post(hostname + 'users/netid', {token: token})
       .then((response) => {
         setCookies(response.data);
         dispatch({
@@ -134,13 +134,22 @@ export const userNetIdLogin = (user) => {
         })
       })
       .catch((err)=>{
-        dispatch({
-          type: user_actions.USER_NETID_LOG_IN,
-          data: {
-            errMsg: "Something unexpected went wrong"
-          }
-        });
-        throw (err.response);
+        if(err.response.status === 400) {
+          dispatch({
+            type: user_actions.USER_NETID_LOG_IN,
+            data: {
+              errMsg: err.response.data.err
+            }
+          });
+        } else {
+          dispatch({
+            type: user_actions.USER_NETID_LOG_IN,
+            data: {
+              errMsg: "Something unexpected went wrong"
+            }
+          });
+          throw (err.response);
+        }
       })
   }
 }
