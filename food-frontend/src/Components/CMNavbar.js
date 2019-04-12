@@ -85,6 +85,9 @@ class CMNavbar extends React.Component {
                 <NavDropdown.Item as={Link} to={'/skus'}>SKUs</NavDropdown.Item>
                 <NavDropdown.Item as={Link} to={'/formula'}>Formulas</NavDropdown.Item>
                 <NavDropdown.Item as={Link} to={'/product_lines'}>Product Lines</NavDropdown.Item>
+                <NavDropdown.Item as={Link} to={'/manufacturing_lines'}>Manufacturing Lines</NavDropdown.Item>
+                <NavDropdown.Divider className={cookies.sales_read === 'true' ? '' : classes.hidden} />
+                <NavDropdown.Item className={cookies.sales_read === 'true' ? '' : classes.hidden} as={Link} to={'/ingredients/dependency'}>Ingredient Dependency Report</NavDropdown.Item>
               </NavDropdown>
               <NavDropdown className={cookies.sales_read === 'true' ? '' : classes.hidden} title="Sales Data" id="collasible-nav-dropdown">
                 <NavDropdown.Item as={Link} to={'/manufacturing_goals'}>Manufacturing Goals</NavDropdown.Item>

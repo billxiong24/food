@@ -11,6 +11,7 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
+import { withCookies } from 'react-cookie';
 
 const styles = {
   card: {
@@ -75,7 +76,7 @@ class ManufacturingLinesCard extends Component {
   }
 
   render() {
-    const { classes } = this.props;
+    const { classes, cookies} = this.props;
     const item = this.props.item
     return (
       <Card className={classes.card} onClick={() => { this.props.edit(item) }}>
@@ -95,6 +96,7 @@ class ManufacturingLinesCard extends Component {
             color="inherit"
             className={classes.button + ' ' + classes.close_button}
             onClick={(e) => { this.delete(e) }}
+            disabled={cookies.cookies.core_write === 'false'}
           >
             <CloseIcon />
           </IconButton>
@@ -104,4 +106,4 @@ class ManufacturingLinesCard extends Component {
   }
 }
 
-export default withStyles(styles)(ManufacturingLinesCard);
+export default withStyles(styles)(withCookies(ManufacturingLinesCard));

@@ -356,7 +356,7 @@ class FormulaPage extends Component {
 
   render() {
     console.log(this.props)
-    let disabled = this.props.cookies.cookies.admin == "false"
+    let disabled = this.props.cookies.cookies.core_write == "false"
     const { classes } = this.props
     return (
       <div className={classes.ingredients_page_container}>

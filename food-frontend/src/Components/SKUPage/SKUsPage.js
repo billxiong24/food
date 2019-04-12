@@ -657,7 +657,7 @@ errorCallback = (value) => {
             </div>
             <div className={classes.other_actions}>
               {
-                this.props.cookies.admin === "true" ?
+                this.props.cookies.core_write === "true" ?
                   <Button
                     className={classes.add_ingredient}
                     onClick={this.openSKUCreatePage}
@@ -669,7 +669,7 @@ errorCallback = (value) => {
                   <div></div>
               }
               {
-                this.props.cookies.admin === "true" ?
+                this.props.cookies.core_write === "true" ?
                   <Button
                     className={classes.add_ingredient}
                     onClick={() => { this.props.addAllFilter() }}
@@ -681,7 +681,7 @@ errorCallback = (value) => {
                   <div></div>
               }
               {
-                this.props.cookies.admin === "true" ?
+                this.props.cookies.core_write === "true" ?
                   <Button
                     className={classes.add_ingredient}
                     onClick={() => { this.props.removeAllFilter() }}
@@ -693,7 +693,7 @@ errorCallback = (value) => {
                   <div></div>
               }
               {
-                this.props.cookies.admin === "true" ?
+                this.props.cookies.core_write === "true" ?
                   <Button
                     className={classes.add_ingredient}
                     onClick={() => { this.openBulkEdit() }}

@@ -8,9 +8,11 @@ import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
 import DeleteIcon from '@material-ui/icons/Delete';
 import ManufacturingGoalsCard from './ManufacturingGoalsCard';
-import { mangoalUpdateMangoal, mangoalAddFilter, mangoalRemoveFilter, mangoalDeleteMangoalSkus,
+import {
+  mangoalUpdateMangoal, mangoalAddFilter, mangoalRemoveFilter, mangoalDeleteMangoalSkus,
   mangaolDeleteMangoal, mangaolUpdateMangoalSkus, mangoalSearchProductLines, mangoalSetActiveMangoal,
-  mangoalGetMangoals, mangoalCreateMangoal, mangoalSearchSkus } from '../../Redux/Actions/ActionCreators/ManufacturingGoalActionCreators';
+  mangoalGetMangoals, mangoalCreateMangoal, mangoalSearchSkus
+} from '../../Redux/Actions/ActionCreators/ManufacturingGoalActionCreators';
 import ManufacturingGoalsSkuSearch from './ManufacturingGoalsSkuSearch';
 import TextField from '@material-ui/core/TextField';
 import SkuCard from './SkuCard';
@@ -195,9 +197,9 @@ class ManufacturingGoalsPage extends Component {
     this.state = {
       fromDate: date.format(new Date(), 'YYYY-MM-DD'),
       toDate: date.format(new Date(), 'YYYY-MM-DD'),
-      viewSales: false, 
-      salesData: {},  
-      aggregateSalesData: {}, 
+      viewSales: false,
+      salesData: {},
+      aggregateSalesData: {},
       orderKey: "",
       currViewGoals: [],
       enabledGoalsMap: {},
@@ -250,8 +252,8 @@ class ManufacturingGoalsPage extends Component {
   toDateString(date) {
     var d = new Date(parseInt(date));
     var year = d.getFullYear();
-    var month = "0" + (d.getMonth()+1);
-    var day = "0" + (d.getDate()+1);
+    var month = "0" + (d.getMonth() + 1);
+    var day = "0" + (d.getDate() + 1);
     return year + '-' + month.substr(-2) + '-' + day.substr(-2);
   }
 
@@ -312,24 +314,24 @@ class ManufacturingGoalsPage extends Component {
   };
 
   getAllGoals = () => {
-      console.log("GETTING ALL GOALS");
-      console.log(this.state.orderKey);
+    console.log("GETTING ALL GOALS");
+    console.log(this.state.orderKey);
     return axios.get(common.hostname + 'manufacturing_goals/fetch', {
-        params: {
-            orderKey: this.state.orderKey
-        }
+      params: {
+        orderKey: this.state.orderKey
+      }
     })
       .then((response) => {
-          let obj = {};
-          for(let i = 0; i < response.data.length; i++) {
-              obj[response.data[i].id] = response.data[i].enabled;
-          }
-          this.setState({
-              enabledGoalsMap: obj
-          })
-          this.setState({
-              currViewGoals: response.data
-          })
+        let obj = {};
+        for (let i = 0; i < response.data.length; i++) {
+          obj[response.data[i].id] = response.data[i].enabled;
+        }
+        this.setState({
+          enabledGoalsMap: obj
+        })
+        this.setState({
+          currViewGoals: response.data
+        })
       })
       .catch(err => {
         console.log(err);
@@ -338,82 +340,82 @@ class ManufacturingGoalsPage extends Component {
   }
 
 
-    fetchSalesProjection = e => {
-        console.log(this.state.fromDate);
-        console.log(this.state.toDate);
-        return axios.get(common.hostname + 'sales/search/timespan', {
-            params: {
-                sku_num: this.state.sku,
-                fromDate: this.state.fromDate, 
-                toDate:  this.state.toDate 
-            }
-        })
-            .then((response) => {
-                let agData = {
-                    average: response.data.average,
-                    stddev: response.data.stddev
-                };
-                delete response.data.average;
-                delete response.data.stddev;
-                console.log(agData);
+  fetchSalesProjection = e => {
+    console.log(this.state.fromDate);
+    console.log(this.state.toDate);
+    return axios.get(common.hostname + 'sales/search/timespan', {
+      params: {
+        sku_num: this.state.sku,
+        fromDate: this.state.fromDate,
+        toDate: this.state.toDate
+      }
+    })
+      .then((response) => {
+        let agData = {
+          average: response.data.average,
+          stddev: response.data.stddev
+        };
+        delete response.data.average;
+        delete response.data.stddev;
+        console.log(agData);
 
-                this.setState({
-                    salesData: response.data, 
-                    aggregateSalesData: agData
-                });
-            })
-            .catch(err => {
-                console.log(err);
-            })
+        this.setState({
+          salesData: response.data,
+          aggregateSalesData: agData
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      })
 
-    }
-
-  setTitleOrderKey = e => {
-      this.setState({
-          orderKey: "name"
-      },
-          () => {
-            this.getAllGoals();
-          }
-      )
   }
 
-    changeEnabled = (goal_id, enabled) => {
-        console.log(enabled);
-        return axios.put(common.hostname + 'manufacturing_goals/' + goal_id, {
-            enabled: enabled
+  setTitleOrderKey = e => {
+    this.setState({
+      orderKey: "name"
+    },
+      () => {
+        this.getAllGoals();
+      }
+    )
+  }
+
+  changeEnabled = (goal_id, enabled) => {
+    console.log(enabled);
+    return axios.put(common.hostname + 'manufacturing_goals/' + goal_id, {
+      enabled: enabled
+    })
+      .then((response) => {
+        let obj = JSON.parse(JSON.stringify(this.state.enabledGoalsMap));
+        obj[goal_id] = enabled;
+        this.setState({
+          enabledGoalsMap: obj
         })
-        .then((response) => {
-            let obj = JSON.parse(JSON.stringify(this.state.enabledGoalsMap));
-            obj[goal_id] = enabled;
-            this.setState({
-                enabledGoalsMap: obj
-            })
-            console.log(this.state.enabledGoalsMap);
-        })
-        .catch(err => {
-            console.log(err);
-        })
-    }
+        console.log(this.state.enabledGoalsMap);
+      })
+      .catch(err => {
+        console.log(err);
+      })
+  }
 
 
   setAuthorOrderKey = e => {
-      this.setState({
-          orderKey: "uname"
-      },() => {
-            this.getAllGoals();
-          }
-      )
-      //this.getAllGoals();
+    this.setState({
+      orderKey: "uname"
+    }, () => {
+      this.getAllGoals();
+    }
+    )
+    //this.getAllGoals();
   }
 
   setEditOrderKey = e => {
-      this.setState({
-          orderKey: "last_edit"
-      },() => {
-            this.getAllGoals();
-          }
-      )
+    this.setState({
+      orderKey: "last_edit"
+    }, () => {
+      this.getAllGoals();
+    }
+    )
   }
 
   selectSku = skuNum => {
@@ -502,30 +504,30 @@ class ManufacturingGoalsPage extends Component {
   }
 
   handleOpenGoals = () => {
-      let bool = this.state.viewGoals;
+    let bool = this.state.viewGoals;
     this.setState({
-        viewGoals: !bool
+      viewGoals: !bool
     });
     this.getAllGoals();
   }
 
-  handleSetSalesViewRange = name => event => { 
-      console.log(event.target.value);
+  handleSetSalesViewRange = name => event => {
+    console.log(event.target.value);
   }
 
   handleSalesOpen = () => {
-      this.fetchSalesProjection()
+    this.fetchSalesProjection()
       .then((d) => {
-          this.setState({
-              viewSales: true
-          });
+        this.setState({
+          viewSales: true
+        });
       })
   }
 
   handleSalesClose = () => {
-      this.setState({
-          viewSales: false
-      });
+    this.setState({
+      viewSales: false
+    });
   }
   handleClickNewOpen = () => {
     this.setState({ newDialog: true });
@@ -561,7 +563,7 @@ class ManufacturingGoalsPage extends Component {
   }
 
   render() {
-    const { classes, manGoals } = this.props
+    const { classes, manGoals, cookies } = this.props
     return (
       <div className={classes.man_goal_page_container}>
         <div className={classes.user_man_goals_container}>
@@ -573,14 +575,18 @@ class ManufacturingGoalsPage extends Component {
               variant="contained"
               onClick={this.handleOpenGoals}
             >
-                See Manufacturing Goals
+              See Manufacturing Goals
             </Button>
-            <Button
-              variant="contained"
-              onClick={this.handleClickNewOpen}
-            >
-              New Manufacturing Goal
-            </Button>
+            {
+              cookies.goals_write === 'true' ?
+                <Button
+                  variant="contained"
+                  onClick={this.handleClickNewOpen}
+                >
+                  New Manufacturing Goal
+              </Button> :
+                <div></div>
+            }
             <ManufacturingGoalsNewDialog
               open={this.state.newDialog}
               close={this.handleNewClose}
@@ -634,30 +640,30 @@ class ManufacturingGoalsPage extends Component {
             </Fab>
           </div>
           <div variant="inset" className={classes.divider} />
-            <div className={this.state.viewGoals ? "test" : classes.hidden}>
+          <div className={this.state.viewGoals ? "test" : classes.hidden}>
             <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell><Button onClick={this.setTitleOrderKey}> Goal name </Button></TableCell>
-                      <TableCell><Button onClick={this.setAuthorOrderKey}> Author </Button></TableCell>
-                      <TableCell><Button onClick={this.setEditOrderKey}> Last Edit</Button></TableCell>
-                      <TableCell>Enable/Disable</TableCell>
+              <TableHead>
+                <TableRow>
+                  <TableCell><Button onClick={this.setTitleOrderKey}> Goal name </Button></TableCell>
+                  <TableCell><Button onClick={this.setAuthorOrderKey}> Author </Button></TableCell>
+                  <TableCell><Button onClick={this.setEditOrderKey}> Last Edit</Button></TableCell>
+                  <TableCell>Enable/Disable</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {
+                  this.state.currViewGoals.map((goal) => {
+                    return <TableRow>
+                      <TableCell> {goal.name} </TableCell>
+                      <TableCell> {goal.uname} </TableCell>
+                      <TableCell> {goal.last_edit} </TableCell>
+                      <TableCell> <Button onClick={() => this.changeEnabled(goal.id, !this.state.enabledGoalsMap[goal.id])}> {this.state.enabledGoalsMap[goal.id] ? "Disable" : "Enable"} </Button> </TableCell>
                     </TableRow>
-                  </TableHead>
-                    <TableBody>
-        {
-                        this.state.currViewGoals.map((goal) => {
-                            return <TableRow>
-                              <TableCell> { goal.name } </TableCell>
-                              <TableCell> { goal.uname } </TableCell>
-                              <TableCell> { goal.last_edit } </TableCell>
-                              <TableCell> <Button onClick={() => this.changeEnabled(goal.id, !this.state.enabledGoalsMap[goal.id])}> { this.state.enabledGoalsMap[goal.id] ? "Disable" : "Enable" } </Button> </TableCell>
-                            </TableRow>
-                        })
-        }
-                    </TableBody>
+                  })
+                }
+              </TableBody>
             </Table>
-            </div>
+          </div>
           <div className={(manGoals.activeGoal.id ? classes.man_goal_content_container : classes.hidden)}>
             <div className={classes.sku_search_container}>
               <div className={classes.man_goal_content_add}>
@@ -704,41 +710,41 @@ class ManufacturingGoalsPage extends Component {
                   </Autocomplete>
                   <FormHelperText>Select Product Lines to Filter By</FormHelperText>
                 </FormControl>
-                <Button onClick = {this.handleSalesOpen} >
-                    View Sales Projection
+                <Button onClick={this.handleSalesOpen} >
+                  View Sales Projection
                 </Button>
-        <div>
-                <TextField
-                  id="date"
-                  label="View Sales Report From"
-                  type="date"
-                  value={this.props.date}
-                  className={classes.textField}
-                  onChange={this.handleChange('fromDate')}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
+                <div>
+                  <TextField
+                    id="date"
+                    label="View Sales Report From"
+                    type="date"
+                    value={this.props.date}
+                    className={classes.textField}
+                    onChange={this.handleChange('fromDate')}
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                  />
+                </div>
+                <div>
+                  <TextField
+                    id="date"
+                    label="View Sales Report To"
+                    type="date"
+                    value={this.props.date}
+                    className={classes.textField}
+                    onChange={this.handleChange('toDate')}
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                  />
+                </div>
+                <ManufacturingGoalsSalesDetails
+                  open={this.state.viewSales}
+                  close={this.handleSalesClose}
+                  data={this.state.salesData}
+                  aggregateData={this.state.aggregateSalesData}
                 />
-</div>
-        <div>
-                <TextField
-                  id="date"
-                  label="View Sales Report To"
-                  type="date"
-                  value={this.props.date}
-                  className={classes.textField}
-                  onChange={this.handleChange('toDate')}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                />
-</div>
-            <ManufacturingGoalsSalesDetails
-              open={this.state.viewSales}
-              close={this.handleSalesClose}
-              data={this.state.salesData}
-              aggregateData={this.state.aggregateSalesData}
-            />
                 <div className={classes.active_filter_container}>
                   {manGoals.filters.map((prdline) => (
                     <Chip

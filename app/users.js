@@ -162,7 +162,6 @@ class Users extends CRUD {
           });
       });
     } else {
-      console.log('here');
       return super.change(dataObj, oldPrimaryKey, "id")
         .then((res) => {
           return this.updatePlantManager(dataObj, manlines, res);

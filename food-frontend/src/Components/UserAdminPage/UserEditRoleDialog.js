@@ -5,17 +5,12 @@ import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { withCookies } from 'react-cookie';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
-import FormLabel from '@material-ui/core/FormLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormGroup from '@material-ui/core/FormGroup';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import Checkbox from '@material-ui/core/Checkbox';
-import { manlineSearch, manlineGetMappings, manlineChangeMapping, manlineUpdateMappings } from '../../Redux/Actions/ActionCreators/ManufacturingLineActionCreators'
 import Axios from 'axios';
 
 import common from '../../Resources/common';
@@ -96,7 +91,6 @@ class UserEditRoleDialog extends Component {
     this.props.update(user);
     if(!this.props.users.errMsg) {
       this.props.handleClose();
-      console.log('here');
       this.props.alert("User Successfully Updated!")
     }
   }
@@ -205,7 +199,9 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    update: userUpdate,
+    update: (user) => {
+      dispatch(userUpdate(user))
+    }
   };
 };
 
