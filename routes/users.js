@@ -6,8 +6,6 @@ const error_controller = require('../app/controller/error_controller');
 
 const { checkUserRead, checkUserWrite } = require('./guard');
 
-import common from '../food-frontend/src/Resources/common';
-
 router.get('/logout', function(req, res, next) {
   if(req.session.user && req.sessionID) {
     req.session.destroy();
@@ -69,9 +67,9 @@ router.post('/', function(req, res, next) {
 });
 
 router.get('/netid', (req, res, next) => {
-  res.redirect("https://oauth.oit.duke.edu/oauth/authorize.php?client_id=" + common.colab_client_id +
-    "&redirect_uri=" + common.colab_redirect_uri +
-    "&client_secret=" + common.colab_client_secret +
+  res.redirect("https://oauth.oit.duke.edu/oauth/authorize.php?client_id=" + process.env.COLAB_CLIENT_ID +
+    "&redirect_uri=" + process.env.COLAB_REDIRECT_URI +
+    "&client_secret=" + process.env.COLAB_CLIENT_SECRET +
     "&response_type=token&state=1234&scope=basic")
 });
 
