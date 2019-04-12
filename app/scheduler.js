@@ -419,7 +419,7 @@ class Scheduler extends CRUD {
         ) AS foo
         INNER JOIN users ON foo.user_id = users.id
         `
-        sku_man_line_map = {}
+        let sku_man_line_map = {}
         return db.execSingleQuery("select * from manufacturing_line_sku", [])
                 .then(function(res){
                 console.log(res.rows)
