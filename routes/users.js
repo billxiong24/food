@@ -75,10 +75,6 @@ router.get('/netid', (req, res, next) => {
 });
 
 router.post('/netid', function (req, res, next) {
-  console.log({
-    'x-api-key': process.env.COLAB_CLIENT_ID,
-    'Authorization': `Bearer ${req.body.access_token}`
-  });
   axios.get('https://api.colab.duke.edu/identity/v1/', {
     headers: {
       'x-api-key': process.env.COLAB_CLIENT_ID,
@@ -88,6 +84,7 @@ router.post('/netid', function (req, res, next) {
   })
     .then((response) => {
       let netid = "netid_" + response.data.netid;
+      let userInfo = {};
       userInfo.netid = netid;
 
       const users = new Users();
@@ -115,7 +112,6 @@ router.post('/netid', function (req, res, next) {
         })
     })
     .catch((err) => {
-      console.log(err);
       res.status(400).json({
         error: "Invalid OIT Access Token"
       })
