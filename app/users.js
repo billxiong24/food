@@ -187,9 +187,9 @@ class Users extends CRUD {
           });
       });
     } else {
-      console.log(dataObj);
       return super.change(dataObj, oldPrimaryKey, "id")
         .then((res) => {
+          console.log('here');
           if (!manlines) {
             return res;
           } else {
