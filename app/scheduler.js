@@ -423,6 +423,7 @@ class Scheduler extends CRUD {
         return db.execSingleQuery("select * from manufacturing_line_sku", [])
                 .then(function(res){
                 console.log(res.rows)
+                let rows = res.rows
                 // ingredients = res.rows.map(item => {
                 //     return {
                 //         label: item.name,
