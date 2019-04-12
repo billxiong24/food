@@ -7,6 +7,7 @@
     "test": "psql -f db/food.sql -v tabl=sku_mgmt && mocha --exit && psql -f db/food.sql -v tabl=sku_mgmt > /dev/null"
   },
   "dependencies": {
+    "axios": "^0.18.0",
     "bcrypt": "^3.0.0",
     "chai": "^4.2.0",
     "chai-http": "^4.2.1",

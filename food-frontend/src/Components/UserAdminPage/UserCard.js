@@ -97,29 +97,16 @@ class UserCard extends Component {
         // console.log(this.props)
         return (
           <Card className={classes.card}>
-            <CardContent className={classes.content}>
+            <CardContent onClick={() => {this.props.selectToEdit(item)}} className={classes.content}>
               <Typography className={classes.user_name} color="textSecondary" gutterBottom>
                 {item.uname}
               </Typography>
-              <div className={classes.admin_switch}>
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={this.props.item.admin}
-                      onChange={() => { this.props.handleToggle(this.props.item) }}
-                      color="primary"
-                      disabled={item.uname === "admin" || item.uname === this.props.currentUser}
-                    />
-                  }
-                  label="Admin"
-                />
-              </div>
               <IconButton
                 key="close"
                 aria-label="Close"
                 color="inherit"
                 className={classes.button + ' ' + classes.close_button}
-                onClick={(e) => { this.props.delete(item) }}
+                onClick={(e) => { e.stopPropagation(); this.props.delete(item) }}
                 disabled={item.uname === "admin" || item.uname === this.props.currentUser }
               >
                 <CloseIcon />

@@ -187,7 +187,7 @@ class IngredientsPage extends Component {
             <div className={classes.ingredients_search_bar}>
           </div>
           <div className={classes.other_actions}>
-            { this.props.cookies.admin === "true" ?
+            { this.props.cookies.core_write === "true" ?
                 <Button
                 className={classes.add_ingredient}
                 onClick={() => {this.openIngredientCreatePage()}}

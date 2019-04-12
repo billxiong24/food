@@ -84,7 +84,31 @@ class Users extends CRUD {
     queryGen.chainAndFilter(names, "uname LIKE ?");
     let queryStr = filter.applyFilter(queryGen.getQuery()).toString();
     //logger.debug(queryStr);
-    return db.execSingleQuery(queryStr, []);
+    return db.execSingleQuery(queryStr, []).then((result) => {
+      result = result.rows;
+      if (!result) {
+        return;
+      }
+      var promises = result.map((user) => {
+        return this.getPlantsManagedBy(user.id).then((lines) => {
+          lines = lines.rows;
+          if (!lines) {
+            return user;
+          }
+          lines = lines.reduce((ret, cur) => {
+            ret.push(cur.manline_id);
+            return ret;
+          }, []);
+          return {
+            ...user,
+            manlines: lines
+          }
+        });
+      });
+      return Promise.all(promises).then((results) => {
+        return results;
+      })
+    });
   }
 
   getPlantsManagedBy(id) {
@@ -126,14 +150,56 @@ class Users extends CRUD {
   }
 
   update(dataObj, oldPrimaryKey) {
+    let manlines = dataObj.manlines;
+    delete dataObj.manlines;
     if (dataObj.password) {
       return bcrypt.hash(dataObj.password, saltRounds).then((hash) => {
         const hashedDataObj = Object.assign({}, dataObj);
         hashedDataObj.password = hash;
-        return super.change(hashedDataObj, oldPrimaryKey, "id");
+        return super.change(hashedDataObj, oldPrimaryKey, "id")
+          .then((res) => {
+            return this.updatePlantManager(hashedDataObj, manlines, res);
+          });
       });
     } else {
-      return super.change(dataObj, oldPrimaryKey, "id");
+      return super.change(dataObj, oldPrimaryKey, "id")
+        .then((res) => {
+          return this.updatePlantManager(dataObj, manlines, res);
+        });
+    }
+  }
+
+  updatePlantManager(dataObj, manlines, res) {
+    if (!manlines) {
+      return res;
+    } else {
+      let deletePlantOwnership = squel.delete()
+        .from("plant_mgr")
+        .where("user_id=" + dataObj.id)
+        .toString();
+      return db.execSingleQuery(deletePlantOwnership, [])
+        .then((rowsDeleted) => {
+          let rowsToInsert = manlines.map((manline) => {
+            return {
+              user_id: dataObj.id,
+              manline_id: manline
+            };
+          });
+          if(rowsToInsert.length === 0) {
+            rowsDeleted.rowCount += res.rowCount;
+            return rowsDeleted;
+          } else {
+            let insertPlantOwnership = squel.insert()
+              .into("plant_mgr")
+              .setFieldsRows(rowsToInsert)
+              .toString();
+            return db.execSingleQuery(insertPlantOwnership, [])
+              .then((inserts) => {
+                inserts.rowCount += res.rowCount + rowsDeleted.rowCount;
+                return inserts;
+              });
+          }
+        })
     }
   }
 

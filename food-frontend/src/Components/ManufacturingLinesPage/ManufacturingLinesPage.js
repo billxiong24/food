@@ -10,6 +10,8 @@ import { manlineSearch, manlineCreate, manlineUpdate,
           manlineDelete } from '../../Redux/Actions/ActionCreators/ManufacturingLineActionCreators';
 import ManufacturingLinesNewDialog from './ManufacturingLinesNewDialog';
 import ManufacturingLinesEditDialog from './ManufacturingLinesEditDialog';
+import { Button } from '@material-ui/core';
+import { withCookies } from 'react-cookie';
 
 const styles = {
   ingredients_list:{
@@ -40,9 +42,7 @@ const styles = {
   },
   query_button:{
     display:'inline-flex',
-    width: '6%',
-    'padding-left':'2%',
-    marginTop:15,
+    width: '10%',
   },
   create_button:{
     textAlign:'center',
@@ -158,13 +158,15 @@ class ManufacturingLinesPage extends Component {
   };
 
   handleClickEditOpen = (manline) => {
-    this.setState({ 
-      editDialog: true,
-      editName: manline.name,
-      editShortName: manline.shortname,
-      editComment: manline.comment ? manline.comment : '',
-      editId: manline.id,
-    });
+    if (this.props.cookies.core_write === 'true'){
+      this.setState({ 
+        editDialog: true,
+        editName: manline.name,
+        editShortName: manline.shortname,
+        editComment: manline.comment ? manline.comment : '',
+        editId: manline.id,
+      });
+    }
   };
 
   handleEditClose = () => {
@@ -297,13 +299,16 @@ class ManufacturingLinesPage extends Component {
               </Fab>
             </div> */}
             <div className={classes.query_button}>
-              <Fab
-                variant="extended"
+              {
+                this.props.cookies.core_write === 'true' ? 
+                <Button
+                variant="contained"
                 className={classes.create_button}
-                onClick={this.handleClickNewOpen}
-              >
-                New Line
-              </Fab>
+                onClick={this.handleClickNewOpen}>
+                  New Line
+                </Button> :
+                <div></div>
+              }
             </div>
             <ManufacturingLinesNewDialog
               open={this.state.newDialog}
@@ -352,9 +357,10 @@ class ManufacturingLinesPage extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
   return {
     manLine: state.manLine,
+    cookies: ownProps.cookies.cookies
   };
 };
 
@@ -365,4 +371,4 @@ const mapDispatchToProps = {
   manlineDelete,
 }
 
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(ManufacturingLinesPage));
+export default withStyles(styles)(withCookies(connect(mapStateToProps, mapDispatchToProps)(ManufacturingLinesPage)));

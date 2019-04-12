@@ -17,6 +17,7 @@ import UserCard from './UserCard';
 import Axios from 'axios';
 import common from '../../Resources/common';
 import UserWarningDialog from './UserWarningDialog';
+import UserEditRoleDialog from './UserEditRoleDialog';
 
 const styles = {
   ingredients_list:{
@@ -89,6 +90,8 @@ class UserAdminPage extends Component {
       warningDialog: false,
       manGoals: [],
       user: null,
+      editDialog: false,
+      userToEdit: {},
     }
   }
 
@@ -129,7 +132,15 @@ class UserAdminPage extends Component {
     })
   }
 
+  editUser = (user) => {
+    this.setState({
+      editDialog: true,
+      userToEdit: user
+    })
+  }
+
   deleteUser(user) {
+    
     Axios.get(common.hostname + 'manufacturing_goals/', {
       params: {
         user_id: user.id
@@ -149,6 +160,12 @@ class UserAdminPage extends Component {
     this.setState({
       goalCount: 0,
       warningDialog: false,
+    })
+  }
+
+  handleEditClose = (e) => {
+    this.setState({
+      editDialog: false,
     })
   }
 
@@ -221,6 +238,13 @@ class UserAdminPage extends Component {
     this.handleQuery();
   }
 
+  alert(err) {
+    this.setState({
+      alert: true,
+      message: err
+    })
+  }
+
   render() {
     const { classes, users, cookies } = this.props
     return (
@@ -242,25 +266,25 @@ class UserAdminPage extends Component {
               />
             </div>
             <div className={classes.query_button}>
-              <Fab
-                variant="extended"
+              <Button
+                variant="contained"
                 aria-label="Delete"
                 className={classes.fab}
                 onClick={(e) => { this.handleQuery() }}
               >
                 Search
-              </Fab>
+              </Button>
             </div>
             <div className={classes.query_button}>
-              <Fab
-                variant="extended"
+              <Button
+                variant="contained"
                 aria-label="Delete"
                 className={classes.create_button}
                 component={Link}
                 to={"/create_user"}
               >
                 Create User
-              </Fab>
+              </Button>
             </div>
           </div>
           <DisplayButton
@@ -276,6 +300,7 @@ class UserAdminPage extends Component {
                 delete={(user) => { this.deleteUser(user) }}
                 handleToggle={(user) => {this.handleToggle(user) }}
                 currentUser={cookies.user}
+                selectToEdit={this.editUser}
               ></UserCard>
             </ItemList>
           </div>
@@ -307,6 +332,12 @@ class UserAdminPage extends Component {
           handleClose={this.handleClose}
           goalCount={this.state.goalCount}
           handleSubmit={this.handleSubmit}
+        />
+        <UserEditRoleDialog
+          user={this.state.userToEdit}
+          open={this.state.editDialog}
+          handleClose={this.handleEditClose}
+          alert={(e) => {this.alert(e)}}
         />
       </div>
     );

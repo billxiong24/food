@@ -13,18 +13,15 @@ export const userLogout = () => {
   return (dispatch) => {
     return axios.get(hostname + 'users/logout')
       .then(response => {
-        Cookies.remove('user');
-        Cookies.remove('admin');
-        Cookies.remove('id');
+        removeCookies();
         dispatch({
           type: user_actions.USER_LOG_OUT
-        })
+        }, window.location.reload()
+        );
       })
       .catch((err) => {
         if (err.response.status == 304) {
-          Cookies.remove('user');
-          Cookies.remove('admin');
-          Cookies.remove('id');
+          removeCookies();
           dispatch({
             type: user_actions.USER_LOG_OUT,
             data: {
@@ -91,9 +88,7 @@ export const userLoginAttempt = (dataObj) => {
       password: dataObj.password
     })
       .then(response => {
-        Cookies.set('user', response.data.uname, { expires: 1 });
-        Cookies.set('admin', response.data.admin, { expires: 1 });
-        Cookies.set('id', response.data.id, { expires: 1 });
+        setCookies(response.data);
         dispatch({
           type: user_actions.USER_LOG_IN_ATTEMPT,
           data: {
@@ -129,25 +124,32 @@ export const userLoginAttempt = (dataObj) => {
 }
 
 // NetID log in
-export const userNetIdLogin = (user) => {
+export const userNetIdLogin = (token) => {
   return (dispatch) => {
-    return axios.post(hostname + 'users/netid', user)
+    return axios.post(hostname + 'users/netid', token)
       .then((response) => {
-        Cookies.set('user', response.data.uname, { expires: 1 });
-        Cookies.set('admin', response.data.admin, { expires: 1 });
-        Cookies.set('id', response.data.id, { expires: 1 });
+        setCookies(response.data);
         dispatch({
           type: user_actions.USER_NETID_LOG_IN,
         })
       })
       .catch((err)=>{
-        dispatch({
-          type: user_actions.USER_NETID_LOG_IN,
-          data: {
-            errMsg: "Something unexpected went wrong"
-          }
-        });
-        throw (err.response);
+        if(err.response.status === 400) {
+          dispatch({
+            type: user_actions.USER_NETID_LOG_IN,
+            data: {
+              errMsg: err.response.data.err
+            }
+          });
+        } else {
+          dispatch({
+            type: user_actions.USER_NETID_LOG_IN,
+            data: {
+              errMsg: "Something unexpected went wrong"
+            }
+          });
+          throw (err.response);
+        }
       })
   }
 }
@@ -287,4 +289,37 @@ export const userNextPage = () => {
       }
     })
   }
+}
+
+function setCookies(user) {
+  Cookies.set('user', user.uname, { expires: 1 });
+  Cookies.set('admin', user.admin, { expires: 1 });
+  Cookies.set('id', user.id, { expires: 1 });
+  Cookies.set('core_read', user.core_read, { expires: 1 });
+  Cookies.set('core_write', user.core_write, { expires: 1 });
+  Cookies.set('sales_read', user.sales_read, { expires: 1 });
+  Cookies.set('sales_write', user.sales_write, { expires: 1 });
+  Cookies.set('goals_read', user.goals_read, { expires: 1 });
+  Cookies.set('goals_write', user.goals_write, { expires: 1 });
+  Cookies.set('schedule_read', user.schedule_read, { expires: 1 });
+  Cookies.set('schedule_write', user.schedule_write, { expires: 1 });
+  Cookies.set('user_read', user.user_read, { expires: 1 });
+  Cookies.set('user_write', user.user_write, { expires: 1 });
+}
+
+function removeCookies() {
+  Cookies.remove('user');
+  Cookies.remove('admin');
+  Cookies.remove('id');
+  Cookies.remove('permissions');
+  Cookies.remove('core_read');
+  Cookies.remove('core_write');
+  Cookies.remove('sales_read');
+  Cookies.remove('sales_write');
+  Cookies.remove('goals_read');
+  Cookies.remove('goals_write');
+  Cookies.remove('schedule_read');
+  Cookies.remove('schedule_write');
+  Cookies.remove('user_read');
+  Cookies.remove('user_write');
 }

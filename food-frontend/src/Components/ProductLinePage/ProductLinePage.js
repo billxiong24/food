@@ -72,6 +72,7 @@ const styles = {
   },
   button: {
     margin:'auto',
+    height:'90%'
   }
 };
 
@@ -202,24 +203,24 @@ class ProductLinePage extends Component {
               />
             </div>
             <div className={classes.query_button}>
-              <Fab
-                variant="extended"
+              <Button
+                variant="contained"
                 aria-label="Delete"
-                className={classes.fab}
+                className={classes.button}
                 onClick={(e) => { this.handleQuery() }}
               >
                 Search
-              </Fab>
+              </Button>
             </div>
             <div className={classes.query_button}>
-              <Fab
-                variant="extended"
+              <Button
+                variant="contained"
                 aria-label="Delete"
-                className={classes.fab}
+                className={classes.button}
                 disabled={productLine.productLines.length === 0}
               >
                 Export Search
-              </Fab>
+              </Button>
             </div>
           </div>
           <DisplayButton
@@ -230,14 +231,14 @@ class ProductLinePage extends Component {
           </DisplayButton>
           <NewProductLine
             addProductLine={(prdline) => { this.addProductLine(prdline) }}
-            admin={this.props.cookies.admin}
+            admin={this.props.cookies.core_write}
             classes={classes}
           ></NewProductLine>
           <div className={classes.list_container}>
             <ItemList items={productLine.productLines}>
               <ProductLineCard
                 onEnter={(prdline) => { this.updateProductLine(prdline) }}
-                editable={this.props.cookies.admin === "true"}
+                editable={this.props.cookies.core_write === "true"}
                 persistent={true}
                 deleteProductLine={(prdline) => { this.removeProductLine(prdline) }}
               ></ProductLineCard>
