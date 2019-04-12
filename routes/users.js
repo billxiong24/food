@@ -148,6 +148,8 @@ router.put('/update/:id', checkUserWrite, function(req, res, next) {
 
   const users = new Users();
 
+  console.log(req.body);
+
   users.update(req.body, req.params.id)
     .then((result) => {
       res.status(200).json({

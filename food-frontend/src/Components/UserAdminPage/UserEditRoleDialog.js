@@ -83,6 +83,25 @@ class UserEditRoleDialog extends Component {
     })
   };
 
+  updateUser() {
+    Axios.put(hostname + 'users/update/' + this.props.user.id, {
+      data: {
+        id: this.props.user.id,
+        analyst: this.state.analyst,
+        prod_mgr: this.state.prod_mgr,
+        bus_mgr: this.state.bus_mgr,
+        manlines: this.state.plant_mgr,
+        admin: this.state.admin
+      }
+    })
+    .then((res) => {
+      this.props.handleClose();
+    })
+    .catch((err) => {
+      this.props.handleError("Error updating user roles: " + err.response);
+    })
+  }
+
   componentWillMount() {
     Axios.get(hostname + 'manufacturing_line/search', {
       params: {
@@ -98,7 +117,6 @@ class UserEditRoleDialog extends Component {
 
   render() {
     const { classes, user, cookies } = this.props
-    console.log(user);
     return (
       <div className={classes.dialog_container}>
         <Dialog
@@ -169,7 +187,7 @@ class UserEditRoleDialog extends Component {
             <Button onClick={this.props.handleClose} color="primary">
               Cancel
             </Button>
-            <Button onClick={this.props.handleSubmit} color="primary" autoFocus>
+            <Button onClick={() => {this.updateUser(); this.props.handleClose()}} color="primary" autoFocus>
               Update
             </Button>
           </DialogActions>

@@ -237,6 +237,13 @@ class UserAdminPage extends Component {
     this.handleQuery();
   }
 
+  throwError(err) {
+    this.setState({
+      alert: true,
+      message: err
+    })
+  }
+
   render() {
     const { classes, users, cookies } = this.props
     return (
@@ -329,6 +336,7 @@ class UserAdminPage extends Component {
           user={this.state.userToEdit}
           open={this.state.editDialog}
           handleClose={this.handleEditClose}
+          handleError={(e) => {this.throwError(e)}}
         />
       </div>
     );
