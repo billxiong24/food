@@ -189,6 +189,7 @@ class Users extends CRUD {
             .into("plant_mgr")
             .setFieldsRows(rowsToInsert)
             .toString();
+          console.log(insertPlantOwnership);
           return db.execSingleQuery(insertPlantOwnership, [])
             .then((inserts) => {
               inserts.rowCount += res.rowCount + rowsDeleted.rowCount;
