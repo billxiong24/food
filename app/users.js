@@ -185,16 +185,20 @@ class Users extends CRUD {
               manline_id: manline
             };
           });
-          let insertPlantOwnership = squel.insert()
-            .into("plant_mgr")
-            .setFieldsRows(rowsToInsert)
-            .toString();
-          console.log(insertPlantOwnership);
-          return db.execSingleQuery(insertPlantOwnership, [])
-            .then((inserts) => {
-              inserts.rowCount += res.rowCount + rowsDeleted.rowCount;
-              return inserts;
-            });
+          if(rowsToInsert.length === 0) {
+            rowsDeleted += res.rowCount;
+            return rowsDeleted;
+          } else {
+            let insertPlantOwnership = squel.insert()
+              .into("plant_mgr")
+              .setFieldsRows(rowsToInsert)
+              .toString();
+            return db.execSingleQuery(insertPlantOwnership, [])
+              .then((inserts) => {
+                inserts.rowCount += res.rowCount + rowsDeleted.rowCount;
+                return inserts;
+              });
+          }
         })
     }
   }
