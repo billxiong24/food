@@ -105,6 +105,7 @@ router.post('/netid', function (req, res, next) {
                 })
             })
             .catch((err) => {
+              console.log(err);
               res.status(400).json({
                 error: err
               });
