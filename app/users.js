@@ -196,7 +196,6 @@ class Users extends CRUD {
               .from("plant_mgr")
               .where("user_id=" + dataObj.id)
               .toString();
-              console.log(deletePlantOwnership);
             return db.execSingleQuery(deletePlantOwnership, [])
               .then((res) => {
                 let rowsToInsert = manlines.map((manline) => {
@@ -208,7 +207,7 @@ class Users extends CRUD {
                 console.log(rowsToInsert);
                 let insertPlantOwnership = squel.insert()
                   .into("plant_mgr")
-                  .setFields(rowsToInsert)
+                  .setFieldsRows(rowsToInsert)
                   .toString();
                 console.log(insertPlantOwnership);
                 return db.execSingleQuery(insertPlantOwnership, [])
