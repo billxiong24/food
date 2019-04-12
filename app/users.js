@@ -189,7 +189,6 @@ class Users extends CRUD {
     } else {
       return super.change(dataObj, oldPrimaryKey, "id")
         .then((res) => {
-          console.log('here');
           if (!manlines) {
             return res;
           } else {
@@ -209,6 +208,7 @@ class Users extends CRUD {
                   .into("plant_mgr")
                   .setFields(rowsToInsert)
                   .toString();
+                console.log(insertPlantOwnership);
                 return db.execSingleQuery(insertPlantOwnership, [])
                   .then((inserts) => {
                     inserts.rowCount += res.rowCount;
