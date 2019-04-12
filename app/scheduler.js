@@ -419,7 +419,7 @@ class Scheduler extends CRUD {
         ) AS foo
         INNER JOIN users ON foo.user_id = users.id
         `
-        let temp_res
+        sku_man_line_map = {}
         return db.execSingleQuery("select * from manufacturing_line_sku", [])
                 .then(function(res){
                 console.log(res.rows)
@@ -429,6 +429,13 @@ class Scheduler extends CRUD {
                 //         id: item.id
                 //     }
                 // })
+                for(let i = 0; i < rows.length; i++){
+                    if(typeof(sku_man_line_map[rows[i].sku_id]) === "undefined"){
+                        sku_man_line_map[rows[i].sku_id] = [rows[i].manufacturing_line_id]
+                    }else{
+                        sku_man_line_map[rows[i].sku_id].push(rows[i].manufacturing_line_id)
+                    }
+                }
                 
         return db.execSingleQuery(query, [])
         .then(function(res){
@@ -448,7 +455,8 @@ class Scheduler extends CRUD {
                     "mfg_rate": parseInt(row.man_rate),
                     "start_time": that.get_date_string(row.start_time),
                     "end_time": that.get_date_string(row.end_time),
-                    "man_line_num": that.get_zero_null(row.shortname)
+                    "man_line_num": that.get_zero_null(row.shortname),
+                    "potential_man_lines": sku_man_line_map[row.sku_id]
                 }
                 let goal = {
                     "name": row.mg_name,
