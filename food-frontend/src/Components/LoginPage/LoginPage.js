@@ -80,6 +80,10 @@ class LoginPage extends Component {
     }
   }
 
+  netIdLogin() {
+    axios.get(common.hostname + 'users/netid');
+  }
+
   updateUnameValue(evt) {
     this.setState({
       uname: evt.target.value
@@ -148,7 +152,7 @@ class LoginPage extends Component {
             >
               Sign in
             </Button>
-            <Button
+            {/* <Button
               fullWidth
               variant="contained"
               className={classes.submit}
@@ -156,6 +160,12 @@ class LoginPage extends Component {
                    "&redirect_uri=" + common.colab_redirect_uri + 
                    "&client_secret=" + common.colab_client_secret + 
                    "&response_type=token&state=1234&scope=basic"}
+            > */}
+            <Button
+              fullWidth
+              variant="contained"
+              className={classes.submit}
+              onClick={()=>{this.netIdLogin()}}
             >
               NetID Sign In
             </Button>

@@ -67,10 +67,6 @@ router.post('/', function (req, res, next) {
     });
 });
 
-router.get('/netid_login', (req, res, next) => {
-
-});
-
 router.get('/netid', (req, res, next) => {
   res.redirect("https://oauth.oit.duke.edu/oauth/authorize.php?client_id=" + process.env.COLAB_CLIENT_ID +
     "&redirect_uri=" + process.env.COLAB_REDIRECT_URI +
