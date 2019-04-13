@@ -341,7 +341,7 @@ class Scheduler extends CRUD {
             WHERE manufacturing_line.shortname LIKE \'${man_line_shrt_name}\'
         ) AS foo
         WHERE 
-        manufacturing_goal_sku.sku_id = ${id},
+        manufacturing_goal_sku.sku_id = ${id} AND
         manufacturing_goal_sku.mg_id = ${mg_id}
         `
         return db.execSingleQuery(query, [])
