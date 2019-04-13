@@ -14,7 +14,7 @@ import Row from 'antd/lib/row'
 import Button from 'antd/lib/button'
 import moment from 'moment'
 import { ENETDOWN } from 'constants';
-import { getEnabledGoals, calculate_scheduled_time, get_scheduled_activity_warnings, day_start_time_trim, day_end_time_trim, hour_time_trim, valid_start_end_pair, valid_time, push_conflict_errors_without_duplication, calculate_end_time } from '../UtilityFunctions';
+import { getEnabledGoals, calculate_scheduled_time, get_scheduled_activity_warnings, day_start_time_trim, day_end_time_trim, hour_time_trim, valid_start_end_pair, valid_time, push_conflict_errors_without_duplication, calculate_end_time, get_man_line_by_id } from '../UtilityFunctions';
 import { Typography } from '@material-ui/core';
 import labels from '../../../Resources/labels';
 import config from '../config';
@@ -180,7 +180,7 @@ class OverlapCheck extends Component{
 
     render(){
         // console.log.log("RENDER")
-        // console.log.log(this.state.scheduler_data)
+        console.log(this.state.scheduler_data)
         return (
             <div>
                 <div>
@@ -196,7 +196,7 @@ class OverlapCheck extends Component{
                                conflictOccurred={this.conflictOccurred}
                                eventItemPopoverTemplateResolver={this.eventItemPopoverTemplateResolver}
                                eventItemTemplateResolver={this.eventItemTemplateResolver}
-                               slotItemTemplateResolver={this.slotItemTemplateResolver}
+                            //    slotItemTemplateResolver={this.slotItemTemplateResolver}
                     />
                 </div>
             </div>
@@ -447,6 +447,28 @@ class OverlapCheck extends Component{
                         }
 
                         <div>
+                            
+                        </div>
+                        <div className={classes.goal_name_deadline_title_container}>
+                            <Typography className={classes.left} color="textSecondary" >
+                                Potential Manufacturing Lines
+                            </Typography>
+                        </div>
+                        
+                        {
+                            activity.potential_man_lines.map(man_line_num => (
+                                <div>
+                                    <Typography className={classes.goal_name} color="textSecondary" >
+                                        {get_man_line_by_id(man_line_num, this.props.man_lines).shrt_name}
+                                    </Typography>
+                                    {/* <Typography className={classes.goal_deadline} color="textSecondary">
+                                        {goal.deadline}
+                                    </Typography> */}
+                                </div>
+                            ))
+                        }
+
+                        <div>
                             <Typography className={classes.left} color="textSecondary" >
                                 Completion Time: 
                             </Typography>
@@ -522,6 +544,14 @@ class OverlapCheck extends Component{
 
 
     moveEvent = (schedulerData, event, slotId, slotName, start, end) => {
+        console.log(event)
+        let possible_man_line_names = event.activity.potential_man_lines.map(man_line_num => get_man_line_by_id(man_line_num, this.props.man_lines).shrt_name)
+        if(!possible_man_line_names.includes(slotName)){
+            swal(`Invalid Manufacturing Line: Proper Manufacturing Lines are ${possible_man_line_names.join(',')}`,{
+                icon: "error",
+              });
+            return
+        }
         
         if(schedulerData.viewType == 0){
             start = hour_time_trim(start)

@@ -377,6 +377,7 @@ router.put('/schedule', function (req, res, next) {
     let start_time = req.body.start_time
     let end_time = req.body.end_time
     let man_line_num = req.body.man_line_num
+    let mg_id = req.body.mg_id
     // var foundCount = 0;
     // let success = scheduler.set_schedule(id, start_time, end_time, man_line_num)
     // // console.log(success)
@@ -403,7 +404,7 @@ router.put('/schedule', function (req, res, next) {
         
     // })
     let scheduler = new Scheduler()
-    scheduler.set_schedule(id,start_time,end_time,man_line_num).then((success) => {
+    scheduler.set_schedule(id,start_time,end_time,man_line_num, mg_id.then((success) => {
         res.status(200).json({
 
         })

@@ -282,7 +282,7 @@ class Scheduler extends CRUD {
         })
     }
 
-    set_schedule(id, raw_start_time, raw_end_time, raw_man_line_shrt_name){
+    set_schedule(id, raw_start_time, raw_end_time, raw_man_line_shrt_name, mg_id){
         var that = this;
         // // console.log(filter)
         let start_time
@@ -341,7 +341,8 @@ class Scheduler extends CRUD {
             WHERE manufacturing_line.shortname LIKE \'${man_line_shrt_name}\'
         ) AS foo
         WHERE 
-        manufacturing_goal_sku.sku_id = ${id}
+        manufacturing_goal_sku.sku_id = ${id},
+        manufacturing_goal_sku.mg_id = ${mg_id}
         `
         return db.execSingleQuery(query, [])
         .then(function(res){

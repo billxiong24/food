@@ -345,9 +345,16 @@ export function getActivities(goals){
 
  export function man_line_to_resource(man_line){
   return {
+     backend_id:man_line.id,
      id:man_line.shrt_name,
      name:man_line.shrt_name
      }
+  }
+
+  export function get_man_line_by_id(man_line_id, man_lines){
+    return man_lines.find(man_line => {
+      return man_line.id == man_line_id
+    })
   }
 
   export function get_current_start_time(){

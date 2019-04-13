@@ -18,7 +18,7 @@ import swal from '@sweetalert/with-react'
 import '../../Resources/Styles/dropdown.css'
 import GoalList from './GoalList';
 import MenuItem from '@material-ui/core/MenuItem';
-import { empty_activity, multipleGoalActivity, hasEnabledGoals, getEnabledGoals, valid_man_line_shrt_name, valid_time, get_current_start_time, calculate_end_time, push_without_duplication, delete_without_duplication, ADD_A_MAN_LINE_ERROR, INVALID_START_TIME_ERROR, INVALID_END_TIME_ERROR, valid_start_end_pair, START_TIME_GREATER_THAN_END_TIME_ERROR, get_unscheduled_activity_warnings, get_time_conflict_errors, push_conflict_errors_without_duplication, delete_conflict_errors_without_duplication } from './UtilityFunctions';
+import { empty_activity, multipleGoalActivity, hasEnabledGoals, getEnabledGoals, valid_man_line_shrt_name, valid_time, get_current_start_time, calculate_end_time, push_without_duplication, delete_without_duplication, ADD_A_MAN_LINE_ERROR, INVALID_START_TIME_ERROR, INVALID_END_TIME_ERROR, valid_start_end_pair, START_TIME_GREATER_THAN_END_TIME_ERROR, get_unscheduled_activity_warnings, get_time_conflict_errors, push_conflict_errors_without_duplication, delete_conflict_errors_without_duplication, get_man_line_by_id } from './UtilityFunctions';
 import moment from 'moment'
 
 
@@ -157,7 +157,8 @@ class UnscheduledActivitiesList extends Component {
             end_time: calculate_end_time(get_current_start_time(), 0),
             man_line:"",
             errors:[],
-            warnings: []
+            warnings: [],
+            man_lines: []
         }
     }
 
@@ -172,8 +173,10 @@ class UnscheduledActivitiesList extends Component {
         let start_time = get_current_start_time()
         let end_time = calculate_end_time(get_current_start_time(), parseInt(activity.completion_time))
         errors = push_conflict_errors_without_duplication(start_time, end_time, this.state.man_line, this.props.scheduled_activities, errors)
+        console.log(activity)
         this.setState({
              open: true,
+             man_lines: activity.potential_man_lines.map(man_line_num => get_man_line_by_id(man_line_num, this.props.man_lines)),
              activity: activity,
              start_time: start_time,
              end_time: end_time,
@@ -190,7 +193,8 @@ class UnscheduledActivitiesList extends Component {
             end_time: calculate_end_time(get_current_start_time(), 0),
             man_line:"",
             errors:[],
-            warnings: []
+            warnings: [],
+            man_lines: []
         });
     };
 
@@ -502,7 +506,7 @@ class UnscheduledActivitiesList extends Component {
                             }}
                             margin="normal"
                             >
-                            {this.props.man_lines.map(man_line => (
+                             {this.state.man_lines.map(man_line => (
                                 <MenuItem key={man_line.shrt_name} value={man_line.shrt_name}>
                                 {man_line.shrt_name}
                                 </MenuItem>

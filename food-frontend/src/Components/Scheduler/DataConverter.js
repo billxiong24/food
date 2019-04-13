@@ -421,7 +421,8 @@ export const set_activity_schedule = (activity) => {
          id:activity.num,
          start_time:activity.start_time,
          end_time:activity.end_time,
-         man_line_num:activity.man_line_num
+         man_line_num:activity.man_line_num,
+         mg_id:activity.goals[0].id
      })
      .then(response => {
        dispatch({
