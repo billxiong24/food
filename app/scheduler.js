@@ -672,6 +672,7 @@ class Scheduler extends CRUD {
             })
           }
         }
+        return activities_list
     }
 
     isScheduled(activity){
