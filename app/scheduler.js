@@ -597,8 +597,8 @@ class Scheduler extends CRUD {
                     filtered_goals.push(goals_id_map[id])
                 }
             }
-            let activities = this.getActivities(filtered_goals)
-            let scheduled_activities = this.filterScheduledActivities(activities)
+            let activities = that.getActivities(filtered_goals)
+            let scheduled_activities = that.filterScheduledActivities(activities)
             console.log(JSON.stringify(scheduled_activities))
             return filtered_goals
         })})
