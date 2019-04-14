@@ -647,6 +647,7 @@ class Scheduler extends CRUD {
     }
 
     getActivities(goals){
+        console.log("getActivities")
         var activities_map = {}
         var activities_list = []
         for(var i = 0; i < goals.length; i++){
