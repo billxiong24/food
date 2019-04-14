@@ -8,7 +8,7 @@ import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import { CardActionArea, Modal, TextField, ListItem, ListItemText, Divider } from '@material-ui/core';
+import { CardActionArea, Modal, TextField, ListItem, ListItemText, Divider, Checkbox } from '@material-ui/core';
 import { routeToPage } from '../../Redux/Actions';
 import { withRouter } from 'react-router-dom'
 import { ingDetSetIng, ingDetGetSkus } from '../../Redux/Actions/ActionCreators/IngredientDetailsActionCreators';
@@ -18,8 +18,9 @@ import swal from '@sweetalert/with-react'
 import '../../Resources/Styles/dropdown.css'
 import GoalList from './GoalList';
 import MenuItem from '@material-ui/core/MenuItem';
-import { empty_activity, multipleGoalActivity, hasEnabledGoals, getEnabledGoals, valid_man_line_shrt_name, valid_time, get_current_start_time, calculate_end_time, push_without_duplication, delete_without_duplication, ADD_A_MAN_LINE_ERROR, INVALID_START_TIME_ERROR, INVALID_END_TIME_ERROR, valid_start_end_pair, START_TIME_GREATER_THAN_END_TIME_ERROR, get_unscheduled_activity_warnings, get_time_conflict_errors, push_conflict_errors_without_duplication, delete_conflict_errors_without_duplication, get_man_line_by_id } from './UtilityFunctions';
+import { empty_activity, multipleGoalActivity, hasEnabledGoals, getEnabledGoals, valid_man_line_shrt_name, valid_time, get_current_start_time, calculate_end_time, push_without_duplication, delete_without_duplication, ADD_A_MAN_LINE_ERROR, INVALID_START_TIME_ERROR, INVALID_END_TIME_ERROR, valid_start_end_pair, START_TIME_GREATER_THAN_END_TIME_ERROR, get_unscheduled_activity_warnings, get_time_conflict_errors, push_conflict_errors_without_duplication, delete_conflict_errors_without_duplication, get_man_line_by_id, is_manager_of, get_unique_activity_id } from './UtilityFunctions';
 import moment from 'moment'
+import { addToList } from '../../Resources/common';
 
 
 function rand() {
@@ -61,7 +62,12 @@ const styles = theme => ({
         fontFamily: 'Open Sans',
         fontWeight: 400,
     },
-    ingredient_id: labels.common_styles.simple_list_text,
+    ingredient_id: {
+        ...labels.common_styles.simple_list_text,
+        minWidth: 325,
+        minHeight:50,
+        verticalAlign: "middle",
+    },
     goal_name: {
         fontSize: 14,
         float: 'right',
@@ -141,6 +147,12 @@ const styles = theme => ({
     error_list:{
         marginTop: "12px"
     },
+    button_left:{
+        float: 'left'
+    },
+    button_right:{
+        float: 'right'
+    },
     unscheduled_activities_title: labels.common_styles.simple_list_title,
     divider: labels.common_styles
 });
@@ -154,11 +166,17 @@ class UnscheduledActivitiesList extends Component {
             open: false,
             activity: empty_activity,
             start_time: get_current_start_time(),
+            auto_schedule_start_time: get_current_start_time(),
+            auto_schedule_end_time: calculate_end_time(get_current_start_time(), 0),
             end_time: calculate_end_time(get_current_start_time(), 0),
             man_line:"",
             errors:[],
+            auto_schedule_warnings: [],
+            auto_schedule_errors: [],
             warnings: [],
-            man_lines: []
+            man_lines: [],
+            checked_activities: [],
+            openAutoScheduler: false
         }
     }
 
@@ -198,6 +216,16 @@ class UnscheduledActivitiesList extends Component {
         });
     };
 
+    autoScheduleHandleClose = () => {
+        this.setState({
+            openAutoScheduler: false,
+            auto_schedule_start_time: get_current_start_time(),
+            auto_schedule_end_time: calculate_end_time(get_current_start_time(), 0),
+            auto_schedule_warnings: [],
+            auto_schedule_errors: []
+        });
+    }
+
     onChange = (event, cheese) => {
         //console.log("INGREDIETNTVIEW DETAIL CHANGE")
         //console.log(JSON.stringify(event))
@@ -234,6 +262,23 @@ class UnscheduledActivitiesList extends Component {
         });
       };
 
+      autoScheduleOnStartTimeChange = (e) => {
+        //console.log(e.target.value)
+        let start_time = e.target.value.split(":")[0] + ":00";
+        this.setState({
+          auto_schedule_start_time: start_time,
+        });
+        let errors = this.state.auto_schedule_errors
+        if(!valid_time(start_time.replace("T", " "))){
+            errors = push_without_duplication(INVALID_START_TIME_ERROR, this.state.auto_schedule_errors)
+        }else{
+            errors = delete_without_duplication(INVALID_START_TIME_ERROR, this.state.auto_schedule_errors)
+        }
+        this.setState({
+            auto_schedule_errors: errors
+        });
+      };
+
     onEndTimeChange = (e) => {
         //console.log(e.target.value)
         let start_time = this.state.start_time
@@ -260,6 +305,23 @@ class UnscheduledActivitiesList extends Component {
             errors: errors,
             warnings: get_unscheduled_activity_warnings(this.state.activity, start_time, end_time)
         })
+    };
+
+    autoScheduleOnEndTimeChange = (e) => {
+        //console.log(e.target.value)
+        let end_time = e.target.value.split(":")[0] + ":00";
+        this.setState({
+          auto_schedule_end_time: end_time,
+        });
+        let errors = this.state.auto_schedule_errors
+        if(!valid_time(end_time.replace("T", " "))){
+            errors = push_without_duplication(INVALID_END_TIME_ERROR, this.state.auto_schedule_errors)
+        }else{
+            errors = delete_without_duplication(INVALID_END_TIME_ERROR, this.state.auto_schedule_errors)
+        }
+        this.setState({
+            auto_schedule_errors: errors
+        });
     };
     
       handleManLineChange = (e) => {
@@ -357,6 +419,49 @@ class UnscheduledActivitiesList extends Component {
             <div>
                 {/* <Typography gutterBottom>Click to get the full Modal experience!</Typography>
                 <Button onClick={this.handleOpen}>Open Modal</Button> */}
+                <div>
+                    {
+                        this.state.checked_activities.length == this.props.unscheduled_activities.length
+                        ?
+                        <Button 
+                            className={classes.left_button}
+                            onClick={()=>{
+                                console.log("I am here")
+                                let new_checked_activities = this.props.unscheduled_activities
+                                console.log(new_checked_activities)
+                                this.setState({
+                                    checked_activities: []
+                                })
+                            }}
+                        >
+                            {"Unselect All"}
+                        </Button>
+                        :
+                        <Button 
+                            className={classes.left_button}
+                            onClick={()=>{
+                                console.log("I am here")
+                                let new_checked_activities = this.props.unscheduled_activities
+                                console.log(new_checked_activities)
+                                this.setState({
+                                    checked_activities: new_checked_activities
+                                })
+                            }}
+                        >
+                            {"Select All"}
+                        </Button>
+                    }
+                    <Button 
+                        className={classes.right_button}
+                        onClick={() => {
+                            this.setState({
+                                openAutoScheduler: true
+                            })
+                        }}
+                    >
+                        {"Autoschedule Selected"}
+                    </Button>
+                </div>
                 {
                     this.props.unscheduled_activities.map((item, index) => (
                         // <Card className={classes.card} key={index} onClick={() => { this.onClick(item) }}>
@@ -379,30 +484,73 @@ class UnscheduledActivitiesList extends Component {
                         //     </CardActionArea>
                         // </Card>
                         multipleGoalActivity(item) ?
-                        <ListItem 
-                            button 
-                            onClick={() => { this.onClick(item) }}
-                            divider={true}
-                        >
-                            <div className={classes.left}>
-                                {item.name}
-                            </div>
-                            <Divider></Divider>
-                        </ListItem>
-                        :
-                        <ListItem 
-                            button
-                            onClick={() => { this.onClick(item) }}
-                            divider={true}
-                        >
-                            <div 
-                                className={classes.ingredient_id}
-
+                        
+                            <ListItem 
+                                button 
+                                onClick={() => { this.onClick(item) }}
+                                divider={true}
                             >
-                                {item.goals[0].name + "-" + item.name}
-                            </div>
-                            <Divider></Divider>
-                        </ListItem>
+                                <div className={classes.left}>
+                                    {item.name}
+                                </div>
+                                <Checkbox
+                                    checked={this.state.checked_activities.map(activity => parseInt(String(item.id) + String(item.goals[0].id)).includes(String(item.id) + String(item.goals[0].id)))}
+                                    onChange={() => {
+                                        if(this.state.checked_activities.map(activity => parseInt(String(item.id) + String(item.goals[0].id)).includes(String(item.id) + String(item.goals[0].id)))){
+                                            let new_checked_activities = this.state.checked_activities.filter(activity => parseInt(String(item.id) + String(item.goals[0].id) != parseInt(String(activity.id) + String(activity.goals[0].id))))
+                                            this.setState({
+                                                checked_activities: new_checked_activities
+                                            })
+                                        }else{
+                                            this.checked_activities.push(item)
+                                        }
+                                    }}
+                                    value="Select"
+                                    className={classes.right}
+                                />
+                                <Divider></Divider>
+                            </ListItem>
+                            :
+                            <div>
+                            <ListItem 
+                                button
+                                
+                                divider={true}
+                            >
+                                <div 
+                                    className={classes.ingredient_id}
+                                    onClick={() => { this.onClick(item) }}
+                                >
+                                    {item.goals[0].name + "-" + item.name}
+                                </div>
+                                <Checkbox
+                                checked={this.state.checked_activities.map(activity => get_unique_activity_id(activity)).includes(get_unique_activity_id(item))}
+                                onClick={() => {
+                                    console.log(item)
+                                    console.log(this.state.checked_activities)
+                                    console.log(this.state.checked_activities.map(activity => get_unique_activity_id(activity)))
+                                    if(this.state.checked_activities.map(activity => get_unique_activity_id(activity)).includes(get_unique_activity_id(item))){
+                                        let new_checked_activities = this.state.checked_activities.filter(activity => get_unique_activity_id(activity) != get_unique_activity_id(item))
+                                        this.setState({
+                                            checked_activities: new_checked_activities
+                                        })
+                                    }else{
+                                        let new_checked_activities = this.state.checked_activities.slice()
+                                        new_checked_activities.push(item)
+                                        this.setState({
+                                            checked_activities: new_checked_activities
+                                        })
+                                    }
+                                }}
+                                value="Select"
+                                className={classes.right}
+                                >
+                            </Checkbox>
+                                
+                                <Divider></Divider>
+                            </ListItem>
+                            
+                        </div>
                     ))
                 }
                 <Modal
@@ -506,7 +654,7 @@ class UnscheduledActivitiesList extends Component {
                             }}
                             margin="normal"
                             >
-                             {this.state.man_lines.map(man_line => (
+                             {this.state.man_lines.filter(man_line => is_manager_of(man_line.id)).map(man_line => (
                                 <MenuItem key={man_line.shrt_name} value={man_line.shrt_name}>
                                 {man_line.shrt_name}
                                 </MenuItem>
@@ -546,6 +694,202 @@ class UnscheduledActivitiesList extends Component {
                                 onClick={this.scheduleActivity}
                             >
                                 Schedule
+                            </Button>
+ 
+                        </div>
+                    </div>
+                </div>
+                </Modal>
+                <Modal
+                aria-labelledby="simple-modal-title"
+                aria-describedby="simple-modal-description"
+                open={this.state.openAutoScheduler}
+                onClose={() => {
+                    this.autoScheduleHandleClose()
+                }}
+                >
+                <div style={getModalStyle()} className={classes.paper}>
+                    <Typography variant="h6" id="modal-title">
+                        {"Autoschedule the following?"}
+                    </Typography>
+                    <div className={classes.popup_view}>
+                        <div className={classes.goal_list_view}>
+                            <div className={classes.goal_name_deadline_title_container}>
+                                <Typography className={classes.left} color="textSecondary" >
+                                    Activity
+                                </Typography>
+                            
+                                <Typography className={classes.right} color="textSecondary">
+                                    Goal
+                                </Typography>
+                            </div>
+                            {
+                                this.state.checked_activities.map(activity => (
+                                    <div>
+                                        <Typography className={classes.goal_name} color="textSecondary" >
+                                            {activity.name}
+                                        </Typography>
+                                        <Typography className={classes.goal_deadline} color="textSecondary">
+                                            {activity.goals[0].name}
+                                        </Typography>
+                                    </div>
+                                ))
+                            }
+                        </div>
+                        <TextField
+                            id="datetime-local"
+                            label="Start Time"
+                            type="datetime-local"
+                            key="start_time"
+                            value={this.state.auto_schedule_start_time}
+                            className={classes.textField}
+                            onChange={this.autoScheduleOnStartTimeChange}
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                        />
+                        <TextField
+                            id="datetime-local"
+                            label="End Time"
+                            type="datetime-local"
+                            key="end_time"
+                            value={this.state.auto_schedule_end_time}
+                            className={classes.textField}
+                            onChange={this.autoScheduleOnEndTimeChange}
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                        />
+                        <div className={classes.error_list}>
+                            {
+                                this.state.auto_schedule_warnings.map(alert => (
+                                    <div className={classes.warning_box}>
+                                        {alert}
+                                    </div>
+                                ))
+                            }
+                        </div>
+                        <div className={classes.error_list}>
+                            {
+                                this.state.auto_schedule_errors.map(alert => (
+                                    <div className={classes.error_box}>
+                                        {alert}
+                                    </div>
+                                ))
+                            }
+                        </div>
+                        <div className={classes.button_view}>
+                            <Button 
+                                variant="outlined" 
+                                color="secondary"
+                                className={classes.left_button}
+                                onClick={this.autoScheduleHandleClose}
+                            >
+                                Cancel
+                            </Button>
+                            <Button 
+                                variant="outlined" 
+                                color="primary" 
+                                className={classes.right_button}
+                                onClick={() => {
+                                    this.props.set_provisional_activities([
+                                        {
+                                          "name": "Amys Hearty Chicken Noodle Poop:234*123 (41)",
+                                          "case_upc": 198988466663,
+                                          "num": 41,
+                                          "unit_upc": 147048599025,
+                                          "unit_size": "234",
+                                          "count_per_case": 123,
+                                          "prd_line": "prod4",
+                                          "comments": "",
+                                          "cases_needed": 5,
+                                          "mfg_rate": 234,
+                                          "start_time": "2019-02-18 08:00:00",
+                                          "end_time": "2019-02-18 09:00:00",
+                                          "man_line_num": "DC2",
+                                          "goals": [
+                                            {
+                                              "name": "goal2",
+                                              "enabled": true,
+                                              "deadline": "2019-02-26",
+                                              "author": "admin",
+                                              "id": 5,
+                                              "author_id": 7
+                                            }
+                                          ],
+                                          "completion_time": 1,
+                                          "potential_man_lines": []
+                                        },
+                                        {
+                                          "name": "Bananna Protein Bar:5 packets*918 (12311461)",
+                                          "case_upc": 12331141,
+                                          "num": 12311461,
+                                          "unit_upc": 65112153,
+                                          "unit_size": "5 packets",
+                                          "count_per_case": 918,
+                                          "prd_line": "Vitamint",
+                                          "comments": "never expires",
+                                          "cases_needed": 624,
+                                          "mfg_rate": 5115,
+                                          "start_time": "2019-02-19 08:00:00",
+                                          "end_time": "2019-02-19 09:00:00",
+                                          "man_line_num": "DC2",
+                                          "goals": [
+                                            {
+                                              "name": "goal2",
+                                              "enabled": true,
+                                              "deadline": "2019-02-26",
+                                              "author": "admin",
+                                              "id": 5,
+                                              "author_id": 7
+                                            }
+                                          ],
+                                          "completion_time": 1,
+                                          "potential_man_lines": [
+                                            1234,
+                                            1235,
+                                            1236,
+                                            1237,
+                                            1238
+                                          ]
+                                        },
+                                        {
+                                          "name": "Vitamin Water:50 fl. oz*98 (12311459)",
+                                          "case_upc": 12113345,
+                                          "num": 12311459,
+                                          "unit_upc": 6511253,
+                                          "unit_size": "50 fl. oz",
+                                          "count_per_case": 98,
+                                          "prd_line": "Vitamint",
+                                          "comments": "never expires",
+                                          "cases_needed": 5115,
+                                          "mfg_rate": 782,
+                                          "start_time": "2019-02-18 08:00:00",
+                                          "end_time": "2019-02-18 09:00:00",
+                                          "man_line_num": "MAXI",
+                                          "potential_man_lines": [
+                                            1234,
+                                            1235,
+                                            1236,
+                                            1237,
+                                            1238
+                                          ],
+                                          "goals": [
+                                            {
+                                              "name": "Super Pack",
+                                              "enabled": true,
+                                              "deadline": "2019-02-21",
+                                              "author": "Robert",
+                                              "author_id": 16,
+                                              "id": 67890
+                                            }
+                                          ],
+                                          "completion_time": 7
+                                        }
+                                      ])
+                                }}
+                            >
+                                AutoSchedule
                             </Button>
  
                         </div>

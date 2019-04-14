@@ -349,6 +349,19 @@ router.put('/goal_user_names', function (req, res, next) {
     })
 });
 
+router.put('/autoschedule', function (req, res, next) {
+    let activities = req.body.activities;
+    let start_time = req.body.start_time;
+    let end_time = req.body.end_time;
+    let man_lines = req.body.man_lines;
+    scheduler.autoschedule(activities, start_time, end_time, man_lines).then((goals) => {
+        // console.log(goals)
+        res.status(200).json({
+            goals: goals
+        })
+    })
+})
+
 router.put('/filtered_goals', function (req, res, next) {
     let filter = req.body.filter;
     let filter_type_index = req.body.filter_type_index

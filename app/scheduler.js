@@ -491,6 +491,119 @@ class Scheduler extends CRUD {
         })})
     }
 
+    autoschedule(activities, start_time, end_time, man_lines){
+        var that = this;
+        let filtered_goals = []
+        let query = `
+        SELECT
+        *,
+        users.uname
+        FROM ( 
+        SELECT
+        manufacturing_goal_sku.mg_id,
+        manufacturing_goal_sku.sku_id,
+        manufacturing_goal_sku.quantity,
+        manufacturing_goal_sku.start_time,
+        manufacturing_goal_sku.end_time,
+        manufacturing_goal_sku.man_line_id,
+        manufacturing_goal.name as mg_name,
+        manufacturing_goal.user_id,
+        manufacturing_goal.deadline,
+        enabled,
+        manufacturing_goal.name,
+        sku.name as sku_name,
+        sku.num,
+        sku.case_upc,
+        sku.unit_upc,
+        sku.unit_size,
+        sku.count_per_case,
+        sku.prd_line,
+        sku.comments,
+        sku.formula_id,
+        sku.formula_scale,
+        sku.man_rate,
+        manufacturing_line.shortname
+        FROM manufacturing_goal_sku 
+        INNER JOIN manufacturing_goal on manufacturing_goal_sku.mg_id= manufacturing_goal.id  
+        INNER JOIN sku ON manufacturing_goal_sku.sku_id=sku.id
+        INNER JOIN manufacturing_line ON manufacturing_goal_sku.man_line_id=manufacturing_line.id
+        ) AS foo
+        INNER JOIN users ON foo.user_id = users.id
+        `
+        let sku_man_line_map = {}
+        return db.execSingleQuery("select * from manufacturing_line_sku", [])
+                .then(function(res){
+                console.log(res.rows)
+                let rows = res.rows
+                // ingredients = res.rows.map(item => {
+                //     return {
+                //         label: item.name,
+                //         id: item.id
+                //     }
+                // })
+                for(let i = 0; i < rows.length; i++){
+                    if(typeof(sku_man_line_map[rows[i].sku_id]) === "undefined"){
+                        sku_man_line_map[rows[i].sku_id] = [rows[i].manufacturing_line_id]
+                    }else{
+                        sku_man_line_map[rows[i].sku_id].push(rows[i].manufacturing_line_id)
+                    }
+                }
+                
+        return db.execSingleQuery(query, [])
+        .then(function(res){
+            let goals_id_map = {}
+            let goals = []
+            
+            res.rows.forEach(function(row){
+                let potential_man_lines = []
+                if(typeof(sku_man_line_map[row.sku_id]) !== "undefined"){
+                    potential_man_lines = sku_man_line_map[row.sku_id]
+                }
+                let activity = {
+                    "name": row.sku_name,
+                    "case_upc": parseInt(row.case_upc),
+                    "num": row.sku_id,
+                    "unit_upc": parseInt(row.unit_upc),
+                    "unit_size": row.unit_size,
+                    "count_per_case": row.count_per_case,
+                    "prd_line": row.prd_line,
+                    "comments": row.comments,
+                    "cases_needed": parseInt(row.quantity),
+                    "mfg_rate": parseInt(row.man_rate),
+                    "start_time": that.get_date_string(row.start_time),
+                    "end_time": that.get_date_string(row.end_time),
+                    "man_line_num": that.get_zero_null(row.shortname),
+                    "potential_man_lines": potential_man_lines
+                }
+                let goal = {
+                    "name": row.mg_name,
+                    "activities": [
+                       activity
+                    ],
+                    "enabled": row.enabled,
+                    "deadline": that.get_date_string_day(row.deadline),
+                    "author": row.uname,
+                    author_id:row.user_id,
+                    "id": row.mg_id
+                }
+                if(typeof(goals_id_map[goal.id]) === "undefined"){
+                    goals_id_map[goal.id] = goal
+                }else{
+                    goals_id_map[goal.id].activities.push(activity)
+                }
+            })
+            for (var id in goals_id_map) {
+                if (goals_id_map.hasOwnProperty(id)) {
+                    filtered_goals.push(goals_id_map[id])
+                }
+            }
+            let activities = this.getActivities(filtered_goals)
+            let scheduled_activities = this.filterScheduledActivities(activities)
+            console.log(JSON.stringify(scheduled_activities))
+            return filtered_goals
+        })})
+    }
+
     get_man_lines(){
         var that = this;
         let man_lines = []
@@ -530,6 +643,51 @@ class Scheduler extends CRUD {
             return man_lines
         })
     }
+
+    getActivities(goals){
+        var activities_map = {}
+        var activities_list = []
+        for(var i = 0; i < goals.length; i++){
+          let {activities, ...goal} = goals[i]
+          for(var j = 0; j < activities.length; j++){
+            let activity = activities[j]
+            activity.name = `${activity.name}:${activity.unit_size}*${activity.count_per_case} (${activity.num})`
+            if(typeof(activities_map[activity.num]) === "undefined"){
+                activities_map[activity.num] = {
+                  ...activity,
+                  goals:[goal],
+                  completion_time:Math.ceil(activity.cases_needed/activity.mfg_rate)
+                }
+            }else{
+                activities_map[activity.num].goals.push(goal)
+            }
+            //let act = {
+            activities_list.push({
+              ...activity,
+              goals:[goal],
+              completion_time:Math.ceil(activity.cases_needed/activity.mfg_rate)
+            })
+          }
+        }
+    }
+
+    isScheduled(activity){
+        return activity.start_time != null && activity.end_time != null && activity.man_line_num != null
+    }
+    
+    isUnscheduled(activity){
+        return hasEnabledGoals(activity) && !isScheduled(activity)
+    }
+
+    filterScheduledActivities(activities){
+        return activities.filter(activity => isScheduled(activity))
+    }
+    
+    filterUnscheduledActivities(activities, provisional_activities){
+        return activities.filter(activity => isUnscheduled(activity)).filter(activity => !isProvisional(activity, provisional_activities))
+    }
+    
+
 
   
 }

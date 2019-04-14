@@ -1,4 +1,6 @@
 import moment from 'moment'
+import * as Cookies from "js-cookie";
+import { store } from '../..';
 
 export function getActivities(goals){
     var activities_map = {}
@@ -48,8 +50,8 @@ export function getActivities(goals){
   //         })
   //       }
   //     }
-  //     console.log("poooopoo")
-  //     console.log(activities)
+  //     // console.log("poooopoo")
+  //     // console.log(activities)
   //     return activities
   //   }
 
@@ -66,8 +68,17 @@ export function getActivities(goals){
     return activities.filter(activity => isScheduled(activity))
   }
 
-  export function filterUnscheduledActivities(activities){
-    return activities.filter(activity => isUnscheduled(activity))
+  export function filterUnscheduledActivities(activities, provisional_activities){
+    return activities.filter(activity => isUnscheduled(activity)).filter(activity => !isProvisional(activity, provisional_activities))
+  }
+
+  export function isProvisional(activity, provisional_activities){
+    console.log("isProvisional")
+    console.log(provisional_activities)
+    console.log(provisional_activities.map(activity => get_unique_activity_id(activity)))
+    console.log(get_unique_activity_id(activity))
+    console.log(provisional_activities.map(activity => get_unique_activity_id(activity)).includes(get_unique_activity_id(activity)))
+    return provisional_activities.map(activity => get_unique_activity_id(activity)).includes(get_unique_activity_id(activity))
   }
 
   export function multipleGoalActivity(activity){
@@ -105,10 +116,10 @@ export function getActivities(goals){
 
   export function valid_time(time){
     var time_moment = moment(time, "YYYY-MM-DD HH:mm")
-    //// // // console.log.log(time_moment)
-    //// // // console.log.log(time_moment.hours());
-    // // // console.log(time_moment.hours())
-    // // // console.log(time_moment.hours() <= 18 && time_moment.hours() >= 8)
+    //// // // // console.log.log(time_moment)
+    //// // // // console.log.log(time_moment.hours());
+    // // // // console.log(time_moment.hours())
+    // // // // console.log(time_moment.hours() <= 18 && time_moment.hours() >= 8)
     return time_moment.hours() <= 18 && time_moment.hours() >= 8
   }
 
@@ -116,8 +127,8 @@ export function getActivities(goals){
     var start_moment = moment(start_time, "YYYY-MM-DD HH:mm")
     var end_moment = moment(end_time, "YYYY-MM-DD HH:mm")
     var seconds_difference = moment.duration(end_moment.diff(start_moment)).asSeconds();
-    // // console.log("VALID START END TIME")
-    // // console.log(seconds_difference)
+    // // // console.log("VALID START END TIME")
+    // // // console.log(seconds_difference)
     return seconds_difference > 0
   }
 
@@ -126,11 +137,11 @@ export function getActivities(goals){
     var end_moment = moment(end_time, "YYYY-MM-DD HH:mm")
     var completion_end_moment = moment(calculate_end_time(start_time, completion_time).replace("T"," "),"YYYY-MM-DD HH:mm")
     var seconds_difference = moment.duration(end_moment.diff(completion_end_moment)).asSeconds();
-    // // console.log("check override duration")
-    // // console.log(start_moment)
-    // // console.log(end_moment)
-    // // console.log(completion_end_moment)
-    // // console.log(seconds_difference)
+    // // // console.log("check override duration")
+    // // // console.log(start_moment)
+    // // // console.log(end_moment)
+    // // // console.log(completion_end_moment)
+    // // // console.log(seconds_difference)
     return seconds_difference != 0
   }
 
@@ -139,8 +150,8 @@ export function getActivities(goals){
     var deadline = moment(deadline,"YYYY-MM-DD")
     deadline.hour(18)
     var seconds_difference = moment.duration(deadline.diff(end_moment)).asSeconds();
-    // // // console.log("EXCEEDS DEADLINE WARNING")
-    // // // console.log(seconds_difference)
+    // // // // console.log("EXCEEDS DEADLINE WARNING")
+    // // // // console.log(seconds_difference)
     return seconds_difference < 0
   }
 
@@ -209,9 +220,9 @@ export function getActivities(goals){
 
   export function get_all_warnings(scheduled_activities, unscheduled_activities){
     let warnings = []
-    console.log("get all warnings")
-    console.log(scheduled_activities)
-    console.log(unscheduled_activities)
+    // console.log("get all warnings")
+    // console.log(scheduled_activities)
+    // console.log(unscheduled_activities)
     if(unscheduled_activities.length > 0){
       warnings.push("There are unscheduled activities")
     }
@@ -240,15 +251,16 @@ export function getActivities(goals){
        title:activity.name,
        activity
     }
-    //console.log(warnings)
+    //// console.log(warnings)
     if(warnings.length > 0){
       event.warning = true
     }
-    //console.log(event)
+    //// console.log(event)
     return event
  }
 
  export function get_time_conflict_errors(start_time, end_time, man_line,scheduled_activities){
+   // console.log(scheduled_activities)
    let conflicts = scheduled_activities.filter(activity => {
       var start_moment = moment(activity.start_time, "YYYY-MM-DD HH:mm")
       var end_moment = moment(activity.end_time, "YYYY-MM-DD HH:mm")
@@ -256,10 +268,10 @@ export function getActivities(goals){
       var time_since_start = moment.duration(time_moment.diff(start_moment)).asSeconds();
       var time_to_end = moment.duration(end_moment.diff(time_moment)).asSeconds();
       if (time_since_start >= 0 && time_to_end > 0){
-        // // console.log("CONFLICT")
-        // // console.log(man_line)
-        // // console.log(activity.man_line_num)
-        // // console.log(man_line == activity.man_line_num)
+        // // // console.log("CONFLICT")
+        // // // console.log(man_line)
+        // // // console.log(activity.man_line_num)
+        // // // console.log(man_line == activity.man_line_num)
         return man_line == activity.man_line_num
       }else{
         return false
@@ -273,10 +285,10 @@ export function getActivities(goals){
     var time_since_start = moment.duration(time_moment.diff(start_moment)).asSeconds();
     var time_to_end = moment.duration(end_moment.diff(time_moment)).asSeconds();
     if (time_since_start >= 0 && time_to_end > 0){
-      // // console.log("CONFLICT")
-      // // console.log(man_line)
-      // // console.log(activity.man_line_num)
-      // // console.log(man_line == activity.man_line_num)
+      // // // console.log("CONFLICT")
+      // // // console.log(man_line)
+      // // // console.log(activity.man_line_num)
+      // // // console.log(man_line == activity.man_line_num)
       return man_line == activity.man_line_num
     }else{
       return false
@@ -290,10 +302,10 @@ export function getActivities(goals){
     var time_since_start = moment.duration(start_moment.diff(start_time_moment)).asSeconds();
     var time_to_end = moment.duration(end_time_moment.diff(start_moment)).asSeconds();
     if (time_since_start >= 0 && time_to_end > 0){
-      // // console.log("CONFLICT")
-      // // console.log(man_line)
-      // // console.log(activity.man_line_num)
-      // // console.log(man_line == activity.man_line_num)
+      // // // console.log("CONFLICT")
+      // // // console.log(man_line)
+      // // // console.log(activity.man_line_num)
+      // // // console.log(man_line == activity.man_line_num)
       return man_line == activity.man_line_num
     }else{
       return false
@@ -310,10 +322,10 @@ export function getActivities(goals){
     var time_since_start = moment.duration(start_moment.diff(start_time_moment)).asSeconds();
     var time_to_end = moment.duration(end_time_moment.diff(start_moment)).asSeconds();
     if (time_since_start >= 0 && time_to_end > 0){
-      // // console.log("CONFLICT")
-      // // console.log(man_line)
-      // // console.log(activity.man_line_num)
-      // // console.log(man_line == activity.man_line_num)
+      // // // console.log("CONFLICT")
+      // // // console.log(man_line)
+      // // // console.log(activity.man_line_num)
+      // // // console.log(man_line == activity.man_line_num)
       return man_line == activity.man_line_num
     }else{
       return false
@@ -347,8 +359,21 @@ export function getActivities(goals){
   return {
      backend_id:man_line.id,
      id:man_line.shrt_name,
-     name:man_line.shrt_name
+     name:man_line.shrt_name,
+     isManager: is_manager_of(man_line.id)
      }
+  }
+
+  export function is_manager_of(man_line_id){
+    let manufacturing_line_ids = Cookies.get('schedule_write').replace("[","").replace("]","").split(",").map(man_line_id_str => parseInt(man_line_id_str))
+    // // console.log(manufacturing_line_ids)
+    // // console.log(man_line.id)
+    // // console.log(manufacturing_line_ids.includes(man_line.id))
+    // console.log(Cookies.get('admin'))
+    if(Cookies.get('admin') == "true"){
+      return true
+    }
+    return manufacturing_line_ids.includes(man_line_id)
   }
 
   export function get_man_line_by_id(man_line_id, man_lines){
@@ -357,69 +382,75 @@ export function getActivities(goals){
     })
   }
 
+  export function get_man_line_by_name(man_line_name, man_lines){
+    return man_lines.find(man_line => {
+      return man_line.shrt_name == man_line_name
+    })
+  }
+
   export function get_current_start_time(){
     var now = moment()
     now.hour(8);
     now.minute(0);
-    // // // console.log.log(now.format('YYYY-MM-DD HH:mm').replace(" ","T"))
+    // // // // console.log.log(now.format('YYYY-MM-DD HH:mm').replace(" ","T"))
     return now.format('YYYY-MM-DD HH:mm').replace(" ","T");
   }
 
   export function calculate_end_time(start_time, completion_hours){
-    //// // // console.log.log(start_time)
+    //// // // // console.log.log(start_time)
     let start_time_string = start_time.replace("T", " ")
     var start_moment = moment(start_time_string, "YYYY-MM-DD HH:mm")
     var start_moment_morning = moment(start_time_string, "YYYY-MM-DD HH:mm")
     start_moment_morning.hour(8)
     var current_hours = moment.duration(start_moment.diff(start_moment_morning)).asHours();
-    // // // console.log.log(current_hours)
+    // // // // console.log.log(current_hours)
     var total_hours = current_hours + completion_hours
     var days = Math.floor(total_hours/10)
     var hours = total_hours % 10
-    // // // console.log.log(start_moment)
+    // // // // console.log.log(start_moment)
     start_moment.hour(8)
     start_moment.add(days, 'days')
     start_moment.add(hours, 'hours')
-    // // // console.log.log(start_moment)
+    // // // // console.log.log(start_moment)
     return start_moment.format('YYYY-MM-DD HH:mm').replace(" ","T");
     //return "2019-02-19T08:00"
   }
 
   export function day_start_time_trim(time){
-    //// // // console.log.log(start_time)
+    //// // // // console.log.log(start_time)
     let time_string = time.replace("T", " ")
     var time_moment = moment(time_string, "YYYY-MM-DD HH:mm")
     time_moment.hour(8)
     time_moment.minute(0)
-    // // // console.log.log(start_moment)
+    // // // // console.log.log(start_moment)
     return time_moment.format('YYYY-MM-DD HH:mm');
     //return "2019-02-19T08:00"
   }
 
   export function day_end_time_trim(time){
-    //// // // console.log.log(start_time)
+    //// // // // console.log.log(start_time)
     let time_string = time.replace("T", " ")
     var time_moment = moment(time_string, "YYYY-MM-DD HH:mm")
     time_moment.hour(18)
     time_moment.minute(0)
-    // // // console.log.log(start_moment)
+    // // // // console.log.log(start_moment)
     return time_moment.format('YYYY-MM-DD HH:mm');
     //return "2019-02-19T08:00"
   }
 
   export function hour_time_trim(time){
-    //// // // console.log.log(start_time)
+    //// // // // console.log.log(start_time)
     let time_string = time.replace("T", " ")
     var time_moment = moment(time_string, "YYYY-MM-DD HH:mm")
     time_moment.minute(0)
-    // // // console.log.log(start_moment)
+    // // // // console.log.log(start_moment)
     return time_moment.format('YYYY-MM-DD HH:mm');
     //return "2019-02-19T08:00"
   }
 
 
   export function calculate_scheduled_time(start_time, end_time){
-    //// // // console.log.log(start_time)
+    //// // // // console.log.log(start_time)
     let start_time_string = start_time.replace("T", " ")
     var start_moment = moment(start_time_string, "YYYY-MM-DD HH:mm")
     var start_moment_morning = moment(start_time_string, "YYYY-MM-DD HH:mm")
@@ -435,7 +466,7 @@ export function getActivities(goals){
     var days = moment.duration(end_moment_morning.diff(start_moment_morning)).asDays();
 
     var total_hours = days * 10 - start_hours_diff + end_hours_diff
-    // // // console.log.log(current_hours)
+    // // // // console.log.log(current_hours)
     return total_hours
   }
 
@@ -449,6 +480,10 @@ export function getActivities(goals){
     b.delete(item)
     return Array.from(b)
 
+  }
+
+  export function get_unique_activity_id(activity){
+    return parseInt(String(activity.num) + String(activity.goals[0].id))
   }
 
   export const ADD_A_MAN_LINE_ERROR = "error: add a manufacturing line";

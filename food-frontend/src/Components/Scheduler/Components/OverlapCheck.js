@@ -14,11 +14,14 @@ import Row from 'antd/lib/row'
 import Button from 'antd/lib/button'
 import moment from 'moment'
 import { ENETDOWN } from 'constants';
-import { getEnabledGoals, calculate_scheduled_time, get_scheduled_activity_warnings, day_start_time_trim, day_end_time_trim, hour_time_trim, valid_start_end_pair, valid_time, push_conflict_errors_without_duplication, calculate_end_time, get_man_line_by_id } from '../UtilityFunctions';
+import { getEnabledGoals, calculate_scheduled_time, get_scheduled_activity_warnings, day_start_time_trim, day_end_time_trim, hour_time_trim, valid_start_end_pair, valid_time, push_conflict_errors_without_duplication, calculate_end_time, get_man_line_by_id, is_manager_of, get_man_line_by_name, isProvisional } from '../UtilityFunctions';
 import { Typography } from '@material-ui/core';
 import labels from '../../../Resources/labels';
 import config from '../config';
 import swal from 'sweetalert';
+import { withCookies } from 'react-cookie';
+import * as Cookies from "js-cookie";
+
 
 const styles = theme => ({
     card: {
@@ -158,12 +161,12 @@ class OverlapCheck extends Component{
         let scheduler_data = new SchedulerData('2019-02-18', ViewTypes.Week, false, false, {
             checkConflict: true,newConfig : config
         });
-        console.log(config)
+        //console.log(config)
         scheduler_data.localeMoment.locale('en');
         scheduler_data.setDate('2019-02-18');
         scheduler_data.setResources(this.props.resources);
         scheduler_data.setEvents(this.props.events);
-        console.log("hello")
+        //console.log("hello")
         scheduler_data.config.schedulerWidth = "65%"
         scheduler_data.config.views = [scheduler_data.config.views[0], scheduler_data.config.views[1]]
         this.state = {
@@ -180,7 +183,10 @@ class OverlapCheck extends Component{
 
     render(){
         // console.log.log("RENDER")
-        console.log(this.state.scheduler_data)
+        //console.log(this.state.scheduler_data)
+        
+        //console.log(document.cookie)
+        console.log(Cookies.get('schedule_write'))
         return (
             <div>
                 <div>
@@ -196,7 +202,7 @@ class OverlapCheck extends Component{
                                conflictOccurred={this.conflictOccurred}
                                eventItemPopoverTemplateResolver={this.eventItemPopoverTemplateResolver}
                                eventItemTemplateResolver={this.eventItemTemplateResolver}
-                            //    slotItemTemplateResolver={this.slotItemTemplateResolver}
+                               slotItemTemplateResolver={this.slotItemTemplateResolver}
                     />
                 </div>
             </div>
@@ -276,6 +282,12 @@ class OverlapCheck extends Component{
     }
 
     updateEventStart = (schedulerData, event, newStart) => {
+        if(isProvisional(event.activity, this.props.provisional_activities)){
+            swal(`Cannot Edit a Provisionally Scheduled Activity`,{
+                icon: "error",
+              });
+            return
+        }
         if(schedulerData.viewType == 0){
             newStart = hour_time_trim(newStart)
         }else{
@@ -328,6 +340,12 @@ class OverlapCheck extends Component{
     }
 
     updateEventEnd = (schedulerData, event, newEnd) => {
+        if(isProvisional(event.activity, this.props.provisional_activities)){
+            swal(`Cannot Edit a Provisionally Scheduled Activity`,{
+                icon: "error",
+              });
+            this.props.
+        }
         if(schedulerData.viewType == 0){
             newEnd = hour_time_trim(newEnd)
         }else{
@@ -396,6 +414,115 @@ class OverlapCheck extends Component{
         if(eventItem.warning){
             dot_color = labels.colors.warningColor
         }
+        if(isProvisional(eventItem.activity, this.props.provisional_activities)){
+
+            dot_color = labels.colors.grayText
+            return (
+                // <React.Fragment>
+                //     <h3>{title}</h3>
+                //     <h5>{start.format("HH:mm")} - {end.format("HH:mm")}</h5>
+                //     <img src="./icons8-ticket-96.png" />
+                // </React.Fragment>
+                <div style={{width: '300px'}}>
+                    <Row type="flex" align="middle">
+                        <Col span={2}>
+                            <div className="status-dot" style={{backgroundColor: dot_color}} />
+                        </Col>
+                        <Col span={22} className="overflow-text">
+                            <span className="header2-text" title={title}>{title}</span>
+                        </Col>
+                    </Row>
+                    <Row type="flex" align="middle">
+                        <Col span={2}>
+                            <div />
+                        </Col>
+                        <Col span={22}>
+                            <span className="header1-text">{start.format('HH:mm')}</span><span className="help-text" style={{marginLeft: '8px'}}>{start.format(dateFormat)}</span><span className="header2-text"  style={{marginLeft: '8px'}}>-</span><span className="header1-text" style={{marginLeft: '8px'}}>{end.format('HH:mm')}</span><span className="help-text" style={{marginLeft: '8px'}}>{end.format(dateFormat)}</span>
+                        </Col>
+                    </Row>
+                    <Row className={classes.popup_view}>
+                        <Col span={2}>
+                            <div />
+                        </Col>
+                            <div className={classes.goal_name_deadline_title_container}>
+                                <Typography className={classes.left} color="textSecondary" >
+                                    Goals
+                                </Typography>
+                            
+                                <Typography className={classes.right} color="textSecondary">
+                                    Deadline
+                                </Typography>
+                            </div>
+                        
+                            {
+                                getEnabledGoals(activity).map(goal => (
+                                    <div>
+                                        <Typography className={classes.goal_name} color="textSecondary" >
+                                            {goal.name}
+                                        </Typography>
+                                        <Typography className={classes.goal_deadline} color="textSecondary">
+                                            {goal.deadline}
+                                        </Typography>
+                                    </div>
+                                ))
+                            }
+    
+                            <div>
+                                
+                            </div>
+                            <div className={classes.goal_name_deadline_title_container}>
+                                <Typography className={classes.left} color="textSecondary" >
+                                    Provisional Activity Set
+                                </Typography>
+                            </div>
+                            
+                            {
+                                this.props.provisional_activities.map(activity => (
+                                    <div>
+                                        <Typography className={classes.goal_name} color="textSecondary" >
+                                            {`${activity.goals[0].name}-${activity.name}`}
+                                        </Typography>
+                                        {/* <Typography className={classes.goal_deadline} color="textSecondary">
+                                            {goal.deadline}
+                                        </Typography> */}
+                                    </div>
+                                ))
+                            }
+    
+                            <div>
+                                <Typography className={classes.left} color="textSecondary" >
+                                    Completion Time: 
+                                </Typography>
+                                <Typography className={classes.goal_deadline} color="textSecondary">
+                                    {activity.completion_time + " hours"}
+                                </Typography>
+                            </div>
+                            <div>
+                                <Typography className={classes.left} color="textSecondary" >
+                                    Scheduled Time: 
+                                </Typography>
+                                <Typography className={classes.goal_deadline} color="textSecondary">
+                                    {calculate_scheduled_time(activity.start_time, activity.end_time) + " hours"}
+                                </Typography>
+                            </div>
+                            <div className={classes.error_list}>
+                                {
+                                    get_scheduled_activity_warnings(activity).map(alert => (
+                                        <div className={classes.warning_box}>
+                                            {alert}
+                                        </div>
+                                    ))
+                                }
+                            </div>
+                        
+                        <Col span={22}>
+                            <Button onClick={()=>{this.unschedule_activity(eventItem);}}>Schedule All</Button>
+                        </Col>
+                    </Row>
+                </div>
+            );
+        }
+
         return (
             // <React.Fragment>
             //     <h3>{title}</h3>
@@ -503,12 +630,23 @@ class OverlapCheck extends Component{
     }
 
     slotItemTemplateResolver = (schedulerData, slot, slotClickedFunc, width, clsName) => {
-        console.log(slot)
-        return (
-            <div>
-                HElLO
-            </div>
-        )
+        // console.log(this.props.man_lines)
+        // console.log(slot)
+        // console.log(get_man_line_by_name(slot.slotName, this.props.man_lines))
+        console.log(is_manager_of(get_man_line_by_name(slot.slotName, this.props.man_lines).id))
+        if(is_manager_of(get_man_line_by_name(slot.slotName, this.props.man_lines).id)){
+            return (
+                <div>
+                    {slot.slotName}
+                </div>
+            )
+        }else{
+            return (
+                <div style={{backgroundColor: labels.colors.infoColor}}>
+                    {slot.slotName}
+                </div>
+            )
+        }
     }
 
     unschedule_activity = (item) => {
@@ -520,6 +658,7 @@ class OverlapCheck extends Component{
     }
 
     eventItemTemplateResolver = (schedulerData, event, bgColor, isStart, isEnd, mustAddCssClass, mustBeHeight, agendaMaxEventWidth) => {
+
         let borderWidth = isStart ? '4' : '0';
         let borderColor =  'rgba(0,139,236,1)', backgroundColor = '#80C5F6';
         let titleText = schedulerData.behaviors.getEventTextFunc(schedulerData, event);
@@ -533,9 +672,19 @@ class OverlapCheck extends Component{
             color = labels.colors.grayText
             borderColor = labels.colors.yellow
         }
+        if(isProvisional(event.activity, this.props.provisional_activities)){
+            backgroundColor = labels.colors.infoColor
+            borderColor = labels.colors.grayText
+            color = labels.colors.grayText
+        }
         let divStyle = {borderLeft: borderWidth + 'px solid ' + borderColor, backgroundColor: backgroundColor, height: mustBeHeight, color:color };
         if(!!agendaMaxEventWidth)
             divStyle = {...divStyle, maxWidth: agendaMaxEventWidth};
+        // console.log("color resolver")
+        // console.log(this.props)
+        // if(isProvisional(event.activity, this.props.provisional_activities)){
+        //     backgroundColor = labels.colors.infoColor
+        // }
 
         return <div key={event.id} className={mustAddCssClass} style={divStyle}>
             <span style={{marginLeft: '4px', lineHeight: `${mustBeHeight}px` }}>{titleText}</span>
@@ -544,6 +693,25 @@ class OverlapCheck extends Component{
 
 
     moveEvent = (schedulerData, event, slotId, slotName, start, end) => {
+        if(isProvisional(event.activity, this.props.provisional_activities)){
+            swal(`Cannot Edit a Provisionally Scheduled Activity`,{
+                icon: "error",
+              });
+            return
+        }
+        if(!is_manager_of(get_man_line_by_name(event.activity.man_line_num, this.props.man_lines).id)){
+            swal(`You cannot move items from a line that you are not the plant manager of`,{
+                icon: "error",
+              });
+            return
+        }
+
+        if(!is_manager_of(get_man_line_by_name(slotName, this.props.man_lines).id)){
+            swal(`You are not a plant manager of this line`,{
+                icon: "error",
+              });
+            return
+        }
         console.log(event)
         let possible_man_line_names = event.activity.potential_man_lines.map(man_line_num => get_man_line_by_id(man_line_num, this.props.man_lines).shrt_name)
         if(!possible_man_line_names.includes(slotName)){
@@ -578,7 +746,7 @@ class OverlapCheck extends Component{
               });
             return
         }
-        let conflict_errors = push_conflict_errors_without_duplication(start, end, event.activity.man_line_num, this.props.scheduled_activities.filter(activity => activity.id != event.activity.id), [])
+        let conflict_errors = push_conflict_errors_without_duplication(start, end, event.activity.man_line_num, this.props.scheduled_activities.filter(activity => parseInt(String(activity.id) + String(activity.goals[0].id))  != parseInt(String(event.activity.id) + String(event.activity.goals[0].id))), [])
         if(conflict_errors.length > 0){
             swal(`Activity Conflicts`,{
                 icon: "error",
@@ -627,4 +795,4 @@ class OverlapCheck extends Component{
     }
 }
 
-export default withRouter(withStyles(styles)(connect(mapStateToProps,mapDispatchToProps)(withDragDropContext(OverlapCheck))));
+export default withRouter(withStyles(styles)(connect(mapStateToProps,mapDispatchToProps)(withCookies(withDragDropContext(OverlapCheck)))));

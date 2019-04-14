@@ -181,7 +181,8 @@ export const demoData = {
      events: [],
      filtered_goals:[],
      unscheduled_activities:[],
-     open: false
+     open: false,
+     provisional_activities: []
  }
 
 export function create_scheduler_data(resources, events){
@@ -215,12 +216,18 @@ export const get_goals = () => {
 
  export const reduceGetGoals = (state, action) => {
     console.log("REDUCE GET GOALS")
+    // console.log(store.getState().scheduler.provisional_activities)
     console.log(action.data)
     // console.log.log("REDUCE SCHEDULER_GET_GOALS")
    let activities = getActivities(action.data.goals)
    //// console.log.log("REDUCE SCHEDULER_GET_GOALS - 1")
    let scheduled_activities = filterScheduledActivities(activities)
-   let unscheduled_activities = filterUnscheduledActivities(activities)
+   let unscheduled_activities = filterUnscheduledActivities(activities, state.provisional_activities)
+   console.log("hey")
+   let provisional_activities = state.provisional_activities
+   console.log(JSON.stringify(unscheduled_activities))
+   console.log(JSON.stringify(provisional_activities))
+   scheduled_activities.push(...provisional_activities)
    //// console.log.log("REDUCE SCHEDULER_GET_GOALS - 2")
    scheduled_activities = sort_scheduled_activities(scheduled_activities)
    //// console.log.log("REDUCE SCHEDULER_GET_GOALS - 3")
@@ -384,6 +391,28 @@ export const get_man_lines = () => {
    });
 }
 
+export const SCHEDULER_SET_PROVISIONAL_ACTIVITIES = "SCHEDULER_SET_PROVISIONAL_ACTIVITIES"
+
+export const set_provisional_activities = (activities) => {
+   console.log("SCHEDULER_SET_PROVISIONAL_ACTIVITIES: action creator")
+   console.log(activities)
+   return (dispatch) => {
+      return dispatch({
+        type: SCHEDULER_SET_PROVISIONAL_ACTIVITIES,
+        data: activities
+      })
+    }
+ }
+
+ export const reduce_set_provisional_activities = (state, action) => {
+   console.log("SCHEDULER_SET_PROVISIONAL_ACTIVITIES: reducer")
+   let activities = action.data
+   console.log(activities)
+   return Object.assign({}, state, {
+      provisional_activities: activities
+   });
+}
+
 export const SCHEDULER_GOAL_SET_ENABLE = "SCHEDULER_GOAL_SET_ENABLE"
 
 export const goal_set_enable = (goal, enable_status) => {
@@ -525,7 +554,8 @@ export const get_filtered_goals = (filter, filter_type_index) => {
         scheduled_activities: state.scheduler.scheduled_activities,
         filtered_goals: state.scheduler.filtered_goals,
         unscheduled_activities: state.scheduler.unscheduled_activities,
-        open: state.scheduler.open
+        open: state.scheduler.open,
+        provisional_activities: state.scheduler.provisional_activities
     };
 };
 
@@ -581,6 +611,10 @@ export const mapDispatchToProps = (dispatch, ownProps) => {
       },
       open_popup: () =>{
          dispatch(set_open(true))
+      },
+      set_provisional_activities: (activities) => {
+         dispatch(set_provisional_activities(activities))
+         dispatch(get_goals())
       }
     };
 };
