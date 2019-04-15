@@ -602,6 +602,8 @@ class Scheduler extends CRUD {
             console.log(activities)
             let scheduled_activities = that.filterScheduledActivities(activities)
             console.log(scheduled_activities)
+            console.log(new Date(start_time).getTime())
+            console.log(new Date(end_time).getTime())
             return filtered_goals
         })})
     }
