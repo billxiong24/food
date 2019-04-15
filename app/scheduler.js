@@ -685,8 +685,8 @@ class Scheduler extends CRUD {
         let end_time = original_interval.end_time
         if(man_line_id == 1234){
             console.log({
-                start_time: new Date(interval_array[j]).getTime(),
-                end_time: new Date(interval_array[j]).getTime(),
+                start_time: new Date(original_interval).getTime(),
+                end_time: new Date(original_interval).getTime(),
                 name: "presplit"
             })
         }
