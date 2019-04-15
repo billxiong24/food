@@ -605,6 +605,8 @@ class Scheduler extends CRUD {
             console.log(new Date(start_time).getTime())
             console.log(new Date(end_time).getTime())
             let interval_array = []
+            start_time = new Date(start_time).getTime()
+            end = new Date(end_time).getTime()
             for(let i = 0; i < man_lines.length; i++){
                 interval_array.push(...that.get_intervals(scheduled_activities, man_lines[i], start_time, end_time))
             }
