@@ -680,15 +680,15 @@ class Scheduler extends CRUD {
     }
     
     isUnscheduled(activity){
-        return hasEnabledGoals(activity) && !isScheduled(activity)
+        return hasEnabledGoals(activity) && !this.isScheduled(activity)
     }
 
     filterScheduledActivities(activities){
-        return activities.filter(activity => isScheduled(activity))
+        return activities.filter(activity => this.isScheduled(activity))
     }
     
     filterUnscheduledActivities(activities, provisional_activities){
-        return activities.filter(activity => isUnscheduled(activity)).filter(activity => !isProvisional(activity, provisional_activities))
+        return activities.filter(activity => this.isUnscheduled(activity)).filter(activity => !isProvisional(activity, provisional_activities))
     }
     
 
