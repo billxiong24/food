@@ -570,8 +570,8 @@ class Scheduler extends CRUD {
                     "comments": row.comments,
                     "cases_needed": parseInt(row.quantity),
                     "mfg_rate": parseInt(row.man_rate),
-                    "start_time": that.get_date_string(row.start_time),
-                    "end_time": that.get_date_string(row.end_time),
+                    "start_time": row.start_time,
+                    "end_time": row.end_time,
                     "man_line_num": that.get_zero_null(row.shortname),
                     "potential_man_lines": potential_man_lines
                 }
@@ -598,15 +598,138 @@ class Scheduler extends CRUD {
                 }
             }
             console.log(filtered_goals)
-            let activities = that.getActivities(filtered_goals)
-            console.log(activities)
-            let scheduled_activities = that.filterScheduledActivities(activities)
+            let all_activities = that.getActivities(filtered_goals)
+            console.log(all_activities)
+            let scheduled_activities = that.filterScheduledActivities(all_activities)
             console.log(scheduled_activities)
             console.log(new Date(start_time).getTime())
             console.log(new Date(end_time).getTime())
-            return filtered_goals
+            let interval_array = []
+            for(let i = 0; i < man_lines.length; i++){
+                interval_array.push(...this.get_intervals(scheduled_activities, man_lines[i], start_time, end_time))
+            }
+            interval_array.sort((a, b) => (a.end_time - a.start_time > b.end_time - b.start_time) ? -1 : 1)
+            activities.sort((a, b) => (a.completion_time > b.completion_time) ? -1 : 1)
+            let activity_set = new Set(activities)
+            let interval_set = new Set(interval_array)
+            for(let i = 0; i < activities.length; i++){
+                let act = activities[i]
+                let temp_interval_array = Array.from(interval_set)
+                temp_interval_array.sort((a, b) => (a.end_time - a.start_time > b.end_time - b.start_time) ? -1 : 1)
+                for(let j = 0; j < temp_interval_array.length; j++){
+                    if(act.potential_man_lines.includes(interval.id) && man_lines.includes(interval.id)){
+                        let interval = temp_interval_array[j]
+                        let calculated_end_time = this.calculate_end_time(interval.start_time, act.completion_time)
+                        if(calculated_end_time < interval.end_time){
+                            interval_set.delete(interval)
+                            act.start_time = interval.start_time
+                            act.end_time = calculated_end_time
+                            act.man_line_num = interval.id
+                            interval_set.add(this.createInterval(act.end_time, interval.end_time))
+                            activity_set.delete(act)
+                            break
+                        }else if(calculated_end_time == interval.end){
+                            interval_set.delete(interval)
+                            act.start_time = interval.start_time
+                            act.end_time = calculated_end_time
+                            act.man_line_num = interval.id
+                            activity_set.delete(act)
+                            break
+                        }
+                    }
+                }
+            }
+            let failed_activities = activities.filter(act => activity_set.has(act))
+            let autoscheduled_activities = activities.filter(act => !activity_set.has(act))
+            return {
+                autoscheduled_activities,
+                failed_activities
+            }
         })})
     }
+
+    get_intervals(activities,man_line_id, start_time, end_time){
+        let intersecting_activities = activities.filter(activity => activity.man_line_num == man_line_id).sort((a, b) => (a.start_time > b.start_time) ? 1 : -1)
+        let original_interval = this.createInterval(start_time, end_time, man_line_id)
+        let interval_set = new Set([original_interval])
+        for(let i = 0; i < intersecting_activities.length; i++){
+            let interval_array = Array.from(interval_set)
+            for(let j = 0; j < interval_array.length; j++){
+                interval_set.delete(interval_array[j])
+                this.splitInterval(interval_array[j], intersecting_activities[i], interval_set, man_line_id)
+            }
+        }
+        return Array.from(interval_set);
+    }
+
+    createInterval(start_time, end_time, man_line_id){
+        return {
+            start_time,
+            end_time,
+            id: man_line_id
+        }
+    }
+
+    splitInterval(original_interval, activity, interval_set, man_line_id){
+        let start_time = original_interval.start_time
+        let end_time = original_interval.end_time
+        //activity overlaps through start
+        if(activity.start_time <= start_time && activity.end_time < end_time){
+            let interval = this.createInterval(activity.end_time, end_time, man_line_id)
+            interval_set.add(interval)
+            return
+        }
+
+        //activity overlaps through end
+        if(activity.start_time > start_time && activity.end_time >= end_time){
+            let interval = this.createInterval(start_time, activity.start_time, man_line_id)
+            interval_set.add(interval)
+            return
+        }
+
+        //activity subsumes interval
+        if(activity.start_time <= start_time && activity.end_time >= end_time){
+            return
+        }
+
+        //activity lies in the middle of interval
+        if(activity.start_time > start_time && activity.end_time < end_time){
+            let interval1 = this.createInterval(start_time, activity.start_time, man_line_id)
+            let interval2 = this.createInterval(activity.end_time, end_time, man_line_id)
+            interval_set.add(interval1)
+            interval_set.add(interval2)
+            return
+        }
+
+        //activity doesn't intersect
+        return
+    }
+
+    intersection(start_time, end_time, activity){
+        // activity exceeds the span or matches it
+        return activity.end_time < start_time || activity.start_time > end_time
+    }
+
+    calculate_end_time(start_time, completion_hours){
+        //// // // // console.log.log(start_time)
+        let start_time_string = start_time.replace("T", " ")
+        var start_moment = moment(start_time_string, "YYYY-MM-DD HH:mm")
+        var start_moment_morning = moment(start_time_string, "YYYY-MM-DD HH:mm")
+        start_moment_morning.hour(8)
+        var current_hours = moment.duration(start_moment.diff(start_moment_morning)).asHours();
+        // // // // console.log.log(current_hours)
+        var total_hours = current_hours + completion_hours
+        var days = Math.floor(total_hours/10)
+        var hours = total_hours % 10
+        // // // // console.log.log(start_moment)
+        start_moment.hour(8)
+        start_moment.add(days, 'days')
+        start_moment.add(hours, 'hours')
+        // // // // console.log.log(start_moment)
+        return new Date(start_moment.format('YYYY-MM-DD HH:mm').replace(" ","T")).getTime();
+        //return "2019-02-19T08:00"
+      }
+
 
     get_man_lines(){
         var that = this;

@@ -355,11 +355,9 @@ router.put('/autoschedule', function (req, res, next) {
     let end_time = req.body.end_time;
     let man_lines = req.body.man_lines;
     let scheduler = new Scheduler();
-    scheduler.autoschedule(activities, start_time, end_time, man_lines).then((goals) => {
+    scheduler.autoschedule(activities, start_time, end_time, man_lines).then((res2) => {
         // console.log(goals)
-        res.status(200).json({
-            goals: goals
-        })
+        res.status(200).json(res2)
     })
 })
 
