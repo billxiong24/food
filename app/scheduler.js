@@ -521,9 +521,9 @@ class Scheduler extends CRUD {
         sku.comments,
         sku.formula_id,
         sku.formula_scale,
-        sku.man_rate as man_line_id,
+        sku.man_rate,
         manufacturing_line.shortname,
-        manufacturing_line.id,
+        manufacturing_line.id as man_line_id
         FROM manufacturing_goal_sku 
         INNER JOIN manufacturing_goal on manufacturing_goal_sku.mg_id= manufacturing_goal.id  
         INNER JOIN sku ON manufacturing_goal_sku.sku_id=sku.id
