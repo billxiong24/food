@@ -683,23 +683,33 @@ class Scheduler extends CRUD {
     splitInterval(original_interval, activity, interval_set, man_line_id){
         let start_time = original_interval.start_time
         let end_time = original_interval.end_time
-        if(man_line_id == 1234 && this.intersection(original_interval.start_time, original_interval.end_time, activity)){
-            console.log({
-                start_time : this.get_date_string(original_interval.start_time),
-                end_time : this.get_date_string(original_interval.end_time),
-                name: "presplit"
-            })
-            console.log({
-                name: activity.name,
-                start_time: this.get_date_string(activity.start_time),
-                end_time: this.get_date_string(activity.end_time)
-            })
-        }
+        // if(man_line_id == 1234 && this.intersection(original_interval.start_time, original_interval.end_time, activity)){
+        //     console.log({
+        //         start_time : this.get_date_string(original_interval.start_time),
+        //         end_time : this.get_date_string(original_interval.end_time),
+        //         name: "presplit"
+        //     })
+        //     console.log({
+        //         name: activity.name,
+        //         start_time: this.get_date_string(activity.start_time),
+        //         end_time: this.get_date_string(activity.end_time)
+        //     })
+        // }
         
         //activity overlaps through start
         if(activity.start_time <= start_time && activity.end_time < end_time){
             let interval = this.createInterval(activity.end_time, end_time, man_line_id)
             if(man_line_id == 1234){
+                console.log({
+                    start_time : this.get_date_string(original_interval.start_time),
+                    end_time : this.get_date_string(original_interval.end_time),
+                    name: "presplit"
+                })
+                console.log({
+                    name: activity.name,
+                    start_time: this.get_date_string(activity.start_time),
+                    end_time: this.get_date_string(activity.end_time)
+                })
                 console.log({
                     start_time : this.get_date_string(interval.start_time),
                     end_time : this.get_date_string(interval.end_time),
@@ -714,6 +724,16 @@ class Scheduler extends CRUD {
         if(activity.start_time > start_time && activity.end_time >= end_time){
             let interval = this.createInterval(start_time, activity.start_time, man_line_id)
             if(man_line_id == 1234){
+                console.log({
+                    start_time : this.get_date_string(original_interval.start_time),
+                    end_time : this.get_date_string(original_interval.end_time),
+                    name: "presplit"
+                })
+                console.log({
+                    name: activity.name,
+                    start_time: this.get_date_string(activity.start_time),
+                    end_time: this.get_date_string(activity.end_time)
+                })
                 console.log({
                     start_time : this.get_date_string(interval.start_time),
                     end_time : this.get_date_string(interval.end_time),
@@ -734,6 +754,16 @@ class Scheduler extends CRUD {
             let interval1 = this.createInterval(start_time, activity.start_time, man_line_id)
             let interval2 = this.createInterval(activity.end_time, end_time, man_line_id)
             if(man_line_id == 1234){
+                console.log({
+                    start_time : this.get_date_string(original_interval.start_time),
+                    end_time : this.get_date_string(original_interval.end_time),
+                    name: "presplit"
+                })
+                console.log({
+                    name: activity.name,
+                    start_time: this.get_date_string(activity.start_time),
+                    end_time: this.get_date_string(activity.end_time)
+                })
                 console.log({
                     start_time : this.get_date_string(interval1.start_time),
                     end_time : this.get_date_string(interval1.end_time),
