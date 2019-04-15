@@ -685,8 +685,8 @@ class Scheduler extends CRUD {
         let end_time = original_interval.end_time
         if(man_line_id == 1234){
             console.log({
-                start_time: new Date(original_interval).getTime(),
-                end_time: new Date(original_interval).getTime(),
+                start_time : this.get_date_string(original_interval.start_time),
+                end_time : this.get_date_string(original_interval.end_time),
                 name: "presplit"
             })
         }
@@ -695,8 +695,8 @@ class Scheduler extends CRUD {
             let interval = this.createInterval(activity.end_time, end_time, man_line_id)
             if(man_line_id == 1234){
                 console.log({
-                    start_time: new Date(interval).getTime(),
-                    end_time: new Date(interval).getTime(),
+                    start_time : this.get_date_string(interval.start_time),
+                    end_time : this.get_date_string(interval.end_time),
                     name: "postsplit"
                 })
             }
@@ -709,8 +709,8 @@ class Scheduler extends CRUD {
             let interval = this.createInterval(start_time, activity.start_time, man_line_id)
             if(man_line_id == 1234){
                 console.log({
-                    start_time: new Date(interval).getTime(),
-                    end_time: new Date(interval).getTime(),
+                    start_time : this.get_date_string(interval.start_time),
+                    end_time : this.get_date_string(interval.end_time),
                     name: "postsplit"
                 })
             }
@@ -729,15 +729,15 @@ class Scheduler extends CRUD {
             let interval2 = this.createInterval(activity.end_time, end_time, man_line_id)
             if(man_line_id == 1234){
                 console.log({
-                    start_time: new Date(interval1).getTime(),
-                    end_time: new Date(interval1).getTime(),
+                    start_time : this.get_date_string(interval1.start_time),
+                    end_time : this.get_date_string(interval1.end_time),
                     name: "postsplit 1"
                 })
             }
             if(man_line_id == 1234){
                 console.log({
-                    start_time: new Date(interval2).getTime(),
-                    end_time: new Date(interval2).getTime(),
+                    start_time : this.get_date_string(interval2.start_time),
+                    end_time : this.get_date_string(interval2.end_time),
                     name: "postsplit 2"
                 })
             }
