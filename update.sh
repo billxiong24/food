@@ -5,4 +5,5 @@ sudo -u vcm git pull
 # sudo node app.js
 NODE=$(sudo netstat -lp | python update.py)
 echo $NODE
+sudo kill $NODE
 sudo node app.js
