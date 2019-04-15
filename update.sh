@@ -1,4 +1,5 @@
 git status
+who am i
 git pull
 # NODE=$(sudo netstat -lp > update.py)
 # sudo kill "$NODE"
