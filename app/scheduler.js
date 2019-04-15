@@ -521,8 +521,9 @@ class Scheduler extends CRUD {
         sku.comments,
         sku.formula_id,
         sku.formula_scale,
-        sku.man_rate,
-        manufacturing_line.shortname
+        sku.man_rate as man_line_id,
+        manufacturing_line.shortname,
+        manufacturing_line.id,
         FROM manufacturing_goal_sku 
         INNER JOIN manufacturing_goal on manufacturing_goal_sku.mg_id= manufacturing_goal.id  
         INNER JOIN sku ON manufacturing_goal_sku.sku_id=sku.id
@@ -572,7 +573,7 @@ class Scheduler extends CRUD {
                     "mfg_rate": parseInt(row.man_rate),
                     "start_time": row.start_time,
                     "end_time": row.end_time,
-                    "man_line_num": that.get_zero_null(row.shortname),
+                    "man_line_num": man_line_id,
                     "potential_man_lines": potential_man_lines
                 }
                 let goal = {
