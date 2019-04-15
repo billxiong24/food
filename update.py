@@ -3,7 +3,7 @@ import sys
 
 for line in fileinput.input():
     print(line)
-    if line.contains("8000"):
+    if "8000" in line:
         print()
         print()
         print(line)
