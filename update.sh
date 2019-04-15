@@ -1,5 +1,5 @@
 git status
-who am i
+whoami
 git pull origin master
 # NODE=$(sudo netstat -lp > update.py)
 # sudo kill "$NODE"
