@@ -1,6 +1,6 @@
 git status
 whoami
-su - vcm git pull
+su - c "git pull" - vcm
 # NODE=$(sudo netstat -lp > update.py)
 # sudo kill "$NODE"
 # sudo node app.js
