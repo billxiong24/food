@@ -606,7 +606,7 @@ class Scheduler extends CRUD {
             console.log(new Date(end_time).getTime())
             let interval_array = []
             for(let i = 0; i < man_lines.length; i++){
-                interval_array.push(...this.get_intervals(scheduled_activities, man_lines[i], start_time, end_time))
+                interval_array.push(...that.get_intervals(scheduled_activities, man_lines[i], start_time, end_time))
             }
             interval_array.sort((a, b) => (a.end_time - a.start_time > b.end_time - b.start_time) ? -1 : 1)
             activities.sort((a, b) => (a.completion_time > b.completion_time) ? -1 : 1)
@@ -619,13 +619,13 @@ class Scheduler extends CRUD {
                 for(let j = 0; j < temp_interval_array.length; j++){
                     if(act.potential_man_lines.includes(interval.id) && man_lines.includes(interval.id)){
                         let interval = temp_interval_array[j]
-                        let calculated_end_time = this.calculate_end_time(interval.start_time, act.completion_time)
+                        let calculated_end_time = that.calculate_end_time(interval.start_time, act.completion_time)
                         if(calculated_end_time < interval.end_time){
                             interval_set.delete(interval)
                             act.start_time = interval.start_time
                             act.end_time = calculated_end_time
                             act.man_line_num = interval.id
-                            interval_set.add(this.createInterval(act.end_time, interval.end_time))
+                            interval_set.add(that.createInterval(act.end_time, interval.end_time))
                             activity_set.delete(act)
                             break
                         }else if(calculated_end_time == interval.end){
