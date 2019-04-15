@@ -571,8 +571,8 @@ class Scheduler extends CRUD {
                     "comments": row.comments,
                     "cases_needed": parseInt(row.quantity),
                     "mfg_rate": parseInt(row.man_rate),
-                    "start_time": row.start_time,
-                    "end_time": row.end_time,
+                    "start_time": parseInt(row.start_time),
+                    "end_time": parseInt(row.end_time),
                     "man_line_num": parseInt(row.man_line_id),
                     "potential_man_lines": potential_man_lines
                 }
