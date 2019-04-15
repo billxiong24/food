@@ -689,7 +689,13 @@ class Scheduler extends CRUD {
                 end_time : this.get_date_string(original_interval.end_time),
                 name: "presplit"
             })
+            console.log({
+                name: activity.name,
+                start_time: this.get_date_string(activity.start_time),
+                end_time: this.get_date_string(activity.end_time)
+            })
         }
+        
         //activity overlaps through start
         if(activity.start_time <= start_time && activity.end_time < end_time){
             let interval = this.createInterval(activity.end_time, end_time, man_line_id)
