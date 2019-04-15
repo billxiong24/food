@@ -344,7 +344,7 @@ class OverlapCheck extends Component{
             swal(`Cannot Edit a Provisionally Scheduled Activity`,{
                 icon: "error",
               });
-            this.props.
+            return
         }
         if(schedulerData.viewType == 0){
             newEnd = hour_time_trim(newEnd)
