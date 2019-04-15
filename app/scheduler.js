@@ -573,7 +573,7 @@ class Scheduler extends CRUD {
                     "mfg_rate": parseInt(row.man_rate),
                     "start_time": row.start_time,
                     "end_time": row.end_time,
-                    "man_line_num": man_line_id,
+                    "man_line_num": row.man_line_id,
                     "potential_man_lines": potential_man_lines
                 }
                 let goal = {
