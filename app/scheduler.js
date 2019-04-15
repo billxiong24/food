@@ -683,7 +683,7 @@ class Scheduler extends CRUD {
     splitInterval(original_interval, activity, interval_set, man_line_id){
         let start_time = original_interval.start_time
         let end_time = original_interval.end_time
-        if(man_line_id == 1234){
+        if(man_line_id == 1234 && this.intersection(original_interval.start_time, original_interval.end_time, activity)){
             console.log({
                 start_time : this.get_date_string(original_interval.start_time),
                 end_time : this.get_date_string(original_interval.end_time),
