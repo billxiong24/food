@@ -886,7 +886,9 @@ class Scheduler extends CRUD {
         manufacturing_line.shortname as shrt_name,
         manufacturing_line.comment,
         manufacturing_line.name
-        FROM manufacturing_line 
+        FROM manufacturing_line
+        WHERE
+        manufacturing_line.id != 0
         `
         let man_line_id_map = {}
         return db.execSingleQuery(query2, []).then(function(res){
