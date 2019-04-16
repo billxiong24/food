@@ -647,7 +647,9 @@ class Scheduler extends CRUD {
                                 name: "interval"
                             })
                             interval_set = new Set(temp_interval_array.filter(inter => inter != interval))
-                            console.log(interval_set)
+                            //console.log((interval_set))
+                            console.log(act.potential_man_lines)
+                            console.log(man_lines)
                             act.start_time = that.get_date_string(interval.start_time)
                             act.end_time = that.get_date_string(calculated_end_time)
                             act.man_line_num = man_line_id_man_line[interval.id]
