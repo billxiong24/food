@@ -89,13 +89,19 @@ const checkScheduleRead = (req, res, next) => {
   }
 }
 
-const checkScheduleWrite = (req, res, next) => {
-  if(!req.session.schedule_write) {
+const checkScheduleWrite = (req, res, next, manlines) => {
+  let valid = true;
+  manlines.forEach((manline) => {
+    if(req.session.schedule_write.indexOf(manline) < 0) {
+      valid = false;
+    }
+  })
+  if(!valid && !req.session.admin) {
     res.status(401).json({
       error: "Unauthorized Access: Missing permission to edit MANUFACTURING SCHEDULE DATA"
     })
   } else {
-    next();
+    return true;
   }
 }
 

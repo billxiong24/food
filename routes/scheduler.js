@@ -3,6 +3,8 @@ const Scheduler = require('../app/scheduler.js');
 let router = express.Router();
 const Controller = require('../app/controller/controller');
 
+const { checkGoalsWrite, checkScheduleRead, checkScheduleWrite } = require('./guard');
+
 var HomeStyleTurkeyMeal = {
     "name": "Homestyle Turkey Meal",
     "case_upc": 123345,
@@ -273,7 +275,7 @@ var dummySchedulerData = {
     count: 0
 }
 
-router.put('/set_enable', function (req, res, next) {
+router.put('/set_enable', checkGoalsWrite, function (req, res, next) {
     let rid = req.params.id
     //// console.log(rid)
     let id = req.body.id;
@@ -324,7 +326,7 @@ function getGoalNames(filter) {
     return dummySchedulerData.goals.filter(goal => goal.name.includes(filter)).map(goal => goal.name);
 }
 
-router.put('/goal_names', function (req, res, next) {
+router.put('/goal_names', checkScheduleRead, function (req, res, next) {
     let filter = req.body.filter;
     // // console.log(req.body)
     let scheduler = new Scheduler()
@@ -339,7 +341,7 @@ function getGoalUserNames(filter) {
     return Array.from(new Set(dummySchedulerData.goals.filter(goal => goal.author.includes(filter)).map(goal => goal.author)));
 }
 
-router.put('/goal_user_names', function (req, res, next) {
+router.put('/goal_user_names', checkScheduleRead, function (req, res, next) {
     let filter = req.body.filter;
     let scheduler = new Scheduler()
     scheduler.get_goal_usernames(filter).then((goal_user_names) => {
@@ -349,19 +351,22 @@ router.put('/goal_user_names', function (req, res, next) {
     })
 });
 
+// write
 router.put('/autoschedule', function (req, res, next) {
     let activities = req.body.activities;
     let start_time = req.body.start_time;
     let end_time = req.body.end_time;
     let man_lines = req.body.man_lines;
     let scheduler = new Scheduler();
-    scheduler.autoschedule(activities, start_time, end_time, man_lines).then((res2) => {
-        // console.log(goals)
-        res.status(200).json(res2)
-    })
+    if(checkScheduleWrite(req, res, next, man_lines)) {
+      scheduler.autoschedule(activities, start_time, end_time, man_lines).then((res2) => {
+          // console.log(goals)
+          res.status(200).json(res2)
+      })
+    }
 })
 
-router.put('/filtered_goals', function (req, res, next) {
+router.put('/filtered_goals', checkScheduleRead, function (req, res, next) {
     let filter = req.body.filter;
     let filter_type_index = req.body.filter_type_index
     let scheduler = new Scheduler()
@@ -372,7 +377,7 @@ router.put('/filtered_goals', function (req, res, next) {
     }) 
 });
 
-router.put('/get_report', function(req, res, next){
+router.put('/get_report', checkScheduleRead, function(req, res, next){
     let id = req.body.id
     let start_time = req.body.start_time
     let end_time = req.body.end_time
@@ -384,12 +389,14 @@ router.put('/get_report', function(req, res, next){
     })
 })
 
+// write
 router.put('/schedule', function (req, res, next) {
     let id = req.body.id;
     let start_time = req.body.start_time
     let end_time = req.body.end_time
     let man_line_num = req.body.man_line_num
-    let mg_id = req.body.mg_id
+    let mg_id = req.body.mg_id;
+
     // var foundCount = 0;
     // let success = scheduler.set_schedule(id, start_time, end_time, man_line_num)
     // // console.log(success)
@@ -417,10 +424,15 @@ router.put('/schedule', function (req, res, next) {
     // })
     console.log(mg_id)
     let scheduler = new Scheduler()
-    scheduler.set_schedule(id,start_time,end_time,man_line_num, mg_id).then((success) => {
-        res.status(200).json({
 
+    scheduler.getManlineId(man_line_num).then((manlineID) => {
+      if(checkScheduleWrite(req, res, next, [manlineID])) {
+        scheduler.set_schedule(id, start_time, end_time, man_line_num, mg_id).then((success) => {
+          res.status(200).json({
+
+          })
         })
+      }
     })
 });
 
@@ -444,8 +456,7 @@ function scheduleActivity(id, start_time, end_time, man_line_num) {
     }
 }
 
-
-router.get('/goals', function (req, res, next) {
+router.get('/goals', checkScheduleRead, function (req, res, next) {
     let scheduler = new Scheduler()
     scheduler.get_goals().then((goals) => {
         // console.log(goals)
@@ -455,11 +466,7 @@ router.get('/goals', function (req, res, next) {
     }) 
 });
 
-
-
-
-
-router.get('/man_lines', function (req, res, next) {
+router.get('/man_lines', checkScheduleRead, function (req, res, next) {
     let scheduler = new Scheduler()
     scheduler.get_man_lines().then((man_lines) => {
         res.status(200).json({

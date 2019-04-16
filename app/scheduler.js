@@ -962,6 +962,22 @@ class Scheduler extends CRUD {
         return activities_list
     }
 
+    getManlineId(shortname) {
+      let query = squel.select()
+      .from("manufacturing_line")
+      .where("shortname = ?", shortname)
+      .toString();
+      return db.execSingleQuery(query, [])
+      .then((res) => {
+        let rows = res.rows;
+        if(!rows) {
+          return null;
+        } else {
+          return rows[0].id;
+        }
+      })
+    }
+
     isScheduled(activity){
         return activity.start_time != null && activity.end_time != null && activity.man_line_num != null
     }
