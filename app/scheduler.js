@@ -533,6 +533,9 @@ class Scheduler extends CRUD {
         INNER JOIN users ON foo.user_id = users.id
         `
         let sku_man_line_map = {}
+        this.get_man_lines(function(res){
+
+        console.log(res)
         return db.execSingleQuery("select * from manufacturing_line_sku", [])
                 .then(function(res){
                 console.log(res.rows)
@@ -621,7 +624,7 @@ class Scheduler extends CRUD {
                     man_line_id: interval.id
                 }
             }))
-            activities.sort((a, b) => (a.deadline > b.deadline) ? 1 : -1)
+            activities.sort((a, b) => (new Date(a.goals[0].deadline).getTime() > new Date(b.goals[0].deadline).getTime()) ? 1 : -1)
             let activity_set = new Set(activities)
             let interval_set = new Set(interval_array)
             for(let i = 0; i < activities.length; i++){
@@ -658,7 +661,7 @@ class Scheduler extends CRUD {
                 autoscheduled_activities,
                 failed_activities
             }
-        })})
+        })})})
     }
 
     get_intervals(activities,man_line_id, start_time, end_time){
