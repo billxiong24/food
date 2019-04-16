@@ -612,7 +612,7 @@ class Scheduler extends CRUD {
                 interval_array.push(...that.get_intervals(scheduled_activities, man_lines[i], start_time, end_time))
             }
             interval_array.sort((a, b) => (a.end_time - a.start_time > b.end_time - b.start_time) ? -1 : 1)
-            console.log(interval_array.map(interval => {
+            console.log(interval_array.filter(act => act.id == 1234).sort((a, b) => (a.start_time > b.start_time) ? 1 : -1).map(interval => {
                 return {
                     start_time : that.get_date_string(interval.start_time),
                     end_time : that.get_date_string(interval.end_time),
