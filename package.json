@@ -33,6 +33,7 @@
     "kue": "^0.11.6",
     "logger": "0.0.1",
     "mocha": "^5.2.0",
+    "moment": "^2.24.0",
     "morgan": "~1.9.0",
     "multer": "^1.4.1",
     "node-datetime": "^2.1.2",
