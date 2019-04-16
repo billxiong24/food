@@ -64,7 +64,7 @@ router.get('/', checkGoalsRead, function(req, res, next) {
     }
     const mg = new ManufacturingGoals();
     const controller = new Controller();
-    controller.constructGetResponse(res, mg.search(req.query.user_id));
+    controller.constructGetResponse(res, mg.searchAll());
 });
 
 router.get('/scheduler/goals', function(req, res, next) {
