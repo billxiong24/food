@@ -425,15 +425,23 @@ router.put('/schedule', function (req, res, next) {
     console.log(mg_id)
     let scheduler = new Scheduler()
 
-    scheduler.getManlineId(man_line_num).then((manlineID) => {
-      if(checkScheduleWrite(req, res, next, [manlineID])) {
-        scheduler.set_schedule(id, start_time, end_time, man_line_num, mg_id).then((success) => {
-          res.status(200).json({
+    if(!man_line_num) {
+      scheduler.set_schedule(id, start_time, end_time, man_line_num, mg_id).then((success) => {
+        res.status(200).json({
 
-          })
         })
-      }
-    })
+      })
+    } else {
+      scheduler.getManlineId(man_line_num).then((manlineID) => {
+        if(checkScheduleWrite(req, res, next, [manlineID])) {
+          scheduler.set_schedule(id, start_time, end_time, man_line_num, mg_id).then((success) => {
+            res.status(200).json({
+  
+            })
+          })
+        }
+      })
+    }
 });
 
 function scheduleActivity(id, start_time, end_time, man_line_num) {
