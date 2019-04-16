@@ -722,7 +722,7 @@ class Scheduler extends CRUD {
         }
 
         //activity overlaps through end
-        if(activity.start_time > start_time && activity.end_time >= end_time){
+        if(activity.start_time > start_time && activity.start_time < end_time){
             
             let interval = this.createInterval(start_time, activity.start_time, man_line_id)
             if(man_line_id == 1234){
