@@ -641,7 +641,7 @@ class Scheduler extends CRUD {
                         let interval = temp_interval_array[j]
                         let calculated_end_time = that.calculate_end_time(interval.start_time, act.completion_time)
                         if(calculated_end_time < interval.end_time){
-                            console.log((new Array.from(interval_set).map(inter => {
+                            console.log((Array.from(interval_set).map(inter => {
                                 return {
                                     start_time: that.get_date_string(inter.start_time),
                                     end_time: that.get_date_string(inter.end_time),
@@ -662,7 +662,7 @@ class Scheduler extends CRUD {
                             act.man_line_num = man_line_id_man_line[interval.id]
                             interval_set.add(that.createInterval(calculated_end_time, interval.end_time))
                             activity_set.delete(act)
-                            console.log((new Array.from(interval_set).map(inter => {
+                            console.log((Array.from(interval_set).map(inter => {
                                 return {
                                     start_time: that.get_date_string(inter.start_time),
                                     end_time: that.get_date_string(inter.end_time),
