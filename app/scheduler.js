@@ -642,6 +642,11 @@ class Scheduler extends CRUD {
                         let calculated_end_time = that.calculate_end_time(interval.start_time, act.completion_time)
                         if(calculated_end_time < interval.end_time){
                             interval_set.delete(interval)
+                            console.log({
+                                start_time: that.get_date_string(interval.start_time),
+                                end_time: that.get_date_string(interval.end_time),
+                                name: "interval"
+                            })
                             act.start_time = that.get_date_string(interval.start_time)
                             act.end_time = that.get_date_string(calculated_end_time)
                             act.man_line_num = man_line_id_man_line[interval.id]
@@ -650,6 +655,11 @@ class Scheduler extends CRUD {
                             break
                         }else if(calculated_end_time == interval.end){
                             interval_set.delete(interval)
+                            console.log({
+                                start_time: that.get_date_string(interval.start_time),
+                                end_time: that.get_date_string(interval.end_time),
+                                name: "interval"
+                            })
                             act.start_time = that.get_date_string(interval.start_time)
                             act.end_time = that.get_date_string(calculated_end_time)
                             act.man_line_num = man_line_id_man_line[interval.id]
