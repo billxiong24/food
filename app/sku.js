@@ -389,13 +389,14 @@ class SKU extends CRUD {
         console.log(prefix)
         let lastDigit = this.generateUPCCheckDigit(parseInt(prefix))
         console.log(lastDigit)
-        let validUPC = lastDigit == parseInt(string_case_upc[11]) && (parseInt(string_case_upc[0]) == 0 || parseInt(string_case_upc[0]) == 1|| parseInt(string_case_upc[0]) == 6 || parseInt(string_case_upc[0]) == 7 || parseInt(string_case_upc[0]) == 8 || parseInt(string_case_upc[0]) == 9)
+        let validUPC = this.validUPC(string_case_upc)
         if(!validUPC){
             console.log("invalid UPC")
         }
         if(case_upc < 1){
             console.log("negative number")
         }
+        
         let query = "SELECT case_upc FROM sku"
         let that = this
         return db.execSingleQuery(query, [])
@@ -409,11 +410,51 @@ class SKU extends CRUD {
         })
     }
 
+    validUPC(upc){
+        const first_digit = new Set(['0', '1', '6', '7', '8', '9']);
+        let err_msg;
+        if(upc_num.length != 12){
+            //incorrect length
+            err_msg = 'Invalid UPC length';
+            return false
+        }
+        let num = Number(upc_num);
+        if(isNaN(num)){
+            //not a number
+            err_msg = 'UPC# must be a number ';
+            return false
+        }
+
+        if(!first_digit.has(upc_num[0])){
+            //invalid first digit
+            err_msg = 'Invalid UPC first digit';
+            return false
+        }
+
+        //checksum
+        let sum = 0;
+        for(let i = 0; i < upc_num.length; i++){
+            if(i % 2 == 0){
+                sum += 3*Number(upc_num[i]);
+            }else{
+                sum += Number(upc_num[i]);
+            }
+        }
+
+        if(sum % 10 != 0){
+            //invalid sum
+            err_msg = 'Invalid UPC sum';
+            return false
+        }
+
+        return true
+    }
+
     validUnitUPC(unit_upc){
         let string_unit_upc = this.pad(unit_upc, 12)
         let prefix = string_unit_upc.slice(0,11)
         let lastDigit = this.generateUPCCheckDigit(parseInt(prefix))
-        let validUPC = lastDigit == parseInt(string_unit_upc[11]) && (parseInt(string_unit_upc[0]) == 0 || parseInt(string_unit_upc[0]) == 1|| parseInt(string_unit_upc[0]) == 6 || parseInt(string_unit_upc[0]) == 7 || parseInt(string_unit_upc[0]) == 8 || parseInt(string_unit_upc[0]) == 9)
+        let validUPC = this.validUPC(string_unit_upc)
         if(!validUPC){
             console.log("invalid UPC")
         }
