@@ -620,7 +620,7 @@ class Scheduler extends CRUD {
                     man_line_id: interval.id
                 }
             }))
-            activities.sort((a, b) => (a.completion_time > b.completion_time) ? -1 : 1)
+            activities.sort((a, b) => (a.deadline > b.deadline) ? 1 : -1)
             let activity_set = new Set(activities)
             let interval_set = new Set(interval_array)
             for(let i = 0; i < activities.length; i++){
@@ -628,6 +628,7 @@ class Scheduler extends CRUD {
                 let temp_interval_array = Array.from(interval_set)
                 temp_interval_array.sort((a, b) => (a.end_time - a.start_time > b.end_time - b.start_time) ? -1 : 1)
                 for(let j = 0; j < temp_interval_array.length; j++){
+                    let interval = temp_interval_array[j]
                     if(act.potential_man_lines.includes(interval.id) && man_lines.includes(interval.id)){
                         let interval = temp_interval_array[j]
                         let calculated_end_time = that.calculate_end_time(interval.start_time, act.completion_time)
