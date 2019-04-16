@@ -258,13 +258,15 @@ class ManufacturingGoalsPage extends Component {
   }
 
   updateDate = (e) => {
-    this.props.mangoalUpdateMangoal({
-      id: this.props.manGoals.activeGoal.id,
-      deadline: Date.parse(e.target.value),
-    })
-    this.setState({
-      date: e.target.value,
-    })
+    if(this.props.cookies.goals_write === 'true') {
+        this.props.mangoalUpdateMangoal({
+          id: this.props.manGoals.activeGoal.id,
+          deadline: Date.parse(e.target.value),
+        })
+        this.setState({
+          date: e.target.value,
+        })
+    }
   }
 
   submitNewForm(e) {
@@ -451,12 +453,16 @@ class ManufacturingGoalsPage extends Component {
   }
 
   removeSku(sku) {
-    this.props.mangoalDeleteMangoalSkus(
-      Object.assign({}, this.props.manGoals.activeGoal, {
-        user_id: this.props.cookies.id
-      }),
-      [sku.id]
-    );
+    if(this.props.cookies.goals_write  === 'true') {
+
+        this.props.mangoalDeleteMangoalSkus(
+          Object.assign({}, this.props.manGoals.activeGoal, {
+            user_id: this.props.cookies.id
+          }),
+          [sku.id]
+        );
+
+    }
   }
 
   getSkuSuggestions() {
@@ -616,6 +622,7 @@ class ManufacturingGoalsPage extends Component {
               className={(manGoals.activeGoal.id ? classes.dateField : classes.hidden)}
             >
               <TextField
+                disabled={cookies.goals_write !== 'true'}
                 id="date"
                 label="Deadline"
                 type="date"
@@ -633,7 +640,7 @@ class ManufacturingGoalsPage extends Component {
             <Fab
               size="small"
               aria-label="Delete"
-              className={(manGoals.activeGoal.id ? classes.fab : classes.hidden)}
+              className={(manGoals.activeGoal.id  && cookies.goals_write === 'true' ? classes.fab : classes.hidden)}
               onClick={() => { this.removeManufacturingGoal(this.props.manGoals.activeGoal) }}
             >
               <DeleteIcon />
@@ -657,7 +664,9 @@ class ManufacturingGoalsPage extends Component {
                       <TableCell> {goal.name} </TableCell>
                       <TableCell> {goal.uname} </TableCell>
                       <TableCell> {goal.last_edit} </TableCell>
-                      <TableCell> <Button onClick={() => this.changeEnabled(goal.id, !this.state.enabledGoalsMap[goal.id])}> {this.state.enabledGoalsMap[goal.id] ? "Disable" : "Enable"} </Button> </TableCell>
+                      <TableCell > 
+                          <Button disabled={cookies.goals_write !== 'true'} onClick={() => this.changeEnabled(goal.id, !this.state.enabledGoalsMap[goal.id])}> {this.state.enabledGoalsMap[goal.id] ? "Disable" : "Enable"} </Button> 
+                      </TableCell>
                     </TableRow>
                   })
                 }
@@ -666,7 +675,7 @@ class ManufacturingGoalsPage extends Component {
           </div>
           <div className={(manGoals.activeGoal.id ? classes.man_goal_content_container : classes.hidden)}>
             <div className={classes.sku_search_container}>
-              <div className={classes.man_goal_content_add}>
+              <div className={cookies.goals_write === 'true' ? classes.man_goal_content_add : classes.hidden}>
                 <div className={classes.sku_search_bar}>
                   <SkuAutocomplete
                     suggestions={manGoals.skus}
@@ -692,12 +701,13 @@ class ManufacturingGoalsPage extends Component {
                   aria-label="Add"
                   className={classes.fab + ' ' + classes.sku_add_button}
                   size="small"
-                  disabled={!this.state.sku || !this.state.quantity}
+                  disabled={(!this.state.sku || !this.state.quantity)}
                   onClick={() => { this.addSku() }}>
                   <AddIcon />
                 </Fab>
               </div>
               <div className={classes.filter_container}>
+        <div className={cookies.goals_write === 'true' ? classes.drop_down : classes.hidden}>
                 <FormControl className={classes.drop_down}>
                   <Autocomplete
                     suggestions={manGoals.productLines}
@@ -710,6 +720,7 @@ class ManufacturingGoalsPage extends Component {
                   </Autocomplete>
                   <FormHelperText>Select Product Lines to Filter By</FormHelperText>
                 </FormControl>
+        </div>
                 <Button onClick={this.handleSalesOpen} >
                   View Sales Projection
                 </Button>
@@ -768,8 +779,8 @@ class ManufacturingGoalsPage extends Component {
               <ItemList
                 items={manGoals.activeGoal.skus}
               >
-                <SkuCard
-                  onDelete={(e) => { this.removeSku(e) }}></SkuCard>
+        
+                <SkuCard onDelete={(e) => { this.removeSku(e) }}></SkuCard>
               </ItemList>
             </div>
             <div variant="inset" className={classes.divider} />

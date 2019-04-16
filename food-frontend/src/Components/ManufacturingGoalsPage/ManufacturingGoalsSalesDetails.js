@@ -1,3 +1,5 @@
+import { withCookies } from 'react-cookie';
+import { connect } from 'react-redux';
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
@@ -90,4 +92,16 @@ class ManufacturingGoalsSalesDetails extends Component {
   }
 }
 
-export default withStyles(styles)(ManufacturingGoalsSalesDetails);
+const mapStateToProps = (state, ownProps) => {
+  return {
+    dummy_ingredients: state.dummy_ingredients,
+    cookies: ownProps.cookies.cookies,
+    manGoals: state.manGoals
+  };
+};
+
+const mapDispatchToProps = {
+};
+
+export default withStyles(styles)(withCookies(connect(mapStateToProps, mapDispatchToProps)(ManufacturingGoalsSalesDetails)));
+//export default withStyles(styles)(ManufacturingGoalsSalesDetails);
