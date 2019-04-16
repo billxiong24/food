@@ -971,7 +971,7 @@ class Scheduler extends CRUD {
       .then((res) => {
         let rows = res.rows;
         console.log(rows);
-        if(!rows) {
+        if(!rows || rows.length < 1) {
           return null;
         } else {
           return rows[0].id;
