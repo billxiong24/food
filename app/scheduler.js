@@ -814,6 +814,7 @@ class Scheduler extends CRUD {
 
     calculate_end_time(start_time, completion_hours){
         //// // // // console.log.log(start_time)
+        start_time = this.get_date_string(start_time)
         let start_time_string = start_time.replace("T", " ")
         var start_moment = moment(start_time_string, "YYYY-MM-DD HH:mm")
         var start_moment_morning = moment(start_time_string, "YYYY-MM-DD HH:mm")
