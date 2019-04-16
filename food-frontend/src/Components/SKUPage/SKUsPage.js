@@ -342,6 +342,7 @@ openEditPage = (closeCallBack) => {
           })
           return (
             <DetailView
+            delete_url={`${common.hostname}formula/${formula_data.id}`}
                 open={true}
                 close={closeCallBack}
                 onSubmit={(form_data) => {

@@ -310,6 +310,8 @@ class IngredientList extends Component {
             console.log(response)
             let pic = (
                 <DetailView
+                    deleteCallback={this.props.search}
+                    delete_url={`${common.hostname}ingredients/${ingredient.id}`}
                     open={true}
                     close={closeCallback}
                     onSubmit={(form_data) => {

@@ -237,6 +237,8 @@ class SKUList extends Component {
           let formulaName = res.data[0].name
         let editDialog = (
           <DetailView
+          deleteCallback={this.props.search}
+            delete_url={`${common.hostname}sku/${sku.id}`}
               open={true}
               close={() => {
                 this.setState({ editDialog: null });
@@ -561,6 +563,8 @@ openEditPage = (closeCallBack) => {
           })
           return (
             <DetailView
+            deleteCallback={this.props.search}
+            delete_url={`${common.hostname}formula/${formula_data.id}`}
                 open={true}
                 close={closeCallBack}
                 onSubmit={(form_data) => {

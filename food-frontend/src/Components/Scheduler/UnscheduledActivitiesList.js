@@ -20,7 +20,9 @@ import GoalList from './GoalList';
 import MenuItem from '@material-ui/core/MenuItem';
 import { empty_activity, multipleGoalActivity, hasEnabledGoals, getEnabledGoals, valid_man_line_shrt_name, valid_time, get_current_start_time, calculate_end_time, push_without_duplication, delete_without_duplication, ADD_A_MAN_LINE_ERROR, INVALID_START_TIME_ERROR, INVALID_END_TIME_ERROR, valid_start_end_pair, START_TIME_GREATER_THAN_END_TIME_ERROR, get_unscheduled_activity_warnings, get_time_conflict_errors, push_conflict_errors_without_duplication, delete_conflict_errors_without_duplication, get_man_line_by_id, is_manager_of, get_unique_activity_id } from './UtilityFunctions';
 import moment from 'moment'
-import { addToList } from '../../Resources/common';
+import common, { addToList } from '../../Resources/common';
+import axios from 'axios';
+
 
 
 function rand() {
@@ -792,101 +794,55 @@ class UnscheduledActivitiesList extends Component {
                                 color="primary" 
                                 className={classes.right_button}
                                 onClick={() => {
-                                    this.props.set_provisional_activities([
-                                        {
-                                          "name": "Amys Hearty Chicken Noodle Poop:234*123 (41)",
-                                          "case_upc": 198988466663,
-                                          "num": 41,
-                                          "unit_upc": 147048599025,
-                                          "unit_size": "234",
-                                          "count_per_case": 123,
-                                          "prd_line": "prod4",
-                                          "comments": "",
-                                          "cases_needed": 5,
-                                          "mfg_rate": 234,
-                                          "start_time": "2019-02-18 08:00:00",
-                                          "end_time": "2019-02-18 09:00:00",
-                                          "man_line_num": "DC2",
-                                          "goals": [
-                                            {
-                                              "name": "goal2",
-                                              "enabled": true,
-                                              "deadline": "2019-02-26",
-                                              "author": "admin",
-                                              "id": 5,
-                                              "author_id": 7
-                                            }
-                                          ],
-                                          "completion_time": 1,
-                                          "potential_man_lines": []
-                                        },
-                                        {
-                                          "name": "Bananna Protein Bar:5 packets*918 (12311461)",
-                                          "case_upc": 12331141,
-                                          "num": 12311461,
-                                          "unit_upc": 65112153,
-                                          "unit_size": "5 packets",
-                                          "count_per_case": 918,
-                                          "prd_line": "Vitamint",
-                                          "comments": "never expires",
-                                          "cases_needed": 624,
-                                          "mfg_rate": 5115,
-                                          "start_time": "2019-02-19 08:00:00",
-                                          "end_time": "2019-02-19 09:00:00",
-                                          "man_line_num": "DC2",
-                                          "goals": [
-                                            {
-                                              "name": "goal2",
-                                              "enabled": true,
-                                              "deadline": "2019-02-26",
-                                              "author": "admin",
-                                              "id": 5,
-                                              "author_id": 7
-                                            }
-                                          ],
-                                          "completion_time": 1,
-                                          "potential_man_lines": [
-                                            1234,
-                                            1235,
-                                            1236,
-                                            1237,
-                                            1238
-                                          ]
-                                        },
-                                        {
-                                          "name": "Vitamin Water:50 fl. oz*98 (12311459)",
-                                          "case_upc": 12113345,
-                                          "num": 12311459,
-                                          "unit_upc": 6511253,
-                                          "unit_size": "50 fl. oz",
-                                          "count_per_case": 98,
-                                          "prd_line": "Vitamint",
-                                          "comments": "never expires",
-                                          "cases_needed": 5115,
-                                          "mfg_rate": 782,
-                                          "start_time": "2019-02-18 08:00:00",
-                                          "end_time": "2019-02-18 09:00:00",
-                                          "man_line_num": "MAXI",
-                                          "potential_man_lines": [
-                                            1234,
-                                            1235,
-                                            1236,
-                                            1237,
-                                            1238
-                                          ],
-                                          "goals": [
-                                            {
-                                              "name": "Super Pack",
-                                              "enabled": true,
-                                              "deadline": "2019-02-21",
-                                              "author": "Robert",
-                                              "author_id": 16,
-                                              "id": 67890
-                                            }
-                                          ],
-                                          "completion_time": 7
+                                    if(this.state.checked_activities.length == 0){
+                                        swal(`No activities selected`,{
+                                            icon: "error",
+                                          });
+                                          return
+                                    }
+                                    if(this.state.auto_schedule_errors.length > 0){
+                                        swal(`Cannot autoschedule with errors`,{
+                                            icon: "error",
+                                          });
+                                          return
+                                    }
+                                    let that = this
+                                    let body = {
+                                        "activities":this.state.checked_activities,
+                                        "start_time":this.state.auto_schedule_start_time.replace("T", " "),
+                                        "end_time":this.state.auto_schedule_end_time.replace("T", " "),
+                                        "man_lines": this.props.man_lines.filter(man_line => is_manager_of(man_line.id)).map(mn => mn.id)
+                                    }
+                                    console.log(body)
+                                    axios.put(`${common.hostname}scheduler/autoschedule`, body)
+                                    .then(function (response) {
+                                        //that.props.submit(item)
+                                        console.log(response)
+                                        let autoscheduled_activities = response.data.autoscheduled_activities
+                                        let failed_activities = response.data.failed_activities
+                                        if(failed_activities.length > 0){
+                                            
+                                            swal(`The following activities could not be scheduled ${failed_activities.map(act => act.name).join(",")}`,{
+                                                icon: "success",
+                                              });
+                                            
+                                            
+                                        }else{
+                                            
+                                            swal(`All activities were scheduled`,{
+                                                icon: "success",
+                                              });
                                         }
-                                      ])
+                                        that.props.set_provisional_activities(autoscheduled_activities)
+                                        that.autoScheduleHandleClose()
+                                        
+                                    })
+                                    .catch(function (error) {
+                                        swal(`${error}`,{
+                                            icon: "error",
+                                        });
+                                    });
+                                    
                                 }}
                             >
                                 AutoSchedule

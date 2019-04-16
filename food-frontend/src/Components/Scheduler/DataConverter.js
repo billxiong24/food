@@ -599,6 +599,18 @@ export const mapDispatchToProps = (dispatch, ownProps) => {
             dispatch(get_filtered_goals(store.getState().scheduler.filter, store.getState().scheduler.filter_type_index))
          }, 600);
       },
+      set_multi_schedule: (acts) => {
+         dispatch(set_provisional_activities([]))
+         for(let i = 0; i < acts.length; i++){
+            let act = acts[i]
+            dispatch(set_activity_schedule(act))
+         }
+         setTimeout(() => {
+            dispatch(get_goals())
+            dispatch(get_filtered_goals(store.getState().scheduler.filter, store.getState().scheduler.filter_type_index))
+         }, 600);
+
+      },
       prev_click: () => {dispatch(prev_click())},
       get_filtered_goals: (filter, filter_type_index) => {
          // Promise.resolve(dispatch(set_filter(filter)))

@@ -516,7 +516,10 @@ class OverlapCheck extends Component{
                             </div>
                         
                         <Col span={22}>
-                            <Button onClick={()=>{this.unschedule_activity(eventItem);}}>Schedule All</Button>
+                            <Button onClick={()=>{this.props.set_multi_schedule(this.props.provisional_activities);}}>Schedule All</Button>
+                        </Col>
+                        <Col span={22}>
+                            <Button onClick={()=>{this.props.set_provisional_activities([]);}}>Remove Provisional Activities</Button>
                         </Col>
                     </Row>
                 </div>

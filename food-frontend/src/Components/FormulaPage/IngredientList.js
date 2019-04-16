@@ -151,6 +151,8 @@ class IngredientList extends Component {
                 let editDialog = (
                   <DetailView
                       open={true}
+                      delete_url={`${common.hostname}formula/${formula_data.id}`}
+                      deleteCallback={this.props.search}
                       close={() => {this.setState({editDialog: null})}}
                       onSubmit={(form_data) => {
                         let item = {}

@@ -375,6 +375,35 @@ class DetailView extends Component {
                 <Button onClick={this.props.close} color="primary">
                   Cancel
                     </Button>
+                    { readOnly || typeof(this.props.delete_url) === 'undefined' ?
+                     null
+                     :
+                     <Button
+                  color="primary"
+                  onClick={() => {
+                    let that = this  
+                    axios.delete(this.props.delete_url)
+                  .then(function (response) {
+                    
+                        
+                        swal(`Successfully Deleted`,{
+                            icon: "success",
+                          });
+                          that.props.deleteCallback()
+                          that.props.close()
+                    
+                    
+                })
+                .catch(function (error) {
+                    swal(`${error}`,{
+                        icon: "error",
+                    });
+                });
+            }}
+                >
+                  Delete
+                    </Button>
+                    }
                     { readOnly ?
                      null
                      :
@@ -385,6 +414,7 @@ class DetailView extends Component {
                   Save
                     </Button>
                     }
+                    
               </DialogActions>
             </form>
           </DialogContent>
