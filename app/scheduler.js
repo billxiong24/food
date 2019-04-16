@@ -881,9 +881,31 @@ class Scheduler extends CRUD {
         FROM manufacturing_line 
         INNER JOIN manufacturing_line_sku on manufacturing_line.id= manufacturing_line_sku.manufacturing_line_id 
         `
+        let query2 = `SELECT
+        manufacturing_line.id,
+        manufacturing_line.shortname as shrt_name,
+        manufacturing_line.comment,
+        manufacturing_line.name,
+        FROM manufacturing_line 
+        `
+        let man_line_id_map = {}
+        return db.execSingleQuery(query2, []).then(function(res){
+            res.rows.forEach(function(row){
+                let man_line = {
+                    "name": row.name,
+                    "shrt_name": row.shrt_name,
+                    "comment": row.comment,
+                    "id":row.id,
+                    "possible_skus":[]
+                }
+                
+                man_line_id_map[man_line.id] = man_line
+                
+            })
+        
         return db.execSingleQuery(query, [])
         .then(function(res){
-            let man_line_id_map = {}
+            
             res.rows.forEach(function(row){
                 let man_line = {
                     "name": row.name,
@@ -906,7 +928,7 @@ class Scheduler extends CRUD {
             }
             // console.log(man_lines)
             return man_lines
-        })
+        })})
     }
 
     getActivities(goals){

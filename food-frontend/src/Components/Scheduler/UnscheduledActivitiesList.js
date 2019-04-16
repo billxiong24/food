@@ -821,10 +821,15 @@ class UnscheduledActivitiesList extends Component {
                                         let autoscheduled_activities = response.data.autoscheduled_activities
                                         let failed_activities = response.data.failed_activities
                                         if(failed_activities.length > 0){
-                                            
-                                            swal(`The following activities could not be scheduled ${failed_activities.map(act => act.name).join(",")}`,{
-                                                icon: "success",
-                                              });
+                                            if(failed_activities.length == that.state.checked_activities.length){
+                                                swal(`None of the activites could be scheduled: ${failed_activities.map(act => act.name).join(",")}`,{
+                                                    icon: "error",
+                                                  });
+                                            }else{
+                                                swal(`The following activities could not be scheduled ${failed_activities.map(act => act.name).join(",")}`,{
+                                                    icon: "success",
+                                                  });
+                                            }
                                             
                                             
                                         }else{
@@ -835,6 +840,9 @@ class UnscheduledActivitiesList extends Component {
                                         }
                                         that.props.set_provisional_activities(autoscheduled_activities)
                                         that.autoScheduleHandleClose()
+                                        that.setState({
+                                            checked_activities: failed_activities
+                                        })
                                         
                                     })
                                     .catch(function (error) {
