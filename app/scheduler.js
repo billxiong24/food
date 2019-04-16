@@ -885,7 +885,7 @@ class Scheduler extends CRUD {
         manufacturing_line.id,
         manufacturing_line.shortname as shrt_name,
         manufacturing_line.comment,
-        manufacturing_line.name,
+        manufacturing_line.name
         FROM manufacturing_line 
         `
         let man_line_id_map = {}
