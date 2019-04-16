@@ -537,8 +537,8 @@ class Scheduler extends CRUD {
         return this.get_man_lines().then(function(res){
 
         console.log(res)
-        for(let i = 0; i < res.rows.length ; i++){
-            man_line_id_man_line[res.rows[i].id] = res.rows[i].shrt_name
+        for(let i = 0; i < res.length ; i++){
+            man_line_id_man_line[res[i].id] = res[i].shrt_name
         }
         return db.execSingleQuery("select * from manufacturing_line_sku", [])
                 .then(function(res){
