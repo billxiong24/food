@@ -533,9 +533,13 @@ class Scheduler extends CRUD {
         INNER JOIN users ON foo.user_id = users.id
         `
         let sku_man_line_map = {}
+        let man_line_id_man_line = {}
         return this.get_man_lines().then(function(res){
 
         console.log(res)
+        for(let i = 0; i < res.rows.length ; i++){
+            man_line_id_man_line[res.rows[i].id] = res.rows[i].shrt_name
+        }
         return db.execSingleQuery("select * from manufacturing_line_sku", [])
                 .then(function(res){
                 console.log(res.rows)
@@ -638,17 +642,17 @@ class Scheduler extends CRUD {
                         let calculated_end_time = that.calculate_end_time(interval.start_time, act.completion_time)
                         if(calculated_end_time < interval.end_time){
                             interval_set.delete(interval)
-                            act.start_time = interval.start_time
-                            act.end_time = calculated_end_time
-                            act.man_line_num = interval.id
+                            act.start_time = that.get_date_string(interval.start_time)
+                            act.end_time = that.get_date_string(calculated_end_time)
+                            act.man_line_num = man_line_id_man_line[interval.id]
                             interval_set.add(that.createInterval(act.end_time, interval.end_time))
                             activity_set.delete(act)
                             break
                         }else if(calculated_end_time == interval.end){
                             interval_set.delete(interval)
-                            act.start_time = interval.start_time
-                            act.end_time = calculated_end_time
-                            act.man_line_num = interval.id
+                            act.start_time = that.get_date_string(interval.start_time)
+                            act.end_time = that.get_date_string(calculated_end_time)
+                            act.man_line_num = man_line_id_man_line[interval.id]
                             activity_set.delete(act)
                             break
                         }
