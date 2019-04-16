@@ -700,6 +700,7 @@ class Scheduler extends CRUD {
         if(activity.start_time <= start_time && activity.end_time < end_time){
             let interval = this.createInterval(activity.end_time, end_time, man_line_id)
             if(man_line_id == 1234){
+                console.log("start")
                 console.log({
                     start_time : this.get_date_string(original_interval.start_time),
                     end_time : this.get_date_string(original_interval.end_time),
@@ -722,8 +723,10 @@ class Scheduler extends CRUD {
 
         //activity overlaps through end
         if(activity.start_time > start_time && activity.end_time >= end_time){
+            
             let interval = this.createInterval(start_time, activity.start_time, man_line_id)
             if(man_line_id == 1234){
+                console.log("end")
                 console.log({
                     start_time : this.get_date_string(original_interval.start_time),
                     end_time : this.get_date_string(original_interval.end_time),
@@ -746,6 +749,19 @@ class Scheduler extends CRUD {
 
         //activity subsumes interval
         if(activity.start_time <= start_time && activity.end_time >= end_time){
+            if(man_line_id == 1234){
+                console.log("subsume")
+                console.log({
+                    start_time : this.get_date_string(original_interval.start_time),
+                    end_time : this.get_date_string(original_interval.end_time),
+                    name: "presplit"
+                })
+                console.log({
+                    name: activity.name,
+                    start_time: this.get_date_string(activity.start_time),
+                    end_time: this.get_date_string(activity.end_time)
+                })
+            }
             return
         }
 
@@ -754,6 +770,7 @@ class Scheduler extends CRUD {
             let interval1 = this.createInterval(start_time, activity.start_time, man_line_id)
             let interval2 = this.createInterval(activity.end_time, end_time, man_line_id)
             if(man_line_id == 1234){
+                console.log("middle")
                 console.log({
                     start_time : this.get_date_string(original_interval.start_time),
                     end_time : this.get_date_string(original_interval.end_time),
