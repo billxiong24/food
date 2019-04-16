@@ -665,7 +665,6 @@ class Scheduler extends CRUD {
         for(let i = 0; i < intersecting_activities.length; i++){
             let interval_array = Array.from(interval_set)
             for(let j = 0; j < interval_array.length; j++){
-                interval_set.delete(interval_array[j])
                 this.splitInterval(interval_array[j], intersecting_activities[i], interval_set, man_line_id)
             }
         }
@@ -698,6 +697,7 @@ class Scheduler extends CRUD {
         
         //activity overlaps through start
         if(activity.start_time <= start_time && activity.end_time < end_time && activity.end_time > start_time ){
+            interval_set.delete(original_interval)
             let interval = this.createInterval(activity.end_time, end_time, man_line_id)
             if(man_line_id == 1234){
                 console.log("start")
@@ -723,7 +723,7 @@ class Scheduler extends CRUD {
 
         //activity overlaps through end
         if(activity.start_time > start_time && activity.start_time < end_time && activity.end_time > end_time){
-            
+            interval_set.delete(original_interval)
             let interval = this.createInterval(start_time, activity.start_time, man_line_id)
             if(man_line_id == 1234){
                 console.log("end")
@@ -749,6 +749,7 @@ class Scheduler extends CRUD {
 
         //activity subsumes interval
         if(activity.start_time <= start_time && activity.end_time >= end_time){
+            interval_set.delete(original_interval)
             if(man_line_id == 1234){
                 console.log("subsume")
                 console.log({
@@ -767,6 +768,7 @@ class Scheduler extends CRUD {
 
         //activity lies in the middle of interval
         if(activity.start_time > start_time && activity.end_time < end_time){
+            interval_set.delete(original_interval)
             let interval1 = this.createInterval(start_time, activity.start_time, man_line_id)
             let interval2 = this.createInterval(activity.end_time, end_time, man_line_id)
             if(man_line_id == 1234){
