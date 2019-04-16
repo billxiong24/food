@@ -410,7 +410,7 @@ class SKU extends CRUD {
         })
     }
 
-    validUPC(upc){
+    validUPC(upc_num){
         const first_digit = new Set(['0', '1', '6', '7', '8', '9']);
         let err_msg;
         if(upc_num.length != 12){
