@@ -4,6 +4,7 @@ const CRUD = require("./CRUD");
 const Sku = require('./sku');
 const Formatter = require('./formatter');
 const QueryGenerator = require("./query_generator");
+const moment = require("moment")
 
 
 class Scheduler extends CRUD {
