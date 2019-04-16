@@ -970,6 +970,7 @@ class Scheduler extends CRUD {
       return db.execSingleQuery(query, [])
       .then((res) => {
         let rows = res.rows;
+        console.log(rows);
         if(!rows) {
           return null;
         } else {
