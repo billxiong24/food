@@ -1,6 +1,6 @@
 import fileinput
 import sys
-
+print("python")
 for line in fileinput.input():
     print(line)
     if "8000" in line:
