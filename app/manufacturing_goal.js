@@ -96,6 +96,11 @@ class ManufacturingGoals extends CRUD {
         return db.execSingleQuery(query, [user_id]);
     }
 
+    searchAll() {
+        let query = "SELECT * FROM " + this.tableName;
+        return db.execSingleQuery(query, []);
+    }
+
     getSkus(manufacturing_id) {
         let query = "SELECT sku.*, manufacturing_goal_sku.quantity FROM manufacturing_goal_sku INNER JOIN sku ON sku.id = manufacturing_goal_sku.sku_id WHERE manufacturing_goal_sku.mg_id = $1";
         return db.execSingleQuery(query, [manufacturing_id]);
